@@ -35,7 +35,7 @@ struct DictKeys {
 
 struct EndPoints {
    
-    static let BASE_URL = "https://thecontractor.ae/rest/"
+    static let BASE_URL = "https://contractor.bidcont.com/rest/"
     static let app = "app"
     static let verifyPurchase = "verify-purchase"
     static let login = "Account/user_login"

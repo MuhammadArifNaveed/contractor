@@ -41,14 +41,15 @@ struct ProfileMenu {
 
 
 struct AppLinks {
-    static let AboutUS = "https://contractor.thecontractor.ae/about-app"
-    static let Terms = "https://contractor.thecontractor.ae/terms-and-conditions-app"
-    static let Privacy = "https://contractor.thecontractor.ae/privacy-policy-app"
-    static let Advertisment = "https://contractor.thecontractor.ae/advertisement-app"
-    static let Vendor = "https://contractor.thecontractor.ae/become-a-vender-app"
-    static let Guide = "https://contractor.thecontractor.ae/guide-app"
-    static let Documentation = "https://contractor.thecontractor.ae/documentations-app"
-    static let ContactUS = "https://contractor.thecontractor.ae/contact"
+    private static let baseURL = "https://contractor.bidcont.com/"
+    static let AboutUS = "\(baseURL)about-app"
+    static let Terms = "\(baseURL)terms-and-conditions-app"
+    static let Privacy = "\(baseURL)privacy-policy-app"
+    static let Advertisment = "\(baseURL)advertisement-app"
+    static let Vendor = "\(baseURL)become-a-vender-app"
+    static let Guide = "\(baseURL)guide-app"
+    static let Documentation = "\(baseURL)documentations-app"
+    static let ContactUS = "\(baseURL)contact"
 }
 
 
