@@ -136,7 +136,10 @@ class MainContainerViewController: BaseViewController{
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+
             oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
@@ -153,7 +156,10 @@ class MainContainerViewController: BaseViewController{
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+
             oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
@@ -170,7 +176,10 @@ class MainContainerViewController: BaseViewController{
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+
             oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
@@ -186,7 +195,10 @@ class MainContainerViewController: BaseViewController{
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+
             oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
@@ -202,7 +214,9 @@ class MainContainerViewController: BaseViewController{
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
             oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
@@ -212,26 +226,38 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     
-    func showWebController(title : String , link : String)  {
+    func showWebController(title: String, link: String) {
+
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "WebVC") as! BaseNavigationController
-        let vc = controller.topViewController as! WebViewViewController
+
+        let controller = storyBoard.instantiateViewController(
+            withIdentifier: "WebVC"
+        ) as! BaseNavigationController
+
+        guard let vc = controller.topViewController as? WebViewViewController else {
+            return
+        }
+
         vc.isFromSideMenu = true
         vc.containeTitle = title
         vc.link = link
+
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
+
         if let oldRef = baseNavigationController {
-            oldRef.viewDidDisappear(true)
+            oldRef.willMove(toParent: nil)
             oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
         }
-        self.baseNavigationController = controller
+
+        baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = self.containerView.bounds
-        self.containerView.addSubview(controller.view)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
         controller.didMove(toParent: self)
     }
+
     
     
     
