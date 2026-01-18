@@ -38,14 +38,21 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         if indexPath.row == 0{
             return 120
         }
-        else if(indexPath.row > 1 && indexPath.row < 11){
-            return 0
-        }
-        else if(indexPath.row == 19 || indexPath.row == 20){
-            return 0
-        }
         else{
-            return 60
+            let title = SideMenu.MENULIST[indexPath.row - 1]["title"] as? String ?? ""
+            let hiddenItems: Set<String> = [
+                "Company Finder",
+                "Submit Enquiry",
+                "Enquiries",
+                "Submit Quotations",
+                "Quotations",
+                "Complaints",
+                "Estimations",
+                "24/7 Companies",
+                "Rate Us",
+                "Share"
+            ]
+            return hiddenItems.contains(title) ? 0 : 60
             
         }
         
@@ -56,41 +63,59 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         drawer.setDrawerState(.closed, animated: true)
         let mainVC = (drawer.mainViewController as! UINavigationController).topViewController as! MainContainerViewController
      //   mainVC.resetAllBottomViews()
-        if(indexPath.row == 1){
-//            mainVC.lblHome.setTitleColor(UIColor.init(hexFromString: "FF525C"), for: .normal)
-//            mainVC.imgHome.tintColor = UIColor.init(hexFromString: "FF525C")
-           mainVC.showHomeController()
+        if indexPath.row == 0 {
+            return
         }
-        else if(indexPath.row > 10 && indexPath.row < 19){
-             let title =  SideMenu.MENULIST[indexPath.row - 1]["title"] as! String
-            var link = ""
-            if(indexPath.row == 11){
 
+        let title = SideMenu.MENULIST[indexPath.row - 1]["title"] as? String ?? ""
+
+        if title == "Home" {
+            mainVC.showHomeController()
+        }
+        else if title == "Freelancers" {
+            mainVC.showFreelancersController()
+        }
+        else if title == "Freelance Dashboard" {
+            if Global.shared.isLogedIn {
+                mainVC.showFreelanceDashboardController()
+            }
+            else {
+                mainVC.loginUser()
+            }
+        }
+        else if title == "Workshop" {
+            mainVC.showWorkshopController()
+        }
+        else {
+            var link = ""
+            if title == "About Us" {
                 link = AppLinks.AboutUS
             }
-            else if(indexPath.row == 12){
+            else if title == "Advertisement" {
                 link = AppLinks.Advertisment
             }
-            else if(indexPath.row == 13){
+            else if title == "Become a Vendor" {
                 link = AppLinks.Vendor
             }
-            else if(indexPath.row == 14){
+            else if title == "Documentations" {
                 link = AppLinks.Documentation
             }
-            else if(indexPath.row == 15){
+            else if title == "Privacy Polices" {
                 link = AppLinks.Privacy
             }
-            else if(indexPath.row == 16){
+            else if title == "Terms & Conditions" {
                 link = AppLinks.Terms
             }
-            else if(indexPath.row == 17){
+            else if title == "Guide" {
                 link = AppLinks.Guide
             }
-            else if(indexPath.row == 18){
+            else if title == "Contact Us" {
                 link = AppLinks.ContactUS
             }
-            mainVC.showWebController(title: title, link: link)
-           
+
+            if !link.isEmpty {
+                mainVC.showWebController(title: title, link: link)
+            }
         }
     }
 }

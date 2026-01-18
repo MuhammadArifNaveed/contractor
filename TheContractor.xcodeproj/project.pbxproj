@@ -134,6 +134,18 @@
 		18EA18BB26D28820003DF2FC /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EA186A26D28820003DF2FC /* BaseNavigationController.swift */; };
 		18EA18BC26D28820003DF2FC /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EA186B26D28820003DF2FC /* BaseView.swift */; };
 		18EA18C926D29560003DF2FC /* Registration.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18EA18C826D29560003DF2FC /* Registration.storyboard */; };
+		80C6FE772F10E70A0014E3EF /* FreelancersHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */; };
+		80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE782F10E7210014E3EF /* AppTheme.swift */; };
+		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
+		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
+		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
+		9A1B2C3D4E5F678901234568 /* FreelanceDashboardHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B2C3D4E5F678901234567 /* FreelanceDashboardHostingController.swift */; };
+		9A1B2C3D4E5F67890123456A /* FreelanceDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B2C3D4E5F678901234569 /* FreelanceDashboardView.swift */; };
+		A1B2C3D4E5F60718293A4B5D /* HiredFreelancerSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* HiredFreelancerSummaryView.swift */; };
+		A1B2C3D4E5F60718293A4B5F /* HiredFreelancerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5E /* HiredFreelancerListView.swift */; };
+		A1B2C3D4E5F60718293A4B61 /* FreelancingOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B60 /* FreelancingOrdersView.swift */; };
+		A1B2C3D4E5F60718293A4B63 /* FreelanceWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B62 /* FreelanceWalletView.swift */; };
+		B1C2D3E4F5A60718293A4B65 /* UpdateFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60718293A4B64 /* UpdateFreelancerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -277,7 +289,19 @@
 		18EA186B26D28820003DF2FC /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		18EA18BE26D28857003DF2FC /* TheContractor-bridging-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TheContractor-bridging-header.h"; sourceTree = "<group>"; };
 		18EA18C826D29560003DF2FC /* Registration.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Registration.storyboard; sourceTree = "<group>"; };
+		80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersHostingController.swift; sourceTree = "<group>"; };
+		80C6FE782F10E7210014E3EF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
+		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
+		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
+		9A1B2C3D4E5F678901234567 /* FreelanceDashboardHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelanceDashboardHostingController.swift; sourceTree = "<group>"; };
+		9A1B2C3D4E5F678901234569 /* FreelanceDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelanceDashboardView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* HiredFreelancerSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiredFreelancerSummaryView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5E /* HiredFreelancerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiredFreelancerListView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B60 /* FreelancingOrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancingOrdersView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B62 /* FreelanceWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelanceWalletView.swift; sourceTree = "<group>"; };
 		A5CC8B6726772F58ED6713FA /* Pods-TheContractor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.debug.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.debug.xcconfig"; sourceTree = "<group>"; };
+		B1C2D3E4F5A60718293A4B64 /* UpdateFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateFreelancerView.swift; sourceTree = "<group>"; };
 		CC58A12B266F9A3C188C8FFA /* Pods_TheContractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TheContractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E427B39844C2A348174E3164 /* Pods-TheContractor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.release.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -332,6 +356,7 @@
 				18EA17E326D287CF003DF2FC /* LaunchScreen.storyboard */,
 				18EA17E626D287CF003DF2FC /* Info.plist */,
 				18EA18BE26D28857003DF2FC /* TheContractor-bridging-header.h */,
+				80C6FE7D2F10E7210014E3EF /* SwiftUI */,
 			);
 			path = TheContractor;
 			sourceTree = "<group>";
@@ -357,6 +382,8 @@
 				189A769826D7022400F28786 /* NewPasswordViewController.swift */,
 				180FE33226D85AF500D1D3C3 /* ProfileViewController.swift */,
 				180FE34026D8629500D1D3C3 /* WebViewViewController.swift */,
+				80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */,
+				9A1B2C3D4E5F678901234567 /* FreelanceDashboardHostingController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -459,6 +486,7 @@
 				18C1BCBB26F9DB700001EB73 /* SearchViewModel.swift */,
 				18C1BCBE26F9DBA00001EB73 /* AreaViewModel.swift */,
 				18C1BCC126F9DBAE0001EB73 /* AreasListViewModel.swift */,
+				80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -754,6 +782,38 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		80C6FE792F10E7210014E3EF /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				80C6FE782F10E7210014E3EF /* AppTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		80C6FE7C2F10E7210014E3EF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */,
+				80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */,
+				9A1B2C3D4E5F678901234569 /* FreelanceDashboardView.swift */,
+				A1B2C3D4E5F60718293A4B5C /* HiredFreelancerSummaryView.swift */,
+				A1B2C3D4E5F60718293A4B5E /* HiredFreelancerListView.swift */,
+				A1B2C3D4E5F60718293A4B60 /* FreelancingOrdersView.swift */,
+				A1B2C3D4E5F60718293A4B62 /* FreelanceWalletView.swift */,
+				B1C2D3E4F5A60718293A4B64 /* UpdateFreelancerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		80C6FE7D2F10E7210014E3EF /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				80C6FE792F10E7210014E3EF /* Theme */,
+				80C6FE7C2F10E7210014E3EF /* Views */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		ADE0FE673CE6C2C69804E22F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -900,6 +960,15 @@
 				18EA189226D28820003DF2FC /* GCD.swift in Sources */,
 				18EA189926D28820003DF2FC /* BReachability.swift in Sources */,
 				18EA187B26D28820003DF2FC /* AppConstants.swift in Sources */,
+				80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */,
+				80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */,
+				80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */,
+				9A1B2C3D4E5F67890123456A /* FreelanceDashboardView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5D /* HiredFreelancerSummaryView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5F /* HiredFreelancerListView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B61 /* FreelancingOrdersView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B63 /* FreelanceWalletView.swift in Sources */,
+				B1C2D3E4F5A60718293A4B65 /* UpdateFreelancerView.swift in Sources */,
 				18EA188726D28820003DF2FC /* TPKeyboardAvoidingScrollView.m in Sources */,
 				18C1BCAD26F965A80001EB73 /* CompanyViewModel.swift in Sources */,
 				18EA188226D28820003DF2FC /* LoginService.swift in Sources */,
@@ -945,6 +1014,7 @@
 				18EA18B226D28820003DF2FC /* NoDataView.swift in Sources */,
 				18EA18AA26D28820003DF2FC /* StringTrimExtension.swift in Sources */,
 				189A768D26D7017900F28786 /* VerifyNumberViewController.swift in Sources */,
+				80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */,
 				18EA17DD26D287CC003DF2FC /* ViewController.swift in Sources */,
 				18EA187926D28820003DF2FC /* UITableView+Extension.swift in Sources */,
 				18EA18BA26D28820003DF2FC /* BaseCollectionViewCell.swift in Sources */,
@@ -980,6 +1050,8 @@
 				18EA187C26D28820003DF2FC /* ResponseHandler.swift in Sources */,
 				18EA187726D28820003DF2FC /* Extensions.swift in Sources */,
 				18C1BCBF26F9DBA00001EB73 /* AreaViewModel.swift in Sources */,
+				80C6FE772F10E70A0014E3EF /* FreelancersHostingController.swift in Sources */,
+				9A1B2C3D4E5F678901234568 /* FreelanceDashboardHostingController.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
@@ -1149,14 +1221,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.5;
-				DEVELOPMENT_TEAM = LFU8PJV7DN;
+				DEVELOPMENT_TEAM = YXCYUGGRTM;
 				INFOPLIST_FILE = TheContractor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.contractor.TheContractor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.contractor.TheContractorx;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "TheContractor/TheContractor-bridging-header.h";
 				SWIFT_VERSION = 5.0;
@@ -1172,14 +1244,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.5;
-				DEVELOPMENT_TEAM = LFU8PJV7DN;
+				DEVELOPMENT_TEAM = YXCYUGGRTM;
 				INFOPLIST_FILE = TheContractor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.contractor.TheContractor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.contractor.TheContractorx;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "TheContractor/TheContractor-bridging-header.h";
 				SWIFT_VERSION = 5.0;

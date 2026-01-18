@@ -31,6 +31,10 @@ class MainContainerViewController: BaseViewController{
     
     weak var delegate:TopBarDelegate?
     var baseNavigationController:BaseNavigationController!
+
+    private var freelanceDashboardPreviousController: BaseNavigationController?
+    private var freelanceDashboardPreviousTopBarHidden: Bool = false
+    private var freelanceDashboardPreviousBottomBarHidden: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,6 +134,8 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showHomeController()  {
+        self.topBarView.isHidden = false
+        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "HomeVC") as! BaseNavigationController
@@ -150,6 +156,7 @@ class MainContainerViewController: BaseViewController{
     }
    
     func showEsstimationController()  {
+        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "EsstimationVC") as! BaseNavigationController
@@ -170,6 +177,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showSearchController()  {
+        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "SearchVC") as! BaseNavigationController
@@ -189,6 +197,7 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showWorkshopController()  {
+        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "WorkshopVC") as! BaseNavigationController
@@ -208,6 +217,7 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showProfileController()  {
+        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "ProfileVC") as! BaseNavigationController
@@ -227,6 +237,8 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showWebController(title: String, link: String) {
+
+        self.bottomBarView.isHidden = false
 
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
 
@@ -257,13 +269,82 @@ class MainContainerViewController: BaseViewController{
         containerView.addSubview(controller.view)
         controller.didMove(toParent: self)
     }
+    
+    func showFreelancersController() {
+        // Hide the top bar for Freelancers screen (it has its own navigation)
+        self.topBarView.isHidden = true
+        self.bottomBarView.isHidden = false
+        
+        let freelancersVC = FreelancersHostingController()
+        let controller = BaseNavigationController(rootViewController: freelancersVC)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+        
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        
+        baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
 
-    
-    
-    
-   
-    
-      
+    func showFreelanceDashboardController() {
+        if let oldRef = baseNavigationController {
+            freelanceDashboardPreviousController = oldRef
+            freelanceDashboardPreviousTopBarHidden = topBarView.isHidden
+            freelanceDashboardPreviousBottomBarHidden = bottomBarView.isHidden
+        }
+
+        self.topBarView.isHidden = true
+        self.bottomBarView.isHidden = true
+
+        let dashboardVC = FreelanceDashboardHostingController()
+        let controller = BaseNavigationController(rootViewController: dashboardVC)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+
+        baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func dismissFreelanceDashboardController() {
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+
+        if let previous = freelanceDashboardPreviousController {
+            self.topBarView.isHidden = freelanceDashboardPreviousTopBarHidden
+            self.bottomBarView.isHidden = freelanceDashboardPreviousBottomBarHidden
+
+            baseNavigationController = previous
+            addChild(previous)
+            previous.view.frame = containerView.bounds
+            containerView.addSubview(previous.view)
+            previous.didMove(toParent: self)
+        }
+        else {
+            showHomeController()
+        }
+
+        freelanceDashboardPreviousController = nil
+    }
+
 
     //MARK:- Action methods
     @IBAction func actionBack(_ sender:UIButton){

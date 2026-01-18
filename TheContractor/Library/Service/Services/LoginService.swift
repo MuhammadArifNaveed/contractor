@@ -32,18 +32,50 @@ class LoginService: BaseService {
     }
     func getUserLogin(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.login
-        self.makePostAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
-            if success {
-                let data = UserViewModel( json!["user"])
-                Global.shared.user = data
-                Global.shared.isLogedIn = true
-                   
-                completion(message,true)
+        
+        // Create a custom session manager to intercept cookies
+        let manager = Alamofire.Session.default
+        
+        manager.request(completeURL, method: .post, parameters: params, encoding: URLEncoding.default, headers: getHeaders())
+            .validate(statusCode: 200...501)
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    // Extract and save session cookie from response headers
+                    if let responseHeaders = response.response?.allHeaderFields as? [String: Any],
+                       let cookies = responseHeaders["Set-Cookie"] as? String {
+                        // Extract ci_session from cookie string
+                        let cookieParts = cookies.components(separatedBy: ";")
+                        for part in cookieParts {
+                            let trimmedPart = part.trimmingCharacters(in: .whitespaces)
+                            if trimmedPart.hasPrefix("ci_session=") {
+                                let sessionValue = trimmedPart.replacingOccurrences(of: "ci_session=", with: "")
+                                UserDefaultsManager.shared.token = sessionValue
+                                break
+                            }
+                        }
+                    }
+                    
+                    let json = JSON(value)
+                    let parsedResponse = ResponseHandler.handleResponse(json)
+                    
+                    if parsedResponse.serviceResponseType == .Success {
+                        let data = UserViewModel(json["user"])
+                        Global.shared.user = data
+                        Global.shared.isLogedIn = true
+                           
+                        completion(parsedResponse.message,true)
+                    }
+                    else{
+                      completion(parsedResponse.message,false)
+                    }
+                    
+                case .failure(let error):
+                    let errorMessage:String = error.localizedDescription
+                    print(errorMessage)
+                    completion(PopupMessages.SomethingWentWrong, false)
+                }
             }
-            else{
-              completion(message,false)
-            }
-        }
     }
     
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {

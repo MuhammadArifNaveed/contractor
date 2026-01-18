@@ -24,7 +24,13 @@ class BaseService {
     }
     
     func getHeaders() -> HTTPHeaders {
-        let headers:HTTPHeaders = ["" : ""]//[DictKeys.authoraization: kBlankString]
+        var headers: HTTPHeaders = [:]
+        
+        // Add session cookie if available
+        if let cookie = UserDefaultsManager.shared.token {
+            headers["Cookie"] = "ci_session=\(cookie)"
+        }
+        
         return headers
     }
     
@@ -149,9 +155,22 @@ class BaseService {
     }
     
     //MARK:- Multipart Post API Call
-    func makePostAPICallWithMultipart(with completeURL:String, dict:[String:Data]?, params:[String:String]?, isImageData:Bool, completion: @escaping (_ error: String, _ success: Bool, _ jsonData:JSON?)->Void) {
-        
-        AF.upload(multipartFormData: { multipartFormData in
+    func makePostAPICallWithMultipart(with completeURL:String, dict:[String:Data]?, params:[String:String]?, isImageData:Bool, headers: HTTPHeaders? = nil, completion: @escaping (_ error: String, _ success: Bool, _ jsonData:JSON?)->Void) {
+        print("\n==================== API REQUEST (MULTIPART) ====================")
+        print("URL: \(completeURL)")
+        print("Params: \(params ?? [:])")
+        let requestHeaders = headers ?? self.getHeaders()
+        print("Headers: \(requestHeaders)")
+        // Debug: Dump all cookies for the domain
+        if let url = URL(string: completeURL),
+           let cookies = HTTPCookieStorage.shared.cookies(for: url) {
+            print("Cookies for \(url.host ?? "?"):")
+            cookies.forEach { print("  \($0.name)=\($0.value)") }
+        } else {
+            print("No cookies found for URL: \(completeURL)")
+        }
+
+        sessionManager.upload(multipartFormData: { multipartFormData in
 
 
             for (key, value) in params ?? [:] {
@@ -166,20 +185,38 @@ class BaseService {
                 multipartFormData.append(value, withName: key,fileName: fileName, mimeType: mimeType)
             }
 
-        }, to: completeURL, headers: self.getHeaders())
-            .responseJSON { (response) in
+        }, to: completeURL, headers: requestHeaders)
+            .responseData { (response) in
+                let statusCode = response.response?.statusCode ?? -1
+                print("\n-------------------- API RESPONSE (MULTIPART) --------------------")
+                print("URL: \(completeURL)")
+                print("Status: \(statusCode)")
+                if let headers = response.response?.allHeaderFields {
+                    print("Response Headers: \(headers)")
+                }
+                if let data = response.data {
+                    let raw = String(data: data, encoding: .utf8) ?? "<non-utf8 data, \(data.count) bytes>"
+                    print("Raw Response: \(raw)")
+                }
+                print("==================================================================\n")
+
                 switch response.result {
+                case .success(let data):
+                    do {
+                        let object = try JSONSerialization.jsonObject(with: data, options: [])
+                        let json = JSON(object)
+                        let parsedResponse = ResponseHandler.handleResponse(json)
 
-                case .success(let value):
-                    let json = JSON(value)
-                    let parsedResponse = ResponseHandler.handleResponse(json)
-
-                    if parsedResponse.serviceResponseType == .Success {
-                        completion(parsedResponse.message,true, parsedResponse.swiftyJsonData)
-                    }else if parsedResponse.serviceResponseType == .UnAuthorizedAccess {
-                        NotificationCenter.default.post(name: NotificationName.UnAuthorizedAccess, object: nil)
-                    }else {
-                        completion(parsedResponse.message,false,nil)
+                        if parsedResponse.serviceResponseType == .Success {
+                            completion(parsedResponse.message,true, parsedResponse.swiftyJsonData)
+                        }else if parsedResponse.serviceResponseType == .UnAuthorizedAccess {
+                            NotificationCenter.default.post(name: NotificationName.UnAuthorizedAccess, object: nil)
+                        }else {
+                            completion(parsedResponse.message,false,nil)
+                        }
+                    }
+                    catch {
+                        completion("Invalid response format", false, nil)
                     }
 
                 case .failure(let error):
@@ -187,7 +224,7 @@ class BaseService {
                     print(errorMessage)
                     completion(PopupMessages.SomethingWentWrong, false, nil)
                 }
-        }
+            }
         
     }
     

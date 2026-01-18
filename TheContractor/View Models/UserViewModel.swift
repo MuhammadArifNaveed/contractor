@@ -19,6 +19,9 @@ class UserViewModel{
     var name: String = kBlankString
     var surname: String =  kBlankString
     var phone : String = kBlankString
+
+    var id: String = kBlankString
+    var userType: String = kBlankString
 //    var deleted: Bool
 //    var windowsId : String
 //    var firstName: String
@@ -58,11 +61,15 @@ class UserViewModel{
         self.name = json["name"].stringValue
         self.surname = json["surname"].stringValue
         self.phone = json["phone"].stringValue
-//        self.windowsId = operater.windowsId
-//        self.firstName = operater.firstName
-//        self.middleName = operater.middleName
-//        self.lastName = operater.lastName
-//        self.loginName = operater.loginName
+
+        let directId = json["id"].stringValue
+        self.id = directId.isEmpty ? json["user_id"].stringValue : directId
+        self.userType = json["user_type"].stringValue
+    //        self.windowsId = operater.windowsId
+    //        self.firstName = operater.firstName
+    //        self.middleName = operater.middleName
+    //        self.lastName = operater.lastName
+    //        self.loginName = operater.loginName
 //        self.email = operater.email
 //        self.encryptedPassword = operater.encryptedPassword
 //        self.showTips = operater.showTips
