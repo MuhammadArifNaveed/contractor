@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImage
 
 struct FreelancersView: View {
-    @StateObject private var viewModel = FreelancerListViewModel.mockData()
+    @StateObject private var viewModel = FreelancerListViewModel()
     @State private var showSearchSheet = false
     @Environment(\.dismiss) private var dismiss
     
@@ -25,8 +25,13 @@ struct FreelancersView: View {
                 // Freelancers List
                 ScrollView {
                     LazyVStack(spacing: AppTheme.Spacing.medium) {
-                        ForEach(viewModel.freelancers.indices, id: \.self) { index in
-                            FreelancerCardView(freelancer: viewModel.freelancers[index])
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .padding(.vertical, 24)
+                        } else {
+                            ForEach(viewModel.freelancers.indices, id: \.self) { index in
+                                FreelancerCardView(freelancer: viewModel.freelancers[index])
+                            }
                         }
                     }
                     .padding(AppTheme.Spacing.medium)
@@ -34,6 +39,9 @@ struct FreelancersView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            viewModel.load()
+        }
         .sheet(isPresented: $showSearchSheet) {
             SearchFreelancerView { filter in
                 // Handle search with filter

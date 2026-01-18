@@ -66,6 +66,68 @@ class FreelancerListViewModel: ObservableObject {
         }
     }
     
+    /// Loads freelancers for the "Freelancers" screen (side menu).
+    /// - For company login, this uses freelancing/freelancers_list.
+    /// - For user login (for now), it falls back to mock data.
+    func load() {
+        if isLoading { return }
+        isLoading = true
+        errorMessage = ""
+
+        if Global.shared.loginType == "company" {
+            FreelancingService.shared.fetchCompanyFreelancersList { [weak self] message, success, json in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.isLoading = false
+                    if success, let json {
+                        let list = json["company_freelancers_list"].arrayValue
+                        self.freelancers = list.map { freelancer in
+                            let vm = FreelancerViewModel()
+                            vm.id = freelancer["id"].stringValue
+                            vm.name = freelancer["name"].stringValue.replacingOccurrences(of: "\n", with: " ")
+                            vm.profession = freelancer["category_name"].stringValue
+                            vm.hourlyRate = freelancer["hourly_rate"].stringValue
+                            // Image path from API is a filename; keep empty or prepend base URL if needed later.
+                            vm.profileImage = ""
+
+                            let ratingJSON = freelancer["rating"]
+                            vm.rating = ratingJSON["avg_rating"].doubleValue
+                            vm.reviewCount = ratingJSON["total_orders"].intValue
+
+                            let cityName = freelancer["city_name"].stringValue
+                            let areaName = freelancer["area_name"].stringValue
+                            vm.location = [areaName, cityName].filter { !$0.isEmpty }.joined(separator: " , ")
+
+                            let fromTime = freelancer["from_time"].stringValue
+                            let toTime = freelancer["to_time"].stringValue
+                            vm.workingHours = formatTimeRange(from: fromTime, to: toTime)
+
+                            let createdAt = freelancer["created_at"].stringValue.replacingOccurrences(of: "\n", with: " ")
+                            vm.memberSince = formatMemberSince(createdAt)
+
+                            vm.skills = freelancer["skills"].arrayValue.map { $0["skill_title"].stringValue }
+
+                            let availabilityFlag = freelancer["is_available_as_freelancer"].stringValue
+                            let availability = freelancer["availability"].stringValue
+                            let isAvailable = availabilityFlag == "1" || availability == "1"
+                            vm.availability = isAvailable ? "Available Hourly" : ""
+
+                            return vm
+                        }
+                    } else {
+                        self.errorMessage = message
+                        self.freelancers = []
+                    }
+                }
+            }
+        } else {
+            // TODO: replace with real user-facing freelancers API when available.
+            let mock = FreelancerListViewModel.mockData()
+            self.freelancers = mock.freelancers
+            self.isLoading = false
+        }
+    }
+    
     // Mock data for testing
     static func mockData() -> FreelancerListViewModel {
         let viewModel = FreelancerListViewModel()
@@ -118,4 +180,39 @@ class FreelancerSearchFilter: ObservableObject {
         selectedCategory = ""
         selectedCity = ""
     }
+}
+
+// MARK: - Local Formatting Helpers (shared with company freelancers UI)
+
+private func formatTimeRange(from: String, to: String) -> String {
+    let fromFormatted = formatTime(from)
+    let toFormatted = formatTime(to)
+    if fromFormatted.isEmpty || toFormatted.isEmpty {
+        return ""
+    }
+    return "\(fromFormatted) to \(toFormatted)"
+}
+
+private func formatTime(_ value: String) -> String {
+    guard !value.isEmpty else { return "" }
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "HH:mm:ss"
+    if let date = formatter.date(from: value) {
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: date)
+    }
+    return value
+}
+
+private func formatMemberSince(_ raw: String) -> String {
+    guard !raw.isEmpty else { return "" }
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    if let date = formatter.date(from: raw) {
+        formatter.dateFormat = "dd MMM yyyy"
+        return formatter.string(from: date)
+    }
+    return raw
 }
