@@ -24,18 +24,36 @@ class ProfileTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureView(){
-        if(Global.shared.isLogedIn){
-            self.viewLogin.isHidden = true
-            self.viewProfile.isHidden = false
-            self.lblUserName.text = Global.shared.user.name + " " + Global.shared.user.name
-            self.lblPhone.text = Global.shared.user.phone
+    func configureView() {
+        // Treat both flags and actual stored user object as the source of truth.
+        let isLoggedInUser = Global.shared.isLogedIn && Global.shared.user != nil
+
+        viewLogin.isHidden = isLoggedInUser
+        viewProfile.isHidden = !isLoggedInUser
+
+        guard isLoggedInUser, let user = Global.shared.user else {
+            // No user available – show empty / default state and avoid crashes.
+            lblUserName.text = ""
+            lblPhone.text = ""
+            return
         }
-        else{
-            self.viewLogin.isHidden = false
-            self.viewProfile.isHidden = true
-            
+
+        // Safely build full name from available components.
+        let firstName = user.name
+        let lastName = user.surname
+        let fullName: String
+        if !firstName.isEmpty && !lastName.isEmpty {
+            fullName = "\(firstName) \(lastName)"
+        } else if !firstName.isEmpty {
+            fullName = firstName
+        } else if !lastName.isEmpty {
+            fullName = lastName
+        } else {
+            fullName = ""
         }
+
+        lblUserName.text = fullName
+        lblPhone.text = user.phone
     }
 
 }

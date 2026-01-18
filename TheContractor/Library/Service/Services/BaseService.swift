@@ -193,6 +193,21 @@ class BaseService {
                 print("Status: \(statusCode)")
                 if let headers = response.response?.allHeaderFields {
                     print("Response Headers: \(headers)")
+
+                    // Extract and persist ci_session cookie when present so subsequent
+                    // requests automatically include it via `getHeaders()`.
+                    if let headerDict = headers as? [String: Any],
+                       let cookies = headerDict["Set-Cookie"] as? String {
+                        let parts = cookies.components(separatedBy: ";")
+                        for part in parts {
+                            let trimmed = part.trimmingCharacters(in: .whitespaces)
+                            if trimmed.hasPrefix("ci_session=") {
+                                let value = trimmed.replacingOccurrences(of: "ci_session=", with: "")
+                                UserDefaultsManager.shared.token = value
+                                break
+                            }
+                        }
+                    }
                 }
                 if let data = response.data {
                     let raw = String(data: data, encoding: .utf8) ?? "<non-utf8 data, \(data.count) bytes>"

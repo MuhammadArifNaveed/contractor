@@ -371,9 +371,10 @@ class MainContainerViewController: BaseViewController{
     func logoutUser() {
       
         Global.shared.user = nil
+        Global.shared.companyVendor = nil
         Global.shared.isLogedIn = false
-        Global.shared.user = UserViewModel()
-        UserDefaultsManager.shared.clearUserData()
+        Global.shared.loginType = ""
+        UserDefaultsManager.shared.clearAllLoginData()
         GCD.async(.Main, delay: 1) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
             let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController

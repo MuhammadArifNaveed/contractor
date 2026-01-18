@@ -39,6 +39,8 @@ struct EndPoints {
     static let app = "app"
     static let verifyPurchase = "verify-purchase"
     static let login = "Account/user_login"
+    /// Login for companies (vendor portal)
+    static let loginCompany = "vendor/login_company"
     static let home = "Home/categories"
     static let homeEsstimation = "Home/get_estimation_categories"
     static let getSearch = "Home/get_search"

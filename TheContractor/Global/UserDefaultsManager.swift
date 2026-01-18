@@ -11,6 +11,12 @@ import Foundation
 fileprivate struct UserDefaultsKeys {
     static let isUserLoggedIn = "isUserLoggedIn"
     static let loggedInUserInfo = "loggedInUserInfo"
+    /// True when a company (vendor) is logged in
+    static let isCompanyLoggedIn = "isCompanyLoggedIn"
+    /// Stored company/vendor info (encoded CompanyVendor)
+    static let loggedInCompanyInfo = "loggedInCompanyInfo"
+    /// "user" or "company" – last successful login type
+    static let loginType = "loginType"
     static let configurationUrl = "configurationUrl"
     static let verificationID = "authVerificationID"
     static let token = "token"
@@ -41,7 +47,29 @@ class UserDefaultsManager {
             return manager.bool(forKey: UserDefaultsKeys.isUserLoggedIn)
         }
     }
-    
+
+    /// Company (vendor) login flag
+    var isCompanyLoggedIn: Bool {
+        set {
+            manager.set(newValue, forKey: UserDefaultsKeys.isCompanyLoggedIn)
+            manager.synchronize()
+        }
+        get {
+            return manager.bool(forKey: UserDefaultsKeys.isCompanyLoggedIn)
+        }
+    }
+
+    /// "user" or "company" – last successful login type
+    var loginType: String {
+        set {
+            manager.set(newValue, forKey: UserDefaultsKeys.loginType)
+            manager.synchronize()
+        }
+        get {
+            return manager.string(forKey: UserDefaultsKeys.loginType) ?? ""
+        }
+    }
+
     
     
     var configurationUrl: String? {
@@ -79,11 +107,32 @@ class UserDefaultsManager {
             
         }
     }
+
+    /// Stored company/vendor info using Codable support
+    var companyInfo: CompanyVendor? {
+        set {
+            manager.set(codable: newValue, forKey: UserDefaultsKeys.loggedInCompanyInfo)
+            manager.synchronize()
+        }
+        get {
+            return manager.codable(CompanyVendor.self, forKey: UserDefaultsKeys.loggedInCompanyInfo)
+        }
+    }
  
    
     func clearUserData() {
         manager.removeObject(forKey: UserDefaultsKeys.loggedInUserInfo)
         manager.set(false, forKey: UserDefaultsKeys.isUserLoggedIn)
+        manager.synchronize()
+    }
+
+    /// Clears both user and company login state (used on full logout)
+    func clearAllLoginData() {
+        manager.removeObject(forKey: UserDefaultsKeys.loggedInUserInfo)
+        manager.removeObject(forKey: UserDefaultsKeys.loggedInCompanyInfo)
+        manager.set(false, forKey: UserDefaultsKeys.isUserLoggedIn)
+        manager.set(false, forKey: UserDefaultsKeys.isCompanyLoggedIn)
+        manager.set("", forKey: UserDefaultsKeys.loginType)
         manager.synchronize()
     }
     var verificationID: String? {

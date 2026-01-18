@@ -13,8 +13,22 @@ class LoginService: BaseService {
     
     fileprivate func saveUserInfo(_ userInfo:UserViewModel) {
         Global.shared.user = userInfo
+        Global.shared.loginType = "user"
+        Global.shared.isLogedIn = true
         UserDefaultsManager.shared.isUserLoggedIn = true
+        UserDefaultsManager.shared.isCompanyLoggedIn = false
+        UserDefaultsManager.shared.loginType = "user"
         UserDefaultsManager.shared.userInfo = userInfo
+    }
+    
+    fileprivate func saveCompanyInfo(_ vendor: CompanyVendor) {
+        Global.shared.companyVendor = vendor
+        Global.shared.loginType = "company"
+        Global.shared.isLogedIn = true
+        UserDefaultsManager.shared.isUserLoggedIn = false
+        UserDefaultsManager.shared.isCompanyLoggedIn = true
+        UserDefaultsManager.shared.loginType = "company"
+        UserDefaultsManager.shared.companyInfo = vendor
     }
     
     //MARK:- Verify Url API
@@ -59,13 +73,12 @@ class LoginService: BaseService {
                     let json = JSON(value)
                     let parsedResponse = ResponseHandler.handleResponse(json)
                     
-                    if parsedResponse.serviceResponseType == .Success {
-                        let data = UserViewModel(json["user"])
-                        Global.shared.user = data
-                        Global.shared.isLogedIn = true
-                           
-                        completion(parsedResponse.message,true)
-                    }
+                if parsedResponse.serviceResponseType == .Success {
+                    let data = UserViewModel(json["user"])
+                    self.saveUserInfo(data)
+                    
+                    completion(parsedResponse.message,true)
+                }
                     else{
                       completion(parsedResponse.message,false)
                     }
@@ -76,6 +89,32 @@ class LoginService: BaseService {
                     completion(PopupMessages.SomethingWentWrong, false)
                 }
             }
+    }
+    
+    // MARK: - Company (Vendor) Login
+    /// Logs in a company using email + 4-digit pin code.
+    func loginCompany(email: String,
+                      pinCode: String,
+                      firebaseToken: String,
+                      completion: @escaping (_ error: String, _ success: Bool, _ vendor: CompanyVendor?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + EndPoints.loginCompany
+        let params: [String: String] = [
+            "login_email": email,
+            "login_password": pinCode,
+            "device_type": "ios",
+            "firebase_token": firebaseToken
+        ]
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let vendorJSON = json["Vendor"]
+                let vendor = CompanyVendor(json: vendorJSON)
+                self.saveCompanyInfo(vendor)
+                completion(message, true, vendor)
+            } else {
+                completion(message, false, nil)
+            }
+        }
     }
     
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {

@@ -13,10 +13,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     @available(iOS 13.0, *)
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        // If a user or company is already logged in, skip the login flow and go
+        // straight to the drawer/home dashboard.
+        if UserDefaultsManager.shared.isUserLoggedIn || UserDefaultsManager.shared.isCompanyLoggedIn {
+            // Rehydrate Global session state from persisted user/company info
+            if UserDefaultsManager.shared.isUserLoggedIn,
+               let storedUser = UserDefaultsManager.shared.userInfo {
+                Global.shared.user = storedUser
+                Global.shared.companyVendor = nil
+                Global.shared.isLogedIn = true
+                Global.shared.loginType = "user"
+            } else if UserDefaultsManager.shared.isCompanyLoggedIn,
+                      let storedCompany = UserDefaultsManager.shared.companyInfo {
+                Global.shared.user = nil
+                Global.shared.companyVendor = storedCompany
+                Global.shared.isLogedIn = true
+                Global.shared.loginType = "company"
+            }
+
+            guard let windowScene = (scene as? UIWindowScene) else { return }
+            let window = UIWindow(windowScene: windowScene)
+
+            let storyboard = UIStoryboard(name: "Drawer", bundle: nil)
+            let root = storyboard.instantiateViewController(withIdentifier: "KYDrawerController") as! KYDrawerController
+            window.rootViewController = root
+            self.window = window
+            window.makeKeyAndVisible()
+        } else {
+            // Fall back to storyboard-defined initial controller (login flow).
+            guard let _ = (scene as? UIWindowScene) else { return }
+        }
     }
     @available(iOS 13.0, *)
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -134,6 +134,9 @@
 		18EA18BB26D28820003DF2FC /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EA186A26D28820003DF2FC /* BaseNavigationController.swift */; };
 		18EA18BC26D28820003DF2FC /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EA186B26D28820003DF2FC /* BaseView.swift */; };
 		18EA18C926D29560003DF2FC /* Registration.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18EA18C826D29560003DF2FC /* Registration.storyboard */; };
+		80327A162F1D224D00BDA19A /* CompanyVendor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A152F1D224D00BDA19A /* CompanyVendor.swift */; };
+		80327A182F1D226E00BDA19A /* CompanyLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A172F1D226E00BDA19A /* CompanyLoginView.swift */; };
+		80327A1A2F1D228900BDA19A /* CompanyLoginHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */; };
 		80C6FE772F10E70A0014E3EF /* FreelancersHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */; };
 		80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE782F10E7210014E3EF /* AppTheme.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
@@ -289,6 +292,9 @@
 		18EA186B26D28820003DF2FC /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		18EA18BE26D28857003DF2FC /* TheContractor-bridging-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TheContractor-bridging-header.h"; sourceTree = "<group>"; };
 		18EA18C826D29560003DF2FC /* Registration.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Registration.storyboard; sourceTree = "<group>"; };
+		80327A152F1D224D00BDA19A /* CompanyVendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyVendor.swift; sourceTree = "<group>"; };
+		80327A172F1D226E00BDA19A /* CompanyLoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginView.swift; sourceTree = "<group>"; };
+		80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginHostingController.swift; sourceTree = "<group>"; };
 		80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersHostingController.swift; sourceTree = "<group>"; };
 		80C6FE782F10E7210014E3EF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
@@ -364,6 +370,7 @@
 		18EA17ED26D28820003DF2FC /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */,
 				18C4FD8A26D2ACE0009A197E /* CompaniesListViewController.swift */,
 				18C4FD9126D2F9F2009A197E /* QuotationListViewController.swift */,
 				18E9D86C26D2FED500C984A0 /* EnquiresListViewController.swift */,
@@ -472,6 +479,7 @@
 		18EA180D26D28820003DF2FC /* View Models */ = {
 			isa = PBXGroup;
 			children = (
+				80327A152F1D224D00BDA19A /* CompanyVendor.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -795,6 +803,7 @@
 			children = (
 				80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */,
 				80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */,
+				80327A172F1D226E00BDA19A /* CompanyLoginView.swift */,
 				9A1B2C3D4E5F678901234569 /* FreelanceDashboardView.swift */,
 				A1B2C3D4E5F60718293A4B5C /* HiredFreelancerSummaryView.swift */,
 				A1B2C3D4E5F60718293A4B5E /* HiredFreelancerListView.swift */,
@@ -1017,6 +1026,7 @@
 				80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */,
 				18EA17DD26D287CC003DF2FC /* ViewController.swift in Sources */,
 				18EA187926D28820003DF2FC /* UITableView+Extension.swift in Sources */,
+				80327A1A2F1D228900BDA19A /* CompanyLoginHostingController.swift in Sources */,
 				18EA18BA26D28820003DF2FC /* BaseCollectionViewCell.swift in Sources */,
 				189A769926D7022400F28786 /* NewPasswordViewController.swift in Sources */,
 				18EA18A526D28820003DF2FC /* RIATextfield.swift in Sources */,
@@ -1026,6 +1036,7 @@
 				18EA17D926D287CC003DF2FC /* AppDelegate.swift in Sources */,
 				18EA189026D28820003DF2FC /* MKProgressViewController.swift in Sources */,
 				18EA18AC26D28820003DF2FC /* ActiveType.swift in Sources */,
+				80327A162F1D224D00BDA19A /* CompanyVendor.swift in Sources */,
 				186C512626D30EDB005C5C2E /* SelectedCompanyDetailsTableViewCell.swift in Sources */,
 				18EA17DB26D287CC003DF2FC /* SceneDelegate.swift in Sources */,
 				18EA189426D28820003DF2FC /* RealmOperations.swift in Sources */,
@@ -1053,6 +1064,7 @@
 				80C6FE772F10E70A0014E3EF /* FreelancersHostingController.swift in Sources */,
 				9A1B2C3D4E5F678901234568 /* FreelanceDashboardHostingController.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
+				80327A182F1D226E00BDA19A /* CompanyLoginView.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
