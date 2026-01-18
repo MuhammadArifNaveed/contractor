@@ -4,26 +4,47 @@ import Alamofire
 
 struct FreelanceDashboardView: View {
     let onBack: (() -> Void)?
-    private enum Segment: String, CaseIterable, Identifiable {
-        case dashboard = "Dashboard"
-        case hiredFreelancer = "Hired Freelancer"
-        case meAsFreelancer = "Me as a freelancer"
-        case wallet = "Wallet"
 
-        var id: String { rawValue }
+    /// Dashboard segments differ for normal users vs company users.
+    private enum Segment: Identifiable {
+        // User mode segments
+        case userDashboard
+        case userHiredFreelancer
+        case userMeAsFreelancer
+        case userWallet
+
+        // Company mode segments
+        case companyDashboard
+        case companyFreelancers
+        case companyHiredFreelancers
+        case companyOrders
+        case companyWallet
+        case companyHireFreelancer
+        case companyRegisterFreelancer
+
+        var id: String {
+            title
+        }
 
         var title: String {
             switch self {
-            case .dashboard: return "Dashboard"
-            case .hiredFreelancer: return "Hired Freelancer"
-            case .meAsFreelancer: return "Me as a freelancer"
-            case .wallet: return "Wallet"
+            case .userDashboard: return "Dashboard"
+            case .userHiredFreelancer: return "Hired Freelancer"
+            case .userMeAsFreelancer: return "Me as a freelancer"
+            case .userWallet: return "Wallet"
+            case .companyDashboard: return "Dashboard"
+            case .companyFreelancers: return "Company Freelancers"
+            case .companyHiredFreelancers: return "Hired Freelancers"
+            case .companyOrders: return "Freelancing Orders"
+            case .companyWallet: return "Wallet"
+            case .companyHireFreelancer: return "Hire a Freelancer"
+            case .companyRegisterFreelancer: return "Register a Freelancer"
             }
         }
     }
 
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedSegment: Segment = .dashboard
+    @State private var selectedSegment: Segment = .userDashboard
     @State private var pushedSegment: Segment?
     @State private var isShowingUpdateFreelancer: Bool = false
 
@@ -31,6 +52,12 @@ struct FreelanceDashboardView: View {
 
     init(onBack: (() -> Void)? = nil) {
         self.onBack = onBack
+        // Initial segment depends on login type
+        if Global.shared.loginType == "company" {
+            _selectedSegment = State(initialValue: .companyDashboard)
+        } else {
+            _selectedSegment = State(initialValue: .userDashboard)
+        }
     }
 
     var body: some View {
@@ -70,7 +97,9 @@ struct FreelanceDashboardView: View {
                 get: { pushedSegment != nil },
                 set: { isActive in
                     if !isActive {
-                        selectedSegment = .dashboard
+                        // Always reset to the base dashboard segment for the
+                        // current login mode when a pushed view is dismissed.
+                        selectedSegment = Global.shared.loginType == "company" ? .companyDashboard : .userDashboard
                         pushedSegment = nil
                     }
                 }
@@ -84,28 +113,39 @@ struct FreelanceDashboardView: View {
     @ViewBuilder
     private var pushedDestination: some View {
         if let segment = pushedSegment {
-            if segment == .hiredFreelancer {
+            switch segment {
+            case .userHiredFreelancer, .companyHiredFreelancers:
                 HiredFreelancerSummaryView()
-            }
-            else if segment == .meAsFreelancer {
+
+            case .userMeAsFreelancer, .companyOrders:
                 FreelancingOrdersView(freelancer: nil)
-            }
-            else if segment == .wallet {
+
+            case .userWallet, .companyWallet:
                 FreelanceWalletView()
-            }
-            else {
+
+            case .companyFreelancers:
+                CompanyFreelancersListView()
+
+            case .companyHireFreelancer, .companyRegisterFreelancer:
                 FreelanceDashboardPlaceholderView(
                     title: segment.title,
                     onBack: {
-                        selectedSegment = .dashboard
+                        selectedSegment = .companyDashboard
                         pushedSegment = nil
                     }
                 )
+
+            case .userDashboard, .companyDashboard:
+                EmptyView()
             }
         }
         else {
             EmptyView()
         }
+    }
+
+    private var isCompanyMode: Bool {
+        Global.shared.loginType == "company"
     }
 
     private var navigationBar: some View {
@@ -136,13 +176,41 @@ struct FreelanceDashboardView: View {
         .background(AppTheme.Colors.primary)
     }
 
+    /// Segments available for the current login mode.
+    private var availableSegments: [Segment] {
+        if isCompanyMode {
+            return [
+                .companyDashboard,
+                .companyFreelancers,
+                .companyHiredFreelancers,
+                .companyOrders,
+                .companyWallet,
+                .companyHireFreelancer,
+                .companyRegisterFreelancer
+            ]
+        } else {
+            return [
+                .userDashboard,
+                .userHiredFreelancer,
+                .userMeAsFreelancer,
+                .userWallet
+            ]
+        }
+    }
+
     private var segmentBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(Array(Segment.allCases.enumerated()), id: \.element.id) { index, segment in
+                ForEach(Array(availableSegments.enumerated()), id: \.element.id) { index, segment in
                     Button(action: {
                         selectedSegment = segment
-                        if segment != .dashboard {
+
+                        // Only some segments push a new screen; dashboard segments
+                        // show inline content.
+                        switch segment {
+                        case .userDashboard, .companyDashboard:
+                            pushedSegment = nil
+                        default:
                             pushedSegment = segment
                         }
                     }) {
@@ -160,7 +228,7 @@ struct FreelanceDashboardView: View {
                     }
                     .buttonStyle(.plain)
 
-                    if index != Segment.allCases.count - 1 {
+                    if index != availableSegments.count - 1 {
                         Rectangle()
                             .fill(Color.black.opacity(0.35))
                             .frame(width: 1, height: 30)
@@ -179,7 +247,11 @@ struct FreelanceDashboardView: View {
     private var dashboardContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                availabilityRow
+                // In user mode we show the availability row; in company mode
+                // the dashboard only displays metrics.
+                if !isCompanyMode {
+                    availabilityRow
+                }
 
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                     Text("Freelancing Dashboard")
@@ -254,24 +326,37 @@ final class FreelancingService: BaseService {
     }
 
     private func defaultIdentityParams() -> [String: String] {
-        // For now, use static values from the provided examples for user_type="users"
-        // TODO: Replace with real Global.shared.user values when session/cookie is fixed
-        return [
-            "user_id": "45",
-            "user_type": "users",
-            "vendor_id": "45"
-        ]
+        // Build identity from the current logged-in session. Supports both
+        // normal users and company (vendor) users.
+        if Global.shared.loginType == "company", let vendor = Global.shared.companyVendor {
+            let userId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+            return [
+                "user_id": userId,
+                "user_type": "companies",
+                "vendor_id": vendor.id
+            ]
+        } else if let user = Global.shared.user {
+            let userId = user.id
+            let userType = user.userType.isEmpty ? "users" : user.userType
+            return [
+                "user_id": userId,
+                "user_type": userType,
+                "vendor_id": userId
+            ]
+        }
+
+        return [:]
     }
 
     func fetchFreelancingDashboard(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
-        let completeURL = EndPoints.BASE_URL + "freelancing/user_freelancing_dashboard"
-        
-        // For testing: manually set the session cookie from your working curl
-        // TODO: This should be dynamically retrieved after login
-        var headers = HTTPHeaders()
-        headers["Cookie"] = "ci_session=d1063ae99f4b6e153bd86799a97423f147824030"
-        
-        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false, headers: headers) { message, success, jsonData in
+        // Companies use `freelancing_dashboard`, normal users use
+        // `user_freelancing_dashboard`.
+        let path: String = Global.shared.loginType == "company"
+            ? "freelancing/freelancing_dashboard"
+            : "freelancing/user_freelancing_dashboard"
+        let completeURL = EndPoints.BASE_URL + path
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
             completion(message, success, jsonData)
         }
     }
@@ -301,6 +386,14 @@ final class FreelancingService: BaseService {
 
     func fetchWallet(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "freelancing/wallet"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
+            completion(message, success, jsonData)
+        }
+    }
+
+    /// Company-specific list of freelancers owned by the logged-in vendor.
+    func fetchCompanyFreelancersList(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/freelancers_list"
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
             completion(message, success, jsonData)
         }
@@ -335,16 +428,25 @@ final class FreelancingDashboardViewModel: ObservableObject {
                 guard let self else { return }
                 self.isLoading = false
                 if success, let json {
-                    // Extract both freelancer and boss metrics
-                    let freelancerMetrics = json["user_freelancing_dashboard"]["as_freelancer"].arrayValue.map { FreelancingDashboardMetric(json: $0) }
-                    let bossMetrics = json["user_freelancing_dashboard"]["as_boss_details"].arrayValue.map { FreelancingDashboardMetric(json: $0) }
-                    
-                    // Combine both arrays for display
-                    self.metrics = freelancerMetrics + bossMetrics
-                    
-                    // Update availability status
-                    let availabilityValue = json["user_freelancing_dashboard"]["is_available_as_freelance"].stringValue
-                    self.isAvailableAsFreelancer = availabilityValue == "1"
+                    if json["user_freelancing_dashboard"].exists() {
+                        // User mode structure
+                        let root = json["user_freelancing_dashboard"]
+                        let freelancerMetrics = root["as_freelancer"].arrayValue.map { FreelancingDashboardMetric(json: $0) }
+                        let bossMetrics = root["as_boss_details"].arrayValue.map { FreelancingDashboardMetric(json: $0) }
+
+                        // Combine both arrays for display
+                        self.metrics = freelancerMetrics + bossMetrics
+
+                        // Update availability status
+                        let availabilityValue = root["is_available_as_freelance"].stringValue
+                        self.isAvailableAsFreelancer = availabilityValue == "1"
+                    } else if json["freelancing_dashboard"].exists() {
+                        // Company mode structure – simple metrics array
+                        self.metrics = json["freelancing_dashboard"].arrayValue.map { FreelancingDashboardMetric(json: $0) }
+                        self.isAvailableAsFreelancer = false
+                    } else {
+                        self.metrics = []
+                    }
                 }
                 else {
                     self.errorMessage = message
