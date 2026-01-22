@@ -126,7 +126,10 @@ struct FreelanceDashboardView: View {
             case .companyFreelancers:
                 CompanyFreelancersListView()
 
-            case .companyHireFreelancer, .companyRegisterFreelancer:
+            case .companyHireFreelancer:
+                CompanyHireFreelancerWrapperView()
+
+            case .companyRegisterFreelancer:
                 FreelanceDashboardPlaceholderView(
                     title: segment.title,
                     onBack: {
@@ -513,6 +516,33 @@ private struct FreelanceDashboardPlaceholderView: View {
             }
         }
         .navigationBarHidden(true)
+    }
+}
+
+private struct CompanyHireFreelancerWrapperView: View {
+    @StateObject private var summaryVM = HiredFreelancerSummaryViewModel()
+
+    var body: some View {
+        ZStack {
+            AppTheme.Colors.secondaryBackground
+                .ignoresSafeArea()
+
+            if summaryVM.isLoading {
+                ProgressView()
+            } else if let first = summaryVM.items.first {
+                HiredFreelancerListView(summaryItem: first)
+            } else {
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    Text("No hired freelancer batches found.")
+                        .font(AppTheme.Fonts.body)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                .padding(AppTheme.Spacing.medium)
+            }
+        }
+        .onAppear {
+            summaryVM.load()
+        }
     }
 }
 

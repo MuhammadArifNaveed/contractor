@@ -4,11 +4,19 @@ import SwiftyJSON
 struct HiredFreelancerListView: View {
     @Environment(\.presentationMode) private var presentationMode
 
+    /// When non-nil, overrides the batch id that will be used to load
+    /// hired freelancers (used by "Hire a Freelancer" company flow).
+    let batchIdOverride: String?
     let summaryItem: SummaryItem?
 
     @State private var selectedFreelancer: HiredFreelancerItem?
 
     @StateObject private var vm = HiredFreelancerListViewModel()
+
+    init(summaryItem: SummaryItem? = nil, batchId: String? = nil) {
+        self.summaryItem = summaryItem
+        self.batchIdOverride = batchId
+    }
 
     var body: some View {
         ZStack {
@@ -56,7 +64,10 @@ struct HiredFreelancerListView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            vm.load(batchId: summaryItem?.batchId)
+            // Use explicit batch id if provided (e.g., from "Hire a Freelancer")
+            // otherwise fall back to the batch id from the summary item.
+            let batchId = batchIdOverride ?? summaryItem?.batchId
+            vm.load(batchId: batchId)
         }
     }
 
