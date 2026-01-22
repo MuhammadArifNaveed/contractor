@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 struct UpdateFreelancerView: View {
     private enum Step: Int, CaseIterable {
@@ -27,6 +29,11 @@ struct UpdateFreelancerView: View {
 
     @State private var step: Step = .general
 
+    // General information
+    @State private var name: String = ""
+    @State private var email: String = ""
+    @State private var phone: String = ""
+    /// Used as Hourly Rate (AED) field
     @State private var experienceYears: String = ""
     @State private var selectedSkills: [String] = []
     @State private var selectedCategory: String = ""
@@ -41,6 +48,12 @@ struct UpdateFreelancerView: View {
     @State private var bankAddress: String = ""
     @State private var accountTitle: String = ""
     @State private var iban: String = ""
+
+    // Media selection
+    @State private var isShowingImagePicker: Bool = false
+    @State private var isShowingVideoPicker: Bool = false
+    @State private var selectedImagesCount: Int = 0
+    @State private var selectedVideoDescription: String = ""
 
     @State private var addresses: [FreelancerAddress] = [
         FreelancerAddress(title: "this is testing current address", fullAddress: "", isCurrent: true),
@@ -65,37 +78,12 @@ struct UpdateFreelancerView: View {
     @State private var bankErrors: BankErrors = .init()
     @State private var addressErrors: AddressErrors = .init()
 
-    private let skills = [
-        "general carpenter",
-        "wood carpenter",
-        "plumber",
-        "electrician",
-        "painter"
-    ]
-
-    private let categories = [
-        "carpenter",
-        "plumber",
-        "electrician",
-        "painter",
-        "cleaning"
-    ]
-
-    private let cities = [
-        "Dubai",
-        "Sharjah",
-        "Abu Dhabi",
-        "Ajman",
-        "Ras Al Khaimah"
-    ]
-
-    private let areas = [
-        "Al Mamzar",
-        "Deira",
-        "Jumeirah",
-        "Al Qusais",
-        "Business Bay"
-    ]
+    // Dropdown data loaded from API
+    @State private var skills: [String] = []
+    @State private var categories: [String] = []
+    @State private var cities: [String] = []
+    @State private var areas: [String] = []
+    @State private var cityToAreas: [String: [String]] = [:]
 
     var body: some View {
         ZStack {
@@ -199,6 +187,23 @@ struct UpdateFreelancerView: View {
                 secondaryButton: .cancel()
             )
         }
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImagePickerSheet { images in
+                selectedImagesCount = images.count
+                isShowingImagePicker = false
+            }
+        }
+        .sheet(isPresented: $isShowingVideoPicker) {
+            VideoPickerSheet { description in
+                selectedVideoDescription = description
+                isShowingVideoPicker = false
+            }
+        }
+        .onAppear {
+            if skills.isEmpty || categories.isEmpty || cities.isEmpty {
+                loadFreelancingSearch()
+            }
+        }
     }
 
     private var topBar: some View {
@@ -210,7 +215,7 @@ struct UpdateFreelancerView: View {
             }
             .frame(width: 44, height: 44)
 
-            Text("Update Freelancer")
+            Text("Add Freelancer")
                 .font(AppTheme.Fonts.title)
                 .foregroundColor(.white)
                 .padding(.leading, 8)
@@ -252,10 +257,30 @@ struct UpdateFreelancerView: View {
     private var generalStep: some View {
         VStack(alignment: .leading, spacing: 14) {
             ValidatedTextField(
-                placeholder: "Experience (Years)",
+                placeholder: "Name",
+                text: $name,
+                error: generalErrors.name
+            )
+
+            ValidatedTextField(
+                placeholder: "Email",
+                text: $email,
+                error: generalErrors.email,
+                keyboardType: .emailAddress
+            )
+
+            ValidatedTextField(
+                placeholder: "Phone",
+                text: $phone,
+                error: generalErrors.phone,
+                keyboardType: .phonePad
+            )
+
+            ValidatedTextField(
+                placeholder: "Hourly Rate (AED)",
                 text: $experienceYears,
                 error: generalErrors.experience,
-                keyboardType: .numberPad
+                keyboardType: .decimalPad
             )
 
             VStack(alignment: .leading, spacing: 6) {
@@ -393,6 +418,45 @@ struct UpdateFreelancerView: View {
                     InlineErrorText(error)
                 }
             }
+
+            // Media buttons
+            Button(action: {
+                isShowingImagePicker = true
+            }) {
+                HStack {
+                    Text(selectedImagesCount > 0 ? "Choose Images (\(selectedImagesCount) selected)" : "Choose Images")
+                        .font(AppTheme.Fonts.body)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+
+            Button(action: {
+                isShowingVideoPicker = true
+            }) {
+                HStack {
+                    Text(selectedVideoDescription.isEmpty ? "Choose Video" : selectedVideoDescription)
+                        .font(AppTheme.Fonts.body)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -553,11 +617,29 @@ struct UpdateFreelancerView: View {
     private func validateGeneral() -> Bool {
         generalErrors = .init()
 
-        if experienceYears.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            generalErrors.experience = "Experience is required"
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedName.isEmpty {
+            generalErrors.name = "Name is required"
         }
-        else if Int(experienceYears.trimmingCharacters(in: .whitespacesAndNewlines)) == nil {
-            generalErrors.experience = "Enter a valid number"
+
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedEmail.isEmpty {
+            generalErrors.email = "Email is required"
+        } else if !isValidEmail(trimmedEmail) {
+            generalErrors.email = "Enter a valid email address"
+        }
+
+        let trimmedPhone = phone.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedPhone.isEmpty {
+            generalErrors.phone = "Phone is required"
+        }
+
+        let trimmedRate = experienceYears.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedRate.isEmpty {
+            generalErrors.experience = "Hourly rate is required"
+        }
+        else if Double(trimmedRate) == nil {
+            generalErrors.experience = "Enter a valid amount"
         }
 
         if selectedSkills.isEmpty {
@@ -633,6 +715,9 @@ struct UpdateFreelancerView: View {
     }
 
     private func firstGeneralErrorMessage() -> String? {
+        if let v = generalErrors.name { return v }
+        if let v = generalErrors.email { return v }
+        if let v = generalErrors.phone { return v }
         if let v = generalErrors.experience { return v }
         if let v = generalErrors.skills { return v }
         if let v = generalErrors.category { return v }
@@ -657,6 +742,7 @@ struct UpdateFreelancerView: View {
     }
 
     private func showToast(_ message: String) {
+        guard !message.isEmpty else { return }
         toastMessage = message
         withAnimation(.easeInOut(duration: 0.2)) {
             isShowingToast = true
@@ -664,6 +750,35 @@ struct UpdateFreelancerView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             withAnimation(.easeInOut(duration: 0.2)) {
                 isShowingToast = false
+            }
+        }
+    }
+
+    private func loadFreelancingSearch() {
+        FreelancingService.shared.fetchFreelancingSearch { message, success, json in
+            DispatchQueue.main.async {
+                if success, let json = json {
+                    skills = json["freelancer_skills"].arrayValue.map { $0["title"].stringValue }
+                    categories = json["freelancer_categories"].arrayValue.map { $0["title"].stringValue }
+
+                    let cityArray = json["freelancer_cities"].arrayValue
+                    var loadedCities: [String] = []
+                    var map: [String: [String]] = [:]
+                    for city in cityArray {
+                        let cityName = city["name"].stringValue
+                        loadedCities.append(cityName)
+                        let areaNames = city["areas"].arrayValue.map { $0["area_name"].stringValue }
+                        map[cityName] = areaNames
+                    }
+                    cities = loadedCities
+                    cityToAreas = map
+
+                    if !selectedCity.isEmpty {
+                        areas = map[selectedCity] ?? []
+                    }
+                } else {
+                    showToast(message)
+                }
             }
         }
     }
@@ -682,6 +797,8 @@ struct UpdateFreelancerView: View {
             selectedCategory = value
         case .city:
             selectedCity = value
+            selectedArea = ""
+            areas = cityToAreas[value] ?? []
         case .area:
             selectedArea = value
         }
@@ -851,6 +968,11 @@ private struct InlineErrorText: View {
     }
 }
 
+private func isValidEmail(_ value: String) -> Bool {
+    let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    return value.range(of: pattern, options: .regularExpression) != nil
+}
+
 private struct ToastBanner: View {
     let message: String
 
@@ -943,6 +1065,101 @@ private struct SkillPickerSheet: View {
             return options
         }
         return options.filter { $0.lowercased().contains(trimmed.lowercased()) }
+    }
+}
+
+private struct ImagePickerSheet: UIViewControllerRepresentable {
+    let onComplete: ([UIImage]) -> Void
+
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 0 // multiple images
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onComplete: onComplete)
+    }
+
+    final class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        let onComplete: ([UIImage]) -> Void
+
+        init(onComplete: @escaping ([UIImage]) -> Void) {
+            self.onComplete = onComplete
+        }
+
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+
+            guard !results.isEmpty else {
+                onComplete([])
+                return
+            }
+
+            var images: [UIImage] = []
+            let group = DispatchGroup()
+
+            for result in results {
+                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    group.enter()
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                        if let image = object as? UIImage {
+                            images.append(image)
+                        }
+                        group.leave()
+                    }
+                }
+            }
+
+            group.notify(queue: .main) {
+                self.onComplete(images)
+            }
+        }
+    }
+}
+
+private struct VideoPickerSheet: UIViewControllerRepresentable {
+    let onComplete: (String) -> Void
+
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .videos
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onComplete: onComplete)
+    }
+
+    final class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        let onComplete: (String) -> Void
+
+        init(onComplete: @escaping (String) -> Void) {
+            self.onComplete = onComplete
+        }
+
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+
+            guard !results.isEmpty else {
+                onComplete("")
+                return
+            }
+
+            // For now we only surface a simple description; actual upload wiring
+            // can use loadFileRepresentation when API is available.
+            onComplete("Video selected")
+        }
     }
 }
 
@@ -1132,6 +1349,9 @@ private struct AddAddressOverlay: View {
 }
 
 private struct GeneralErrors {
+    var name: String?
+    var email: String?
+    var phone: String?
     var experience: String?
     var skills: String?
     var category: String?

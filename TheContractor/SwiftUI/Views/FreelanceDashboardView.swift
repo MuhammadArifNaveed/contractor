@@ -130,13 +130,7 @@ struct FreelanceDashboardView: View {
                 CompanyHireFreelancerWrapperView()
 
             case .companyRegisterFreelancer:
-                FreelanceDashboardPlaceholderView(
-                    title: segment.title,
-                    onBack: {
-                        selectedSegment = .companyDashboard
-                        pushedSegment = nil
-                    }
-                )
+                UpdateFreelancerView()
 
             case .userDashboard, .companyDashboard:
                 EmptyView()
@@ -389,6 +383,14 @@ final class FreelancingService: BaseService {
 
     func fetchWallet(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "freelancing/wallet"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
+            completion(message, success, jsonData)
+        }
+    }
+
+    /// Fetches freelancing search metadata for dropdowns (cities/areas, categories, skills).
+    func fetchFreelancingSearch(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/get_freelancing_search"
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
             completion(message, success, jsonData)
         }
