@@ -398,6 +398,23 @@ final class FreelancingService: BaseService {
             completion(message, success, jsonData)
         }
     }
+
+    /// Updates the "available as freelancer" status for a company freelancer.
+    func updateCompanyFreelancerStatus(freelancerId: String, isChecked: Bool, completion: @escaping (_ message: String, _ success: Bool, _ available: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/update_company_freelancer_status"
+        var params = defaultIdentityParams()
+        params["freelancer_id"] = freelancerId
+        params["is_checked"] = isChecked ? "1" : "0"
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let available = json["available"].boolValue
+                completion(message, true, available)
+            } else {
+                completion(message, false, false)
+            }
+        }
+    }
 }
 
 struct FreelancingDashboardMetric: Identifiable, Hashable {

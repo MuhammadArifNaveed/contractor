@@ -12,8 +12,7 @@ import SwiftyJSON
 
 
 
-class UserViewModel{
-    //:NSObject, NSCoding {
+class UserViewModel: Codable {
    
     
     var name: String = kBlankString

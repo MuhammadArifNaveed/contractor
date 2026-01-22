@@ -91,20 +91,13 @@ class UserDefaultsManager {
        }
     
     
-    var userInfo:UserViewModel! {
+    var userInfo: UserViewModel? {
         set {
-            let data = NSKeyedArchiver.archivedData(withRootObject: newValue!)
-            manager.set(data, forKey: UserDefaultsKeys.loggedInUserInfo)
+            manager.set(codable: newValue, forKey: UserDefaultsKeys.loggedInUserInfo)
             manager.synchronize()
         }
         get {
-            if let data = manager.data(forKey: UserDefaultsKeys.loggedInUserInfo) {
-                let userInfo = NSKeyedUnarchiver.unarchiveObject(with: data) as! UserViewModel
-                return userInfo
-            }else {
-                return nil
-            }
-            
+            return manager.codable(UserViewModel.self, forKey: UserDefaultsKeys.loggedInUserInfo)
         }
     }
 

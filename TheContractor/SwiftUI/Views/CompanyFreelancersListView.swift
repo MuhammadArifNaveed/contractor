@@ -29,12 +29,35 @@ struct CompanyFreelancersListView: View {
                         }
                         else {
                             ForEach(vm.items) { item in
-                                CompanyFreelancerCard(item: item)
+                                CompanyFreelancerCard(
+                                    item: item,
+                                    onToggleFreelancerAvailability: { isChecked in
+                                        vm.toggleFreelancerAvailability(for: item, to: isChecked)
+                                    },
+                                    onUpdate: {
+                                        vm.selectedForUpdate = item
+                                    }
+                                )
                             }
                         }
                     }
                     .padding(AppTheme.Spacing.medium)
                 }
+
+                NavigationLink(
+                    destination: UpdateFreelancerView(),
+                    isActive: Binding(
+                        get: { vm.selectedForUpdate != nil },
+                        set: { isActive in
+                            if !isActive {
+                                vm.selectedForUpdate = nil
+                            }
+                        }
+                    )
+                ) {
+                    EmptyView()
+                }
+                .hidden()
             }
         }
         .navigationBarHidden(true)
@@ -69,6 +92,8 @@ struct CompanyFreelancersListView: View {
 
 private struct CompanyFreelancerCard: View {
     let item: CompanyFreelancerItem
+    let onToggleFreelancerAvailability: (Bool) -> Void
+    let onUpdate: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
@@ -128,6 +153,23 @@ private struct CompanyFreelancerCard: View {
                 .font(AppTheme.Fonts.caption)
                 .foregroundColor(AppTheme.Colors.textPrimary)
 
+            // Checkbox row: "Yes, i am available as freelancer"
+            Button(action: {
+                onToggleFreelancerAvailability(!item.isAvailableAsFreelancer)
+            }) {
+                HStack(spacing: 10) {
+                    Image(systemName: item.isAvailableAsFreelancer ? "checkmark.square.fill" : "square")
+                        .foregroundColor(AppTheme.Colors.primary)
+
+                    Text(item.isAvailableAsFreelancer ? "Yes, i am available as freelancer" : "No, I am not available as freelancer")
+                        .font(AppTheme.Fonts.body)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+
+                    Spacer()
+                }
+            }
+            .buttonStyle(.plain)
+
             HStack(spacing: AppTheme.Spacing.small) {
                 // Rating
                 HStack(spacing: 4) {
@@ -145,7 +187,8 @@ private struct CompanyFreelancerCard: View {
                 Spacer()
 
                 Button(action: {
-                    // Toggle availability action (API TBD)
+                    // This button reflects general availability ("Available" / "Not Available").
+                    // API for toggling this is not defined yet.
                 }) {
                     Text(item.isAvailable ? "Available" : "Not Available")
                         .font(AppTheme.Fonts.caption)
@@ -158,7 +201,7 @@ private struct CompanyFreelancerCard: View {
                 .buttonStyle(.plain)
 
                 Button(action: {
-                    // Navigate to update freelancer screen (API/UI TBD)
+                    onUpdate()
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "square.and.pencil")
@@ -194,7 +237,10 @@ struct CompanyFreelancerItem: Identifiable, Hashable {
     let memberSince: String
     let rating: Double
     let reviewCount: Int
-    let isAvailable: Bool
+    /// Checkbox: "Yes, i am available as freelancer"
+    var isAvailableAsFreelancer: Bool
+    /// General availability button (Available / Not Available)
+    var isAvailable: Bool
 
     var formattedRate: String { "\(hourlyRate)/hr" }
 }
@@ -203,6 +249,7 @@ final class CompanyFreelancersListViewModel: ObservableObject {
     @Published var items: [CompanyFreelancerItem] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
+    @Published var selectedForUpdate: CompanyFreelancerItem?
 
     func load() {
         if isLoading { return }
@@ -237,9 +284,10 @@ final class CompanyFreelancersListViewModel: ObservableObject {
 
                         let skills = freelancer["skills"].arrayValue.map { $0["skill_title"].stringValue }
 
-                        let availabilityFlag = freelancer["is_available_as_freelancer"].stringValue
+                        let availableAsFreelancerFlag = freelancer["is_available_as_freelancer"].stringValue
                         let availability = freelancer["availability"].stringValue
-                        let isAvailable = availabilityFlag == "1" || availability == "1"
+                        let isAvailableAsFreelancer = availableAsFreelancerFlag == "1"
+                        let isAvailable = availability == "1"
 
                         return CompanyFreelancerItem(
                             id: id,
@@ -253,12 +301,41 @@ final class CompanyFreelancersListViewModel: ObservableObject {
                             memberSince: memberSince,
                             rating: avgRating,
                             reviewCount: totalOrders,
+                            isAvailableAsFreelancer: isAvailableAsFreelancer,
                             isAvailable: isAvailable
                         )
                     }
                 } else {
                     self.errorMessage = message
                     self.items = []
+                }
+            }
+        }
+    }
+
+    /// Toggle "Yes, i am available as freelancer" state for a given freelancer.
+    func toggleFreelancerAvailability(for item: CompanyFreelancerItem, to isChecked: Bool) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+
+        var updated = item
+        updated.isAvailableAsFreelancer = isChecked
+        items[index] = updated
+
+        FreelancingService.shared.updateCompanyFreelancerStatus(freelancerId: item.id, isChecked: isChecked) { [weak self] message, success, available in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard let idx = self.items.firstIndex(where: { $0.id == item.id }) else { return }
+
+                if success {
+                    var confirmed = self.items[idx]
+                    confirmed.isAvailableAsFreelancer = available
+                    self.items[idx] = confirmed
+                } else {
+                    // Revert on failure
+                    var reverted = self.items[idx]
+                    reverted.isAvailableAsFreelancer = !isChecked
+                    self.items[idx] = reverted
+                    self.errorMessage = message
                 }
             }
         }

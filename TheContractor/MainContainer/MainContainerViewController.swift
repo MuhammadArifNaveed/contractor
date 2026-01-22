@@ -367,34 +367,97 @@ class MainContainerViewController: BaseViewController{
     @IBAction func actionRightButton(_ sender: Any) {
         delegate?.rightButtonAction()
     }
-    
-    func logoutUser() {
+    /// Logs out the current user (user or company).
+    /// - Parameter showSuccessAlert: if true, shows a 3-second auto-dismissing
+    ///   "logged out" message on the login screen after navigation.
+    func logoutUser(showSuccessAlert: Bool = false) {
       
         Global.shared.user = nil
         Global.shared.companyVendor = nil
         Global.shared.isLogedIn = false
         Global.shared.loginType = ""
         UserDefaultsManager.shared.clearAllLoginData()
-        GCD.async(.Main, delay: 1) {
+
+        GCD.async(.Main) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            if let container = self.navigationController?.parent as? KYDrawerController {
-                container.navigationController?.setViewControllers([controller], animated: true)
-                container.navigationController?.popToRootViewController(animated: true)
-           }
-         }
+            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+
+            // Case 1: Login -> (nav) -> KYDrawerController stack
+            if let drawer = self.navigationController?.parent as? KYDrawerController,
+               let outerNav = drawer.navigationController {
+                outerNav.setViewControllers([loginVC], animated: true)
+
+                if showSuccessAlert {
+                    self.showLogoutSuccessAlert(on: loginVC)
+                }
+                return
+            }
+
+            // Case 2: App launched directly into KYDrawerController (SceneDelegate)
+            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = scene.windows.first {
+
+                let nav = UINavigationController(rootViewController: loginVC)
+                nav.navigationBar.isHidden = true
+                window.rootViewController = nav
+                window.makeKeyAndVisible()
+
+                if showSuccessAlert {
+                    self.showLogoutSuccessAlert(on: loginVC)
+                }
+            }
+        }
      }
+
+    private func showLogoutSuccessAlert(on controller: UIViewController) {
+        // Small delay to ensure navigation has finished before presenting.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let alert = UIAlertController(
+                title: LocalStrings.success,
+                message: "You have been logged out successfully",
+                preferredStyle: .alert
+            )
+            controller.present(alert, animated: true, completion: nil)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                alert.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+
     func loginUser() {
         Global.shared.user = nil
-        UserDefaultsManager.shared.clearUserData()
-        GCD.async(.Main, delay: 1) {
+        Global.shared.companyVendor = nil
+        Global.shared.isLogedIn = false
+        Global.shared.loginType = ""
+        UserDefaultsManager.shared.clearAllLoginData()
+
+        GCD.async(.Main) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            if let container = self.navigationController?.parent as? KYDrawerController {
-                container.navigationController?.setViewControllers([controller], animated: true)
-                container.navigationController?.popToRootViewController(animated: true)
-           }
-         }
+            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+
+            // Case 1: App was launched from Login inside a navigation controller
+            // and KYDrawerController was pushed on top. In this case we can
+            // simply reset the outer navigation controller's stack.
+            if let drawer = self.navigationController?.parent as? KYDrawerController,
+               let outerNav = drawer.navigationController {
+                outerNav.setViewControllers([loginVC], animated: true)
+                return
+            }
+
+            // Case 2: App was launched directly into KYDrawerController (e.g. via
+            // SceneDelegate auto-login). In this case there may not be an outer
+            // navigation controller, so we replace the window's root controller
+            // with a fresh navigation controller containing the login screen.
+            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = scene.windows.first {
+
+                let nav = UINavigationController(rootViewController: loginVC)
+                nav.navigationBar.isHidden = true
+                window.rootViewController = nav
+                window.makeKeyAndVisible()
+            }
+        }
      }
     
 }

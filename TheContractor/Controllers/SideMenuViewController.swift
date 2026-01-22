@@ -75,7 +75,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         else if title == "Freelancers" {
             mainVC.showFreelancersController()
         }
-        else if title == "Freelance Dashboard" {
+        else if title == "Freelancer Dashboard" {
             if Global.shared.isLogedIn {
                 mainVC.showFreelanceDashboardController()
             }

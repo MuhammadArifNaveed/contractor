@@ -92,9 +92,24 @@ extension ProfileViewController : UITableViewDelegate , UITableViewDataSource{
             self.navigationController?.pushViewController(vc, animated: true)
         }
         else if(indexPath.row == 12){
-            if let container = self.mainContainer{
-                container.logoutUser()
+            guard let container = self.mainContainer else { return }
+
+            // Confirm before logging out
+            let alert = UIAlertController(
+                title: PopupMessages.warning,
+                message: PopupMessages.sureToLogout,
+                preferredStyle: .alert
+            )
+
+            let cancel = UIAlertAction(title: LocalStrings.Cancel, style: .cancel, handler: nil)
+            let confirm = UIAlertAction(title: LocalStrings.Yes, style: .destructive) { _ in
+                container.logoutUser(showSuccessAlert: true)
             }
+
+            alert.addAction(cancel)
+            alert.addAction(confirm)
+
+            self.present(alert, animated: true, completion: nil)
         }
         
     }
