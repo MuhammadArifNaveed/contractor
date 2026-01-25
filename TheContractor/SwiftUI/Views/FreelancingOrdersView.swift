@@ -16,6 +16,14 @@ struct FreelancingOrdersView: View {
             VStack(spacing: 0) {
                 topBar(title: "Freelancing Orders")
 
+                if !vm.errorMessage.isEmpty {
+                    Text(vm.errorMessage)
+                        .font(AppTheme.Fonts.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal, AppTheme.Spacing.medium)
+                        .padding(.top, AppTheme.Spacing.small)
+                }
+
                 ScrollView {
                     LazyVStack(spacing: AppTheme.Spacing.medium) {
                         if vm.isLoading {
@@ -24,7 +32,16 @@ struct FreelancingOrdersView: View {
                         }
                         else {
                             ForEach(vm.orders) { order in
-                                FreelancingOrderCard(order: order)
+                                FreelancingOrderCard(
+                                    order: order,
+                                    isUpdating: vm.isUpdating(orderId: order.orderId),
+                                    onAccept: {
+                                        vm.changeStatus(for: order, action: .accept)
+                                    },
+                                    onReject: {
+                                        vm.changeStatus(for: order, action: .reject)
+                                    }
+                                )
                             }
                         }
                     }
@@ -62,6 +79,9 @@ struct FreelancingOrdersView: View {
 
 private struct FreelancingOrderCard: View {
     let order: FreelancingOrderItem
+    let isUpdating: Bool
+    let onAccept: () -> Void
+    let onReject: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
@@ -124,6 +144,37 @@ private struct FreelancingOrderCard: View {
                     InfoRow(title: "Status", value: order.status)
                 }
             }
+
+            HStack(spacing: AppTheme.Spacing.small) {
+                if order.canRespond {
+                    Button(action: { onAccept() }) {
+                        Text("Accept")
+                            .font(AppTheme.Fonts.semibold(14))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 40)
+                            .background(isUpdating ? AppTheme.Colors.primary.opacity(0.6) : Color.green)
+                            .cornerRadius(4)
+                    }
+                    .disabled(isUpdating)
+
+                    Button(action: { onReject() }) {
+                        Text("Reject")
+                            .font(AppTheme.Fonts.semibold(14))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 40)
+                            .background(isUpdating ? Color.red.opacity(0.6) : Color.red)
+                            .cornerRadius(4)
+                    }
+                    .disabled(isUpdating)
+                } else {
+                    Text(order.status.isEmpty ? "No Response" : "")
+                        .font(AppTheme.Fonts.caption)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            .padding(.top, AppTheme.Spacing.small)
         }
         .padding(AppTheme.Spacing.medium)
         .cardStyle(cornerRadius: AppTheme.CornerRadius.medium, shadowRadius: 2)
@@ -150,6 +201,7 @@ private struct InfoRow: View {
 struct FreelancingOrderItem: Identifiable, Hashable {
     let id = UUID()
 
+    let orderId: String
     let freelancerName: String
     let pickStatus: String
     let durationText: String
@@ -157,16 +209,30 @@ struct FreelancingOrderItem: Identifiable, Hashable {
     let requestDate: String
 
     let registeredOnDate: String
-    let responseTime: String
-    let response: String
-    let status: String
+    var responseTime: String
+    var response: String
+    var status: String
+    var isExpired: Bool
 
+    var canRespond: Bool {
+        !isExpired && status.isEmpty
+    }
 }
 
 final class FreelancingOrdersViewModel: ObservableObject {
     @Published var orders: [FreelancingOrderItem] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
+    @Published private var updatingOrderIds: Set<String> = []
+
+    enum OrderAction: Int {
+        case accept = 1
+        case reject = 2
+    }
+
+    func isUpdating(orderId: String) -> Bool {
+        updatingOrderIds.contains(orderId)
+    }
 
     func load() {
         if isLoading { return }
@@ -182,6 +248,7 @@ final class FreelancingOrdersViewModel: ObservableObject {
                         let order = wrapper["order"]
                         let requester = wrapper["requester"]
 
+                        let orderId = order["id"].stringValue
                         let freelancerName = order["freelancer_name"].stringValue.replacingOccurrences(of: "\n", with: " ")
                         let fromTime = order["from_time"].stringValue
                         let toTime = order["to_time"].stringValue
@@ -190,30 +257,66 @@ final class FreelancingOrdersViewModel: ObservableObject {
                         let createdAt = order["created_at"].stringValue.replacingOccurrences(of: "\n", with: " ")
                         let expired = order["expired"].stringValue
                         let statusValue = order["status"].stringValue
+                        let responseRaw = order["response"].stringValue.replacingOccurrences(of: "\n", with: " ")
+                        let responseTimeRaw = order["response_time"].stringValue.replacingOccurrences(of: "\n", with: " ")
 
                         let requesterName = requester["name"].stringValue.replacingOccurrences(of: "\n", with: " ")
                         let requestDate = dates.replacingOccurrences(of: "\n", with: " ")
 
                         let duration = "Full Day (\(fromTime) to \(toTime))"
                         let pickStatus = picked == "1" ? "Picked" : "Not Picked"
-                        let status = expired == "1" ? "Expired" : (statusValue.isEmpty ? "" : statusValue)
+                        let isExpired = expired == "1"
+                        let status = isExpired ? "Expired" : (statusValue.isEmpty ? "" : statusValue)
+                        let responseTime = isExpired && responseTimeRaw.isEmpty ? "Time Over" : responseTimeRaw
 
                         return FreelancingOrderItem(
+                            orderId: orderId,
                             freelancerName: freelancerName,
                             pickStatus: pickStatus,
                             durationText: duration,
                             requestFrom: requesterName,
                             requestDate: requestDate,
                             registeredOnDate: createdAt,
-                            responseTime: "",
-                            response: "",
-                            status: status
+                            responseTime: responseTime,
+                            response: responseRaw,
+                            status: status,
+                            isExpired: isExpired
                         )
                     }
                 }
                 else {
                     self.errorMessage = message
                     self.orders = []
+                }
+            }
+        }
+    }
+
+    func changeStatus(for order: FreelancingOrderItem, action: OrderAction) {
+        guard !order.orderId.isEmpty else { return }
+        if updatingOrderIds.contains(order.orderId) { return }
+
+        updatingOrderIds.insert(order.orderId)
+        errorMessage = ""
+
+        FreelancingService.shared.changeFreelancingOrderStatus(orderId: order.orderId, type: action.rawValue) { [weak self] message, success in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.updatingOrderIds.remove(order.orderId)
+
+                if success {
+                    if let index = self.orders.firstIndex(where: { $0.orderId == order.orderId }) {
+                        var updated = self.orders[index]
+                        updated.status = action == .accept ? "Accepted" : "Rejected"
+                        updated.response = action == .accept ? "Accept" : "Reject"
+                        updated.isExpired = false
+                        self.orders[index] = updated
+                    }
+                } else {
+                    self.errorMessage = message
+                    // On failure (e.g., "Order has been expired") we reload
+                    // the list so UI reflects latest backend state.
+                    self.load()
                 }
             }
         }

@@ -130,7 +130,7 @@ struct FreelanceDashboardView: View {
                 CompanyHireFreelancerWrapperView()
 
             case .companyRegisterFreelancer:
-                UpdateFreelancerView()
+                UpdateFreelancerView(mode: .registerCompany)
 
             case .userDashboard, .companyDashboard:
                 EmptyView()
@@ -381,9 +381,86 @@ final class FreelancingService: BaseService {
         }
     }
 
+    /// Change order status for a freelancing order.
+    /// type = 1 (accept), 2 (reject)
+    func changeFreelancingOrderStatus(orderId: String, type: Int, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/change_order_status"
+        var params = defaultIdentityParams()
+        params["order_id"] = orderId
+        params["type"] = String(type)
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            guard success, let json = json else {
+                completion(message, false)
+                return
+            }
+            // API returns { status: Bool, error: Bool, message: String }
+            let apiStatus = json["status"].boolValue
+            let apiError = json["error"].boolValue
+            if apiStatus && !apiError {
+                completion(json["message"].stringValue.isEmpty ? message : json["message"].stringValue, true)
+            } else {
+                completion(json["message"].stringValue.isEmpty ? message : json["message"].stringValue, false)
+            }
+        }
+    }
+
     func fetchWallet(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "freelancing/wallet"
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: defaultIdentityParams(), isImageData: false) { message, success, jsonData in
+            completion(message, success, jsonData)
+        }
+    }
+
+    /// Registers a new company freelancer with optional image and video.
+    func registerCompanyFreelancer(params: [String: String], imageData: Data?, videoData: Data?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/register_company_freelancer"
+
+        self.makePostAPICallWithMultipartWithFiles(with: completeURL, params: params, imageData: imageData, videoData: videoData) { message, success, jsonData in
+            completion(message, success)
+        }
+    }
+
+    /// Adds an address for an existing freelancer.
+    func addFreelancerAddress(freelancerId: String,
+                              address: String,
+                              pickUpAddress: String,
+                              latitude: String,
+                              longitude: String,
+                              current: Bool,
+                              completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/add_freelancer_address"
+        var params = defaultIdentityParams()
+        params["freelancer_id"] = freelancerId
+        params["address"] = address
+        params["pick_up_address"] = pickUpAddress
+        params["pick_up_latitude"] = latitude
+        params["pick_up_longitude"] = longitude
+        params["current"] = current ? "1" : "0"
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, jsonData in
+            completion(message, success, jsonData)
+        }
+    }
+
+    /// Fetches all addresses for a freelancer.
+    func fetchFreelancerAddresses(freelancerId: String,
+                                  completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/get_freelancer_addresses"
+        var params = defaultIdentityParams()
+        params["freelancer_id"] = freelancerId
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, jsonData in
+            completion(message, success, jsonData)
+        }
+    }
+
+    /// Deletes a freelancer address by id.
+    func deleteFreelancerAddress(addressId: String,
+                                 completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/delete_freelancer_address"
+        var params = defaultIdentityParams()
+        params["address_id"] = addressId
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, jsonData in
             completion(message, success, jsonData)
         }
     }

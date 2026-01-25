@@ -1,8 +1,14 @@
 import SwiftUI
 import PhotosUI
 import UIKit
+import UniformTypeIdentifiers
 
 struct UpdateFreelancerView: View {
+    enum Mode {
+        case registerCompany
+        case generic
+    }
+
     private enum Step: Int, CaseIterable {
         case general = 0
         case bank = 1
@@ -26,6 +32,8 @@ struct UpdateFreelancerView: View {
     }
 
     @Environment(\.presentationMode) private var presentationMode
+
+    let mode: Mode
 
     @State private var step: Step = .general
 
@@ -54,9 +62,11 @@ struct UpdateFreelancerView: View {
     @State private var isShowingVideoPicker: Bool = false
     @State private var selectedImagesCount: Int = 0
     @State private var selectedVideoDescription: String = ""
+    @State private var selectedImageData: Data?
+    @State private var selectedVideoData: Data?
 
     @State private var addresses: [FreelancerAddress] = [
-        FreelancerAddress(title: "this is testing current address", fullAddress: "", isCurrent: true),
+        FreelancerAddress(title: "this is testing current address", fullAddress: "139 Second Industrial St - Industrial Areas - Industrial Area - Sharjah - United Arab Emirates", isCurrent: true),
         FreelancerAddress(title: "test", fullAddress: "", isCurrent: false),
         FreelancerAddress(title: "sfsdfsdfs", fullAddress: "", isCurrent: false),
         FreelancerAddress(title: "this is address", fullAddress: "139 Second Industrial St - Industrial Areas - Industrial Area - Sharjah - United Arab Emirates", isCurrent: false)
@@ -68,11 +78,14 @@ struct UpdateFreelancerView: View {
     @State private var isSelectingStartTime: Bool = false
     @State private var isSelectingEndTime: Bool = false
     @State private var isShowingAddAddress: Bool = false
+    @State private var isSubmitting: Bool = false
 
     @State private var activeSinglePicker: SinglePickerType?
 
     @State private var toastMessage: String = ""
     @State private var isShowingToast: Bool = false
+
+    @State private var registrationAlert: RegistrationAlert?
 
     @State private var generalErrors: GeneralErrors = .init()
     @State private var bankErrors: BankErrors = .init()
@@ -84,6 +97,15 @@ struct UpdateFreelancerView: View {
     @State private var cities: [String] = []
     @State private var areas: [String] = []
     @State private var cityToAreas: [String: [String]] = [:]
+
+    @State private var skillIdByTitle: [String: String] = [:]
+    @State private var categoryIdByTitle: [String: String] = [:]
+    @State private var cityIdByName: [String: String] = [:]
+    @State private var areaIdByCityAndTitle: [String: [String: String]] = [:]
+
+    init(mode: Mode = .generic) {
+        self.mode = mode
+    }
 
     var body: some View {
         ZStack {
@@ -187,14 +209,29 @@ struct UpdateFreelancerView: View {
                 secondaryButton: .cancel()
             )
         }
+        .alert(item: $registrationAlert) { alert in
+            Alert(
+                title: Text(alert.isSuccess ? "✅ Success" : "❌ Error"),
+                message: Text(alert.message),
+                dismissButton: .default(Text(alert.isSuccess ? "Great!" : "OK")) {
+                    if alert.isSuccess {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            )
+        }
         .sheet(isPresented: $isShowingImagePicker) {
             ImagePickerSheet { images in
                 selectedImagesCount = images.count
+                if let first = images.first {
+                    selectedImageData = first.jpegData(compressionQuality: 0.8)
+                }
                 isShowingImagePicker = false
             }
         }
         .sheet(isPresented: $isShowingVideoPicker) {
-            VideoPickerSheet { description in
+            VideoPickerSheet { data, description in
+                selectedVideoData = data
                 selectedVideoDescription = description
                 isShowingVideoPicker = false
             }
@@ -581,7 +618,7 @@ struct UpdateFreelancerView: View {
             else {
                 HStack(spacing: AppTheme.Spacing.medium) {
                     Button(action: {
-                        step = .bank
+                        if !isSubmitting { step = .bank }
                     }) {
                         Text("Back")
                             .font(AppTheme.Fonts.semibold(16))
@@ -594,21 +631,43 @@ struct UpdateFreelancerView: View {
                     .buttonStyle(.plain)
 
                     Button(action: {
+                        guard !isSubmitting else { return }
                         if validateAddress() {
-                            showToast("Update submitted")
+                            if mode == .registerCompany {
+                                submitCompanyRegistration()
+                            } else {
+                                showToast("Update submitted")
+                            }
                         }
                     }) {
-                        Text("Submit")
-                            .font(AppTheme.Fonts.semibold(16))
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 52)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.black.opacity(0.7), lineWidth: 1)
-                            )
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(AppTheme.Colors.primary)
+                                .frame(height: 52)
+                            
+                            if isSubmitting {
+                                HStack(spacing: 12) {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                        .scaleEffect(0.9)
+                                    Text("Registering...")
+                                        .font(AppTheme.Fonts.semibold(16))
+                                        .foregroundColor(.white)
+                                }
+                            } else {
+                                Text("Submit")
+                                    .font(AppTheme.Fonts.semibold(16))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.black.opacity(0.3), lineWidth: 1)
+                        )
                     }
                     .buttonStyle(.plain)
+                    .disabled(isSubmitting)
                 }
             }
         }
@@ -714,6 +773,116 @@ struct UpdateFreelancerView: View {
         return true
     }
 
+    private func currentAddressForRegistration() -> FreelancerAddress? {
+        // First try to find current address with non-empty fullAddress
+        if let current = addresses.first(where: { $0.isCurrent && !$0.fullAddress.isEmpty }) {
+            return current
+        }
+        // If current address has empty fullAddress, find any address with non-empty fullAddress
+        if let addressWithFullAddress = addresses.first(where: { !$0.fullAddress.isEmpty }) {
+            return addressWithFullAddress
+        }
+        // Fallback to first address (even if empty)
+        return addresses.first
+    }
+
+    private func submitCompanyRegistration() {
+        guard !isSubmitting else { return }
+        
+        // Show loader immediately
+        isSubmitting = true
+        
+        guard let vendor = Global.shared.companyVendor else {
+            isSubmitting = false
+            showToast("Company session not found")
+            return
+        }
+
+        guard let primaryAddress = currentAddressForRegistration() else {
+            isSubmitting = false
+            showToast("Please add at least 1 address")
+            return
+        }
+        
+        // Validate that pick_up_address is not empty
+        if primaryAddress.fullAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            isSubmitting = false
+            showToast("Please add a complete address with pick-up location details")
+            return
+        }
+
+        // Identity params for company user
+        var params: [String: String] = [:]
+        let userId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        params["user_id"] = userId
+        params["user_type"] = "companies"
+        params["vendor_id"] = vendor.id
+
+        // General
+        params["name"] = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        params["email"] = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        params["phone"] = phone.trimmingCharacters(in: .whitespacesAndNewlines)
+        params["rate"] = experienceYears.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Skills as JSON string: [{"id":"1"},...]
+        let skillIds: [String] = selectedSkills.compactMap { skillIdByTitle[$0] }
+        if !skillIds.isEmpty {
+            let jsonArray = skillIds.map { ["id": $0] }
+            if let data = try? JSONSerialization.data(withJSONObject: jsonArray, options: []),
+               let jsonString = String(data: data, encoding: .utf8) {
+                params["freelancer_skills"] = jsonString
+            }
+        }
+
+        if let catId = categoryIdByTitle[selectedCategory] {
+            params["job_category"] = catId
+        }
+        if let cityId = cityIdByName[selectedCity] {
+            params["city"] = cityId
+        }
+        if let areaId = areaIdByCityAndTitle[selectedCity]?[selectedArea] {
+            params["area"] = areaId
+        }
+
+        params["available_per_hour"] = availablePerHour ? "1" : "0"
+        params["from_time"] = timeString(startTime)
+        params["to_time"] = timeString(endTime)
+
+        // Bank
+        params["bank_name"] = bankName
+        params["bank_address"] = bankAddress
+        params["account_title"] = accountTitle
+        params["iban"] = iban
+
+        // Address
+        params["address"] = primaryAddress.title
+        params["pick_up_address"] = primaryAddress.fullAddress
+        params["pick_up_longitude"] = "0.00000000"
+        params["pick_up_latitude"] = "0.00000000"
+
+        FreelancingService.shared.registerCompanyFreelancer(params: params, imageData: selectedImageData, videoData: selectedVideoData) { message, success in
+            DispatchQueue.main.async {
+                // Always dismiss loader first
+                isSubmitting = false
+                
+                if success {
+                    // Show success alert
+                    registrationAlert = RegistrationAlert(
+                        message: message.isEmpty ? "Freelancer registered successfully!" : message, 
+                        isSuccess: true
+                    )
+                } else {
+                    // Show error alert with more descriptive message
+                    let errorMessage = message.isEmpty ? "Registration failed. Please try again." : message
+                    registrationAlert = RegistrationAlert(
+                        message: errorMessage, 
+                        isSuccess: false
+                    )
+                }
+            }
+        }
+    }
+
     private func firstGeneralErrorMessage() -> String? {
         if let v = generalErrors.name { return v }
         if let v = generalErrors.email { return v }
@@ -758,20 +927,39 @@ struct UpdateFreelancerView: View {
         FreelancingService.shared.fetchFreelancingSearch { message, success, json in
             DispatchQueue.main.async {
                 if success, let json = json {
-                    skills = json["freelancer_skills"].arrayValue.map { $0["title"].stringValue }
-                    categories = json["freelancer_categories"].arrayValue.map { $0["title"].stringValue }
+                    let skillsArray = json["freelancer_skills"].arrayValue
+                    skills = skillsArray.map { $0["title"].stringValue }
+                    skillIdByTitle = Dictionary(uniqueKeysWithValues: skillsArray.map { ($0["title"].stringValue, $0["id"].stringValue) })
+
+                    let categoriesArray = json["freelancer_categories"].arrayValue
+                    categories = categoriesArray.map { $0["title"].stringValue }
+                    categoryIdByTitle = Dictionary(uniqueKeysWithValues: categoriesArray.map { ($0["title"].stringValue, $0["id"].stringValue) })
 
                     let cityArray = json["freelancer_cities"].arrayValue
                     var loadedCities: [String] = []
                     var map: [String: [String]] = [:]
+                    var areaIdMap: [String: [String: String]] = [:]
+                    var cityIdMap: [String: String] = [:]
+
                     for city in cityArray {
                         let cityName = city["name"].stringValue
+                        let cityId = city["id"].stringValue
                         loadedCities.append(cityName)
-                        let areaNames = city["areas"].arrayValue.map { $0["area_name"].stringValue }
+                        cityIdMap[cityName] = cityId
+
+                        let areasJson = city["areas"].arrayValue
+                        let areaNames = areasJson.map { $0["area_name"].stringValue }
                         map[cityName] = areaNames
+                        var singleCityAreaMap: [String: String] = [:]
+                        for area in areasJson {
+                            singleCityAreaMap[area["area_name"].stringValue] = area["area_id"].stringValue
+                        }
+                        areaIdMap[cityName] = singleCityAreaMap
                     }
                     cities = loadedCities
                     cityToAreas = map
+                    cityIdByName = cityIdMap
+                    areaIdByCityAndTitle = areaIdMap
 
                     if !selectedCity.isEmpty {
                         areas = map[selectedCity] ?? []
@@ -1124,7 +1312,7 @@ private struct ImagePickerSheet: UIViewControllerRepresentable {
 }
 
 private struct VideoPickerSheet: UIViewControllerRepresentable {
-    let onComplete: (String) -> Void
+    let onComplete: (Data?, String) -> Void
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration()
@@ -1142,23 +1330,33 @@ private struct VideoPickerSheet: UIViewControllerRepresentable {
     }
 
     final class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let onComplete: (String) -> Void
+        let onComplete: (Data?, String) -> Void
 
-        init(onComplete: @escaping (String) -> Void) {
+        init(onComplete: @escaping (Data?, String) -> Void) {
             self.onComplete = onComplete
         }
 
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
 
-            guard !results.isEmpty else {
-                onComplete("")
+            guard let first = results.first else {
+                onComplete(nil, "")
                 return
             }
 
-            // For now we only surface a simple description; actual upload wiring
-            // can use loadFileRepresentation when API is available.
-            onComplete("Video selected")
+            if first.itemProvider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
+                first.itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, _ in
+                    var data: Data? = nil
+                    if let url {
+                        data = try? Data(contentsOf: url)
+                    }
+                    DispatchQueue.main.async {
+                        self.onComplete(data, data == nil ? "" : "Video selected")
+                    }
+                }
+            } else {
+                onComplete(nil, "")
+            }
         }
     }
 }
@@ -1346,6 +1544,12 @@ private struct AddAddressOverlay: View {
             }
         }
     }
+}
+
+private struct RegistrationAlert: Identifiable {
+    let id = UUID()
+    let message: String
+    let isSuccess: Bool
 }
 
 private struct GeneralErrors {
