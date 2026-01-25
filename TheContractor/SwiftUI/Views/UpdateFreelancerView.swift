@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
+import SwiftyJSON
 
 struct UpdateFreelancerView: View {
     enum Mode {
@@ -163,10 +164,7 @@ struct UpdateFreelancerView: View {
 
             if isShowingAddAddress {
                 AddAddressOverlay { newAddress in
-                    if newAddress.isCurrent {
-                        addresses = addresses.map { FreelancerAddress(id: $0.id, title: $0.title, fullAddress: $0.fullAddress, isCurrent: false) }
-                    }
-                    addresses.append(newAddress)
+                    addAddress(newAddress)
                     isShowingAddAddress = false
                 } onCancel: {
                     isShowingAddAddress = false
@@ -204,7 +202,7 @@ struct UpdateFreelancerView: View {
                 title: Text("Delete Address"),
                 message: Text("Are you sure you want to delete this address?"),
                 primaryButton: .destructive(Text("Delete"), action: {
-                    addresses.removeAll { $0.id == address.id }
+                    deleteAddress(address)
                 }),
                 secondaryButton: .cancel()
             )
@@ -239,6 +237,12 @@ struct UpdateFreelancerView: View {
         .onAppear {
             if skills.isEmpty || categories.isEmpty || cities.isEmpty {
                 loadFreelancingSearch()
+            }
+        }
+        .onChange(of: step) { newStep in
+            // Fetch addresses only when switching to address step in company mode
+            if newStep == .address && mode == .registerCompany {
+                fetchFreelancerAddresses()
             }
         }
     }
@@ -883,6 +887,103 @@ struct UpdateFreelancerView: View {
         }
     }
 
+    //MARK: - Address Management
+    
+    private func fetchFreelancerAddresses() {
+        print("📍 Fetch addresses called - mode: \(mode), step: \(step)")
+        
+        guard let vendor = Global.shared.companyVendor else { 
+            print("📍 No vendor found")
+            return 
+        }
+        
+        let freelancerId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        print("📍 Fetching addresses for freelancer ID: \(freelancerId)")
+        
+        FreelancingService.shared.fetchFreelancerAddresses(freelancerId: freelancerId) { message, success, json in
+            DispatchQueue.main.async {
+                print("📍 Fetch API response - success: \(success), message: \(message)")
+                if success, let json = json {
+                    self.parseAddressesFromAPI(json: json)
+                } else {
+                    // Keep using hardcoded addresses if API fails
+                    print("📍 Failed to fetch addresses: \(message)")
+                }
+            }
+        }
+    }
+    
+    private func parseAddressesFromAPI(json: JSON) {
+        addresses.removeAll()
+        
+        if let addressesArray = json["addresses"].array {
+            for addressJson in addressesArray {
+                let id = addressJson["id"].stringValue
+                let title = addressJson["address"].stringValue
+                let pickUpAddress = addressJson["pick_up_address"].stringValue
+                let status = addressJson["status"].stringValue == "1"
+                
+                let freelancerAddress = FreelancerAddress(
+                    apiId: id,
+                    title: title,
+                    fullAddress: pickUpAddress.isEmpty ? title : pickUpAddress,
+                    isCurrent: status
+                )
+                addresses.append(freelancerAddress)
+            }
+        }
+    }
+    
+    private func deleteAddress(_ address: FreelancerAddress) {
+        print("🗑️ Delete address called for: \(address.title)")
+        
+        guard let apiId = address.apiId else {
+            print("🗑️ Local address - removing from array")
+            // For local addresses, just remove from array
+            addresses.removeAll { $0.id == address.id }
+            showToast("Address deleted successfully")
+            return
+        }
+        
+        print("🗑️ API address - calling delete API with ID: \(apiId)")
+        
+        FreelancingService.shared.deleteFreelancerAddress(addressId: apiId) { message, success, json in
+            DispatchQueue.main.async {
+                print("🗑️ Delete API response - success: \(success), message: \(message)")
+                if success {
+                    self.addresses.removeAll { $0.id == address.id }
+                    self.showToast("Address deleted successfully")
+                } else {
+                    self.showToast("Failed to delete address: \(message)")
+                }
+            }
+        }
+    }
+    
+    private func addAddress(_ address: FreelancerAddress) {
+        guard let vendor = Global.shared.companyVendor else { return }
+        
+        let freelancerId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        
+        FreelancingService.shared.addFreelancerAddress(
+            freelancerId: freelancerId,
+            address: address.title,
+            pickUpAddress: address.fullAddress,
+            latitude: "0.00000000", // You might want to get actual coordinates
+            longitude: "0.00000000",
+            current: address.isCurrent
+        ) { message, success, json in
+            DispatchQueue.main.async {
+                if success {
+                    self.showToast("Address added successfully")
+                    self.fetchFreelancerAddresses() // Refresh the list
+                } else {
+                    self.showToast("Failed to add address: \(message)")
+                }
+            }
+        }
+    }
+
     private func firstGeneralErrorMessage() -> String? {
         if let v = generalErrors.name { return v }
         if let v = generalErrors.email { return v }
@@ -1384,13 +1485,15 @@ private struct TimePickerSheet: View {
 }
 
 private struct FreelancerAddress: Identifiable {
-    let id: UUID
+    let id: UUID // For SwiftUI identification
+    let apiId: String? // API address ID (from server)
     let title: String
     let fullAddress: String
     let isCurrent: Bool
 
-    init(id: UUID = UUID(), title: String, fullAddress: String, isCurrent: Bool) {
+    init(id: UUID = UUID(), apiId: String? = nil, title: String, fullAddress: String, isCurrent: Bool) {
         self.id = id
+        self.apiId = apiId
         self.title = title
         self.fullAddress = fullAddress
         self.isCurrent = isCurrent
