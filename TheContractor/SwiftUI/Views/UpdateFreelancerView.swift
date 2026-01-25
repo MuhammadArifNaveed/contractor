@@ -39,24 +39,24 @@ struct UpdateFreelancerView: View {
     @State private var step: Step = .general
 
     // General information
-    @State private var name: String = ""
-    @State private var email: String = ""
-    @State private var phone: String = ""
+    @State private var name: String = "Test Freelancer"
+    @State private var email: String = "test@example.com"
+    @State private var phone: String = "0501234567"
     /// Used as Hourly Rate (AED) field
-    @State private var experienceYears: String = ""
-    @State private var selectedSkills: [String] = []
-    @State private var selectedCategory: String = ""
-    @State private var selectedCity: String = ""
-    @State private var selectedArea: String = ""
+    @State private var experienceYears: String = "25"
+    @State private var selectedSkills: [String] = ["Plumbing", "Electrical"]
+    @State private var selectedCategory: String = "Maintenance"
+    @State private var selectedCity: String = "Dubai"
+    @State private var selectedArea: String = "Deira"
 
     @State private var availablePerHour: Bool = true
     @State private var startTime: Date = Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date()
     @State private var endTime: Date = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
 
-    @State private var bankName: String = ""
-    @State private var bankAddress: String = ""
-    @State private var accountTitle: String = ""
-    @State private var iban: String = ""
+    @State private var bankName: String = "Emirates NBD"
+    @State private var bankAddress: String = "Dubai Main Branch"
+    @State private var accountTitle: String = "Test Account"
+    @State private var iban: String = "AE070300000000123456789"
 
     // Media selection
     @State private var isShowingImagePicker: Bool = false
@@ -74,6 +74,7 @@ struct UpdateFreelancerView: View {
     ]
 
     @State private var addressPendingDelete: FreelancerAddress?
+    @State private var showingDeleteAlert: Bool = false
 
     @State private var isShowingSkillPicker: Bool = false
     @State private var isSelectingStartTime: Bool = false
@@ -197,15 +198,21 @@ struct UpdateFreelancerView: View {
                 isSelectingEndTime = false
             }
         }
-        .alert(item: $addressPendingDelete) { address in
-            Alert(
-                title: Text("Delete Address"),
-                message: Text("Are you sure you want to delete this address?"),
-                primaryButton: .destructive(Text("Delete"), action: {
+        .alert("Delete Address", isPresented: $showingDeleteAlert) {
+            Button("Delete", role: .destructive) {
+                if let address = addressPendingDelete {
+                    print("🗑️ Alert delete button pressed for: \(address.title)")
                     deleteAddress(address)
-                }),
-                secondaryButton: .cancel()
-            )
+                }
+                addressPendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                addressPendingDelete = nil
+            }
+        } message: {
+            if let address = addressPendingDelete {
+                Text("Are you sure you want to delete \(address.title)?")
+            }
         }
         .alert(item: $registrationAlert) { alert in
             Alert(
@@ -560,7 +567,10 @@ struct UpdateFreelancerView: View {
                             }
                         },
                         onDelete: {
+                            print("🗑️ onDelete callback triggered for: \(address.title)")
                             addressPendingDelete = address
+                            showingDeleteAlert = true
+                            print("🗑️ showingDeleteAlert set to true")
                         }
                     )
                 }
@@ -1532,7 +1542,10 @@ private struct AddressCard: View {
                 }
                 .buttonStyle(.plain)
 
-                Button(action: { onDelete() }) {
+                Button(action: { 
+                    print("🗑️ Delete button clicked for: \(address.title)")
+                    onDelete() 
+                }) {
                     Image(systemName: "trash")
                         .foregroundColor(.black)
                 }
