@@ -246,9 +246,12 @@ struct FreelanceDashboardView: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                 // In user mode we show the availability row; in company mode
                 // the dashboard only displays metrics.
+                // Availability row hidden
+                /*
                 if !isCompanyMode {
                     availabilityRow
                 }
+                */
 
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                     Text("Freelancing Dashboard")
@@ -280,6 +283,8 @@ struct FreelanceDashboardView: View {
 
             Spacer()
 
+            // Edit button hidden
+            /*
             Button(action: {
                 isShowingUpdateFreelancer = true
             }) {
@@ -292,6 +297,7 @@ struct FreelanceDashboardView: View {
                 .foregroundColor(AppTheme.Colors.textPrimary)
             }
             .buttonStyle(.plain)
+            */
         }
         .padding(AppTheme.Spacing.medium)
         .background(AppTheme.Colors.cardBackground)
