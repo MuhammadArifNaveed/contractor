@@ -23,6 +23,15 @@ class FreelancerViewModel: ObservableObject {
     var memberSince: String = ""
     var skills: [String] = []
     
+    // Additional fields for hiring flow
+    var uuid: String = ""
+    var cityId: String = ""
+    var area: String = ""
+    var commission: String = ""
+    var fromTime: String = ""
+    var toTime: String = ""
+    var isHourly: String = "0"
+    
     init() {}
     
     init(json: JSON) {
@@ -111,6 +120,16 @@ class FreelancerListViewModel: ObservableObject {
                             let availability = freelancer["availability"].stringValue
                             let isAvailable = availabilityFlag == "1" || availability == "1"
                             vm.availability = isAvailable ? "Available Hourly" : ""
+                            
+                            // Additional fields for hiring
+                            vm.uuid = freelancer["uuid"].stringValue
+                            vm.cityId = freelancer["city_id"].stringValue
+                            vm.area = areaName
+                            vm.city = cityName
+                            vm.commission = freelancer["commission"].stringValue
+                            vm.fromTime = fromTime
+                            vm.toTime = toTime
+                            vm.isHourly = freelancer["is_hourly"].stringValue
 
                             return vm
                         }

@@ -503,6 +503,73 @@ final class FreelancingService: BaseService {
             }
         }
     }
+    
+    // MARK: - Freelancer Hiring APIs
+    
+    /// Updates user job status (availability) for a freelancer.
+    /// - Parameters:
+    ///   - uuid: The freelancer's UUID
+    ///   - completion: Callback with message, success status, and new status
+    func updateUserJobStatus(uuid: String, completion: @escaping (_ message: String, _ success: Bool, _ status: String) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/update_user_job_status"
+        let params: [String: String] = ["uuid": uuid]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let status = json["data"]["status"].stringValue
+                let apiMessage = json["message"].stringValue
+                completion(apiMessage.isEmpty ? message : apiMessage, true, status)
+            } else {
+                completion(message, false, "")
+            }
+        }
+    }
+    
+    /// Fetches transportation charges for hiring a freelancer.
+    /// - Parameters:
+    ///   - freelancerId: The freelancer's ID
+    ///   - completion: Callback with message, success, cost, and discount
+    func fetchTransportationCharges(freelancerId: String, completion: @escaping (_ message: String, _ success: Bool, _ cost: Double, _ discount: Double) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/transportation_charges"
+        var params = defaultIdentityParams()
+        params["freelancer_id"] = freelancerId
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let cost = json["charges"]["cost"].doubleValue
+                let discount = json["charges"]["discount"].doubleValue
+                let apiMessage = json["message"].stringValue
+                completion(apiMessage.isEmpty ? message : apiMessage, true, cost, discount)
+            } else {
+                completion(message, false, 0, 0)
+            }
+        }
+    }
+    
+    /// Hires multiple freelancers.
+    /// - Parameters:
+    ///   - freelancerDataJSON: JSON string array of freelancer selection data
+    ///   - completion: Callback with message and success status
+    func hireFreelancers(freelancerDataJSON: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/hire_freelancers"
+        var params = defaultIdentityParams()
+        params["freelancer_id"] = freelancerDataJSON
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let apiStatus = json["status"].boolValue
+                let apiError = json["error"].boolValue
+                let apiMessage = json["message"].stringValue
+                if apiStatus && !apiError {
+                    completion(apiMessage.isEmpty ? message : apiMessage, true)
+                } else {
+                    completion(apiMessage.isEmpty ? message : apiMessage, false)
+                }
+            } else {
+                completion(message, false)
+            }
+        }
+    }
 }
 
 struct FreelancingDashboardMetric: Identifiable, Hashable {

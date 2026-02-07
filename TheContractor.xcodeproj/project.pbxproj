@@ -138,6 +138,9 @@
 		80327A182F1D226E00BDA19A /* CompanyLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A172F1D226E00BDA19A /* CompanyLoginView.swift */; };
 		80327A1A2F1D228900BDA19A /* CompanyLoginHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
+		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
+		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
+		80B5EA7C2F37B7F0006712EF /* FreelancerHiringModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA7A2F37B7F0006712EF /* FreelancerHiringModels.swift */; };
 		80C6FE772F10E70A0014E3EF /* FreelancersHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */; };
 		80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE782F10E7210014E3EF /* AppTheme.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
@@ -297,6 +300,9 @@
 		80327A172F1D226E00BDA19A /* CompanyLoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginView.swift; sourceTree = "<group>"; };
 		80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginHostingController.swift; sourceTree = "<group>"; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
+		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
+		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
+		80B5EA7A2F37B7F0006712EF /* FreelancerHiringModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerHiringModels.swift; sourceTree = "<group>"; };
 		80C6FE762F10E70A0014E3EF /* FreelancersHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersHostingController.swift; sourceTree = "<group>"; };
 		80C6FE782F10E7210014E3EF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
@@ -792,6 +798,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		80B5EA7B2F37B7F0006712EF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				80B5EA7A2F37B7F0006712EF /* FreelancerHiringModels.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		80C6FE792F10E7210014E3EF /* Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -803,6 +817,8 @@
 		80C6FE7C2F10E7210014E3EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */,
+				80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */,
 				80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */,
 				80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */,
 				80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */,
@@ -820,6 +836,7 @@
 		80C6FE7D2F10E7210014E3EF /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				80B5EA7B2F37B7F0006712EF /* ViewModels */,
 				80C6FE792F10E7210014E3EF /* Theme */,
 				80C6FE7C2F10E7210014E3EF /* Views */,
 			);
@@ -968,6 +985,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				189A768A26D7010800F28786 /* LoginViewController.swift in Sources */,
+				80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */,
 				1807146826D6C13E00B0944B /* CategoryCollectionViewCell.swift in Sources */,
 				18EA189226D28820003DF2FC /* GCD.swift in Sources */,
 				18EA189926D28820003DF2FC /* BReachability.swift in Sources */,
@@ -1049,6 +1067,7 @@
 				18EA18B926D28820003DF2FC /* BaseTableViewController.swift in Sources */,
 				18EA188C26D28820003DF2FC /* MKProgress.swift in Sources */,
 				18EA187E26D28820003DF2FC /* ServiceRequestMessage.swift in Sources */,
+				80B5EA7C2F37B7F0006712EF /* FreelancerHiringModels.swift in Sources */,
 				18C1BCAA26F965990001EB73 /* CategoryViewModel.swift in Sources */,
 				18EA18A626D28820003DF2FC /* CustomIOSAlertView.m in Sources */,
 				18EA18B726D28820003DF2FC /* BaseViewController.swift in Sources */,
@@ -1075,6 +1094,7 @@
 				18EA187126D28820003DF2FC /* Global.swift in Sources */,
 				18EA188426D28820003DF2FC /* RegisterListViewModel.swift in Sources */,
 				18EA187526D28820003DF2FC /* Validations.swift in Sources */,
+				80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */,
 				18EA188126D28820003DF2FC /* BaseService.swift in Sources */,
 				18EA188326D28820003DF2FC /* UserViewModel.swift in Sources */,
 				18EA187F26D28820003DF2FC /* ServiceResponseType.swift in Sources */,

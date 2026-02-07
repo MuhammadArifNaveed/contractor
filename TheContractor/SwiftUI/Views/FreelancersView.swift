@@ -7,11 +7,20 @@
 
 import SwiftUI
 import SDWebImage
+import Combine
 
 struct FreelancersView: View {
     @StateObject private var viewModel = FreelancerListViewModel()
+    @ObservedObject private var cartManager = FreelancerCartManager.shared
     @State private var showSearchSheet = false
+    @State private var selectedFreelancerForDialog: FreelancerViewModel? = nil
+    @State private var showCheckout = false
+    @State private var cartUpdateTrigger = false // Force UI refresh
     @Environment(\.dismiss) private var dismiss
+    
+    private var isCompanyLoggedIn: Bool {
+        Global.shared.isLogedIn && Global.shared.loginType == "company"
+    }
     
     var body: some View {
         ZStack {
@@ -30,17 +39,54 @@ struct FreelancersView: View {
                                 .padding(.vertical, 24)
                         } else {
                             ForEach(viewModel.freelancers.indices, id: \.self) { index in
-                                FreelancerCardView(freelancer: viewModel.freelancers[index])
+                                FreelancerCardView(
+                                    freelancer: viewModel.freelancers[index],
+                                    isCompanyLoggedIn: isCompanyLoggedIn,
+                                    isSelected: cartManager.isFreelancerSelected(viewModel.freelancers[index].id),
+                                    onSelectTapped: {
+                                        selectedFreelancerForDialog = viewModel.freelancers[index]
+                                    },
+                                    onRemoveTapped: {
+                                        cartManager.removeFreelancer(viewModel.freelancers[index].id)
+                                    }
+                                )
                             }
                         }
                     }
                     .padding(AppTheme.Spacing.medium)
+                    // Add bottom padding when cart has items to account for floating bar
+                    .padding(.bottom, cartManager.totalFreelancers > 0 ? 70 : 0)
+                }
+                
+                // Floating checkout bar
+                if cartManager.totalFreelancers > 0 {
+                    checkoutFloatingBar
                 }
             }
+            
+            // Selection dialog overlay
+            if let freelancer = selectedFreelancerForDialog {
+                FreelancerSelectionDialog(
+                    freelancer: freelancer,
+                    onAddToList: { selection in
+                        cartManager.addFreelancer(selection)
+                    },
+                    onDismiss: {
+                        selectedFreelancerForDialog = nil
+                    }
+                )
+            }
         }
+        .id(cartUpdateTrigger) // Force view refresh when cart changes
         .navigationBarHidden(true)
         .onAppear {
             viewModel.load()
+        }
+        .onReceive(cartManager.objectWillChange) { _ in
+            // Force UI refresh when cart changes
+            DispatchQueue.main.async {
+                cartUpdateTrigger.toggle()
+            }
         }
         .sheet(isPresented: $showSearchSheet) {
             SearchFreelancerView { filter in
@@ -48,6 +94,28 @@ struct FreelancersView: View {
                 performSearch(with: filter)
             }
         }
+        .fullScreenCover(isPresented: $showCheckout) {
+            FreelancerCheckoutView(onDismiss: {
+                showCheckout = false
+            })
+        }
+    }
+    
+    private var checkoutFloatingBar: some View {
+        Button(action: {
+            showCheckout = true
+        }) {
+            Text("Selected Freelancer List (\(cartManager.totalFreelancers))")
+                .font(AppTheme.Fonts.semibold(16))
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(AppTheme.Colors.primary)
+                .cornerRadius(AppTheme.CornerRadius.small)
+        }
+        .padding(.horizontal, AppTheme.Spacing.medium)
+        .padding(.bottom, AppTheme.Spacing.small)
+        .background(AppTheme.Colors.secondaryBackground)
     }
     
     private var navigationBar: some View {
@@ -92,6 +160,22 @@ struct FreelancersView: View {
 // MARK: - Freelancer Card View
 struct FreelancerCardView: View {
     let freelancer: FreelancerViewModel
+    let isCompanyLoggedIn: Bool
+    let isSelected: Bool
+    let onSelectTapped: () -> Void
+    let onRemoveTapped: () -> Void
+    
+    init(freelancer: FreelancerViewModel, 
+         isCompanyLoggedIn: Bool = false, 
+         isSelected: Bool = false,
+         onSelectTapped: @escaping () -> Void = {},
+         onRemoveTapped: @escaping () -> Void = {}) {
+        self.freelancer = freelancer
+        self.isCompanyLoggedIn = isCompanyLoggedIn
+        self.isSelected = isSelected
+        self.onSelectTapped = onSelectTapped
+        self.onRemoveTapped = onRemoveTapped
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
@@ -166,7 +250,7 @@ struct FreelancerCardView: View {
             }
             .padding(.top, 4)
             
-            // Member since and rating
+            // Member since and action button
             HStack {
                 Text("Member since \(freelancer.memberSince)")
                     .font(AppTheme.Fonts.caption)
@@ -174,17 +258,52 @@ struct FreelancerCardView: View {
                 
                 Spacer()
                 
-                // Login button
-                Button(action: {
-                    // Handle hire action - show login if needed
-                }) {
-                    Text("Please Login to Hire")
-                        .font(AppTheme.Fonts.caption)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(AppTheme.Colors.primary)
-                        .cornerRadius(AppTheme.CornerRadius.small)
+                // Action button based on login state
+                if isCompanyLoggedIn {
+                    if isSelected {
+                        // Remove Freelancer button (red/outlined)
+                        Button(action: onRemoveTapped) {
+                            Text("Remove Freelancer")
+                                .font(AppTheme.Fonts.caption)
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.red.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
+                                        .stroke(Color.red, lineWidth: 1)
+                                )
+                                .cornerRadius(AppTheme.CornerRadius.small)
+                        }
+                    } else {
+                        // Select Freelancer button
+                        Button(action: onSelectTapped) {
+                            Text("Select Freelancer")
+                                .font(AppTheme.Fonts.caption)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(AppTheme.Colors.primary.opacity(0.2))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
+                                        .stroke(AppTheme.Colors.primary, lineWidth: 1)
+                                )
+                                .cornerRadius(AppTheme.CornerRadius.small)
+                        }
+                    }
+                } else {
+                    // Please Login to Hire button
+                    Button(action: {
+                        // Handle hire action - show login if needed
+                    }) {
+                        Text("Please Login to Hire")
+                            .font(AppTheme.Fonts.caption)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(AppTheme.Colors.primary)
+                            .cornerRadius(AppTheme.CornerRadius.small)
+                    }
                 }
             }
             .padding(.top, 4)
