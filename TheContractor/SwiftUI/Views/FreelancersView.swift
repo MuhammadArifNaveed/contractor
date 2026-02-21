@@ -7,23 +7,25 @@
 
 import SwiftUI
 import SDWebImage
-import Combine
 
 struct FreelancersView: View {
     @StateObject private var viewModel = FreelancerListViewModel()
-    @ObservedObject private var cartManager = FreelancerCartManager.shared
     @State private var showSearchSheet = false
     @State private var selectedFreelancerForDialog: FreelancerViewModel? = nil
     @State private var showCheckout = false
-    @State private var cartUpdateTrigger = false // Force UI refresh
+    @State private var cartCount: Int = 0 // Track cart count for UI updates
     @Environment(\.dismiss) private var dismiss
     
     private var isCompanyLoggedIn: Bool {
         Global.shared.isLogedIn && Global.shared.loginType == "company"
     }
     
+    private var cartManager: FreelancerCartManager {
+        FreelancerCartManager.shared
+    }
+    
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             AppTheme.Colors.secondaryBackground
                 .ignoresSafeArea()
             
@@ -48,6 +50,7 @@ struct FreelancersView: View {
                                     },
                                     onRemoveTapped: {
                                         cartManager.removeFreelancer(viewModel.freelancers[index].id)
+                                        updateCartCount()
                                     }
                                 )
                             }
@@ -55,13 +58,14 @@ struct FreelancersView: View {
                     }
                     .padding(AppTheme.Spacing.medium)
                     // Add bottom padding when cart has items to account for floating bar
-                    .padding(.bottom, cartManager.totalFreelancers > 0 ? 70 : 0)
+                    .padding(.bottom, cartCount > 0 ? 80 : 0)
                 }
-                
-                // Floating checkout bar
-                if cartManager.totalFreelancers > 0 {
-                    checkoutFloatingBar
-                }
+            }
+            
+            // Floating checkout bar - as overlay at bottom
+            if cartCount > 0 {
+                checkoutFloatingBar
+                    .transition(.move(edge: .bottom))
             }
             
             // Selection dialog overlay
@@ -70,6 +74,7 @@ struct FreelancersView: View {
                     freelancer: freelancer,
                     onAddToList: { selection in
                         cartManager.addFreelancer(selection)
+                        updateCartCount()
                     },
                     onDismiss: {
                         selectedFreelancerForDialog = nil
@@ -77,16 +82,10 @@ struct FreelancersView: View {
                 )
             }
         }
-        .id(cartUpdateTrigger) // Force view refresh when cart changes
         .navigationBarHidden(true)
         .onAppear {
             viewModel.load()
-        }
-        .onReceive(cartManager.objectWillChange) { _ in
-            // Force UI refresh when cart changes
-            DispatchQueue.main.async {
-                cartUpdateTrigger.toggle()
-            }
+            updateCartCount()
         }
         .sheet(isPresented: $showSearchSheet) {
             SearchFreelancerView { filter in
@@ -97,24 +96,33 @@ struct FreelancersView: View {
         .fullScreenCover(isPresented: $showCheckout) {
             FreelancerCheckoutView(onDismiss: {
                 showCheckout = false
+                updateCartCount()
             })
         }
     }
     
-    private var checkoutFloatingBar: some View {
-        Button(action: {
-            showCheckout = true
-        }) {
-            Text("Selected Freelancer List (\(cartManager.totalFreelancers))")
-                .font(AppTheme.Fonts.semibold(16))
-                .foregroundColor(AppTheme.Colors.textPrimary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(AppTheme.Colors.primary)
-                .cornerRadius(AppTheme.CornerRadius.small)
+    private func updateCartCount() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            cartCount = cartManager.totalFreelancers
         }
-        .padding(.horizontal, AppTheme.Spacing.medium)
-        .padding(.bottom, AppTheme.Spacing.small)
+    }
+    
+    private var checkoutFloatingBar: some View {
+        VStack(spacing: 0) {
+            Button(action: {
+                showCheckout = true
+            }) {
+                Text("Selected Freelancer List (\(cartCount))")
+                    .font(AppTheme.Fonts.semibold(16))
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(AppTheme.Colors.primary)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            }
+            .padding(.horizontal, AppTheme.Spacing.medium)
+            .padding(.vertical, AppTheme.Spacing.small)
+        }
         .background(AppTheme.Colors.secondaryBackground)
     }
     
