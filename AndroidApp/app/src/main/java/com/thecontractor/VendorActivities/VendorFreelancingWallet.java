@@ -1,0 +1,285 @@
+package com.thecontractor.VendorActivities;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.thecontractor.Adapter.VendorFreelancingWalletAdapter;
+import com.thecontractor.Adapter.VendorHiredFreelancerAdapter;
+import com.thecontractor.Global.ApiUrls;
+import com.thecontractor.Global.SharedPrefManager;
+import com.thecontractor.Model.BasicResponseModel;
+import com.thecontractor.Model.UserModel;
+import com.thecontractor.Model.VendorFreelancingOrdersModel;
+import com.thecontractor.Model.VendorFreelancingWalletModel;
+import com.thecontractor.Model.VendorHiredFreelancersModel;
+import com.thecontractor.Model.VendorSharedPrefModel;
+import com.thecontractor.R;
+import com.thecontractor.RetrofitLibrary.RetrofitApi;
+import com.thecontractor.RetrofitLibrary.SSSHandShake;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class VendorFreelancingWallet extends AppCompatActivity {
+    String from;
+    String selectedLanguage = "en";
+    String vendorId;
+    String userId;
+    String userType;
+
+    LinearLayout freelancingWalletLayout;
+    TextView totalBalance, totalRefund, totalReinvest;
+    RecyclerView freelancingWalletListingRV;
+    LinearLayoutManager linearLayoutManager ;
+    ArrayList<VendorFreelancingWalletModel.TransactionsModel> list;
+
+    ProgressDialog progressDialog;
+    Call<BasicResponseModel> call;
+    VendorFreelancingWalletAdapter vendorFreelancingWalletAdapter;
+    TextView noData;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_vendor_freelancing_wallet);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Wallet");
+
+        getDataFromActivity();
+        getLanguageFromSP();
+
+        if(from.equals("user")){
+            getUserDataFromSP();
+        }else if(from.equals("vendor")){
+            getVendorDataFromSP();
+        }
+
+        initiate();
+        vendorFreelancingWalletAPI();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+
+    }
+
+    public void getDataFromActivity(){
+        Intent intent = getIntent();
+        from = intent.getStringExtra("from");
+
+        Log.e("tag" , "freelancer from is : "+from);
+    }
+
+
+    public void getLanguageFromSP() {
+        if (!SharedPrefManager.getInstance(VendorFreelancingWallet.this).getUserLanguage().equals("")) {
+            selectedLanguage = SharedPrefManager.getInstance(VendorFreelancingWallet.this).getUserLanguage();
+
+            Log.e("tag" , "selected language is : "+selectedLanguage);
+
+        }
+    }
+
+
+    public void getUserDataFromSP() {
+        if (!SharedPrefManager.getInstance(VendorFreelancingWallet.this).getUserObject().equals("")) {
+            Gson gson = new Gson();
+            String json = SharedPrefManager.getInstance(VendorFreelancingWallet.this).getUserObject();
+            UserModel userModel = gson.fromJson(json, UserModel.class);
+
+            userId = userModel.getId();
+            userType = userModel.getUser_type();
+            vendorId = userId;
+
+            Log.e("tag" , "user id is : "+userId);
+            Log.e("tag" , "user type is : "+userType);
+            Log.e("tag" , "vendor id is : "+vendorId);
+
+        }
+    }
+
+    public void getVendorDataFromSP() {
+        if (!SharedPrefManager.getInstance(VendorFreelancingWallet.this).getVendorObject().equals("")) {
+            Gson gson = new Gson();
+            String json = SharedPrefManager.getInstance(VendorFreelancingWallet.this).getVendorObject();
+            VendorSharedPrefModel vendorModel = gson.fromJson(json, VendorSharedPrefModel.class);
+
+            vendorId = vendorModel.getId();
+            userId = vendorModel.getUser_id();
+            userType = vendorModel.getUser_type();
+
+
+            Log.e("tag" , "Vendor id is : "+vendorId);
+            Log.e("tag" , "user id is : "+userId);
+            Log.e("tag" , "user type is : "+userType);
+
+
+        }
+    }
+
+    public void initiate()
+    {
+
+        progressDialog = new ProgressDialog(VendorFreelancingWallet.this);
+
+        noData = (TextView) findViewById(R.id.noData);
+        noData.setVisibility(GONE);
+
+        list = new ArrayList<>();
+        freelancingWalletLayout = (LinearLayout) findViewById(R.id.freelancingWalletLayout);
+        freelancingWalletLayout.setVisibility(GONE);
+        totalBalance = (TextView) findViewById(R.id.totalBalance);
+        totalRefund = (TextView) findViewById(R.id.totalRefund);
+        totalReinvest = (TextView) findViewById(R.id.totalReinvest);
+        freelancingWalletListingRV = (RecyclerView) findViewById(R.id.freelancingWalletListingRV);
+        linearLayoutManager = new LinearLayoutManager(VendorFreelancingWallet.this  ,  LinearLayoutManager.VERTICAL , false);
+        freelancingWalletListingRV.setLayoutManager(linearLayoutManager);
+
+    }
+
+
+    private void vendorFreelancingWalletAPI() {
+
+        RequestBody vendor_id = RequestBody.create(vendorId , MediaType.parse("text/plain"));
+        RequestBody user_id = RequestBody.create(userId , MediaType.parse("text/plain"));
+        RequestBody user_type = RequestBody.create(userType , MediaType.parse("text/plain"));
+
+        //The gson builder
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .build();
+
+        //creating retrofit object
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiUrls.API_URL)
+                .client(SSSHandShake.getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        showProgress();
+
+        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+
+        //creating a call and calling the upload image method
+        call = retrofitApi.vendorFreelancingWalletApi(user_id , user_type , vendor_id);
+
+        //finally performing the call
+        call.enqueue(new Callback<BasicResponseModel>() {
+            @Override
+            public void onResponse(Call<BasicResponseModel> call, Response<BasicResponseModel> response) {
+
+
+                Log.e("tag", "API response is : "+new Gson().toJson(response.body()) );
+
+                freelancingWalletLayout.setVisibility(VISIBLE);
+
+                hideProgress();
+                if(response.isSuccessful())
+                {
+                    if(response.body().getError().equals("false")) {
+
+                        totalBalance.setText(response.body().getWallet().getBalance() + " " + getResources().getString(R.string.currency));
+                        totalRefund.setText(response.body().getWallet().getRefund() + " " + getResources().getString(R.string.currency));
+                        totalReinvest.setText(response.body().getWallet().getDeposit() + " " + getResources().getString(R.string.currency));
+
+                        list = response.body().getWallet().getTransactions();
+
+                        if(!list.isEmpty()){
+                            Log.e("tag" , "list size is : "+list.size());
+
+                            vendorFreelancingWalletAdapter = new VendorFreelancingWalletAdapter(VendorFreelancingWallet.this , list , selectedLanguage);
+                            freelancingWalletListingRV.setAdapter(vendorFreelancingWalletAdapter);
+                        }
+
+
+
+
+
+                    }
+                    else
+                    {
+                        //noData.setVisibility(View.VISIBLE);
+                        Toast.makeText(VendorFreelancingWallet.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(VendorFreelancingWallet.this, getResources().getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<BasicResponseModel> call, Throwable t) {
+                if(call.isCanceled())
+                {
+                    Log.e("tag" , "request is cancelled");
+                }
+                else
+                {
+                    hideProgress();
+                    Toast.makeText(VendorFreelancingWallet.this , getResources().getString(R.string.serviceError), Toast.LENGTH_LONG).show();
+                    Log.e("tag", "on failure error : " + t.getMessage());
+
+                }
+            }
+        });
+    }
+
+
+    public void showProgress()
+    {
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.getWindow().setBackgroundDrawable(null);
+    }
+
+    public void hideProgress()
+    {
+        progressDialog.dismiss();
+    }
+}

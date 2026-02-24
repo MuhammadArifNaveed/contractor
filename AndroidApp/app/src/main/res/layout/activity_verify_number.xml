@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VerifyNumber"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                app:srcCompat="@drawable/logo" />
+
+
+
+            <LinearLayout
+                android:id="@+id/layoutPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edittext_background"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/editTextColor"
+                        android:textSize="@dimen/editTextSize"
+                        android:text="+971"
+                        android:id="@+id/countryCode"/>
+
+
+
+                    <EditText
+                        android:id="@+id/edtPhoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/phone_number"
+                        android:inputType="number"
+                        android:layout_marginHorizontal="5dp"
+                        android:maxLength="15"
+                        android:textColor="@color/editTextColor"
+                        android:textColorHint="@color/hintColor"
+                        android:textSize="@dimen/editTextSize" />
+
+
+                </LinearLayout>
+
+
+
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSendCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/submit_btn"
+                    style="@style/buttonStyle" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutVerifyCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="0000000000\t"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/sms_sent_on_that_number" />
+                </LinearLayout>
+
+
+
+
+                <EditText
+                    android:id="@+id/edtVerifyCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_background"
+                    android:ems="10"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/verification_code"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/hintColor"
+                    android:textSize="14sp"
+                    android:layout_marginTop="20dp"/>
+
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnVerifyCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_bacground"
+                    android:text="@string/next_btn"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="@dimen/buttonTextSize" />
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnResendCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resend_code_btn"
+                        android:background="@drawable/button_bacground"
+                        android:textColor="@color/buttonTextColor"
+                        android:textSize="@dimen/buttonTextSize"
+                        android:layout_marginHorizontal="20dp"
+                        android:paddingHorizontal="20dp"/>
+
+                    <TextView
+                        android:id="@+id/tvCounter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resend_btn"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:gravity="end"
+                        android:layout_marginHorizontal="10dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--End-->
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

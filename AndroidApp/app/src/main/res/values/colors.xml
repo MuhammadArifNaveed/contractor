@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#f2be36</color>
+    <color name="purple_500">#f2be36</color>
+    <color name="purple_700">#f2be36</color>
+    <color name="teal_200">#f2be36</color>
+    <color name="teal_700">#f2be36</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#019C53</color>
+    <color name="red">#D51F1F</color>
+    <color name="background">#f7f7f7</color>
+    <color name="lightColor">#D0BDBDBD</color>
+    <color name="buttonTextColor">#FF000000</color>
+    <color name="buttonColor">#f2be36</color>
+    <color name="editTextColor">#FF000000</color>
+    <color name="hintColor">#15182B</color>
+    <color name="appColor">#f2be36</color>
+    <color name="textColor">#FF000000</color>
+    <color name="badge_color">#222121</color>
+</resources>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VendorActivities.VendorRegister"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="@dimen/screenPadding">
+
+
+    <EditText
+        android:id="@+id/companyNameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/company_name_in_english"
+        android:inputType="textCapSentences"
+        style="@style/editTextStyle"
+        android:layout_weight="1" />
+
+
+    <EditText
+        android:id="@+id/companyNameArabicET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/company_name_in_arabic"
+        android:inputType="textCapSentences"
+        style="@style/editTextStyle"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/companyEmailET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/company_email_address"
+        android:inputType="textEmailAddress"
+        style="@style/editTextStyle" />
+
+
+
+
+    <EditText
+        android:id="@+id/companyMobileET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/company_phone_number"
+        android:inputType="number"
+        android:maxLength="15"
+        style="@style/editTextStyle" />
+
+
+
+    <EditText
+        android:id="@+id/companyAddressET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/company_address"
+        android:inputType="textCapSentences"
+        style="@style/editTextStyle" />
+
+
+    <EditText
+        android:id="@+id/ownerNameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/owner_name"
+        android:inputType="textEmailAddress"
+        style="@style/editTextStyle" />
+
+
+
+
+    <EditText
+        android:id="@+id/ownerPhoneNumberET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/owner_phone_number"
+        android:inputType="number"
+        android:maxLength="15"
+        style="@style/editTextStyle" />
+
+
+    <EditText
+        android:id="@+id/agentReferralET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/agent_referral_code_optional"
+        android:inputType="text"
+        style="@style/editTextStyle"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/loginEmailET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/login_email_address"
+        android:inputType="textEmailAddress"
+        style="@style/editTextStyle" />
+
+
+    <EditText
+        android:id="@+id/passwordET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/_4_digit_pin"
+        android:maxLength="4"
+        android:inputType="textPassword"
+        style="@style/editTextStyle" />
+
+
+
+
+    <EditText
+        android:id="@+id/confirmPasswordET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/confirm_4_digit_pin"
+        android:maxLength="4"
+        android:inputType="textPassword"
+        style="@style/editTextStyle" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+      <CheckBox
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text=""
+          android:id="@+id/termsConditionCB"
+          android:textColor="@color/black"
+          android:textSize="16sp"
+          android:checked="true"/>
+
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="I agree with Terms &amp; Condition and Company Registered Agreement"
+          android:id="@+id/termsTV"
+          android:textColor="@color/black"
+          android:textSize="14sp"
+          android:checked="true"/>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/registerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/register"
+        style="@style/buttonStyle"/>
+  </LinearLayout>
+
+
+</ScrollView>

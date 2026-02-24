@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.thecontractor">
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:name=".Global.MyApp"
+        android:allowBackup="false"
+        android:fitsSystemWindows="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TheContractor"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".VendorActivities.VendorFreelancerChat"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorFreelancersChatConnection"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorInterestedWorkshopDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorInterestedWorkshops"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorAllWorkshopsAds"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorPostWorkshop"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorAddFreelancer"
+            android:exported="false" />
+        <activity
+            android:name=".UserDashboardFreelancer"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorFreelancingWallet"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorFreelancingOrders"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorHiredFreelancers"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorHiredFreelancersSummary"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorFreelancersList"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorDashboardFreelancer"
+            android:exported="false" />
+        <activity
+            android:name=".FreelancerCheckout"
+            android:exported="false" />
+        <activity
+            android:name=".SearchFreelancer"
+            android:exported="false" />
+        <activity
+            android:name=".Freelancers"
+            android:exported="false" />
+        <activity
+            android:name=".UserDirectHiring"
+            android:exported="false" />
+        <activity
+            android:name=".UserJobApplied"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorDirectHiringDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorDirectHiring"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorAppliesDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorApplies"
+            android:exported="false" />
+        <activity
+            android:name=".SearchJobsAndApplicant"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorApplicantDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorApplicants"
+            android:exported="false" />
+        <activity
+            android:name=".AvailableJobsDetails"
+            android:exported="false" />
+        <activity
+            android:name=".AvailableJobs"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorJobDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorJobListing"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorPostJob"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorDashboardJobs"
+            android:exported="false" />
+        <activity
+            android:name=".AdvertiseCompany"
+            android:exported="false" />
+        <activity
+            android:name=".ChatConnection"
+            android:exported="false" />
+        <activity
+            android:name=".Chat"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="user_inbox" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VendorActivities.VendorChatConnection"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorChat"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorWorkshopDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="vendor_workshop" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VendorActivities.VendorWorkshop"
+            android:exported="false" />
+        <activity
+            android:name=".WorkshopAdDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="workshop" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".WorkShopAds"
+            android:exported="false" />
+        <activity
+            android:name=".CompaniesByCategory"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorNewPassword"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorForgotPasswordPin"
+            android:exported="false" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/map_key" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".VendorActivities.VendorParticularQuotations"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorMyMembershipDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="vendor_membership" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VendorActivities.VendorMyMembership"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorMembership"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorQuotationDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="vendor_quotation" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VendorActivities.VendorDashboardQuotations"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorDashboardEnquiries"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorRatingDetail"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorRating"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorParticularEnquiries"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorProfile"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorEnquiryDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="vendor_enquiry" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VendorActivities.VendorHome"
+            android:exported="false"
+            android:label="@string/title_activity_vendor_home"
+            android:theme="@style/Theme.TheContractor.NoActionBar" />
+        <activity
+            android:name=".VendorActivities.VendorForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorRegister"
+            android:exported="false" />
+        <activity
+            android:name=".VendorActivities.VendorLogin"
+            android:exported="false" />
+        <activity
+            android:name=".CompanyFinder"
+            android:exported="false" />
+        <activity
+            android:name=".WebViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EnquiryDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="enquiry" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".EstimationsDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="estimation" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Estimations"
+            android:exported="false" />
+        <activity
+            android:name=".ComplaintDetail"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="complaint" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Complaints"
+            android:exported="false" />
+        <activity
+            android:name=".SearchResult"
+            android:exported="false" />
+        <activity
+            android:name=".TwentyFourSeven"
+            android:exported="false" />
+        <activity
+            android:name=".Search"
+            android:exported="false" />
+        <activity
+            android:name=".QuotationsDetails"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="quotation" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Quotations"
+            android:exported="false" />
+        <activity
+            android:name=".SubmitQuotations"
+            android:exported="false" />
+        <activity
+            android:name=".Enquiries"
+            android:exported="false" />
+        <activity
+            android:name=".OrderContactInfo"
+            android:exported="false" />
+        <activity
+            android:name=".Cart"
+            android:exported="false" />
+        <activity
+            android:name=".SubCategories"
+            android:exported="false" />
+        <activity
+            android:name=".CompanyDetails"
+            android:exported="false" />
+        <activity
+            android:name=".Companies"
+            android:exported="false" />
+        <activity
+            android:name=".UpdateProfile"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePassword"
+            android:exported="false" />
+        <activity
+            android:name=".NewPassword"
+            android:exported="false" />
+        <activity
+            android:name=".Home"
+            android:exported="false"
+            android:theme="@style/Theme.TheContractor.NoActionBar">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".ForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".VerifyNumber"
+            android:exported="false" />
+        <activity
+            android:name=".Register"
+            android:exported="false" />
+        <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".SelectLanguage"
+            android:exported="false" />
+        <activity
+            android:name=".Splash"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:name=".Notifications.MyFirebaseMessagingService"
+            android:exported="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

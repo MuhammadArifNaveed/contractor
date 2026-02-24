@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Home"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.PopupOverlay"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/white"
+            app:popupTheme="@style/Theme.PopupOverlay"
+            app:contentInsetStartWithNavigation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:src="@drawable/topicon"
+                android:adjustViewBounds="true"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="end">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/submit_quotation"
+                    android:textAllCaps="false"
+                    android:id="@+id/submitQuotation"
+                    android:textColor="@color/white"
+                    android:background="@drawable/green_button_bacground"
+                    android:paddingHorizontal="5dp"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"/>
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_24_7_maintenance"
+                    android:textAllCaps="false"
+                    android:id="@+id/twentyFourSevenMaintenance"
+                    android:textColor="@color/white"
+                    android:background="@drawable/red_button_bacground"
+                    android:paddingHorizontal="5dp"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:layout_weight="1"/>
+
+
+
+
+            </LinearLayout>
+
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_home" />
+
+</LinearLayout>

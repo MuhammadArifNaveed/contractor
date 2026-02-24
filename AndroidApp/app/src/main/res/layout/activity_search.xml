@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Search"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/searchDataLayout">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/specialties"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+
+                <com.thecontractor.Global.MultiSelectAutoCompleteViewNew
+                    android:id="@+id/multiSelectAutoCompleteView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>
+
+
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/lightColor"
+                    android:layout_marginVertical="10dp"/>
+
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/categories"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/categoriesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/lightColor"
+                    android:layout_marginVertical="10dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sub_categories"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSubCategories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/lightColor"
+                    android:layout_marginVertical="10dp"/>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cities"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/citiesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/areaLayout">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.1dp"
+                        android:background="@color/lightColor"
+                        android:layout_marginVertical="10dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/areas"
+                        style="@style/headingStyle" />
+
+                    <View
+                        android:layout_width="@dimen/headingLineWidth"
+                        android:layout_height="@dimen/headingLineHeight"
+                        android:background="@drawable/heading_line_bacground"/>
+
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.AppCompat.Spinner"
+                        android:background="@drawable/spinner_background"
+                        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                        android:id="@+id/areaSpinner"
+                        android:spinnerMode="dropdown"
+                        android:layout_marginTop="10dp" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAreas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/lightColor"
+                    android:layout_marginVertical="10dp"/>
+
+
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/show_verified_listed_only"
+                    android:textStyle="bold"
+                    android:id="@+id/showVerifiedCB"/>
+
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/lightColor"
+                    android:layout_marginVertical="10dp"/>
+
+
+
+                <EditText
+                    android:id="@+id/keywordET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_keyword"
+                    android:inputType="textCapSentences"
+                    style="@style/editTextStyle" />
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/searchBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/search"
+                    style="@style/buttonStyle"/>
+
+
+
+            </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+</androidx.core.widget.NestedScrollView>

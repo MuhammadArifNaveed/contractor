@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<item>
+    <layer-list>
+        <item android:right="0dp" android:top="0dp">
+            <shape>
+                <corners android:radius="10dp" />
+                <stroke android:color="@color/lightColor" android:width="1dp"/>
+                <padding android:left="5dp" android:right="5dp"/>
+            </shape>
+        </item>
+        <item>
+
+            <bitmap android:gravity="center|right" android:src="@drawable/abc_spinner_mtrl_am_alpha"
+                android:tint="@color/appColor"/>
+
+        </item>
+
+    </layer-list>
+</item>
+</selector>

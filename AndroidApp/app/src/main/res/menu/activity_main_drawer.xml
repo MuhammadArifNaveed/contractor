@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_select_language"
+        android:icon="@drawable/ic_language"
+        android:title="@string/select_language"/>
+
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home"/>
+
+
+    <item
+        android:id="@+id/nav_inbox"
+        android:icon="@drawable/ic_inbox"
+        android:title="@string/inbox"/>
+
+
+    <item
+        android:id="@+id/nav_company_finder"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/company_finder"/>
+
+    <item
+        android:id="@+id/nav_submit_enquiry"
+        android:icon="@drawable/ic_paperplane"
+        android:title="@string/submit_enquiry"/>
+
+
+    <item
+        android:id="@+id/nav_enquiries"
+        android:icon="@drawable/ic_enquiry"
+        android:title="@string/enquiries"/>
+
+
+    <item
+        android:id="@+id/nav_request_for_quotation"
+        android:icon="@drawable/ic_paperplane"
+        android:title="@string/submit_quotation"/>
+
+
+    <item
+        android:id="@+id/nav_quotations"
+        android:icon="@drawable/ic_quotation"
+        android:title="@string/quotations"/>
+
+
+    <item
+        android:id="@+id/nav_complaints"
+        android:icon="@drawable/ic_complaint"
+        android:title="@string/complaints"/>
+
+
+    <item
+        android:id="@+id/nav_estimations"
+        android:icon="@drawable/ic_calculator"
+        android:title="@string/estimations"/>
+
+
+    <item
+        android:id="@+id/nav_twenty_four_seven"
+        android:icon="@drawable/ic_twentyfourhours"
+        android:title="@string/_24_7_maintenance"/>
+
+
+    <item
+        android:id="@+id/nav_advertise_company"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/advertise_company"/>
+
+    <item
+        android:id="@+id/nav_available_jobs"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/available_jobs"/>
+
+
+    <item
+        android:id="@+id/nav_my_jobs_applies"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/my_job_applies"/>
+
+
+    <item
+        android:id="@+id/nav_direct_hiring"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/direct_hiring"/>
+
+    <item
+        android:id="@+id/nav_freelancer"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/freelancers"/>
+
+    <item
+        android:id="@+id/nav_freelancer_dashboard"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/freelancer_dashboard"/>
+
+    <item
+        android:id="@+id/nav_workshop"
+        android:icon="@drawable/ic_workshop"
+        android:title="@string/workshop_ad"/>
+
+    <item
+        android:id="@+id/nav_about_us"
+        android:icon="@drawable/ic_aboutus"
+        android:title="@string/about_us"/>
+
+    <item
+        android:id="@+id/nav_advertisement"
+        android:icon="@drawable/ic_advertisement"
+        android:title="@string/advertisement"/>
+
+
+
+    <item
+        android:id="@+id/nav_become_vendor"
+        android:icon="@drawable/ic_vendor"
+        android:title="@string/become_a_vendor"/>
+
+    <item
+        android:id="@+id/nav_documentations"
+        android:icon="@drawable/ic_documententations"
+        android:title="@string/documentations"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/nav_privacy_policy"
+        android:icon="@drawable/ic_privacypolicy"
+        android:title="@string/privacy_policy"/>
+
+    <item
+        android:id="@+id/nav_terms_and_conditions"
+        android:icon="@drawable/ic_termsandconditions"
+        android:title="@string/terms_and_conditions"/>
+
+
+    <item
+        android:id="@+id/nav_guide"
+        android:icon="@drawable/ic_guide"
+        android:title="@string/guide"/>
+
+
+    <item
+        android:id="@+id/nav_contact_us"
+        android:icon="@drawable/ic_contactus"
+        android:title="@string/contact_us"/>
+
+
+    <item
+        android:id="@+id/nav_rate_us"
+        android:icon="@drawable/ic_rate"
+        android:title="@string/rate_us"/>
+
+    <item
+        android:id="@+id/nav_share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share"/>
+
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="@string/logout"/>
+
+
+
+</menu>

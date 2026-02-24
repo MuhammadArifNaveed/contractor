@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VendorActivities.VendorPostJob"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding"
+        android:id="@+id/postJobLayout">
+
+
+        <EditText
+            android:id="@+id/jobTitleEnglish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Job Title (English)"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_weight="1" />
+
+
+        <EditText
+            android:id="@+id/jobTitleArabic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Job Title (Arabic)"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_weight="1" />
+
+
+        <EditText
+            android:id="@+id/vacancies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="vacancies"
+            android:inputType="number"
+            android:maxLength="5"
+            style="@style/editTextStyle"/>
+
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description (English)"
+            android:gravity="top"
+            android:id="@+id/descriptionEnglish"
+            android:inputType="textMultiLine"
+            android:lines="8"
+            style="@style/editTextStyle"
+            android:maxLines="10"
+            android:minLines="3"
+            android:scrollbars="vertical"
+            android:layout_marginTop="10dp" />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description (Arabic)"
+            android:gravity="top"
+            android:id="@+id/descriptionArabic"
+            android:inputType="textMultiLine"
+            android:lines="8"
+            style="@style/editTextStyle"
+            android:maxLines="10"
+            android:minLines="3"
+            android:scrollbars="vertical"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:id="@+id/salary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Salary"
+            android:inputType="number"
+            android:maxLength="5"
+            style="@style/editTextStyle"/>
+
+
+        <EditText
+            android:id="@+id/deadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Deadline"
+            android:inputType="date"
+            android:focusable="false"
+            android:clickable="true"
+            style="@style/editTextStyle"/>
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/jobTypeSpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/jobCategorySpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/jobLocationSpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/choose_images"
+            android:background="@drawable/edittext_background"
+            android:textColor="@color/editTextColor"
+            android:textSize="@dimen/editTextSize"
+            android:textAllCaps="false"
+            android:gravity="center"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customImagesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/config_container"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"/>
+
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sponsored the Job Add Pay Minimum 5 AED to Sponsored your Add"
+            android:textStyle="bold"
+            android:id="@+id/payJobCB"
+            android:layout_marginTop="10dp"/>
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/submitBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/submit_btn"
+            style="@style/buttonStyle"/>
+
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

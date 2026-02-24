@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".VendorActivities.VendorHome"
+    android:background="@color/background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/vendorHomeLayout"
+            android:padding="@dimen/screenPadding">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enquiries Dashboard"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dashboardRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:id="@+id/pendingEnquiriesLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pending_enquiries"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/pendingEnquiriesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:id="@+id/acceptedEnquiriesLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accepted_enquiries"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/acceptedEnquiriesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:id="@+id/todayEnquiriesLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_enquiries"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/todayEnquiriesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noData"
+        android:text="@string/data_not_found"
+        style="@style/noDataStyle"
+        android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>

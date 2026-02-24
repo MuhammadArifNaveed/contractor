@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="@string/home"
+        android:icon="@drawable/ic_home"/>
+
+    <item
+        android:id="@+id/nav_inbox"
+        android:title="@string/inbox"
+        android:icon="@drawable/ic_inbox"/>
+
+    <item
+        android:id="@+id/nav_vendor_rating"
+        android:title="@string/rating"
+        android:icon="@drawable/ic_rate"/>
+
+    <item
+        android:id="@+id/nav_vendor_enquiries"
+        android:title="@string/enquiries"
+        android:icon="@drawable/ic_enquiry"/>
+
+    <item
+        android:id="@+id/nav_vendor_quotations"
+        android:title="@string/quotations"
+        android:icon="@drawable/ic_quotation"/>
+
+    <item
+        android:id="@+id/nav_vendor_post_workshop"
+        android:title="@string/post_workshop"
+        android:icon="@drawable/ic_workshop"/>
+
+
+    <item
+        android:id="@+id/nav_vendor_workshop"
+        android:title="@string/my_workshops"
+        android:icon="@drawable/ic_workshop"/>
+
+    <item
+        android:id="@+id/nav_vendor_all_workshop"
+        android:title="@string/all_workshops"
+        android:icon="@drawable/ic_workshop"/>
+
+    <item
+        android:id="@+id/nav_vendor_interested_workshop"
+        android:title="@string/interested_workshops"
+        android:icon="@drawable/ic_workshop"/>
+
+    <item
+        android:id="@+id/nav_vendor_jobs"
+        android:title="@string/jobs_portal"
+        android:icon="@drawable/ic_workshop"/>
+
+    <item
+        android:id="@+id/nav_vendor_applicants"
+        android:title="@string/available_applicant"
+        android:icon="@drawable/ic_workshop"/>
+
+    <item
+        android:id="@+id/nav_vendor_freelancer"
+        android:icon="@drawable/ic_workshop"
+        android:title="@string/freelancers"/>
+
+    <item
+        android:id="@+id/nav_vendor_freelancer_dashboard"
+        android:icon="@drawable/ic_workshop"
+        android:title="@string/freelancer_dashboard"/>
+
+    <item
+        android:id="@+id/nav_vendor_membership"
+        android:title="@string/memberships"
+        android:icon="@drawable/ic_membership"/>
+
+    <item
+        android:id="@+id/nav_vendor_my_membership"
+        android:title="@string/my_membership"
+        android:icon="@drawable/ic_membership"/>
+
+    <item
+        android:id="@+id/nav_vendor_logout"
+        android:title="@string/vendor_logout"
+        android:icon="@drawable/ic_logout"/>
+
+</menu>

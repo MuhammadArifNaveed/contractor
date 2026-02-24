@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CompanyDetails"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/companyDetailLayout">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp"
+            android:layout_margin="5dp"
+            app:cardElevation="5dp">
+
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/companyImage"
+                        android:scaleType="centerCrop"/>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp">
+
+                        <TextView
+                            android:id="@+id/companyName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Company Name"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+
+
+                        <TextView
+                            android:id="@+id/categoriesName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category Name"
+                            android:textSize="14sp" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style = "?android:attr/ratingBarStyleSmall"
+                        android:mirrorForRtl="false"
+                        android:numStars="5"
+                        android:rating="3.5" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(39)"
+                        android:id="@+id/companyTotalRatingCount"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="5dp"/>
+
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:id="@+id/verified"
+                        android:src="@drawable/ic_verified"
+                        android:layout_marginStart="5dp" />
+
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:id="@+id/twentyFourSeven"
+                        android:src="@drawable/ic_twentyfourhours"
+                        android:layout_marginStart="5dp" />
+
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:id="@+id/trusted"
+                        android:src="@drawable/ic_trusted"
+                        android:layout_marginStart="5dp" />
+
+
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:id="@+id/vip"
+                        android:src="@drawable/ic_vip"
+                        android:layout_marginStart="5dp" />
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/disable_button_bacground"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:layout_marginEnd="5dp"
+                        android:id="@+id/companyPhoneLayout">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:id="@+id/phone"
+                            android:src="@drawable/ic_phone"
+                            app:tint="@color/white"
+                            android:layout_marginEnd="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Phone"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:textColor="@color/white"/>
+
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/disable_button_bacground"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:layout_marginEnd="5dp"
+                        android:id="@+id/companyWhatsappLayout">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:id="@+id/whatsapp"
+                            android:src="@drawable/whatsapp_disable"
+                            app:tint="@color/white"
+                            android:layout_marginEnd="5dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="WA"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:textColor="@color/white"/>
+
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/disable_button_bacground"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:id="@+id/companyEmailLayout">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:id="@+id/email"
+                            android:src="@drawable/email"
+                            app:tint="@color/white"
+                            android:layout_marginEnd="5dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:textColor="@color/white"/>
+
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/selectOrRemoveBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="@string/select_company"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bacground"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:paddingHorizontal="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="2dp"/>
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/complaintBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="@string/complaint"
+                        android:textSize="12sp"
+                        android:textAllCaps="false"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/green_button_bacground"
+                        android:textColor="@color/white"
+                        android:paddingHorizontal="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="2dp"/>
+
+
+                </LinearLayout>
+
+
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:elevation="0dp">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabMode="fixed"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/black"
+                    app:tabIndicatorHeight="2dp"
+                    app:tabTextColor="@color/black"
+                    app:tabSelectedTextColor="@color/black"
+                    style="@style/MyTabLayout" />
+
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

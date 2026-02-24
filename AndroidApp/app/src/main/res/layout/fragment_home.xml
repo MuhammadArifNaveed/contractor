@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.HomeFragment"
+    android:background="@color/background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/homeLayout">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/top_section_bacground"
+                android:padding="10dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/topCategoriesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/search_bacground"
+                    android:padding="15dp"
+                    android:id="@+id/search">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/search_for_companies"
+                        android:textSize="14sp"
+                        android:textColorHint="@color/black"
+                        android:textColor="@color/black"
+                        android:background="@null"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/ic_search_black"
+                        android:drawablePadding="10dp"
+                        android:clickable="false"
+                        android:focusable="false"/>
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:cardCornerRadius="5dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/browse_categories"
+                        style="@style/headingStyle" />
+
+                    <View
+                        android:layout_width="@dimen/headingLineWidth"
+                        android:layout_height="@dimen/headingLineHeight"
+                        android:background="@drawable/heading_line_bacground"/>
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/categoriesRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"/>
+
+
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.1dp"
+                        android:background="@color/lightColor"
+                        android:layout_marginVertical="10dp"/>
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvSubCategories"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+
+                </LinearLayout>
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/titaniumCompaniesLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/titanium_companies"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/titaniumCompaniesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/homeCompaniesLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/top_companies"
+                    style="@style/headingStyle" />
+
+                <View
+                    android:layout_width="@dimen/headingLineWidth"
+                    android:layout_height="@dimen/headingLineHeight"
+                    android:background="@drawable/heading_line_bacground"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/homeCompaniesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noData"
+            android:text="@string/data_not_found"
+            style="@style/noDataStyle"
+            android:layout_centerInParent="true"/>
+
+
+
+
+</RelativeLayout>

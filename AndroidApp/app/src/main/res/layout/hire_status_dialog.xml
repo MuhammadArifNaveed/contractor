@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/search_bacground"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="5dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hire Applicant"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Spinner"
+        android:background="@drawable/spinner_background"
+        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+        android:id="@+id/hireStatusSpinner"
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="20dp" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/proceedBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/proceed"
+        style="@style/buttonStyle"
+        android:layout_marginTop="20dp"/>
+
+
+</LinearLayout>

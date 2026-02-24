@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 2: Bank Account"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/bankNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bank Name"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_marginTop="20dp"/>
+
+        <EditText
+            android:id="@+id/bankAddressET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bank Address"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_marginTop="10dp"/>
+
+
+        <EditText
+            android:id="@+id/accountNameTitleET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account Name / Title"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_marginTop="10dp"/>
+
+
+
+        <EditText
+            android:id="@+id/accountIBANET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account IBAN"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_marginTop="20dp"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBack"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                style="@style/buttonStyle"/>
+
+            <View android:layout_width="16dp" android:layout_height="1dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Next"
+                style="@style/buttonStyle"
+                android:background="@drawable/outline_black_button_bacground"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

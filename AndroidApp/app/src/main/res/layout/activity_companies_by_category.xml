@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CompaniesByCategory"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/screenPadding"
+        android:id="@+id/categoryByCompaniesNestedScrollView">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/categoryByCompaniesLayout">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sub_categories"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/subCategoriesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/top_companies"
+                style="@style/headingStyle"
+                android:layout_marginTop="10dp"/>
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categoryCompaniesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noData"
+        android:text="@string/sub_categories_not_found"
+        style="@style/noDataStyle"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

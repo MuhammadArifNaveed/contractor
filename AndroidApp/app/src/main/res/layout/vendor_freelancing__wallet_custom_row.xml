@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/cardRadius"
+    android:layout_marginHorizontal="@dimen/cardHorizontalMargin"
+    android:layout_marginVertical="@dimen/cardVerticalMargin"
+    app:cardElevation="@dimen/cardElevation"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Transaction ID"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_weight="1"/>
+
+
+                <TextView
+                    android:id="@+id/transactionID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="edfb48a3-d1cd-11f0-a286-c87f54521c6e	"
+                    android:textSize="14sp"/>
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Amount"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:layout_weight="1"/>
+
+
+
+                    <TextView
+                        android:id="@+id/amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="180 AED (REFUND)"
+                        android:textSize="14sp"
+                        android:layout_weight="1"/>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Created At"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:layout_gravity="left"
+                        android:gravity="left"/>
+
+
+                    <TextView
+                        android:id="@+id/createdAt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="05-12-2025 03:31 PM"
+                        android:textSize="14sp"
+                        android:layout_gravity="left"
+                        android:gravity="left"/>
+
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+</androidx.cardview.widget.CardView>

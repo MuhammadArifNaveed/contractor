@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Cart"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/goToAddContactInfoLayout"
+        android:padding="@dimen/screenPadding"
+        android:id="@+id/cartLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cartLimitIssue"
+                android:text="issue"
+                android:textColor="@color/red"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/selected_companies"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedCompaniesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/button_bacground"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/goToAddContactInfoLayout"
+        android:gravity="center"
+        android:paddingVertical="15dp"
+        android:paddingHorizontal="10dp">
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/selected_companies"
+            android:id="@+id/totalCompanies"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_weight="1" />
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/add_contact_info"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_next"
+            android:layout_marginLeft="5dp"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noData"
+        android:text="@string/no_selected_companies_found"
+        style="@style/noDataStyle"
+        android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>

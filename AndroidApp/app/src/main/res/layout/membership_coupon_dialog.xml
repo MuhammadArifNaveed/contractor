@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/search_bacground"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="5dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Coupon Code"
+        android:id="@+id/couponCode"
+        style="@style/editTextStyle" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/applyCouponBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply Coupon"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:background="@drawable/button_bacground"
+        android:layout_marginTop="20dp"/>
+
+
+</LinearLayout>

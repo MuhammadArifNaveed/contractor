@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.EstimationFragment"
+    android:background="@color/background">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding"
+        android:id="@+id/requestForEstimationLayout">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/estimationCategoriesLayout">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/what_are_you_looking_for"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/estimationCategoriesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/lightColor"
+                android:layout_marginVertical="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/what_category"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/estimationSubCategoriesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/lightColor"
+                android:layout_marginVertical="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/estimate_for_how_much_sqft"
+                style="@style/headingStyle" />
+
+            <View
+                android:layout_width="@dimen/headingLineWidth"
+                android:layout_height="@dimen/headingLineHeight"
+                android:background="@drawable/heading_line_bacground"/>
+
+
+            <EditText
+                android:id="@+id/squareFeet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/sqft"
+                android:inputType="number"
+                android:digits="01234567890"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginTop="10dp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/calculateEstimatedBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/calculate_estimated_budget"
+                style="@style/buttonStyle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/outline_black_button_bacground"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:id="@+id/estimationResultLayout">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/estimation_detail"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/looking_for"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Looking For"
+                    android:id="@+id/lookingFor"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/lightColor"
+                android:layout_marginVertical="10dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selected_category"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Category"
+                    android:id="@+id/estimationCategory"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/lightColor"
+                android:layout_marginVertical="10dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_sqft"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100 sqft"
+                    android:id="@+id/totalSqft"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+
+
+            </LinearLayout>
+
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/lightColor"
+                android:layout_marginVertical="10dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100 ADE"
+                    android:id="@+id/estimatedBudget"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/freeConsultationBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/request_for_installment"
+            style="@style/buttonStyle"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/estimationContactLayout">
+
+
+
+            <EditText
+                android:id="@+id/fistNameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/full_name"
+                android:inputType="textCapSentences"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp" />
+
+
+
+
+            <EditText
+                android:id="@+id/mobileET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/phone_number"
+                android:inputType="number"
+                android:maxLength="15"
+                style="@style/editTextStyle"/>
+
+
+
+
+
+
+            <EditText
+                android:id="@+id/emailET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/email_address"
+                android:inputType="textEmailAddress"
+                style="@style/editTextStyle" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/note"
+                android:gravity="top"
+                android:id="@+id/noteET"
+                android:inputType="textMultiLine"
+                android:lines="8"
+                style="@style/editTextStyle"
+                android:maxLines="10"
+                android:minLines="3"
+                android:scrollbars="vertical"
+                android:layout_marginTop="10dp" />
+
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/updateProfileBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/submit_details"
+                style="@style/buttonStyle"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/estimate_again"
+                android:id="@+id/estimateAgain"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+
+
+</androidx.core.widget.NestedScrollView>

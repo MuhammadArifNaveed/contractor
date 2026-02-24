@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "440409598739",
+    "firebase_url": "https://thecontractor-uae-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "thecontractor-uae",
+    "storage_bucket": "thecontractor-uae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440409598739:android:4fa2f398bc2da426ec48e6",
+        "android_client_info": {
+          "package_name": "com.thecontractor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440409598739-7drqr156opehh9s8rtbgm9avnvkt7c50.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thecontractor",
+            "certificate_hash": "6c0cc8ad9bb82861ae6dd6b4a7113467e0fa3f8c"
+          }
+        },
+        {
+          "client_id": "440409598739-j2rg837a3sbunj8ek59ce7umh1jn0huv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thecontractor",
+            "certificate_hash": "272bb336956c73d8ba071ad7aec4c27f70ddfcb3"
+          }
+        },
+        {
+          "client_id": "440409598739-edqdjav8pmli03gptbduh605fc1suojr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJevkmokK8d_dO3ED3vQq2FNr2DICgKG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440409598739-edqdjav8pmli03gptbduh605fc1suojr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,35 @@
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/drawable/heading_line_bacground.xml" value="0.2203125" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/drawable/ic_tick.xml" value="0.1555" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_company_details.xml" value="0.17980072463768115" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_enquiries.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_home.xml" value="0.17980072463768115" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_register.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_submit_quotations.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_vendor_dashboard_quotations.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_vendor_membership.xml" value="0.18432971014492755" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/activity_webview_activity.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/app_bar_main.xml" value="0.17980072463768115" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/categories_with_companies_custom_row.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/content_home.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/custom_image_row.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/fragment_home.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/fragment_profile.xml" value="0.17980072463768115" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/membership_coupon_dialog.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/layout/membership_custom_row.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/menu/activity_main_drawer.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidStudioProjects/TheContractor/app/src/main/res/menu/bottom_navigation_main.xml" value="0.20416666666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

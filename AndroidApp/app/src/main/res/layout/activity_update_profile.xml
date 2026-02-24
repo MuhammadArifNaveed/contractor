@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UpdateProfile"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/updateProfileLayout"
+        android:padding="@dimen/screenPadding">
+
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:srcCompat="@drawable/ic_user_profile"
+                android:id="@+id/profileImage"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center" />
+
+
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_camera"
+                android:id="@+id/editImage"
+                android:adjustViewBounds="true"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="10dp"/>
+
+
+
+
+
+        </FrameLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <EditText
+                android:id="@+id/fistNameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:inputType="textCapSentences"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"/>
+
+
+            <EditText
+                android:id="@+id/lastNameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/sur_name"
+                android:inputType="textCapSentences"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"/>
+
+
+        </LinearLayout>
+
+
+
+        <EditText
+            android:id="@+id/emailET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/email_address"
+            android:inputType="textEmailAddress"
+            style="@style/editTextStyle" />
+
+
+
+
+        <EditText
+            android:id="@+id/mobileET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/phone_number"
+            android:inputType="number"
+            android:maxLength="15"
+            style="@style/editTextStyle"
+            android:focusable="false"
+            android:clickable="false"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/citySpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+        <EditText
+            android:id="@+id/addressET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/address"
+            android:inputType="textCapSentences"
+            style="@style/editTextStyle"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Upload Video"
+            android:background="@drawable/edittext_background"
+            android:textColor="@color/editTextColor"
+            android:textSize="@dimen/editTextSize"
+            android:textAllCaps="false"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Video Name"
+            android:id="@+id/videoName"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"/>
+
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center" />
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/categorySpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Upload CV"
+            android:background="@drawable/edittext_background"
+            android:textColor="@color/editTextColor"
+            android:textSize="@dimen/editTextSize"
+            android:textAllCaps="false"
+            android:gravity="center"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CV Name"
+            android:id="@+id/CVName"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"/>
+
+
+        <CheckBox
+            android:id="@+id/cbJob"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes, i am available for job" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbFreelancer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes, i am available as freelancer" />
+
+
+            <TextView
+                android:id="@+id/updateFreelancer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:drawableStart="@drawable/edit"
+                android:drawablePadding="2dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"/>
+
+
+
+        </LinearLayout>
+
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/updateProfileBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/update_profile"
+            style="@style/buttonStyle"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

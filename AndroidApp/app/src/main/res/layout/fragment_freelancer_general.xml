@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding"
+        android:id="@+id/generalInfoLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 1: General Information"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <EditText
+                android:id="@+id/nameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:inputType="textCapSentences"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"/>
+
+            <EditText
+                android:id="@+id/emailET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"/>
+
+
+        </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/phoneET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone"
+            android:inputType="number"
+            android:maxLength="15"
+            style="@style/editTextStyle"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"/>
+
+
+        <EditText
+            android:id="@+id/hourlyRateET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hourly Rate (AED)"
+            android:inputType="number"
+            style="@style/editTextStyle"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"/>
+
+
+
+
+
+
+
+        <com.thecontractor.Global.MultiSelectAutoCompleteViewNew
+            android:id="@+id/multiSelectAutoCompleteView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"/>
+
+
+
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/categorySpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/citySpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_background"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:id="@+id/areaSpinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="10dp" />
+
+        <CheckBox
+            android:id="@+id/cbHourly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Available Per Hour" />
+
+        <LinearLayout
+            android:id="@+id/layoutTimePickers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <EditText
+                android:id="@+id/fromTimeET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="From"
+                android:focusable="false"
+                android:clickable="true"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"/>
+
+
+
+
+            <EditText
+                android:id="@+id/toTimeET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="To"
+                android:focusable="false"
+                android:clickable="true"
+                style="@style/editTextStyle"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/choose_images"
+            android:background="@drawable/edittext_background"
+            android:textColor="@color/editTextColor"
+            android:textSize="@dimen/editTextSize"
+            android:textAllCaps="false"
+            android:gravity="center"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customImagesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/config_container"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"/>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/choose_video"
+            android:background="@drawable/edittext_background"
+            android:textColor="@color/editTextColor"
+            android:textSize="@dimen/editTextSize"
+            android:textAllCaps="false"
+            android:gravity="center"/>
+
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center" />
+
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Next Step"
+            style="@style/buttonStyle"/>
+
+
+    </LinearLayout>
+
+
+
+</ScrollView>

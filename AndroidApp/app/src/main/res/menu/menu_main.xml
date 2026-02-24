@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.protest.Splash">
+
+
+    <item
+        android:id="@+id/action_twenty_four_seven"
+        android:icon="@drawable/ic_twentyfourhours_white"
+        android:title=""
+        app:showAsAction="always"
+        android:visible="false"/>
+
+
+    <item
+        android:id="@+id/action_cart"
+        android:actionLayout="@layout/cart_layout"
+        android:icon="@drawable/ic_menu_cart"
+        android:title=""
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="always"
+        android:title=""/>
+
+
+
+
+</menu>

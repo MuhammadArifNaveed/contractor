@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/search_bacground"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="5dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Price"
+        android:inputType="number"
+        android:id="@+id/price"
+        style="@style/editTextStyle" />
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write Something"
+        android:id="@+id/writeSomething"
+        android:lines="8"
+        android:minLines="6"
+        android:gravity="top|left"
+        android:maxLines="10"
+        style="@style/editTextStyle"
+        android:layout_marginTop="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/myRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/defaultTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Default Terms" />
+
+        <RadioButton
+            android:id="@+id/customTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Custom Terms" />
+
+    </RadioGroup>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/chooseDocument"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Choose File"
+        android:background="@drawable/edittext_background"
+        android:textColor="@color/editTextColor"
+        android:textSize="@dimen/editTextSize"
+        android:textAllCaps="false"
+        android:gravity="center"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="File Name"
+        android:id="@+id/fileName"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"/>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/submitComplainBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_complain"
+        style="@style/buttonStyle"
+        android:layout_marginTop="20dp"/>
+
+
+</LinearLayout>

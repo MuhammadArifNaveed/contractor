@@ -1,0 +1,19 @@
+<resources>
+    <dimen name="screenPadding">10dp</dimen>
+    <dimen name="buttonTextSize">16sp</dimen>
+    <dimen name="editTextSize">14sp</dimen>
+    <dimen name="headingLineHeight">1.5dp</dimen>
+    <dimen name="headingLineWidth">20dp</dimen>
+    <dimen name="badge_text_size">13sp</dimen>
+    <dimen name="profileDivPadding">10dp</dimen>
+    <dimen name="profileDivMargin">4dp</dimen>
+    <dimen name="profileTab">40dp</dimen>
+    <dimen name="cardRadius">5dp</dimen>
+    <dimen name="cardVerticalMargin">5dp</dimen>
+    <dimen name="cardHorizontalMargin">2dp</dimen>
+    <dimen name="cardElevation">2dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="pager_margin">5dp</dimen>
+    <dimen name="drawablePadding">5dp</dimen>
+
+</resources>

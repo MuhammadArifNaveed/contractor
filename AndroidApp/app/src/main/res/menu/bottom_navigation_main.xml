@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_home"
+        android:enabled="true"
+        android:title="@string/home"
+        android:icon="@drawable/ic_home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_workshop"
+        android:enabled="true"
+        android:title="@string/workshop"
+        android:icon="@drawable/ic_workshop"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_search"
+        android:enabled="true"
+        android:title="@string/search"
+        android:icon="@drawable/ic_search_black"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_estimation"
+        android:enabled="true"
+        android:title="@string/estimation"
+        android:icon="@drawable/ic_calculator"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_profile"
+        android:enabled="true"
+        android:title="@string/profile"
+        android:icon="@drawable/ic_profile"
+        app:showAsAction="ifRoom" />
+
+
+</menu>

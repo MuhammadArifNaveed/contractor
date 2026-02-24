@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MapsActivity"
+    android:fitsSystemWindows="true">
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_pin"
+        android:layout_centerInParent="true"/>
+
+
+
+
+    <TextView
+        android:id="@+id/currentAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bacground"
+        android:text="Type Your Location"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:drawableTint="@color/black"
+        android:padding="10dp"
+        android:layout_margin="20dp" />
+
+
+
+    <TextView
+        android:id="@+id/customLocationImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bacground"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:padding="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:drawableLeft="@drawable/ic_gps"
+        android:drawableTint="@color/black"
+        android:layout_above="@+id/selectLocationBtn"
+        android:layout_alignParentRight="true"/>
+
+
+
+
+
+
+    <Button
+        android:id="@+id/selectLocationBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_bacground"
+        android:text="Select Location"
+        android:textColor="@color/black"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"/>
+
+
+
+</RelativeLayout>
