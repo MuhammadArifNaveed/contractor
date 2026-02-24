@@ -126,7 +126,7 @@ struct CompanyLoginView: View {
     private var forgotPassword: some View {
         HStack {
             Spacer()
-            Button(action: { /* TODO: Forgot password flow */ }) {
+            NavigationLink(destination: VendorForgotPasswordView()) {
                 Text("Forgot password")
                     .font(AppTheme.Fonts.caption)
                     .foregroundColor(AppTheme.Colors.textPrimary)

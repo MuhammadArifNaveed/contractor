@@ -128,6 +128,40 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Company (Vendor) Forgot Password
+    /// Step 1: Send reset pin to vendor email
+    func vendorForgotPasswordSendPin(email: String,
+                                    completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/send_reset_password_pin"
+        let params: [String: String] = ["email": email]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Step 2: Verify reset pin code
+    func vendorForgotPasswordVerifyPin(email: String, pin: String,
+                                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/reset_pin_check"
+        let params: [String: String] = ["email": email, "pin": pin]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Step 3: Update vendor password
+    func vendorUpdatePassword(email: String, password: String,
+                            completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/update_password"
+        let params: [String: String] = ["password": password, "email": email]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
