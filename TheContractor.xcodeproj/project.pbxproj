@@ -137,6 +137,8 @@
 		80327A162F1D224D00BDA19A /* CompanyVendor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A152F1D224D00BDA19A /* CompanyVendor.swift */; };
 		80327A182F1D226E00BDA19A /* CompanyLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A172F1D226E00BDA19A /* CompanyLoginView.swift */; };
 		80327A1A2F1D228900BDA19A /* CompanyLoginHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */; };
+		90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A1E2F1D500000BDA19A /* CompanyRegistrationView.swift */; };
+		90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A202F1D500100BDA19A /* CompanyRegistrationViewModel.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -299,6 +301,8 @@
 		80327A152F1D224D00BDA19A /* CompanyVendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyVendor.swift; sourceTree = "<group>"; };
 		80327A172F1D226E00BDA19A /* CompanyLoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginView.swift; sourceTree = "<group>"; };
 		80327A192F1D228900BDA19A /* CompanyLoginHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyLoginHostingController.swift; sourceTree = "<group>"; };
+		90327A1E2F1D500000BDA19A /* CompanyRegistrationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyRegistrationView.swift; sourceTree = "<group>"; };
+		90327A202F1D500100BDA19A /* CompanyRegistrationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyRegistrationViewModel.swift; sourceTree = "<group>"; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -488,6 +492,7 @@
 			isa = PBXGroup;
 			children = (
 				80327A152F1D224D00BDA19A /* CompanyVendor.swift */,
+				90327A202F1D500100BDA19A /* CompanyRegistrationViewModel.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -823,6 +828,7 @@
 				80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */,
 				80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */,
 				80327A172F1D226E00BDA19A /* CompanyLoginView.swift */,
+				90327A1E2F1D500000BDA19A /* CompanyRegistrationView.swift */,
 				9A1B2C3D4E5F678901234569 /* FreelanceDashboardView.swift */,
 				A1B2C3D4E5F60718293A4B5C /* HiredFreelancerSummaryView.swift */,
 				A1B2C3D4E5F60718293A4B5E /* HiredFreelancerListView.swift */,
@@ -1087,6 +1093,8 @@
 				9A1B2C3D4E5F678901234568 /* FreelanceDashboardHostingController.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				80327A182F1D226E00BDA19A /* CompanyLoginView.swift in Sources */,
+				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
+				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,

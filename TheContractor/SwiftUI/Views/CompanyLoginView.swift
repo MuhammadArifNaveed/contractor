@@ -138,9 +138,11 @@ struct CompanyLoginView: View {
 
     private var switchToUserButton: some View {
         VStack(spacing: AppTheme.Spacing.small) {
-            Text("Not a Member? Create Account")
-                .font(AppTheme.Fonts.body)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+            NavigationLink(destination: CompanyRegistrationView()) {
+                Text("Not a Member? Create Account")
+                    .font(AppTheme.Fonts.body)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+            }
 
             Button(action: { dismiss() }) {
                 Text("Login as a User")

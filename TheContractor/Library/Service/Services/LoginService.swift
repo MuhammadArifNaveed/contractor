@@ -117,6 +117,17 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Company (Vendor) Registration
+    /// Registers a new company/vendor account.
+    func registerCompany(params: [String: String],
+                        completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/register_company"
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
