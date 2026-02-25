@@ -164,6 +164,10 @@
 		90327A4D2F1E000000BDA19A /* EmergencyServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A4E2F1E000000BDA19A /* EmergencyServiceModels.swift */; };
 		90327A4F2F1E000100BDA19A /* FreelancerDashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A502F1E000100BDA19A /* FreelancerDashboardModels.swift */; };
 		90327A512F1E000200BDA19A /* SettingsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A522F1E000200BDA19A /* SettingsModels.swift */; };
+		90327A532F1E100000BDA19A /* PaymentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A542F1E100000BDA19A /* PaymentModels.swift */; };
+		90327A552F1E100100BDA19A /* AnalyticsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A562F1E100100BDA19A /* AnalyticsModels.swift */; };
+		90327A572F1E100200BDA19A /* SocialModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A582F1E100200BDA19A /* SocialModels.swift */; };
+		90327A592F1E100300BDA19A /* HelpSupportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -353,6 +357,10 @@
 		90327A4E2F1E000000BDA19A /* EmergencyServiceModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmergencyServiceModels.swift; path = TheContractor/Models/EmergencyServiceModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A502F1E000100BDA19A /* FreelancerDashboardModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FreelancerDashboardModels.swift; path = TheContractor/Models/FreelancerDashboardModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A522F1E000200BDA19A /* SettingsModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsModels.swift; path = TheContractor/Models/SettingsModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A542F1E100000BDA19A /* PaymentModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PaymentModels.swift; path = TheContractor/Models/PaymentModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A562F1E100100BDA19A /* AnalyticsModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnalyticsModels.swift; path = TheContractor/Models/AnalyticsModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A582F1E100200BDA19A /* SocialModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocialModels.swift; path = TheContractor/Models/SocialModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HelpSupportModels.swift; path = TheContractor/Models/HelpSupportModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -565,6 +573,10 @@
 				90327A4E2F1E000000BDA19A /* EmergencyServiceModels.swift */,
 				90327A502F1E000100BDA19A /* FreelancerDashboardModels.swift */,
 				90327A522F1E000200BDA19A /* SettingsModels.swift */,
+				90327A542F1E100000BDA19A /* PaymentModels.swift */,
+				90327A562F1E100100BDA19A /* AnalyticsModels.swift */,
+				90327A582F1E100200BDA19A /* SocialModels.swift */,
+				90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1195,6 +1207,10 @@
 				90327A4D2F1E000000BDA19A /* EmergencyServiceModels.swift in Sources */,
 				90327A4F2F1E000100BDA19A /* FreelancerDashboardModels.swift in Sources */,
 				90327A512F1E000200BDA19A /* SettingsModels.swift in Sources */,
+				90327A532F1E100000BDA19A /* PaymentModels.swift in Sources */,
+				90327A552F1E100100BDA19A /* AnalyticsModels.swift in Sources */,
+				90327A572F1E100200BDA19A /* SocialModels.swift in Sources */,
+				90327A592F1E100300BDA19A /* HelpSupportModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,

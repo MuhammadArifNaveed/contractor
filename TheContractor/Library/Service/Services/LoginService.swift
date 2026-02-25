@@ -702,6 +702,176 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Payments
+    /// Get payment methods
+    func getPaymentMethods(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/payment_methods"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Process payment
+    func processPayment(userId: String, amount: String, paymentMethodId: String, purpose: String, relatedId: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/process_payment"
+        var params: [String: String] = ["user_id": userId, "amount": amount, "payment_method_id": paymentMethodId, "purpose": purpose]
+        if let relatedId = relatedId { params["related_id"] = relatedId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get payment history
+    func getPaymentHistory(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/payment_history"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Analytics
+    /// Get user analytics
+    func getUserAnalytics(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_analytics"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get company analytics
+    func getCompanyAnalytics(companyId: String, dateFrom: String?, dateTo: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/analytics"
+        var params: [String: String] = ["company_id": companyId]
+        if let dateFrom = dateFrom { params["date_from"] = dateFrom }
+        if let dateTo = dateTo { params["date_to"] = dateTo }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Log activity
+    func logActivity(userId: String, activityType: String, description: String, relatedId: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/log_activity"
+        var params: [String: String] = ["user_id": userId, "activity_type": activityType, "description": description]
+        if let relatedId = relatedId { params["related_id"] = relatedId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Social Features
+    /// Get social feed
+    func getSocialFeed(pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/social_feed"
+        let params: [String: String] = ["page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create social post
+    func createSocialPost(userId: String, content: String, images: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/create_post"
+        var params: [String: String] = ["user_id": userId, "content": content]
+        var imageDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                imageDict["image\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Like/Unlike post
+    func likePost(userId: String, postId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/like_post"
+        let params: [String: String] = ["user_id": userId, "post_id": postId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get post comments
+    func getPostComments(postId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/post_comments"
+        let params: [String: String] = ["post_id": postId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add comment
+    func addComment(userId: String, postId: String, content: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/add_comment"
+        let params: [String: String] = ["user_id": userId, "post_id": postId, "content": content]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Help & Support
+    /// Get FAQs
+    func getFAQs(categoryId: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/faqs"
+        var params: [String: String] = [:]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create support ticket
+    func createSupportTicket(userId: String, subject: String, description: String, category: String, priority: String, attachments: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/create_ticket"
+        var params: [String: String] = ["user_id": userId, "subject": subject, "description": description, "category": category, "priority": priority]
+        var fileDict: [String: Data] = [:]
+        if let attachments = attachments {
+            for (index, fileData) in attachments.enumerated() {
+                fileDict["attachment\(index + 1)"] = fileData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get support tickets
+    func getSupportTickets(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/support_tickets"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get ticket messages
+    func getTicketMessages(ticketId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/ticket_messages"
+        let params: [String: String] = ["ticket_id": ticketId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Send ticket message
+    func sendTicketMessage(ticketId: String, userId: String, message: String, attachments: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/send_ticket_message"
+        var params: [String: String] = ["ticket_id": ticketId, "user_id": userId, "message": message]
+        var fileDict: [String: Data] = [:]
+        if let attachments = attachments {
+            for (index, fileData) in attachments.enumerated() {
+                fileDict["attachment\(index + 1)"] = fileData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
