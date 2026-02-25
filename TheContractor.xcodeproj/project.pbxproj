@@ -212,6 +212,7 @@
 		90327AAD2F1EC00100BDA19A /* ProjectMilestoneModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AAE2F1EC00100BDA19A /* ProjectMilestoneModels.swift */; };
 		90327AAF2F1EC00200BDA19A /* WarrantyManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AB02F1EC00200BDA19A /* WarrantyManagementModels.swift */; };
 		90327AB12F1EC00300BDA19A /* ServiceHistoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AB22F1EC00300BDA19A /* ServiceHistoryModels.swift */; };
+		90327AB52F1ED00100BDA19A /* AssetManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AB62F1ED00100BDA19A /* AssetManagementModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -449,6 +450,7 @@
 		90327AAE2F1EC00100BDA19A /* ProjectMilestoneModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectMilestoneModels.swift; path = TheContractor/Models/ProjectMilestoneModels.swift; sourceTree = SOURCE_ROOT; };
 		90327AB02F1EC00200BDA19A /* WarrantyManagementModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WarrantyManagementModels.swift; path = TheContractor/Models/WarrantyManagementModels.swift; sourceTree = SOURCE_ROOT; };
 		90327AB22F1EC00300BDA19A /* ServiceHistoryModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceHistoryModels.swift; path = TheContractor/Models/ServiceHistoryModels.swift; sourceTree = SOURCE_ROOT; };
+		90327AB62F1ED00100BDA19A /* AssetManagementModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AssetManagementModels.swift; path = TheContractor/Models/AssetManagementModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -709,6 +711,7 @@
 				90327AAE2F1EC00100BDA19A /* ProjectMilestoneModels.swift */,
 				90327AB02F1EC00200BDA19A /* WarrantyManagementModels.swift */,
 				90327AB22F1EC00300BDA19A /* ServiceHistoryModels.swift */,
+				90327AB62F1ED00100BDA19A /* AssetManagementModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1387,6 +1390,7 @@
 				90327AAD2F1EC00100BDA19A /* ProjectMilestoneModels.swift in Sources */,
 				90327AAF2F1EC00200BDA19A /* WarrantyManagementModels.swift in Sources */,
 				90327AB12F1EC00300BDA19A /* ServiceHistoryModels.swift in Sources */,
+				90327AB52F1ED00100BDA19A /* AssetManagementModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,

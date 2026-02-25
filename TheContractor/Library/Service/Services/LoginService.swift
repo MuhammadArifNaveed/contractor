@@ -2963,6 +2963,114 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Emergency Services
+    /// Request emergency service
+    func requestEmergencyService(userId: String, serviceType: String, urgencyLevel: String, location: String, latitude: String, longitude: String, description: String, contactNumber: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/request_emergency_service"
+        let params: [String: String] = ["user_id": userId, "service_type": serviceType, "urgency_level": urgencyLevel, "location": location, "latitude": latitude, "longitude": longitude, "description": description, "contact_number": contactNumber]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get emergency requests
+    func getEmergencyRequests(userId: String?, status: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/emergency_requests"
+        var params: [String: String] = [:]
+        if let userId = userId { params["user_id"] = userId }
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Respond to emergency
+    func respondToEmergency(requestId: String, companyId: String, technicianName: String, technicianPhone: String, estimatedArrival: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/respond_to_emergency"
+        let params: [String: String] = ["request_id": requestId, "company_id": companyId, "technician_name": technicianName, "technician_phone": technicianPhone, "estimated_arrival": estimatedArrival]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get emergency contacts
+    func getEmergencyContacts(serviceCategory: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/emergency_contacts"
+        var params: [String: String] = [:]
+        if let serviceCategory = serviceCategory { params["service_category"] = serviceCategory }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Update emergency status
+    func updateEmergencyStatus(requestId: String, status: String, notes: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/update_emergency_status"
+        var params: [String: String] = ["request_id": requestId, "status": status]
+        if let notes = notes { params["notes"] = notes }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Asset Management
+    /// Get company assets
+    func getCompanyAssets(companyId: String, category: String?, status: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/company_assets"
+        var params: [String: String] = ["company_id": companyId]
+        if let category = category { params["category"] = category }
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add asset
+    func addAsset(companyId: String, assetName: String, assetType: String, assetCode: String, category: String, purchaseDate: String, purchasePrice: String, location: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/add_asset"
+        let params: [String: String] = ["company_id": companyId, "asset_name": assetName, "asset_type": assetType, "asset_code": assetCode, "category": category, "purchase_date": purchaseDate, "purchase_price": purchasePrice, "location": location]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Transfer asset
+    func transferAsset(assetId: String, toLocation: String, reason: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/transfer_asset"
+        let params: [String: String] = ["asset_id": assetId, "to_location": toLocation, "reason": reason]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get asset depreciation
+    func getAssetDepreciation(assetId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/asset_depreciation"
+        let params: [String: String] = ["asset_id": assetId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Conduct asset audit
+    func conductAssetAudit(companyId: String, auditorName: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Admin/conduct_asset_audit"
+        let params: [String: String] = ["company_id": companyId, "auditor_name": auditorName]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Dispose asset
+    func disposeAsset(assetId: String, disposalMethod: String, reason: String, disposalValue: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/dispose_asset"
+        var params: [String: String] = ["asset_id": assetId, "disposal_method": disposalMethod, "reason": reason]
+        if let disposalValue = disposalValue { params["disposal_value"] = disposalValue }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
