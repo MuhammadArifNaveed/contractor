@@ -506,6 +506,109 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Jobs Portal
+    /// Get job listings
+    func getJobs(filters: [String: String], completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_jobs"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: filters, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get job detail
+    func getJobDetail(jobId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/job_detail"
+        let params: [String: String] = ["job_id": jobId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Apply for job with optional resume
+    func applyForJob(jobId: String, userId: String, name: String, phone: String, email: String, coverLetter: String, resume: Data?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/apply_job"
+        var params: [String: String] = ["job_id": jobId, "user_id": userId, "name": name, "phone": phone, "email": email, "cover_letter": coverLetter]
+        var fileDict: [String: Data] = [:]
+        if let resume = resume { fileDict["resume"] = resume }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get user job applications
+    func getUserJobApplications(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_job_applications"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Vendor Workshops Management
+    /// Get vendor workshops
+    func getVendorWorkshops(vendorId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/workshops"
+        let params: [String: String] = ["vendor_id": vendorId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create workshop with images
+    func createWorkshop(vendorId: String, title: String, titleArabic: String, description: String, categoryId: String, location: String, city: String, date: String, startTime: String, endTime: String, price: String, capacity: String, images: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/create_workshop"
+        var params: [String: String] = ["vendor_id": vendorId, "title": title, "title_arabic": titleArabic, "description": description, "category_id": categoryId, "location": location, "city": city, "date": date, "start_time": startTime, "end_time": endTime, "price": price, "capacity": capacity]
+        var imageDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                imageDict["image\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get workshop enrollments
+    func getWorkshopEnrollments(workshopId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/workshop_enrollments"
+        let params: [String: String] = ["workshop_id": workshopId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Documents
+    /// Get documents
+    func getDocuments(categoryId: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_documents"
+        var params: [String: String] = ["page_no": pageNo]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload document
+    func uploadDocument(title: String, description: String, categoryId: String?, fileData: Data, fileName: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/upload_document"
+        var params: [String: String] = ["title": title, "description": description]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        let fileDict: [String: Data] = ["document": fileData]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: true) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get company documents
+    func getCompanyDocuments(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/company_documents"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in

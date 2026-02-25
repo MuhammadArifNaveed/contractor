@@ -158,6 +158,9 @@
 		90327A412F1DE00000BDA19A /* NotificationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A422F1DE00000BDA19A /* NotificationModels.swift */; };
 		90327A432F1DE00100BDA19A /* ReviewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A442F1DE00100BDA19A /* ReviewModels.swift */; };
 		90327A452F1DE00200BDA19A /* MembershipModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A462F1DE00200BDA19A /* MembershipModels.swift */; };
+		90327A472F1DF00000BDA19A /* JobsPortalModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A482F1DF00000BDA19A /* JobsPortalModels.swift */; };
+		90327A492F1DF00100BDA19A /* VendorWorkshopModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A4A2F1DF00100BDA19A /* VendorWorkshopModels.swift */; };
+		90327A4B2F1DF00200BDA19A /* DocumentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A4C2F1DF00200BDA19A /* DocumentModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -341,6 +344,9 @@
 		90327A422F1DE00000BDA19A /* NotificationModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationModels.swift; path = TheContractor/Models/NotificationModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A442F1DE00100BDA19A /* ReviewModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReviewModels.swift; path = TheContractor/Models/ReviewModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A462F1DE00200BDA19A /* MembershipModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MembershipModels.swift; path = TheContractor/Models/MembershipModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A482F1DF00000BDA19A /* JobsPortalModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JobsPortalModels.swift; path = TheContractor/Models/JobsPortalModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A4A2F1DF00100BDA19A /* VendorWorkshopModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopModels.swift; path = TheContractor/Models/VendorWorkshopModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A4C2F1DF00200BDA19A /* DocumentModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DocumentModels.swift; path = TheContractor/Models/DocumentModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -547,6 +553,9 @@
 				90327A422F1DE00000BDA19A /* NotificationModels.swift */,
 				90327A442F1DE00100BDA19A /* ReviewModels.swift */,
 				90327A462F1DE00200BDA19A /* MembershipModels.swift */,
+				90327A482F1DF00000BDA19A /* JobsPortalModels.swift */,
+				90327A4A2F1DF00100BDA19A /* VendorWorkshopModels.swift */,
+				90327A4C2F1DF00200BDA19A /* DocumentModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1171,6 +1180,9 @@
 				90327A412F1DE00000BDA19A /* NotificationModels.swift in Sources */,
 				90327A432F1DE00100BDA19A /* ReviewModels.swift in Sources */,
 				90327A452F1DE00200BDA19A /* MembershipModels.swift in Sources */,
+				90327A472F1DF00000BDA19A /* JobsPortalModels.swift in Sources */,
+				90327A492F1DF00100BDA19A /* VendorWorkshopModels.swift in Sources */,
+				90327A4B2F1DF00200BDA19A /* DocumentModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
