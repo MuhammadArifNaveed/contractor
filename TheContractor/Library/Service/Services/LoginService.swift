@@ -1061,6 +1061,175 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Promotions
+    /// Get active promotions
+    func getActivePromotions(companyId: String?, cityId: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/active_promotions"
+        var params: [String: String] = ["page_no": pageNo]
+        if let companyId = companyId { params["company_id"] = companyId }
+        if let cityId = cityId { params["city_id"] = cityId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create promotion
+    func createPromotion(companyId: String, title: String, titleArabic: String, description: String, descriptionArabic: String, discountType: String, discountValue: String, startDate: String, endDate: String, termsConditions: String?, banner: Data?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/create_promotion"
+        var params: [String: String] = ["company_id": companyId, "title": title, "title_arabic": titleArabic, "description": description, "description_arabic": descriptionArabic, "discount_type": discountType, "discount_value": discountValue, "start_date": startDate, "end_date": endDate]
+        if let termsConditions = termsConditions { params["terms_conditions"] = termsConditions }
+        var imageDict: [String: Data] = [:]
+        if let banner = banner { imageDict["banner"] = banner }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Claim promotion
+    func claimPromotion(userId: String, promotionId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/claim_promotion"
+        let params: [String: String] = ["user_id": userId, "promotion_id": promotionId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get user promotions
+    func getUserPromotions(userId: String, status: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_promotions"
+        var params: [String: String] = ["user_id": userId]
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Certifications & Licenses
+    /// Get company certifications
+    func getCompanyCertifications(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/certifications"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload certification
+    func uploadCertification(companyId: String, certificateName: String, certificateNameArabic: String, issuingAuthority: String, certificateNumber: String, issueDate: String, expiryDate: String?, document: Data, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/upload_certification"
+        var params: [String: String] = ["company_id": companyId, "certificate_name": certificateName, "certificate_name_arabic": certificateNameArabic, "issuing_authority": issuingAuthority, "certificate_number": certificateNumber, "issue_date": issueDate]
+        if let expiryDate = expiryDate { params["expiry_date"] = expiryDate }
+        let fileDict: [String: Data] = ["document": document]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: true) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get company licenses
+    func getCompanyLicenses(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/licenses"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload license
+    func uploadLicense(companyId: String, licenseType: String, licenseTypeArabic: String, licenseNumber: String, issuingAuthority: String, issueDate: String, expiryDate: String, document: Data, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/upload_license"
+        let params: [String: String] = ["company_id": companyId, "license_type": licenseType, "license_type_arabic": licenseTypeArabic, "license_number": licenseNumber, "issuing_authority": issuingAuthority, "issue_date": issueDate, "expiry_date": expiryDate]
+        let fileDict: [String: Data] = ["document": document]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: true) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Insurance
+    /// Get company insurance policies
+    func getCompanyInsurance(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/insurance_policies"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload insurance policy
+    func uploadInsurancePolicy(companyId: String, policyType: String, policyTypeArabic: String, policyNumber: String, provider: String, coverageAmount: String, startDate: String, endDate: String, document: Data, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/upload_insurance"
+        let params: [String: String] = ["company_id": companyId, "policy_type": policyType, "policy_type_arabic": policyTypeArabic, "policy_number": policyNumber, "provider": provider, "coverage_amount": coverageAmount, "start_date": startDate, "end_date": endDate]
+        let fileDict: [String: Data] = ["document": document]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: true) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Submit insurance claim
+    func submitInsuranceClaim(policyId: String, userId: String, enquiryId: String?, claimAmount: String, claimDescription: String, documents: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/submit_insurance_claim"
+        var params: [String: String] = ["policy_id": policyId, "user_id": userId, "claim_amount": claimAmount, "claim_description": claimDescription]
+        if let enquiryId = enquiryId { params["enquiry_id"] = enquiryId }
+        var fileDict: [String: Data] = [:]
+        if let documents = documents {
+            for (index, docData) in documents.enumerated() {
+                fileDict["document\(index + 1)"] = docData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Advanced Filtering
+    /// Search companies with advanced filters
+    func searchCompaniesAdvanced(filters: [String: String], pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_companies_advanced"
+        var params = filters
+        params["page_no"] = pageNo
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Search workshops with advanced filters
+    func searchWorkshopsAdvanced(filters: [String: String], pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_workshops_advanced"
+        var params = filters
+        params["page_no"] = pageNo
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Search freelancers with advanced filters
+    func searchFreelancersAdvanced(filters: [String: String], pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_freelancers_advanced"
+        var params = filters
+        params["page_no"] = pageNo
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Save filter
+    func saveFilter(userId: String, filterName: String, filterType: String, filterData: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/save_filter"
+        let params: [String: String] = ["user_id": userId, "filter_name": filterName, "filter_type": filterType, "filter_data": filterData]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get saved filters
+    func getSavedFilters(userId: String, filterType: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/saved_filters"
+        var params: [String: String] = ["user_id": userId]
+        if let filterType = filterType { params["filter_type"] = filterType }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
