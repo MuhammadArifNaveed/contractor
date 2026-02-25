@@ -273,6 +273,72 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Profile Management
+    /// Change user password
+    func changePassword(userId: String, oldPassword: String, newPassword: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/change_password"
+        let params: [String: String] = ["user_id": userId, "old_password": oldPassword, "new_password": newPassword]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Update user profile with optional image
+    func updateProfile(userId: String, name: String, surname: String, phone: String, email: String, address: String?, profileImage: Data?,
+                      completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/update_profile"
+        var params: [String: String] = ["user_id": userId, "name": name, "surname": surname, "phone": phone, "email": email]
+        if let address = address { params["address"] = address }
+        var imageDict: [String: Data] = [:]
+        if let profileImage = profileImage { imageDict["profile_image"] = profileImage }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Estimations
+    /// Get estimation categories
+    func getEstimationCategories(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_estimation_categories"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get estimation items by category
+    func getEstimationItems(categoryId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_estimation_items"
+        let params: [String: String] = ["category_id": categoryId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Search & Filter
+    /// Search companies with filters
+    func searchCompanies(filters: [String: String], completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_companies"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: filters, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Search freelancers with filters
+    func searchFreelancers(filters: [String: String], completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_freelancers"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: filters, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Search workshops with filters
+    func searchWorkshops(filters: [String: String], completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/search_workshops"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: filters, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
