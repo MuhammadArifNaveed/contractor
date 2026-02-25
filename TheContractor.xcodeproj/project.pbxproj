@@ -168,6 +168,10 @@
 		90327A552F1E100100BDA19A /* AnalyticsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A562F1E100100BDA19A /* AnalyticsModels.swift */; };
 		90327A572F1E100200BDA19A /* SocialModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A582F1E100200BDA19A /* SocialModels.swift */; };
 		90327A592F1E100300BDA19A /* HelpSupportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */; };
+		90327A5B2F1E200000BDA19A /* CompanyPortfolioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A5C2F1E200000BDA19A /* CompanyPortfolioModels.swift */; };
+		90327A5D2F1E200100BDA19A /* BookmarkModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A5E2F1E200100BDA19A /* BookmarkModels.swift */; };
+		90327A5F2F1E200200BDA19A /* RecommendationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A602F1E200200BDA19A /* RecommendationModels.swift */; };
+		90327A612F1E200300BDA19A /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A622F1E200300BDA19A /* ChatModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -361,6 +365,10 @@
 		90327A562F1E100100BDA19A /* AnalyticsModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnalyticsModels.swift; path = TheContractor/Models/AnalyticsModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A582F1E100200BDA19A /* SocialModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocialModels.swift; path = TheContractor/Models/SocialModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HelpSupportModels.swift; path = TheContractor/Models/HelpSupportModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A5C2F1E200000BDA19A /* CompanyPortfolioModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyPortfolioModels.swift; path = TheContractor/Models/CompanyPortfolioModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A5E2F1E200100BDA19A /* BookmarkModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BookmarkModels.swift; path = TheContractor/Models/BookmarkModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A602F1E200200BDA19A /* RecommendationModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecommendationModels.swift; path = TheContractor/Models/RecommendationModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A622F1E200300BDA19A /* ChatModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatModels.swift; path = TheContractor/Models/ChatModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -577,6 +585,10 @@
 				90327A562F1E100100BDA19A /* AnalyticsModels.swift */,
 				90327A582F1E100200BDA19A /* SocialModels.swift */,
 				90327A5A2F1E100300BDA19A /* HelpSupportModels.swift */,
+				90327A5C2F1E200000BDA19A /* CompanyPortfolioModels.swift */,
+				90327A5E2F1E200100BDA19A /* BookmarkModels.swift */,
+				90327A602F1E200200BDA19A /* RecommendationModels.swift */,
+				90327A622F1E200300BDA19A /* ChatModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1211,6 +1223,10 @@
 				90327A552F1E100100BDA19A /* AnalyticsModels.swift in Sources */,
 				90327A572F1E100200BDA19A /* SocialModels.swift in Sources */,
 				90327A592F1E100300BDA19A /* HelpSupportModels.swift in Sources */,
+				90327A5B2F1E200000BDA19A /* CompanyPortfolioModels.swift in Sources */,
+				90327A5D2F1E200100BDA19A /* BookmarkModels.swift in Sources */,
+				90327A5F2F1E200200BDA19A /* RecommendationModels.swift in Sources */,
+				90327A612F1E200300BDA19A /* ChatModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,

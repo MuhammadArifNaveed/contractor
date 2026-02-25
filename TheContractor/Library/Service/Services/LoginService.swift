@@ -872,6 +872,195 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Company Portfolio
+    /// Get company portfolio
+    func getCompanyPortfolio(companyId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/portfolio"
+        let params: [String: String] = ["company_id": companyId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add portfolio item
+    func addPortfolioItem(companyId: String, title: String, titleArabic: String, description: String, descriptionArabic: String, categoryId: String, location: String, completionDate: String, clientName: String?, projectCost: String?, images: [Data], completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/add_portfolio"
+        var params: [String: String] = ["company_id": companyId, "title": title, "title_arabic": titleArabic, "description": description, "description_arabic": descriptionArabic, "category_id": categoryId, "location": location, "completion_date": completionDate]
+        if let clientName = clientName { params["client_name"] = clientName }
+        if let projectCost = projectCost { params["project_cost"] = projectCost }
+        var imageDict: [String: Data] = [:]
+        for (index, imageData) in images.enumerated() {
+            imageDict["image\(index + 1)"] = imageData
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get company gallery
+    func getCompanyGallery(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/gallery"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload gallery images
+    func uploadGalleryImages(companyId: String, images: [Data], captions: [String]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/upload_gallery"
+        var params: [String: String] = ["company_id": companyId]
+        if let captions = captions {
+            for (index, caption) in captions.enumerated() {
+                params["caption\(index + 1)"] = caption
+            }
+        }
+        var imageDict: [String: Data] = [:]
+        for (index, imageData) in images.enumerated() {
+            imageDict["image\(index + 1)"] = imageData
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Bookmarks/Favorites
+    /// Get bookmarked companies
+    func getBookmarkedCompanies(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/bookmarked_companies"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Toggle company bookmark
+    func toggleCompanyBookmark(userId: String, companyId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/toggle_company_bookmark"
+        let params: [String: String] = ["user_id": userId, "company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get bookmarked workshops
+    func getBookmarkedWorkshops(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/bookmarked_workshops"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Toggle workshop bookmark
+    func toggleWorkshopBookmark(userId: String, workshopId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/toggle_workshop_bookmark"
+        let params: [String: String] = ["user_id": userId, "workshop_id": workshopId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get bookmarked freelancers
+    func getBookmarkedFreelancers(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/bookmarked_freelancers"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Toggle freelancer bookmark
+    func toggleFreelancerBookmark(userId: String, freelancerId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/toggle_freelancer_bookmark"
+        let params: [String: String] = ["user_id": userId, "freelancer_id": freelancerId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Recommendations
+    /// Get recommended companies
+    func getRecommendedCompanies(userId: String, categoryId: String?, limit: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/recommended_companies"
+        var params: [String: String] = ["user_id": userId, "limit": limit]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get recommended workshops
+    func getRecommendedWorkshops(userId: String, limit: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/recommended_workshops"
+        let params: [String: String] = ["user_id": userId, "limit": limit]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get recommended freelancers
+    func getRecommendedFreelancers(userId: String, skills: String?, limit: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/recommended_freelancers"
+        var params: [String: String] = ["user_id": userId, "limit": limit]
+        if let skills = skills { params["skills"] = skills }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Chat System
+    /// Get chat conversations
+    func getChatConversations(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Chat/conversations"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get chat messages
+    func getChatMessages(conversationId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Chat/messages"
+        let params: [String: String] = ["conversation_id": conversationId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Send chat message
+    func sendChatMessage(conversationId: String, senderId: String, receiverId: String, message: String, messageType: String, attachments: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Chat/send_message"
+        var params: [String: String] = ["conversation_id": conversationId, "sender_id": senderId, "receiver_id": receiverId, "message": message, "message_type": messageType]
+        var fileDict: [String: Data] = [:]
+        if let attachments = attachments {
+            for (index, fileData) in attachments.enumerated() {
+                fileDict["attachment\(index + 1)"] = fileData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Mark messages as read
+    func markMessagesAsRead(conversationId: String, userId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Chat/mark_read"
+        let params: [String: String] = ["conversation_id": conversationId, "user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Update typing status
+    func updateTypingStatus(conversationId: String, userId: String, isTyping: Bool, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Chat/typing_status"
+        let params: [String: String] = ["conversation_id": conversationId, "user_id": userId, "is_typing": isTyping ? "1" : "0"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
