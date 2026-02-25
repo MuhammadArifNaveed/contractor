@@ -609,6 +609,99 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - 24/7 Emergency Services
+    /// Get emergency companies (24/7 available)
+    func getEmergencyCompanies(categoryId: String?, cityId: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/emergency_companies"
+        var params: [String: String] = ["is_24x7": "1"]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        if let cityId = cityId { params["city_id"] = cityId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Submit emergency request
+    func submitEmergencyRequest(userId: String, companyId: String, description: String, location: String, lat: String, lng: String, urgencyLevel: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/emergency_request"
+        let params: [String: String] = ["user_id": userId, "company_id": companyId, "description": description, "location": location, "lat": lat, "lng": lng, "urgency_level": urgencyLevel]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Freelancer Dashboard
+    /// Get freelancer dashboard stats
+    func getFreelancerDashboard(freelancerId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Freelancer/dashboard"
+        let params: [String: String] = ["freelancer_id": freelancerId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get freelancer jobs
+    func getFreelancerJobs(freelancerId: String, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Freelancer/jobs"
+        var params: [String: String] = ["freelancer_id": freelancerId, "page_no": pageNo]
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Update freelancer profile with portfolio
+    func updateFreelancerProfile(userId: String, skills: String, experience: String, hourlyRate: String, availability: String, bio: String, portfolio: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Freelancer/update_profile"
+        var params: [String: String] = ["user_id": userId, "skills": skills, "experience": experience, "hourly_rate": hourlyRate, "availability": availability, "bio": bio]
+        var imageDict: [String: Data] = [:]
+        if let portfolio = portfolio {
+            for (index, imageData) in portfolio.enumerated() {
+                imageDict["portfolio\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - App Settings
+    /// Get app settings
+    func getAppSettings(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/app_settings"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Update app settings
+    func updateAppSettings(userId: String, settings: [String: String], completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/update_app_settings"
+        var params = settings
+        params["user_id"] = userId
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get available languages
+    func getLanguages(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/languages"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Check app version
+    func checkAppVersion(currentVersion: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/check_version"
+        let params: [String: String] = ["version": currentVersion, "platform": "ios"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
