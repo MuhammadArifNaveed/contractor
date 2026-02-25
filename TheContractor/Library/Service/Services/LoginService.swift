@@ -416,6 +416,96 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Notifications
+    /// Get user notifications
+    func getNotifications(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_notifications"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Mark notification as read
+    func markNotificationRead(notificationId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/mark_notification_read"
+        let params: [String: String] = ["notification_id": notificationId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Update notification settings
+    func updateNotificationSettings(userId: String, settings: [String: String], completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/update_notification_settings"
+        var params = settings
+        params["user_id"] = userId
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Reviews & Ratings
+    /// Get company reviews
+    func getCompanyReviews(companyId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/company_reviews"
+        let params: [String: String] = ["company_id": companyId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Submit review with optional images
+    func submitReview(companyId: String, userId: String, rating: String, comment: String, images: [Data]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/submit_review"
+        var params: [String: String] = ["company_id": companyId, "user_id": userId, "rating": rating, "comment": comment]
+        var imageDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                imageDict["image\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get company rating stats
+    func getCompanyRatingStats(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/company_rating_stats"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Memberships
+    /// Get membership plans
+    func getMembershipPlans(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/membership_plans"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get user membership
+    func getUserMembership(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_membership"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Purchase membership
+    func purchaseMembership(userId: String, planId: String, paymentMethod: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/purchase_membership"
+        let params: [String: String] = ["user_id": userId, "plan_id": planId, "payment_method": paymentMethod]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
