@@ -14,8 +14,8 @@ class Global {
     // MARK: - Session State
     /// Logged-in user (app user login)
     var user: UserViewModel!
-    /// Logged-in company (vendor/company login)
-    var companyVendor: CompanyVendor?
+    /// Logged-in company (vendor/company login) - temporarily disabled
+    // var companyVendor: CompanyVendor?
     /// True if either a user or a company is logged in
     var isLogedIn: Bool = false
     /// True if logged in as vendor/company

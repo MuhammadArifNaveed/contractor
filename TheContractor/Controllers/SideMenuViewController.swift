@@ -64,114 +64,63 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         if indexPath.row == 0{
             return 120
         }
-        else{
-            // All menu items are now visible
-            return 60
+        else if(indexPath.row > 1 && indexPath.row < 10){
+            return 0
         }
+        else if(indexPath.row == 20 || indexPath.row == 21){
+            return 0
+        }
+        else{
+            return 60
+            
+        }
+        
     }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
         let drawer = self.navigationController?.parent as! KYDrawerController
         drawer.setDrawerState(.closed, animated: true)
         let mainVC = (drawer.mainViewController as! UINavigationController).topViewController as! MainContainerViewController
         
-        if indexPath.row == 0 {
-            return
+        if(indexPath.row == 1){
+//            mainVC.lblHome.setTitleColor(UIColor.init(hexFromString: "FF525C"), for: .normal)
+//            mainVC.imgHome.tintColor = UIColor.init(hexFromString: "FF525C")
+           mainVC.showHomeController()
         }
-
-        let title = currentMenuList[indexPath.row - 1]["title"] as? String ?? ""
-
-        // Vendor menu handlers
-        if Global.shared.isVendor {
-            handleVendorMenuItem(title: title, mainVC: mainVC)
-            return
-        }
-        
-        // User menu handlers
-        if title == "Home" {
-            mainVC.showHomeController()
-        }
-        else if title == "Company Finder" {
-            mainVC.showSearchController()
-        }
-        else if title == "Submit Enquiry" {
-            // TODO: Navigate to Submit Enquiry screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Submit Enquiry")
-        }
-        else if title == "Enquiries" {
-            // TODO: Navigate to Enquiries list screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Enquiries")
-        }
-        else if title == "Submit Quotations" {
-            // TODO: Navigate to Submit Quotations screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Submit Quotations")
-        }
-        else if title == "Quotations" {
-            // TODO: Navigate to Quotations list screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Quotations")
-        }
-        else if title == "Complaints" {
-            // TODO: Navigate to Complaints screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Complaints")
-        }
-        else if title == "Estimations" {
-            mainVC.showEsstimationController()
-        }
-        else if title == "24/7 Companies" {
-            // TODO: Navigate to 24/7 Companies screen (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "24/7 Companies")
-        }
-        else if title == "Freelancers" {
+        else if(indexPath.row == 10){
+            // Freelancers
             mainVC.showFreelancersController()
         }
-        else if title == "Freelancer Dashboard" {
-            if Global.shared.isLogedIn {
-                mainVC.showFreelanceDashboardController()
-            }
-            else {
-                mainVC.loginUser()
-            }
-        }
-        else if title == "Workshop" {
-            mainVC.showWorkshopController()
-        }
-        else if title == "Rate Us" {
-            rateApp(in: mainVC)
-        }
-        else if title == "Share" {
-            shareApp(in: mainVC)
-        }
-        else {
+        else if(indexPath.row > 11 && indexPath.row < 20){
+             let title =  SideMenu.MENULIST[indexPath.row - 1]["title"] as! String
             var link = ""
-            if title == "About Us" {
+            if(indexPath.row == 12){
+
                 link = AppLinks.AboutUS
             }
-            else if title == "Advertisement" {
+            else if(indexPath.row == 13){
                 link = AppLinks.Advertisment
             }
-            else if title == "Become a Vendor" {
+            else if(indexPath.row == 14){
                 link = AppLinks.Vendor
             }
-            else if title == "Documentations" {
+            else if(indexPath.row == 15){
                 link = AppLinks.Documentation
             }
-            else if title == "Privacy Polices" {
+            else if(indexPath.row == 16){
                 link = AppLinks.Privacy
             }
-            else if title == "Terms & Conditions" {
+            else if(indexPath.row == 17){
                 link = AppLinks.Terms
             }
-            else if title == "Guide" {
+            else if(indexPath.row == 18){
                 link = AppLinks.Guide
             }
-            else if title == "Contact Us" {
+            else if(indexPath.row == 19){
                 link = AppLinks.ContactUS
             }
-
-            if !link.isEmpty {
-                mainVC.showWebController(title: title, link: link)
-            }
+            mainVC.showWebController(title: title, link: link)
+           
         }
     }
     
@@ -224,12 +173,16 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showFreelancersController()
         }
         else if title == "Freelancer Dashboard" {
+            // Temporarily disabled - showFreelanceDashboardController removed
+            /*
             if Global.shared.isLogedIn {
                 mainVC.showFreelanceDashboardController()
             }
             else {
                 mainVC.loginUser()
             }
+            */
+            showComingSoonAlert(in: mainVC, feature: "Freelancer Dashboard")
         }
         else if title == "Memberships" {
             // TODO: Navigate to Memberships (will be implemented in separate feature)
@@ -240,7 +193,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             showComingSoonAlert(in: mainVC, feature: "My Membership")
         }
         else if title == "Vendor Logout" {
-            mainVC.logoutVendor()
+            // Temporarily disabled - logoutVendor removed
+            // mainVC.logoutVendor()
+            showComingSoonAlert(in: mainVC, feature: "Vendor Logout")
         }
     }
     

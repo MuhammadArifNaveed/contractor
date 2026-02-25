@@ -13,22 +13,8 @@ class LoginService: BaseService {
     
     fileprivate func saveUserInfo(_ userInfo:UserViewModel) {
         Global.shared.user = userInfo
-        Global.shared.loginType = "user"
-        Global.shared.isLogedIn = true
         UserDefaultsManager.shared.isUserLoggedIn = true
-        UserDefaultsManager.shared.isCompanyLoggedIn = false
-        UserDefaultsManager.shared.loginType = "user"
         UserDefaultsManager.shared.userInfo = userInfo
-    }
-    
-    fileprivate func saveCompanyInfo(_ vendor: CompanyVendor) {
-        Global.shared.companyVendor = vendor
-        Global.shared.loginType = "company"
-        Global.shared.isLogedIn = true
-        UserDefaultsManager.shared.isUserLoggedIn = false
-        UserDefaultsManager.shared.isCompanyLoggedIn = true
-        UserDefaultsManager.shared.loginType = "company"
-        UserDefaultsManager.shared.companyInfo = vendor
     }
     
     //MARK:- Verify Url API
@@ -46,73 +32,16 @@ class LoginService: BaseService {
     }
     func getUserLogin(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.login
-        
-        // Create a custom session manager to intercept cookies
-        let manager = Alamofire.Session.default
-        
-        manager.request(completeURL, method: .post, parameters: params, encoding: URLEncoding.default, headers: getHeaders())
-            .validate(statusCode: 200...501)
-            .responseJSON { response in
-                switch response.result {
-                case .success(let value):
-                    // Extract and save session cookie from response headers
-                    if let responseHeaders = response.response?.allHeaderFields as? [String: Any],
-                       let cookies = responseHeaders["Set-Cookie"] as? String {
-                        // Extract ci_session from cookie string
-                        let cookieParts = cookies.components(separatedBy: ";")
-                        for part in cookieParts {
-                            let trimmedPart = part.trimmingCharacters(in: .whitespaces)
-                            if trimmedPart.hasPrefix("ci_session=") {
-                                let sessionValue = trimmedPart.replacingOccurrences(of: "ci_session=", with: "")
-                                UserDefaultsManager.shared.token = sessionValue
-                                break
-                            }
-                        }
-                    }
-                    
-                    let json = JSON(value)
-                    let parsedResponse = ResponseHandler.handleResponse(json)
-                    
-                if parsedResponse.serviceResponseType == .Success {
-                    let data = UserViewModel(json["user"])
-                    self.saveUserInfo(data)
-                    
-                    completion(parsedResponse.message,true)
-                }
-                    else{
-                      completion(parsedResponse.message,false)
-                    }
-                    
-                case .failure(let error):
-                    let errorMessage:String = error.localizedDescription
-                    print(errorMessage)
-                    completion(PopupMessages.SomethingWentWrong, false)
-                }
+        self.makePostAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
+            if success {
+                let data = UserViewModel( json!["user"])
+                Global.shared.user = data
+                Global.shared.isLogedIn = true
+                   
+                completion(message,true)
             }
-    }
-    
-    // MARK: - Company (Vendor) Login
-    /// Logs in a company using email + 4-digit pin code.
-    func loginCompany(email: String,
-                      pinCode: String,
-                      firebaseToken: String,
-                      completion: @escaping (_ error: String, _ success: Bool, _ vendor: CompanyVendor?) -> Void) {
-        let completeURL = EndPoints.BASE_URL + EndPoints.loginCompany
-        let params: [String: String] = [
-            "login_email": email,
-            "login_password": pinCode,
-            "device_type": "ios",
-            "firebase_token": firebaseToken
-        ]
-
-        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
-            if success, let json = json {
-                let vendorJSON = json["Vendor"]
-                let vendor = CompanyVendor(json: vendorJSON)
-                self.saveCompanyInfo(vendor)
-                completion(message, true, vendor)
-            } else {
-                completion(message, false, nil)
+            else{
+              completion(message,false)
             }
         }
     }

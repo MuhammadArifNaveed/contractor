@@ -84,6 +84,8 @@ class FreelancerListViewModel: ObservableObject {
         errorMessage = ""
 
         if Global.shared.loginType == "company" {
+            // FreelancingService temporarily disabled - service removed
+            /*
             FreelancingService.shared.fetchCompanyFreelancersList { [weak self] message, success, json in
                 DispatchQueue.main.async {
                     guard let self else { return }
@@ -138,6 +140,14 @@ class FreelancerListViewModel: ObservableObject {
                         self.freelancers = []
                     }
                 }
+            }
+            */
+            // Fallback to mock data for now
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                let mock = FreelancerListViewModel.mockData()
+                self.freelancers = mock.freelancers
+                self.isLoading = false
             }
         } else {
             // TODO: replace with real user-facing freelancers API when available.

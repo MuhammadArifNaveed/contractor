@@ -31,10 +31,6 @@ class MainContainerViewController: BaseViewController{
     
     weak var delegate:TopBarDelegate?
     var baseNavigationController:BaseNavigationController!
-
-    private var freelanceDashboardPreviousController: BaseNavigationController?
-    private var freelanceDashboardPreviousTopBarHidden: Bool = false
-    private var freelanceDashboardPreviousBottomBarHidden: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,7 +131,6 @@ class MainContainerViewController: BaseViewController{
     
     func showHomeController()  {
         self.topBarView.isHidden = false
-        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "HomeVC") as! BaseNavigationController
@@ -156,7 +151,6 @@ class MainContainerViewController: BaseViewController{
     }
    
     func showEsstimationController()  {
-        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "EsstimationVC") as! BaseNavigationController
@@ -177,7 +171,6 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showSearchController()  {
-        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "SearchVC") as! BaseNavigationController
@@ -197,7 +190,6 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showWorkshopController()  {
-        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "WorkshopVC") as! BaseNavigationController
@@ -217,7 +209,6 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showProfileController()  {
-        self.bottomBarView.isHidden = false
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "ProfileVC") as! BaseNavigationController
@@ -237,8 +228,6 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showWebController(title: String, link: String) {
-
-        self.bottomBarView.isHidden = false
 
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
 
@@ -273,7 +262,6 @@ class MainContainerViewController: BaseViewController{
     func showFreelancersController() {
         // Hide the top bar for Freelancers screen (it has its own navigation)
         self.topBarView.isHidden = true
-        self.bottomBarView.isHidden = false
         
         let freelancersVC = FreelancersHostingController()
         let controller = BaseNavigationController(rootViewController: freelancersVC)
@@ -292,59 +280,14 @@ class MainContainerViewController: BaseViewController{
         containerView.addSubview(controller.view)
         controller.didMove(toParent: self)
     }
+    
 
-    func showFreelanceDashboardController() {
-        if let oldRef = baseNavigationController {
-            freelanceDashboardPreviousController = oldRef
-            freelanceDashboardPreviousTopBarHidden = topBarView.isHidden
-            freelanceDashboardPreviousBottomBarHidden = bottomBarView.isHidden
-        }
-
-        self.topBarView.isHidden = true
-        self.bottomBarView.isHidden = true
-
-        let dashboardVC = FreelanceDashboardHostingController()
-        let controller = BaseNavigationController(rootViewController: dashboardVC)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
-
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-
-        baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
-    }
-
-    func dismissFreelanceDashboardController() {
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-
-        if let previous = freelanceDashboardPreviousController {
-            self.topBarView.isHidden = freelanceDashboardPreviousTopBarHidden
-            self.bottomBarView.isHidden = freelanceDashboardPreviousBottomBarHidden
-
-            baseNavigationController = previous
-            addChild(previous)
-            previous.view.frame = containerView.bounds
-            containerView.addSubview(previous.view)
-            previous.didMove(toParent: self)
-        }
-        else {
-            showHomeController()
-        }
-
-        freelanceDashboardPreviousController = nil
-    }
-
+    
+    
+    
+   
+    
+      
 
     //MARK:- Action methods
     @IBAction func actionBack(_ sender:UIButton){
@@ -367,117 +310,33 @@ class MainContainerViewController: BaseViewController{
     @IBAction func actionRightButton(_ sender: Any) {
         delegate?.rightButtonAction()
     }
-    /// Logs out the current user (user or company).
-    /// - Parameter showSuccessAlert: if true, shows a 3-second auto-dismissing
-    ///   "logged out" message on the login screen after navigation.
-    func logoutUser(showSuccessAlert: Bool = false) {
+    
+    func logoutUser() {
       
         Global.shared.user = nil
-        Global.shared.companyVendor = nil
         Global.shared.isLogedIn = false
-        Global.shared.loginType = ""
-        UserDefaultsManager.shared.clearAllLoginData()
-
-        GCD.async(.Main) {
+        Global.shared.user = UserViewModel()
+        UserDefaultsManager.shared.clearUserData()
+        GCD.async(.Main, delay: 1) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-
-            // Case 1: Login -> (nav) -> KYDrawerController stack
-            if let drawer = self.navigationController?.parent as? KYDrawerController,
-               let outerNav = drawer.navigationController {
-                outerNav.setViewControllers([loginVC], animated: true)
-
-                if showSuccessAlert {
-                    self.showLogoutSuccessAlert(on: loginVC)
-                }
-                return
-            }
-
-            // Case 2: App launched directly into KYDrawerController (SceneDelegate)
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = scene.windows.first {
-
-                let nav = UINavigationController(rootViewController: loginVC)
-                nav.navigationBar.isHidden = true
-                window.rootViewController = nav
-                window.makeKeyAndVisible()
-
-                if showSuccessAlert {
-                    self.showLogoutSuccessAlert(on: loginVC)
-                }
-            }
-        }
+            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            if let container = self.navigationController?.parent as? KYDrawerController {
+                container.navigationController?.setViewControllers([controller], animated: true)
+                container.navigationController?.popToRootViewController(animated: true)
+           }
+         }
      }
-
-    private func showLogoutSuccessAlert(on controller: UIViewController) {
-        // Small delay to ensure navigation has finished before presenting.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let alert = UIAlertController(
-                title: LocalStrings.success,
-                message: "You have been logged out successfully",
-                preferredStyle: .alert
-            )
-            controller.present(alert, animated: true, completion: nil)
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                alert.dismiss(animated: true, completion: nil)
-            }
-        }
-    }
-
-    func confirmLogoutUser() {
-        let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
-            self.logoutUser(showSuccessAlert: true)
-        }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func logoutVendor() {
-        let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
-            Global.shared.isVendor = false
-            NotificationCenter.default.post(name: NSNotification.Name("RefreshSideMenu"), object: nil)
-            self.logoutUser(showSuccessAlert: true)
-        }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-
     func loginUser() {
         Global.shared.user = nil
-        Global.shared.companyVendor = nil
-        Global.shared.isLogedIn = false
-        Global.shared.loginType = ""
-        UserDefaultsManager.shared.clearAllLoginData()
-
-        GCD.async(.Main) {
+        UserDefaultsManager.shared.clearUserData()
+        GCD.async(.Main, delay: 1) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-
-            // Case 1: App was launched from Login inside a navigation controller
-            // and KYDrawerController was pushed on top. In this case we can
-            // simply reset the outer navigation controller's stack.
-            if let drawer = self.navigationController?.parent as? KYDrawerController,
-               let outerNav = drawer.navigationController {
-                outerNav.setViewControllers([loginVC], animated: true)
-                return
-            }
-
-            // Case 2: App was launched directly into KYDrawerController (e.g. via
-            // SceneDelegate auto-login). In this case there may not be an outer
-            // navigation controller, so we replace the window's root controller
-            // with a fresh navigation controller containing the login screen.
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = scene.windows.first {
-
-                let nav = UINavigationController(rootViewController: loginVC)
-                nav.navigationBar.isHidden = true
-                window.rootViewController = nav
-                window.makeKeyAndVisible()
-            }
-        }
+            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            if let container = self.navigationController?.parent as? KYDrawerController {
+                container.navigationController?.setViewControllers([controller], animated: true)
+                container.navigationController?.popToRootViewController(animated: true)
+           }
+         }
      }
     
 }

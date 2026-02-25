@@ -102,6 +102,8 @@ class UserDefaultsManager {
     }
 
     /// Stored company/vendor info using Codable support
+    // Temporarily disabled - CompanyVendor model removed
+    /*
     var companyInfo: CompanyVendor? {
         set {
             manager.set(codable: newValue, forKey: UserDefaultsKeys.loggedInCompanyInfo)
@@ -111,6 +113,7 @@ class UserDefaultsManager {
             return manager.codable(CompanyVendor.self, forKey: UserDefaultsKeys.loggedInCompanyInfo)
         }
     }
+    */
  
    
     func clearUserData() {

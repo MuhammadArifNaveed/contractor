@@ -20,9 +20,10 @@ struct FreelancersView: View {
         Global.shared.isLogedIn && Global.shared.loginType == "company"
     }
     
-    private var cartManager: FreelancerCartManager {
-        FreelancerCartManager.shared
-    }
+    // Temporarily disabled - FreelancerCartManager removed
+    // private var cartManager: FreelancerCartManager {
+    //     FreelancerCartManager.shared
+    // }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -44,13 +45,13 @@ struct FreelancersView: View {
                                 FreelancerCardView(
                                     freelancer: viewModel.freelancers[index],
                                     isCompanyLoggedIn: isCompanyLoggedIn,
-                                    isSelected: cartManager.isFreelancerSelected(viewModel.freelancers[index].id),
+                                    isSelected: false, // cartManager disabled
                                     onSelectTapped: {
-                                        selectedFreelancerForDialog = viewModel.freelancers[index]
+                                        // selectedFreelancerForDialog = viewModel.freelancers[index]
                                     },
                                     onRemoveTapped: {
-                                        cartManager.removeFreelancer(viewModel.freelancers[index].id)
-                                        updateCartCount()
+                                        // cartManager.removeFreelancer(viewModel.freelancers[index].id)
+                                        // updateCartCount()
                                     }
                                 )
                             }
@@ -68,7 +69,8 @@ struct FreelancersView: View {
                     .transition(.move(edge: .bottom))
             }
             
-            // Selection dialog overlay
+            // Selection dialog overlay - temporarily disabled
+            /*
             if let freelancer = selectedFreelancerForDialog {
                 FreelancerSelectionDialog(
                     freelancer: freelancer,
@@ -81,6 +83,7 @@ struct FreelancersView: View {
                     }
                 )
             }
+            */
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -93,18 +96,25 @@ struct FreelancersView: View {
                 performSearch(with: filter)
             }
         }
+        // Checkout view temporarily disabled
+        /*
         .fullScreenCover(isPresented: $showCheckout) {
             FreelancerCheckoutView(onDismiss: {
                 showCheckout = false
                 updateCartCount()
             })
         }
+        */
     }
     
     private func updateCartCount() {
+        // cartManager temporarily disabled
+        /*
         withAnimation(.easeInOut(duration: 0.2)) {
             cartCount = cartManager.totalFreelancers
         }
+        */
+        cartCount = 0
     }
     
     private var checkoutFloatingBar: some View {

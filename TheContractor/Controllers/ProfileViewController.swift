@@ -103,7 +103,7 @@ extension ProfileViewController : UITableViewDelegate , UITableViewDataSource{
 
             let cancel = UIAlertAction(title: LocalStrings.Cancel, style: .cancel, handler: nil)
             let confirm = UIAlertAction(title: LocalStrings.Yes, style: .destructive) { _ in
-                container.logoutUser(showSuccessAlert: true)
+                container.logoutUser()
             }
 
             alert.addAction(cancel)

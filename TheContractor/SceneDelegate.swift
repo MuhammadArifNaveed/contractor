@@ -20,16 +20,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if UserDefaultsManager.shared.isUserLoggedIn,
                let storedUser = UserDefaultsManager.shared.userInfo {
                 Global.shared.user = storedUser
-                Global.shared.companyVendor = nil
+                // Global.shared.companyVendor = nil  // Temporarily disabled
                 Global.shared.isLogedIn = true
                 Global.shared.loginType = "user"
-            } else if UserDefaultsManager.shared.isCompanyLoggedIn,
+            }
+            // Temporarily disabled - CompanyVendor model removed
+            /*
+            else if UserDefaultsManager.shared.isCompanyLoggedIn,
                       let storedCompany = UserDefaultsManager.shared.companyInfo {
                 Global.shared.user = nil
                 Global.shared.companyVendor = storedCompany
                 Global.shared.isLogedIn = true
                 Global.shared.loginType = "company"
             }
+            */
 
             guard let windowScene = (scene as? UIWindowScene) else { return }
             let window = UIWindow(windowScene: windowScene)

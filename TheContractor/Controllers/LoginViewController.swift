@@ -66,8 +66,14 @@ class LoginViewController: BaseViewController {
     }
 
     @IBAction func actionLoginAsCompany(_ sender: Any) {
+        // Temporarily disabled - CompanyLoginHostingController removed
+        /*
         let controller = CompanyLoginHostingController()
         self.navigationController?.pushViewController(controller, animated: true)
+        */
+        let alert = UIAlertController(title: "Coming Soon", message: "Company login will be available in an upcoming update.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true)
     }
     
 }
