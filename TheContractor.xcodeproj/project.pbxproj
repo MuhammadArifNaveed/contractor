@@ -196,6 +196,10 @@
 		90327A8D2F1E800100BDA19A /* PerformanceTrackingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A8E2F1E800100BDA19A /* PerformanceTrackingModels.swift */; };
 		90327A8F2F1E800200BDA19A /* InventoryManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A902F1E800200BDA19A /* InventoryManagementModels.swift */; };
 		90327A912F1E800300BDA19A /* AuditLogModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A922F1E800300BDA19A /* AuditLogModels.swift */; };
+		90327A932F1E900000BDA19A /* EquipmentRentalModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A942F1E900000BDA19A /* EquipmentRentalModels.swift */; };
+		90327A952F1E900100BDA19A /* TaskManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A962F1E900100BDA19A /* TaskManagementModels.swift */; };
+		90327A972F1E900200BDA19A /* InvoicingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A982F1E900200BDA19A /* InvoicingModels.swift */; };
+		90327A992F1E900300BDA19A /* CustomerPortalModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A9A2F1E900300BDA19A /* CustomerPortalModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -417,6 +421,10 @@
 		90327A8E2F1E800100BDA19A /* PerformanceTrackingModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerformanceTrackingModels.swift; path = TheContractor/Models/PerformanceTrackingModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A902F1E800200BDA19A /* InventoryManagementModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InventoryManagementModels.swift; path = TheContractor/Models/InventoryManagementModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A922F1E800300BDA19A /* AuditLogModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuditLogModels.swift; path = TheContractor/Models/AuditLogModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A942F1E900000BDA19A /* EquipmentRentalModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EquipmentRentalModels.swift; path = TheContractor/Models/EquipmentRentalModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A962F1E900100BDA19A /* TaskManagementModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskManagementModels.swift; path = TheContractor/Models/TaskManagementModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A982F1E900200BDA19A /* InvoicingModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InvoicingModels.swift; path = TheContractor/Models/InvoicingModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A9A2F1E900300BDA19A /* CustomerPortalModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomerPortalModels.swift; path = TheContractor/Models/CustomerPortalModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -661,6 +669,10 @@
 				90327A8E2F1E800100BDA19A /* PerformanceTrackingModels.swift */,
 				90327A902F1E800200BDA19A /* InventoryManagementModels.swift */,
 				90327A922F1E800300BDA19A /* AuditLogModels.swift */,
+				90327A942F1E900000BDA19A /* EquipmentRentalModels.swift */,
+				90327A962F1E900100BDA19A /* TaskManagementModels.swift */,
+				90327A982F1E900200BDA19A /* InvoicingModels.swift */,
+				90327A9A2F1E900300BDA19A /* CustomerPortalModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1323,6 +1335,10 @@
 				90327A8D2F1E800100BDA19A /* PerformanceTrackingModels.swift in Sources */,
 				90327A8F2F1E800200BDA19A /* InventoryManagementModels.swift in Sources */,
 				90327A912F1E800300BDA19A /* AuditLogModels.swift in Sources */,
+				90327A932F1E900000BDA19A /* EquipmentRentalModels.swift in Sources */,
+				90327A952F1E900100BDA19A /* TaskManagementModels.swift in Sources */,
+				90327A972F1E900200BDA19A /* InvoicingModels.swift in Sources */,
+				90327A992F1E900300BDA19A /* CustomerPortalModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
