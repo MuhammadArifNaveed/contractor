@@ -162,6 +162,24 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Cart System
+    /// Check cart limit for current user
+    func checkCartLimit(userId: String,
+                       completion: @escaping (_ message: String, _ success: Bool, _ cartLimit: Int, _ availableLimit: Int) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/check_cart_limit"
+        let params: [String: String] = ["user_id": userId]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                let cartLimit = json["cart_limit"].intValue
+                let availableLimit = json["available_cart_limit"].intValue
+                completion(message, true, cartLimit, availableLimit)
+            } else {
+                completion(message, false, 0, 0)
+            }
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
