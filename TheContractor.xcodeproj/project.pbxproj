@@ -204,6 +204,10 @@
 		90327A9D2F1EA00100BDA19A /* ComplianceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A9E2F1EA00100BDA19A /* ComplianceModels.swift */; };
 		90327A9F2F1EA00200BDA19A /* ResourcePlanningModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AA02F1EA00200BDA19A /* ResourcePlanningModels.swift */; };
 		90327AA12F1EA00300BDA19A /* CommunicationCenterModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AA22F1EA00300BDA19A /* CommunicationCenterModels.swift */; };
+		90327AA32F1EB00000BDA19A /* VendorOnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AA42F1EB00000BDA19A /* VendorOnboardingModels.swift */; };
+		90327AA52F1EB00100BDA19A /* QualityControlModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AA62F1EB00100BDA19A /* QualityControlModels.swift */; };
+		90327AA72F1EB00200BDA19A /* FleetManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AA82F1EB00200BDA19A /* FleetManagementModels.swift */; };
+		90327AA92F1EB00300BDA19A /* TrainingCenterModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327AAA2F1EB00300BDA19A /* TrainingCenterModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -433,6 +437,10 @@
 		90327A9E2F1EA00100BDA19A /* ComplianceModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ComplianceModels.swift; path = TheContractor/Models/ComplianceModels.swift; sourceTree = SOURCE_ROOT; };
 		90327AA02F1EA00200BDA19A /* ResourcePlanningModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ResourcePlanningModels.swift; path = TheContractor/Models/ResourcePlanningModels.swift; sourceTree = SOURCE_ROOT; };
 		90327AA22F1EA00300BDA19A /* CommunicationCenterModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CommunicationCenterModels.swift; path = TheContractor/Models/CommunicationCenterModels.swift; sourceTree = SOURCE_ROOT; };
+		90327AA42F1EB00000BDA19A /* VendorOnboardingModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorOnboardingModels.swift; path = TheContractor/Models/VendorOnboardingModels.swift; sourceTree = SOURCE_ROOT; };
+		90327AA62F1EB00100BDA19A /* QualityControlModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QualityControlModels.swift; path = TheContractor/Models/QualityControlModels.swift; sourceTree = SOURCE_ROOT; };
+		90327AA82F1EB00200BDA19A /* FleetManagementModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FleetManagementModels.swift; path = TheContractor/Models/FleetManagementModels.swift; sourceTree = SOURCE_ROOT; };
+		90327AAA2F1EB00300BDA19A /* TrainingCenterModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TrainingCenterModels.swift; path = TheContractor/Models/TrainingCenterModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -685,6 +693,10 @@
 				90327A9E2F1EA00100BDA19A /* ComplianceModels.swift */,
 				90327AA02F1EA00200BDA19A /* ResourcePlanningModels.swift */,
 				90327AA22F1EA00300BDA19A /* CommunicationCenterModels.swift */,
+				90327AA42F1EB00000BDA19A /* VendorOnboardingModels.swift */,
+				90327AA62F1EB00100BDA19A /* QualityControlModels.swift */,
+				90327AA82F1EB00200BDA19A /* FleetManagementModels.swift */,
+				90327AAA2F1EB00300BDA19A /* TrainingCenterModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1355,6 +1367,10 @@
 				90327A9D2F1EA00100BDA19A /* ComplianceModels.swift in Sources */,
 				90327A9F2F1EA00200BDA19A /* ResourcePlanningModels.swift in Sources */,
 				90327AA12F1EA00300BDA19A /* CommunicationCenterModels.swift in Sources */,
+				90327AA32F1EB00000BDA19A /* VendorOnboardingModels.swift in Sources */,
+				90327AA52F1EB00100BDA19A /* QualityControlModels.swift in Sources */,
+				90327AA72F1EB00200BDA19A /* FleetManagementModels.swift in Sources */,
+				90327AA92F1EB00300BDA19A /* TrainingCenterModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
