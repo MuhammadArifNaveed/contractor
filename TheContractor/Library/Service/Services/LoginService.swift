@@ -182,25 +182,94 @@ class LoginService: BaseService {
     
     // MARK: - Enquiries
     /// Submit enquiry to selected companies
-    func submitEnquiry(userId: String,
-                      firstName: String,
-                      lastName: String,
-                      phone: String,
-                      email: String,
-                      companiesJSON: String,
+    func submitEnquiry(userId: String, firstName: String, lastName: String, phone: String, email: String, companiesJSON: String,
                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Home/send_enquiries"
-        let params: [String: String] = [
-            "user_id": userId,
-            "first_name": firstName,
-            "last_name": lastName,
-            "phone": phone,
-            "email": email,
-            "companies": companiesJSON
-        ]
-        
+        let params: [String: String] = ["user_id": userId, "first_name": firstName, "last_name": lastName, "phone": phone, "email": email, "companies": companiesJSON]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
+        }
+    }
+    
+    /// Get enquiries list for user
+    func getEnquiries(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_enquiries"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get enquiry detail
+    func getEnquiryDetail(enquiryId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/enquiry_detail"
+        let params: [String: String] = ["enquiry_id": enquiryId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Quotations
+    /// Submit quotation request
+    func submitQuotationRequest(userId: String, companyId: String, description: String, location: String, dateTime: String,
+                               completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/send_quotation_request"
+        let params: [String: String] = ["user_id": userId, "company_id": companyId, "description": description, "location": location, "date_time": dateTime]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get quotations list
+    func getQuotations(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_quotations"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get quotation detail
+    func getQuotationDetail(quotationId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/quotation_detail"
+        let params: [String: String] = ["quotation_id": quotationId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Complaints
+    /// Submit complaint with optional images
+    func submitComplaint(userId: String, companyId: String, subject: String, description: String, images: [Data]?,
+                        completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/send_complaint"
+        var params: [String: String] = ["user_id": userId, "company_id": companyId, "subject": subject, "description": description]
+        var imageDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                imageDict["image\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: true) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get complaints list
+    func getComplaints(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_complaints"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get complaint detail
+    func getComplaintDetail(complaintId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/complaint_detail"
+        let params: [String: String] = ["complaint_id": complaintId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
         }
     }
     

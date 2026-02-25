@@ -147,6 +147,9 @@
 		90327A2B2F1D900000BDA19A /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A2C2F1D900000BDA19A /* CartItem.swift */; };
 		90327A2D2F1D900100BDA19A /* CartManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A2E2F1D900100BDA19A /* CartManager.swift */; };
 		90327A2F2F1DA00000BDA19A /* EnquiryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A302F1DA00000BDA19A /* EnquiryModels.swift */; };
+		90327A312F1DB00000BDA19A /* EnquiryDetailModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A322F1DB00000BDA19A /* EnquiryDetailModels.swift */; };
+		90327A332F1DB00100BDA19A /* QuotationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A342F1DB00100BDA19A /* QuotationModels.swift */; };
+		90327A352F1DB00200BDA19A /* ComplaintModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A362F1DB00200BDA19A /* ComplaintModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -319,6 +322,9 @@
 		90327A2C2F1D900000BDA19A /* CartItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CartItem.swift; path = TheContractor/Models/CartItem.swift; sourceTree = SOURCE_ROOT; };
 		90327A2E2F1D900100BDA19A /* CartManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartManager.swift; sourceTree = "<group>"; };
 		90327A302F1DA00000BDA19A /* EnquiryModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnquiryModels.swift; path = TheContractor/Models/EnquiryModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A322F1DB00000BDA19A /* EnquiryDetailModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnquiryDetailModels.swift; path = TheContractor/Models/EnquiryDetailModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A342F1DB00100BDA19A /* QuotationModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QuotationModels.swift; path = TheContractor/Models/QuotationModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A362F1DB00200BDA19A /* ComplaintModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ComplaintModels.swift; path = TheContractor/Models/ComplaintModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -514,6 +520,9 @@
 				90327A202F1D500100BDA19A /* CompanyRegistrationViewModel.swift */,
 				90327A2C2F1D900000BDA19A /* CartItem.swift */,
 				90327A302F1DA00000BDA19A /* EnquiryModels.swift */,
+				90327A322F1DB00000BDA19A /* EnquiryDetailModels.swift */,
+				90327A342F1DB00100BDA19A /* QuotationModels.swift */,
+				90327A362F1DB00200BDA19A /* ComplaintModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1127,6 +1136,9 @@
 				90327A2B2F1D900000BDA19A /* CartItem.swift in Sources */,
 				90327A2D2F1D900100BDA19A /* CartManager.swift in Sources */,
 				90327A2F2F1DA00000BDA19A /* EnquiryModels.swift in Sources */,
+				90327A312F1DB00000BDA19A /* EnquiryDetailModels.swift in Sources */,
+				90327A332F1DB00100BDA19A /* QuotationModels.swift in Sources */,
+				90327A352F1DB00200BDA19A /* ComplaintModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
