@@ -2780,6 +2780,189 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Expense Tracking
+    /// Submit expense
+    func submitExpense(companyId: String, projectId: String?, categoryId: String, amount: String, currency: String, expenseDate: String, description: String, paymentMethod: String, receipt: Data?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/submit_expense"
+        var params: [String: String] = ["company_id": companyId, "category_id": categoryId, "amount": amount, "currency": currency, "expense_date": expenseDate, "description": description, "payment_method": paymentMethod]
+        if let projectId = projectId { params["project_id"] = projectId }
+        var fileDict: [String: Data] = [:]
+        if let receipt = receipt { fileDict["receipt"] = receipt }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get expenses
+    func getExpenses(companyId: String, projectId: String?, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/expenses"
+        var params: [String: String] = ["company_id": companyId, "page_no": pageNo]
+        if let projectId = projectId { params["project_id"] = projectId }
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Approve expense
+    func approveExpense(expenseId: String, status: String, notes: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Admin/approve_expense"
+        var params: [String: String] = ["expense_id": expenseId, "status": status]
+        if let notes = notes { params["notes"] = notes }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get expense report
+    func getExpenseReport(companyId: String, dateFrom: String, dateTo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/expense_report"
+        let params: [String: String] = ["company_id": companyId, "date_from": dateFrom, "date_to": dateTo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Project Milestones
+    /// Get project milestones
+    func getProjectMilestones(projectId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/project_milestones"
+        let params: [String: String] = ["project_id": projectId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create milestone
+    func createMilestone(projectId: String, milestoneName: String, description: String, targetDate: String, assignedTo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/create_milestone"
+        let params: [String: String] = ["project_id": projectId, "milestone_name": milestoneName, "description": description, "target_date": targetDate, "assigned_to": assignedTo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Update milestone progress
+    func updateMilestoneProgress(milestoneId: String, progress: String, status: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/update_milestone_progress"
+        let params: [String: String] = ["milestone_id": milestoneId, "progress": progress, "status": status]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get project timeline
+    func getProjectTimeline(projectId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/project_timeline"
+        let params: [String: String] = ["project_id": projectId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Warranty Management
+    /// Get warranties
+    func getWarranties(companyId: String?, projectId: String?, status: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/warranties"
+        var params: [String: String] = [:]
+        if let companyId = companyId { params["company_id"] = companyId }
+        if let projectId = projectId { params["project_id"] = projectId }
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// File warranty claim
+    func fileWarrantyClaim(warrantyId: String, userId: String, issueDescription: String, priority: String, images: [Data]?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/file_warranty_claim"
+        let params: [String: String] = ["warranty_id": warrantyId, "user_id": userId, "issue_description": issueDescription, "priority": priority]
+        var fileDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                fileDict["image\(index + 1)"] = imageData
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: fileDict, params: params, isImageData: !fileDict.isEmpty) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get warranty claims
+    func getWarrantyClaims(warrantyId: String?, userId: String?, status: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/warranty_claims"
+        var params: [String: String] = [:]
+        if let warrantyId = warrantyId { params["warranty_id"] = warrantyId }
+        if let userId = userId { params["user_id"] = userId }
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Schedule warranty inspection
+    func scheduleWarrantyInspection(warrantyId: String, inspectorName: String, inspectionDate: String, inspectionType: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/schedule_warranty_inspection"
+        let params: [String: String] = ["warranty_id": warrantyId, "inspector_name": inspectorName, "inspection_date": inspectionDate, "inspection_type": inspectionType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Service History
+    /// Get service history
+    func getServiceHistory(userId: String, companyId: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/service_history"
+        var params: [String: String] = ["user_id": userId]
+        if let companyId = companyId { params["company_id"] = companyId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add service record
+    func addServiceRecord(userId: String, companyId: String, serviceType: String, description: String, cost: String, technicianName: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/add_service_record"
+        let params: [String: String] = ["user_id": userId, "company_id": companyId, "service_type": serviceType, "description": description, "cost": cost, "technician_name": technicianName]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get maintenance schedule
+    func getMaintenanceSchedule(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/maintenance_schedule"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Create service report
+    func createServiceReport(serviceRecordId: String, workPerformed: String, recommendations: String, parts: [[String: String]]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/create_service_report"
+        var params: [String: String] = ["service_record_id": serviceRecordId, "work_performed": workPerformed, "recommendations": recommendations]
+        if let parts = parts {
+            for (index, part) in parts.enumerated() {
+                for (key, value) in part {
+                    params["part\(index + 1)_\(key)"] = value
+                }
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Send service reminder
+    func sendServiceReminder(userId: String, assetId: String, reminderType: String, message: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Admin/send_service_reminder"
+        let params: [String: String] = ["user_id": userId, "asset_id": assetId, "reminder_type": reminderType, "message": message]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
