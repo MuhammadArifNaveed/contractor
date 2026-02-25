@@ -1405,6 +1405,182 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Push Notifications
+    /// Register device for push notifications
+    func registerPushDevice(userId: String, deviceToken: String, platform: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/register_push_device"
+        let params: [String: String] = ["user_id": userId, "device_token": deviceToken, "platform": platform]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Update push notification settings
+    func updatePushSettings(userId: String, settings: [String: String], completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/update_push_settings"
+        var params = settings
+        params["user_id"] = userId
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get push notification history
+    func getPushNotifications(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/push_notifications"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Send push notification
+    func sendPushNotification(userId: String, title: String, body: String, notificationType: String, data: [String: String]?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Admin/send_push_notification"
+        var params: [String: String] = ["user_id": userId, "title": title, "body": body, "notification_type": notificationType]
+        if let data = data {
+            for (key, value) in data {
+                params["data_\(key)"] = value
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - QR Codes
+    /// Generate QR code
+    func generateQRCode(companyId: String, qrType: String, data: [String: String], expiryHours: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/generate_qr_code"
+        var params: [String: String] = ["company_id": companyId, "qr_type": qrType]
+        if let expiryHours = expiryHours { params["expiry_hours"] = expiryHours }
+        for (key, value) in data {
+            params["data_\(key)"] = value
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Scan QR code
+    func scanQRCode(qrData: String, userId: String?, latitude: String?, longitude: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/scan_qr_code"
+        var params: [String: String] = ["qr_data": qrData]
+        if let userId = userId { params["user_id"] = userId }
+        if let latitude = latitude { params["latitude"] = latitude }
+        if let longitude = longitude { params["longitude"] = longitude }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get company QR codes
+    func getCompanyQRCodes(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/qr_codes"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get QR scan analytics
+    func getQRScanAnalytics(qrId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/qr_scan_analytics"
+        let params: [String: String] = ["qr_id": qrId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Barcode Scanner
+    /// Scan barcode
+    func scanBarcode(barcode: String, barcodeType: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/scan_barcode"
+        let params: [String: String] = ["barcode": barcode, "barcode_type": barcodeType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add product with barcode
+    func addBarcodeProduct(barcode: String, productName: String, productNameArabic: String, categoryId: String, manufacturer: String, price: String, description: String, descriptionArabic: String, image: Data?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/add_barcode_product"
+        let params: [String: String] = ["barcode": barcode, "product_name": productName, "product_name_arabic": productNameArabic, "category_id": categoryId, "manufacturer": manufacturer, "price": price, "description": description, "description_arabic": descriptionArabic]
+        var imageDict: [String: Data] = [:]
+        if let image = image { imageDict["image"] = image }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: imageDict, params: params, isImageData: !imageDict.isEmpty) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Order material by barcode
+    func orderMaterialByBarcode(userId: String, companyId: String, barcode: String, quantity: String, deliveryAddress: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/order_material"
+        let params: [String: String] = ["user_id": userId, "company_id": companyId, "barcode": barcode, "quantity": quantity, "delivery_address": deliveryAddress]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get material orders
+    func getMaterialOrders(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/material_orders"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Export & Reports
+    /// Request export
+    func requestExport(userId: String, exportType: String, format: String, dateFrom: String, dateTo: String, filters: [String: String]?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/request_export"
+        var params: [String: String] = ["user_id": userId, "export_type": exportType, "format": format, "date_from": dateFrom, "date_to": dateTo]
+        if let filters = filters {
+            for (key, value) in filters {
+                params["filter_\(key)"] = value
+            }
+        }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get export requests
+    func getExportRequests(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/export_requests"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get report templates
+    func getReportTemplates(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/report_templates"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Generate dashboard report
+    func generateDashboardReport(userId: String, reportType: String, dateFrom: String, dateTo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/generate_dashboard_report"
+        let params: [String: String] = ["user_id": userId, "report_type": reportType, "date_from": dateFrom, "date_to": dateTo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Download report
+    func downloadReport(exportId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/download_report"
+        let params: [String: String] = ["export_id": exportId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
