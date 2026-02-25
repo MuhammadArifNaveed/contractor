@@ -425,6 +425,26 @@ class MainContainerViewController: BaseViewController{
         }
     }
 
+    func confirmLogoutUser() {
+        let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+            self.logoutUser(showSuccessAlert: true)
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func logoutVendor() {
+        let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+            Global.shared.isVendor = false
+            NotificationCenter.default.post(name: NSNotification.Name("RefreshSideMenu"), object: nil)
+            self.logoutUser(showSuccessAlert: true)
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
     func loginUser() {
         Global.shared.user = nil
         Global.shared.companyVendor = nil

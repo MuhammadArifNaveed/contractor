@@ -18,6 +18,8 @@ class Global {
     var companyVendor: CompanyVendor?
     /// True if either a user or a company is logged in
     var isLogedIn: Bool = false
+    /// True if logged in as vendor/company
+    var isVendor: Bool = false
     /// Last known login type ("user" or "company")
     var loginType: String = ""
 

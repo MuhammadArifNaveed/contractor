@@ -10,18 +10,44 @@ import UIKit
 class SideMenuViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
+    
+    private var currentMenuList: [[String: String]] {
+        return Global.shared.isVendor ? VendorMenu.MENULIST : SideMenu.MENULIST
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupNotifications()
     }
-
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshMenu),
+            name: NSNotification.Name("RefreshSideMenu"),
+            object: nil
+        )
+    }
+    
+    @objc private func refreshMenu() {
+        tableView.reloadData()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
+
 extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SideMenu.MENULIST.count + 1
+        return currentMenuList.count + 1
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.row == 0){
             let cell = tableView.dequeueReusableCell(withIdentifier: "SideMenuHeaderTableViewCell") as! SideMenuHeaderTableViewCell
@@ -29,7 +55,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             
         }else{
             let cell = tableView.dequeueReusableCell(withIdentifier: "SideMenuTableViewCell") as! SideMenuTableViewCell
-            cell.configureView(side: SideMenu.MENULIST[indexPath.row - 1])
+            cell.configureView(side: currentMenuList[indexPath.row - 1])
             return cell
         }
         
@@ -54,9 +80,15 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             return
         }
 
-        let title = SideMenu.MENULIST[indexPath.row - 1]["title"] as? String ?? ""
+        let title = currentMenuList[indexPath.row - 1]["title"] as? String ?? ""
 
-        // Navigation handlers for all menu items
+        // Vendor menu handlers
+        if Global.shared.isVendor {
+            handleVendorMenuItem(title: title, mainVC: mainVC)
+            return
+        }
+        
+        // User menu handlers
         if title == "Home" {
             mainVC.showHomeController()
         }
@@ -144,6 +176,73 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
     }
     
     // MARK: - Helper Methods
+    
+    private func handleVendorMenuItem(title: String, mainVC: MainContainerViewController) {
+        if title == "Home" {
+            mainVC.showHomeController()
+        }
+        else if title == "Inbox" {
+            // TODO: Navigate to Inbox (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Inbox")
+        }
+        else if title == "Vendor Rating" {
+            // TODO: Navigate to Vendor Rating (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Vendor Rating")
+        }
+        else if title == "Enquiries" {
+            // TODO: Navigate to Vendor Enquiries (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Enquiries")
+        }
+        else if title == "Quotations" {
+            // TODO: Navigate to Vendor Quotations (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Quotations")
+        }
+        else if title == "Post Workshop" {
+            // TODO: Navigate to Post Workshop (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Post Workshop")
+        }
+        else if title == "My Workshops" {
+            // TODO: Navigate to My Workshops (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "My Workshops")
+        }
+        else if title == "All Workshops" {
+            mainVC.showWorkshopController()
+        }
+        else if title == "Interested Workshops" {
+            // TODO: Navigate to Interested Workshops (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Interested Workshops")
+        }
+        else if title == "Jobs Portal" {
+            // TODO: Navigate to Jobs Portal (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Jobs Portal")
+        }
+        else if title == "Available Applicant" {
+            // TODO: Navigate to Available Applicant (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Available Applicant")
+        }
+        else if title == "Freelancers" {
+            mainVC.showFreelancersController()
+        }
+        else if title == "Freelancer Dashboard" {
+            if Global.shared.isLogedIn {
+                mainVC.showFreelanceDashboardController()
+            }
+            else {
+                mainVC.loginUser()
+            }
+        }
+        else if title == "Memberships" {
+            // TODO: Navigate to Memberships (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Memberships")
+        }
+        else if title == "My Membership" {
+            // TODO: Navigate to My Membership (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "My Membership")
+        }
+        else if title == "Vendor Logout" {
+            mainVC.logoutVendor()
+        }
+    }
     
     private func showComingSoonAlert(in viewController: UIViewController, feature: String) {
         let alert = UIAlertController(
