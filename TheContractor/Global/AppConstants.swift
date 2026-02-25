@@ -48,6 +48,68 @@ struct EndPoints {
    
 }
 
+struct ImageURLs {
+    
+    /// Base URL for the application (without /rest/)
+    static let BASE_URL = "https://contractor.bidcont.com/"
+    
+    /// Profile images for users
+    static let PROFILE_IMAGE_URL = BASE_URL + "uploads/users/"
+    
+    /// Profile videos for applicants
+    static let PROFILE_VIDEO_URL = BASE_URL + "uploads/applicant_videos/"
+    
+    /// Category icons
+    static let CATEGORIES_IMAGE_URL = BASE_URL + "uploads/icons/"
+    
+    /// Company logos and images
+    static let COMPANIES_IMAGE_URL = BASE_URL + "uploads/companies/"
+    
+    /// Quotation images
+    static let QUOTATION_IMAGE_URL = BASE_URL + "uploads/quotations/"
+    
+    /// Workshop images
+    static let WORKSHOP_IMAGE_URL = BASE_URL + "uploads/workshop/"
+    
+    /// Downloadable quotation documents
+    static let DOWNLOAD_QUOTATIONS_IMAGE_URL = BASE_URL + "uploads/documents/"
+    
+    /// Helper method to construct full image URL
+    /// - Parameters:
+    ///   - baseURL: The base URL for the image type
+    ///   - imageName: The image file name
+    /// - Returns: Complete image URL string, or nil if imageName is empty
+    static func imageURL(baseURL: String, imageName: String?) -> String? {
+        guard let name = imageName, !name.isEmpty else { return nil }
+        return baseURL + name
+    }
+    
+    /// Constructs profile image URL
+    static func profileImageURL(_ imageName: String?) -> String? {
+        return imageURL(baseURL: PROFILE_IMAGE_URL, imageName: imageName)
+    }
+    
+    /// Constructs company image URL
+    static func companyImageURL(_ imageName: String?) -> String? {
+        return imageURL(baseURL: COMPANIES_IMAGE_URL, imageName: imageName)
+    }
+    
+    /// Constructs category icon URL
+    static func categoryIconURL(_ imageName: String?) -> String? {
+        return imageURL(baseURL: CATEGORIES_IMAGE_URL, imageName: imageName)
+    }
+    
+    /// Constructs workshop image URL
+    static func workshopImageURL(_ imageName: String?) -> String? {
+        return imageURL(baseURL: WORKSHOP_IMAGE_URL, imageName: imageName)
+    }
+    
+    /// Constructs quotation image URL
+    static func quotationImageURL(_ imageName: String?) -> String? {
+        return imageURL(baseURL: QUOTATION_IMAGE_URL, imageName: imageName)
+    }
+}
+
 //Default values for data types
 let kBlankString = ""
 let Plateform = "IOS"
