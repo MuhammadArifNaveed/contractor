@@ -143,6 +143,7 @@
 		90327A232F1D600100BDA19A /* VendorForgotPasswordPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A242F1D600100BDA19A /* VendorForgotPasswordPinView.swift */; };
 		90327A252F1D600200BDA19A /* VendorNewPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A262F1D600200BDA19A /* VendorNewPasswordView.swift */; };
 		90327A272F1D700000BDA19A /* ImageCompressionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A282F1D700000BDA19A /* ImageCompressionUtility.swift */; };
+		90327A292F1D800000BDA19A /* PaginationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A2A2F1D800000BDA19A /* PaginationHelper.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -311,6 +312,7 @@
 		90327A242F1D600100BDA19A /* VendorForgotPasswordPinView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VendorForgotPasswordPinView.swift; sourceTree = "<group>"; };
 		90327A262F1D600200BDA19A /* VendorNewPasswordView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VendorNewPasswordView.swift; sourceTree = "<group>"; };
 		90327A282F1D700000BDA19A /* ImageCompressionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCompressionUtility.swift; sourceTree = "<group>"; };
+		90327A2A2F1D800000BDA19A /* PaginationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaginationHelper.swift; sourceTree = "<group>"; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				18EA17F726D28820003DF2FC /* UserDefaultsManager.swift */,
 				18EA17F826D28820003DF2FC /* Validations.swift */,
 				90327A282F1D700000BDA19A /* ImageCompressionUtility.swift */,
+				90327A2A2F1D800000BDA19A /* PaginationHelper.swift */,
 				18EA17F926D28820003DF2FC /* Extensions */,
 				18EA17FE26D28820003DF2FC /* Protocols.swift */,
 				18EA17FF26D28820003DF2FC /* AppConstants.swift */,
@@ -1111,6 +1114,7 @@
 				90327A232F1D600100BDA19A /* VendorForgotPasswordPinView.swift in Sources */,
 				90327A252F1D600200BDA19A /* VendorNewPasswordView.swift in Sources */,
 				90327A272F1D700000BDA19A /* ImageCompressionUtility.swift in Sources */,
+				90327A292F1D800000BDA19A /* PaginationHelper.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
