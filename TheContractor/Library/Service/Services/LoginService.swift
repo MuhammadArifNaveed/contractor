@@ -180,6 +180,30 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Enquiries
+    /// Submit enquiry to selected companies
+    func submitEnquiry(userId: String,
+                      firstName: String,
+                      lastName: String,
+                      phone: String,
+                      email: String,
+                      companiesJSON: String,
+                      completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/send_enquiries"
+        let params: [String: String] = [
+            "user_id": userId,
+            "first_name": firstName,
+            "last_name": lastName,
+            "phone": phone,
+            "email": email,
+            "companies": companiesJSON
+        ]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
