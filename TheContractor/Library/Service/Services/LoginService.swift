@@ -339,6 +339,83 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Workshops
+    /// Get all workshops
+    func getWorkshops(pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_workshops"
+        let params: [String: String] = ["page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get workshop detail
+    func getWorkshopDetail(workshopId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/workshop_detail"
+        let params: [String: String] = ["workshop_id": workshopId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Enroll in workshop
+    func enrollWorkshop(userId: String, workshopId: String, paymentMethod: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/enroll_workshop"
+        var params: [String: String] = ["user_id": userId, "workshop_id": workshopId]
+        if let paymentMethod = paymentMethod { params["payment_method"] = paymentMethod }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get user workshop enrollments
+    func getUserWorkshops(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_workshops"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Vendor Dashboard
+    /// Get vendor dashboard stats
+    func getVendorDashboard(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/dashboard"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get vendor enquiries
+    func getVendorEnquiries(vendorId: String, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/enquiries"
+        var params: [String: String] = ["vendor_id": vendorId, "page_no": pageNo]
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get vendor quotations
+    func getVendorQuotations(vendorId: String, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/quotations"
+        var params: [String: String] = ["vendor_id": vendorId, "page_no": pageNo]
+        if let status = status { params["status"] = status }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Submit vendor quotation response
+    func submitVendorQuotation(quotationId: String, amount: String, notes: String, validUntil: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/submit_quotation"
+        let params: [String: String] = ["quotation_id": quotationId, "amount": amount, "notes": notes, "valid_until": validUntil]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in

@@ -153,6 +153,8 @@
 		90327A372F1DC00000BDA19A /* ProfileModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A382F1DC00000BDA19A /* ProfileModels.swift */; };
 		90327A392F1DC00100BDA19A /* EstimationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A3A2F1DC00100BDA19A /* EstimationModels.swift */; };
 		90327A3B2F1DC00200BDA19A /* SearchFilterModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A3C2F1DC00200BDA19A /* SearchFilterModels.swift */; };
+		90327A3D2F1DD00000BDA19A /* WorkshopModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A3E2F1DD00000BDA19A /* WorkshopModels.swift */; };
+		90327A3F2F1DD00100BDA19A /* VendorDashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90327A402F1DD00100BDA19A /* VendorDashboardModels.swift */; };
 		80327A1C2F1D349500BDA19A /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */; };
 		80B5EA772F37B748006712EF /* FreelancerSelectionDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */; };
 		80B5EA792F37B782006712EF /* FreelancerCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */; };
@@ -331,6 +333,8 @@
 		90327A382F1DC00000BDA19A /* ProfileModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileModels.swift; path = TheContractor/Models/ProfileModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A3A2F1DC00100BDA19A /* EstimationModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationModels.swift; path = TheContractor/Models/EstimationModels.swift; sourceTree = SOURCE_ROOT; };
 		90327A3C2F1DC00200BDA19A /* SearchFilterModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchFilterModels.swift; path = TheContractor/Models/SearchFilterModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A3E2F1DD00000BDA19A /* WorkshopModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WorkshopModels.swift; path = TheContractor/Models/WorkshopModels.swift; sourceTree = SOURCE_ROOT; };
+		90327A402F1DD00100BDA19A /* VendorDashboardModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorDashboardModels.swift; path = TheContractor/Models/VendorDashboardModels.swift; sourceTree = SOURCE_ROOT; };
 		80327A1B2F1D349500BDA19A /* CompanyFreelancersListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyFreelancersListView.swift; sourceTree = "<group>"; };
 		80B5EA762F37B748006712EF /* FreelancerSelectionDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerSelectionDialog.swift; sourceTree = "<group>"; };
 		80B5EA782F37B782006712EF /* FreelancerCheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreelancerCheckoutView.swift; sourceTree = "<group>"; };
@@ -532,6 +536,8 @@
 				90327A382F1DC00000BDA19A /* ProfileModels.swift */,
 				90327A3A2F1DC00100BDA19A /* EstimationModels.swift */,
 				90327A3C2F1DC00200BDA19A /* SearchFilterModels.swift */,
+				90327A3E2F1DD00000BDA19A /* WorkshopModels.swift */,
+				90327A402F1DD00100BDA19A /* VendorDashboardModels.swift */,
 				18EA180E26D28820003DF2FC /* UserViewModel.swift */,
 				18EA180F26D28820003DF2FC /* RegisterListViewModel.swift */,
 				18C1BCA026F964F40001EB73 /* HomeViewModel.swift */,
@@ -1151,6 +1157,8 @@
 				90327A372F1DC00000BDA19A /* ProfileModels.swift in Sources */,
 				90327A392F1DC00100BDA19A /* EstimationModels.swift in Sources */,
 				90327A3B2F1DC00200BDA19A /* SearchFilterModels.swift in Sources */,
+				90327A3D2F1DD00000BDA19A /* WorkshopModels.swift in Sources */,
+				90327A3F2F1DD00100BDA19A /* VendorDashboardModels.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
 				18C4FD9226D2F9F2009A197E /* QuotationListViewController.swift in Sources */,
