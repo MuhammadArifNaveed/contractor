@@ -139,6 +139,11 @@
 		90C6FE912F20E10100BDA19A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE922F20E10100BDA19A /* HomeViewModel.swift */; };
 		90C6FE932F20E10200BDA19A /* SearchCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE942F20E10200BDA19A /* SearchCompaniesView.swift */; };
 		90C6FE952F20E10300BDA19A /* HomeHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE962F20E10300BDA19A /* HomeHostingController.swift */; };
+		90C6FE972F20E20000BDA19A /* CompaniesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE982F20E20000BDA19A /* CompaniesListView.swift */; };
+		90C6FE992F20E20100BDA19A /* CompaniesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9A2F20E20100BDA19A /* CompaniesListViewModel.swift */; };
+		90C6FE9B2F20E20200BDA19A /* CompanyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9C2F20E20200BDA19A /* CompanyDetailView.swift */; };
+		90C6FE9D2F20E20300BDA19A /* CompanyDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9E2F20E20300BDA19A /* CompanyDetailViewModel.swift */; };
+		90C6FE9F2F20E20400BDA19A /* CompaniesListHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA02F20E20400BDA19A /* CompaniesListHostingController.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -296,6 +301,11 @@
 		90C6FE922F20E10100BDA19A /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = TheContractor/SwiftUI/ViewModels/HomeViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE942F20E10200BDA19A /* SearchCompaniesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchCompaniesView.swift; path = TheContractor/SwiftUI/Views/SearchCompaniesView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE962F20E10300BDA19A /* HomeHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeHostingController.swift; path = TheContractor/HostingControllers/HomeHostingController.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE982F20E20000BDA19A /* CompaniesListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListView.swift; path = TheContractor/SwiftUI/Views/CompaniesListView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE9A2F20E20100BDA19A /* CompaniesListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CompaniesListViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE9C2F20E20200BDA19A /* CompanyDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyDetailView.swift; path = TheContractor/SwiftUI/Views/CompanyDetailView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE9E2F20E20300BDA19A /* CompanyDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyDetailViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CompanyDetailViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEA02F20E20400BDA19A /* CompaniesListHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListHostingController.swift; path = TheContractor/HostingControllers/CompaniesListHostingController.swift; sourceTree = SOURCE_ROOT; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
@@ -1132,6 +1142,11 @@
 				90C6FE912F20E10100BDA19A /* HomeViewModel.swift in Sources */,
 				90C6FE932F20E10200BDA19A /* SearchCompaniesView.swift in Sources */,
 				90C6FE952F20E10300BDA19A /* HomeHostingController.swift in Sources */,
+				90C6FE972F20E20000BDA19A /* CompaniesListView.swift in Sources */,
+				90C6FE992F20E20100BDA19A /* CompaniesListViewModel.swift in Sources */,
+				90C6FE9B2F20E20200BDA19A /* CompanyDetailView.swift in Sources */,
+				90C6FE9D2F20E20300BDA19A /* CompanyDetailViewModel.swift in Sources */,
+				90C6FE9F2F20E20400BDA19A /* CompaniesListHostingController.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
 				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
