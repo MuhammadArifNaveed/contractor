@@ -14,12 +14,12 @@ class MainContainerViewController: BaseViewController{
     @IBOutlet weak var imgLogo: UIImageView!
     @IBOutlet weak var imgProfile: UIImageView!
     @IBOutlet weak var lblProfile: UIButton!
-    @IBOutlet weak var lblFavorite: UIButton!
-    @IBOutlet weak var imgHeart: UIImageView!
-    @IBOutlet weak var lblLibarary: UIButton!
-    @IBOutlet weak var imgLibarary: UIImageView!
-    @IBOutlet weak var imgCategory: UIImageView!
-    @IBOutlet weak var lblCategory: UIButton!
+    @IBOutlet weak var lblEstimation: UIButton!
+    @IBOutlet weak var imgEstimation: UIImageView!
+    @IBOutlet weak var lblSearch: UIButton!
+    @IBOutlet weak var imgSearch: UIImageView!
+    @IBOutlet weak var imgWorkshop: UIImageView!
+    @IBOutlet weak var lblWorkshop: UIButton!
     @IBOutlet weak var lblHome: UIButton!
     @IBOutlet weak var imgHome: UIImageView!
     @IBOutlet weak var lblTitle: UILabel!
@@ -56,14 +56,14 @@ class MainContainerViewController: BaseViewController{
     func resetAllBottomViews(){
         
     self.lblHome.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblCategory.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblLibarary.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblFavorite.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
+    self.lblWorkshop.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
+    self.lblSearch.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
+    self.lblEstimation.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
     self.lblProfile.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
     self.imgHome.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgCategory.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgLibarary.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgHeart.tintColor = UIColor.init(hexFromString: "A0A0A0")
+    self.imgWorkshop.tintColor = UIColor.init(hexFromString: "A0A0A0")
+    self.imgSearch.tintColor = UIColor.init(hexFromString: "A0A0A0")
+    self.imgEstimation.tintColor = UIColor.init(hexFromString: "A0A0A0")
     self.imgProfile.tintColor = UIColor.init(hexFromString: "A0A0A0")
     }
     
@@ -73,8 +73,8 @@ class MainContainerViewController: BaseViewController{
     
     func showSearchCompanyController(){
         self.resetAllBottomViews()
-        self.lblLibarary.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
-        self.imgLibarary.tintColor = UIColor.init(hexFromString: "F2BE36")
+        self.lblSearch.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+        self.imgSearch.tintColor = UIColor.init(hexFromString: "F2BE36")
         self.showSearchController()
     }
     
@@ -83,31 +83,31 @@ class MainContainerViewController: BaseViewController{
         self.btnBack.setImage(UIImage(named: "menu"), for: .normal)
         self.resetAllBottomViews()
         if(sender.tag == 0){
+            // Home
             self.lblHome.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgHome.tintColor = UIColor.init(hexFromString: "F2BE36")
            self.showHomeController()
-            
-            
         }
         else if(sender.tag == 1){
-            self.lblCategory.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
-            self.imgCategory.tintColor = UIColor.init(hexFromString: "F2BE36")
+            // Workshop
+            self.lblWorkshop.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+            self.imgWorkshop.tintColor = UIColor.init(hexFromString: "F2BE36")
             self.showWorkshopController()
-            
         }
         else if(sender.tag == 2){
-            self.lblLibarary.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
-            self.imgLibarary.tintColor = UIColor.init(hexFromString: "F2BE36")
+            // Search
+            self.lblSearch.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+            self.imgSearch.tintColor = UIColor.init(hexFromString: "F2BE36")
             self.showSearchController()
-            
         }
         else if(sender.tag == 3){
-            
-            self.lblFavorite.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
-            self.imgHeart.tintColor = UIColor.init(hexFromString: "F2BE36")
+            // Estimation
+            self.lblEstimation.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+            self.imgEstimation.tintColor = UIColor.init(hexFromString: "F2BE36")
             self.showEsstimationController()
         }
         else{
+            // Profile
             self.lblProfile.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgProfile.tintColor = UIColor.init(hexFromString: "F2BE36")
            self.showProfileController()

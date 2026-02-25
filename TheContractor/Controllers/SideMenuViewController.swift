@@ -64,17 +64,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         if indexPath.row == 0{
             return 120
         }
-        else if(indexPath.row > 1 && indexPath.row < 10){
-            return 0
-        }
-        else if(indexPath.row == 20 || indexPath.row == 21){
-            return 0
-        }
         else{
             return 60
-            
         }
-        
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
@@ -82,45 +74,112 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         drawer.setDrawerState(.closed, animated: true)
         let mainVC = (drawer.mainViewController as! UINavigationController).topViewController as! MainContainerViewController
         
-        if(indexPath.row == 1){
-//            mainVC.lblHome.setTitleColor(UIColor.init(hexFromString: "FF525C"), for: .normal)
-//            mainVC.imgHome.tintColor = UIColor.init(hexFromString: "FF525C")
-           mainVC.showHomeController()
+        // Skip header row
+        if indexPath.row == 0 { return }
+        
+        let menuItem = currentMenuList[indexPath.row - 1]
+        let title = menuItem["title"] ?? ""
+        
+        // Handle different menu types
+        if Global.shared.isVendor {
+            handleVendorMenuItem(title: title, mainVC: mainVC)
+        } else {
+            handleUserMenuItem(title: title, mainVC: mainVC, indexPath: indexPath)
         }
-        else if(indexPath.row == 10){
-            // Freelancers
+    }
+    
+    private func handleUserMenuItem(title: String, mainVC: MainContainerViewController, indexPath: IndexPath) {
+        switch title {
+        case "Select Language":
+            showComingSoonAlert(in: mainVC, feature: "Language Selection")
+            
+        case "Home":
+            mainVC.showHomeController()
+            
+        case "Inbox":
+            showComingSoonAlert(in: mainVC, feature: "Inbox")
+            
+        case "Company Finder":
+            mainVC.showSearchCompanyController()
+            
+        case "Submit Enquiry":
+            showComingSoonAlert(in: mainVC, feature: "Submit Enquiry")
+            
+        case "Enquiries":
+            showComingSoonAlert(in: mainVC, feature: "Enquiries")
+            
+        case "Submit Quotation":
+            showComingSoonAlert(in: mainVC, feature: "Submit Quotation")
+            
+        case "Quotations":
+            showComingSoonAlert(in: mainVC, feature: "Quotations")
+            
+        case "Complaints":
+            showComingSoonAlert(in: mainVC, feature: "Complaints")
+            
+        case "Estimations":
+            mainVC.showEsstimationController()
+            
+        case "24/7 Maintenance":
+            showComingSoonAlert(in: mainVC, feature: "24/7 Maintenance")
+            
+        case "Advertise Company":
+            showComingSoonAlert(in: mainVC, feature: "Advertise Company")
+            
+        case "Available Jobs":
+            showComingSoonAlert(in: mainVC, feature: "Available Jobs")
+            
+        case "My Job Applies":
+            showComingSoonAlert(in: mainVC, feature: "My Job Applies")
+            
+        case "Direct Hiring":
+            showComingSoonAlert(in: mainVC, feature: "Direct Hiring")
+            
+        case "Freelancers":
             mainVC.showFreelancersController()
-        }
-        else if(indexPath.row > 11 && indexPath.row < 20){
-             let title =  SideMenu.MENULIST[indexPath.row - 1]["title"] as! String
-            var link = ""
-            if(indexPath.row == 12){
-
-                link = AppLinks.AboutUS
+            
+        case "Freelancer Dashboard":
+            showComingSoonAlert(in: mainVC, feature: "Freelancer Dashboard")
+            
+        case "Workshop Ad":
+            mainVC.showWorkshopController()
+            
+        case "About Us":
+            mainVC.showWebController(title: "About Us", link: AppLinks.AboutUS)
+            
+        case "Advertisement":
+            mainVC.showWebController(title: "Advertisement", link: AppLinks.Advertisment)
+            
+        case "Become a Vendor":
+            mainVC.showWebController(title: "Become a Vendor", link: AppLinks.Vendor)
+            
+        case "Privacy Policy":
+            mainVC.showWebController(title: "Privacy Policy", link: AppLinks.Privacy)
+            
+        case "Terms & Conditions":
+            mainVC.showWebController(title: "Terms & Conditions", link: AppLinks.Terms)
+            
+        case "Guide":
+            mainVC.showWebController(title: "Guide", link: AppLinks.Guide)
+            
+        case "Contact Us":
+            mainVC.showWebController(title: "Contact Us", link: AppLinks.ContactUS)
+            
+        case "Rate Us":
+            rateApp(in: mainVC)
+            
+        case "Share":
+            shareApp(in: mainVC)
+            
+        case "Logout":
+            if Global.shared.isLogedIn {
+                mainVC.logoutUser()
+            } else {
+                mainVC.loginUser()
             }
-            else if(indexPath.row == 13){
-                link = AppLinks.Advertisment
-            }
-            else if(indexPath.row == 14){
-                link = AppLinks.Vendor
-            }
-            else if(indexPath.row == 15){
-                link = AppLinks.Documentation
-            }
-            else if(indexPath.row == 16){
-                link = AppLinks.Privacy
-            }
-            else if(indexPath.row == 17){
-                link = AppLinks.Terms
-            }
-            else if(indexPath.row == 18){
-                link = AppLinks.Guide
-            }
-            else if(indexPath.row == 19){
-                link = AppLinks.ContactUS
-            }
-            mainVC.showWebController(title: title, link: link)
-           
+            
+        default:
+            break
         }
     }
     

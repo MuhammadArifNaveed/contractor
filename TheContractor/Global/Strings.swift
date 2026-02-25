@@ -30,7 +30,36 @@ struct AssetNames {
 }
 
 struct SideMenu {
-    static let MENULIST = [["title":"Home","image":"home"],["title":"Company Finder","image":"company-finder"],["title":"Submit Enquiry","image":"submit-quotation"],["title":"Enquiries","image":"enquiries"],["title":"Submit Quotations","image":"submit-quotation"],["title":"Quotations","image":"quotation"],["title":"Complaints","image":"compaints"],["title":"Estimations","image":"quotation"],["title":"24/7 Companies","image":"24-7"],["title":"Freelancers","image":"become-a-vendor"],["title":"Workshop","image":"become-a-vendor"],["title":"About Us","image":"guide"],["title":"Advertisement","image":"advertisement"],["title":"Become a Vendor","image":"become-a-vendor"],["title":"Documentations","image":"document"],["title":"Privacy Polices","image":"privacy-policy"],["title":"Terms & Conditions","image":"terms-and-conditions"],["title":"Guide","image":"guide"],["title":"Contact Us","image":"contact"],["title":"Rate Us","image":"rate"],["title":"Share","image":"share"]]
+    static let MENULIST = [
+        ["title":"Select Language","image":"language"],
+        ["title":"Home","image":"home"],
+        ["title":"Inbox","image":"inbox"],
+        ["title":"Company Finder","image":"company-finder"],
+        ["title":"Submit Enquiry","image":"submit-quotation"],
+        ["title":"Enquiries","image":"enquiries"],
+        ["title":"Submit Quotation","image":"submit-quotation"],
+        ["title":"Quotations","image":"quotation"],
+        ["title":"Complaints","image":"compaints"],
+        ["title":"Estimations","image":"quotation"],
+        ["title":"24/7 Maintenance","image":"24-7"],
+        ["title":"Advertise Company","image":"advertisement"],
+        ["title":"Available Jobs","image":"advertisement"],
+        ["title":"My Job Applies","image":"advertisement"],
+        ["title":"Direct Hiring","image":"advertisement"],
+        ["title":"Freelancers","image":"become-a-vendor"],
+        ["title":"Freelancer Dashboard","image":"become-a-vendor"],
+        ["title":"Workshop Ad","image":"become-a-vendor"],
+        ["title":"About Us","image":"guide"],
+        ["title":"Advertisement","image":"advertisement"],
+        ["title":"Become a Vendor","image":"become-a-vendor"],
+        ["title":"Privacy Policy","image":"privacy-policy"],
+        ["title":"Terms & Conditions","image":"terms-and-conditions"],
+        ["title":"Guide","image":"guide"],
+        ["title":"Contact Us","image":"contact"],
+        ["title":"Rate Us","image":"rate"],
+        ["title":"Share","image":"share"],
+        ["title":"Logout","image":"logout"]
+    ]
 }
 
 struct VendorMenu {

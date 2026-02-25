@@ -139,6 +139,12 @@
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
+		90C6FE832F20E00000BDA19A /* CompanyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE842F20E00000BDA19A /* CompanyCard.swift */; };
+		90C6FE852F20E00100BDA19A /* CategoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE862F20E00100BDA19A /* CategoryCard.swift */; };
+		90C6FE872F20E00200BDA19A /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE882F20E00200BDA19A /* LoadingView.swift */; };
+		90C6FE892F20E00300BDA19A /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE8A2F20E00300BDA19A /* CustomTextField.swift */; };
+		90C6FE8B2F20E00400BDA19A /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE8C2F20E00400BDA19A /* PrimaryButton.swift */; };
+		90C6FE8D2F20E00500BDA19A /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE8E2F20E00500BDA19A /* RatingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -287,6 +293,12 @@
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
+		90C6FE842F20E00000BDA19A /* CompanyCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyCard.swift; path = TheContractor/SwiftUI/Components/CompanyCard.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE862F20E00100BDA19A /* CategoryCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CategoryCard.swift; path = TheContractor/SwiftUI/Components/CategoryCard.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE882F20E00200BDA19A /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingView.swift; path = TheContractor/SwiftUI/Components/LoadingView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE8A2F20E00300BDA19A /* CustomTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomTextField.swift; path = TheContractor/SwiftUI/Components/CustomTextField.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE8C2F20E00400BDA19A /* PrimaryButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrimaryButton.swift; path = TheContractor/SwiftUI/Components/PrimaryButton.swift; sourceTree = SOURCE_ROOT; };
+		90C6FE8E2F20E00500BDA19A /* RatingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RatingView.swift; path = TheContractor/SwiftUI/Components/RatingView.swift; sourceTree = SOURCE_ROOT; };
 		A5CC8B6726772F58ED6713FA /* Pods-TheContractor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.debug.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.debug.xcconfig"; sourceTree = "<group>"; };
 		CC58A12B266F9A3C188C8FFA /* Pods_TheContractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TheContractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E427B39844C2A348174E3164 /* Pods-TheContractor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.release.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.release.xcconfig"; sourceTree = "<group>"; };
@@ -1023,6 +1035,12 @@
 				80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */,
 				80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */,
 				80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */,
+				90C6FE832F20E00000BDA19A /* CompanyCard.swift in Sources */,
+				90C6FE852F20E00100BDA19A /* CategoryCard.swift in Sources */,
+				90C6FE872F20E00200BDA19A /* LoadingView.swift in Sources */,
+				90C6FE892F20E00300BDA19A /* CustomTextField.swift in Sources */,
+				90C6FE8B2F20E00400BDA19A /* PrimaryButton.swift in Sources */,
+				90C6FE8D2F20E00500BDA19A /* RatingView.swift in Sources */,
 				18EA188726D28820003DF2FC /* TPKeyboardAvoidingScrollView.m in Sources */,
 				18C1BCAD26F965A80001EB73 /* CompanyViewModel.swift in Sources */,
 				18EA188226D28820003DF2FC /* LoginService.swift in Sources */,
