@@ -39,38 +39,56 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             return 120
         }
         else{
-            let title = SideMenu.MENULIST[indexPath.row - 1]["title"] as? String ?? ""
-            let hiddenItems: Set<String> = [
-                "Company Finder",
-                "Submit Enquiry",
-                "Enquiries",
-                "Submit Quotations",
-                "Quotations",
-                "Complaints",
-                "Estimations",
-                "24/7 Companies",
-                "Rate Us",
-                "Share"
-            ]
-            return hiddenItems.contains(title) ? 0 : 60
-            
+            // All menu items are now visible
+            return 60
         }
-        
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
         let drawer = self.navigationController?.parent as! KYDrawerController
         drawer.setDrawerState(.closed, animated: true)
         let mainVC = (drawer.mainViewController as! UINavigationController).topViewController as! MainContainerViewController
-     //   mainVC.resetAllBottomViews()
+        
         if indexPath.row == 0 {
             return
         }
 
         let title = SideMenu.MENULIST[indexPath.row - 1]["title"] as? String ?? ""
 
+        // Navigation handlers for all menu items
         if title == "Home" {
             mainVC.showHomeController()
+        }
+        else if title == "Company Finder" {
+            mainVC.showSearchController()
+        }
+        else if title == "Submit Enquiry" {
+            // TODO: Navigate to Submit Enquiry screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Submit Enquiry")
+        }
+        else if title == "Enquiries" {
+            // TODO: Navigate to Enquiries list screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Enquiries")
+        }
+        else if title == "Submit Quotations" {
+            // TODO: Navigate to Submit Quotations screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Submit Quotations")
+        }
+        else if title == "Quotations" {
+            // TODO: Navigate to Quotations list screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Quotations")
+        }
+        else if title == "Complaints" {
+            // TODO: Navigate to Complaints screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "Complaints")
+        }
+        else if title == "Estimations" {
+            mainVC.showEsstimationController()
+        }
+        else if title == "24/7 Companies" {
+            // TODO: Navigate to 24/7 Companies screen (will be implemented in separate feature)
+            showComingSoonAlert(in: mainVC, feature: "24/7 Companies")
         }
         else if title == "Freelancers" {
             mainVC.showFreelancersController()
@@ -85,6 +103,12 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         }
         else if title == "Workshop" {
             mainVC.showWorkshopController()
+        }
+        else if title == "Rate Us" {
+            rateApp(in: mainVC)
+        }
+        else if title == "Share" {
+            shareApp(in: mainVC)
         }
         else {
             var link = ""
@@ -117,6 +141,45 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
                 mainVC.showWebController(title: title, link: link)
             }
         }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func showComingSoonAlert(in viewController: UIViewController, feature: String) {
+        let alert = UIAlertController(
+            title: "Coming Soon",
+            message: "\(feature) will be available in an upcoming update.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        viewController.present(alert, animated: true)
+    }
+    
+    private func rateApp(in viewController: UIViewController) {
+        if let url = URL(string: "itms-apps://itunes.apple.com/app/id YOUR_APP_ID") {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
+        }
+    }
+    
+    private func shareApp(in viewController: UIViewController) {
+        let appURL = URL(string: "https://apps.apple.com/app/id YOUR_APP_ID")!
+        let shareText = "Check out The Contractor app!"
+        
+        let activityVC = UIActivityViewController(
+            activityItems: [shareText, appURL],
+            applicationActivities: nil
+        )
+        
+        // For iPad support
+        if let popoverController = activityVC.popoverPresentationController {
+            popoverController.sourceView = viewController.view
+            popoverController.sourceRect = CGRect(x: viewController.view.bounds.midX, y: viewController.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        
+        viewController.present(activityVC, animated: true)
     }
 }
 
