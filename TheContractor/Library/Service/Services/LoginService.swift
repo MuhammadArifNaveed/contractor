@@ -1230,6 +1230,181 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Video Content
+    /// Get company videos
+    func getCompanyVideos(companyId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/videos"
+        let params: [String: String] = ["company_id": companyId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Upload video
+    func uploadVideo(companyId: String, title: String, titleArabic: String, description: String, descriptionArabic: String, categoryId: String, videoUrl: String, thumbnailUrl: String, duration: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/upload_video"
+        let params: [String: String] = ["company_id": companyId, "title": title, "title_arabic": titleArabic, "description": description, "description_arabic": descriptionArabic, "category_id": categoryId, "video_url": videoUrl, "thumbnail_url": thumbnailUrl, "duration": duration]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Like video
+    func likeVideo(userId: String, videoId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/like_video"
+        let params: [String: String] = ["user_id": userId, "video_id": videoId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Track video view
+    func trackVideoView(userId: String, videoId: String, watchTime: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/track_video_view"
+        let params: [String: String] = ["user_id": userId, "video_id": videoId, "watch_time": watchTime]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    // MARK: - Subscriptions
+    /// Get subscription plans
+    func getSubscriptionPlans(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/subscription_plans"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Subscribe to plan
+    func subscribeToPlan(userId: String, planId: String, paymentMethodId: String, autoRenew: Bool, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/subscribe"
+        let params: [String: String] = ["user_id": userId, "plan_id": planId, "payment_method_id": paymentMethodId, "auto_renew": autoRenew ? "1" : "0"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get user subscription
+    func getUserSubscription(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_subscription"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Cancel subscription
+    func cancelSubscription(subscriptionId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/cancel_subscription"
+        let params: [String: String] = ["subscription_id": subscriptionId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get subscription usage
+    func getSubscriptionUsage(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/subscription_usage"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Referrals
+    /// Get referral program details
+    func getReferralProgram(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/referral_program"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get user referral code
+    func getUserReferralCode(userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/user_referral_code"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Apply referral code
+    func applyReferralCode(userId: String, referralCode: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/apply_referral_code"
+        let params: [String: String] = ["user_id": userId, "referral_code": referralCode]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Get referral transactions
+    func getReferralTransactions(userId: String, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/referral_transactions"
+        let params: [String: String] = ["user_id": userId, "page_no": pageNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get referral leaderboard
+    func getReferralLeaderboard(limit: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/referral_leaderboard"
+        let params: [String: String] = ["limit": limit]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Geolocation
+    /// Get nearby companies
+    func getNearbyCompanies(latitude: String, longitude: String, radius: String, categoryId: String?, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/nearby_companies"
+        var params: [String: String] = ["latitude": latitude, "longitude": longitude, "radius": radius]
+        if let categoryId = categoryId { params["category_id"] = categoryId }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Get company service areas
+    func getCompanyServiceAreas(companyId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/service_areas"
+        let params: [String: String] = ["company_id": companyId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Add service area
+    func addServiceArea(companyId: String, cityId: String, areaName: String, areaNameArabic: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Vendor/add_service_area"
+        let params: [String: String] = ["company_id": companyId, "city_id": cityId, "area_name": areaName, "area_name_arabic": areaNameArabic]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Track user location
+    func trackUserLocation(userId: String, latitude: String, longitude: String, accuracy: String, activityType: String?, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/track_location"
+        var params: [String: String] = ["user_id": userId, "latitude": latitude, "longitude": longitude, "accuracy": accuracy]
+        if let activityType = activityType { params["activity_type"] = activityType }
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+    
+    /// Check geofence
+    func checkGeofence(userId: String, latitude: String, longitude: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/check_geofence"
+        let params: [String: String] = ["user_id": userId, "latitude": latitude, "longitude": longitude]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
