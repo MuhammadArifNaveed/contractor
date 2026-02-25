@@ -4,9 +4,13 @@
 //
 //  Created by Rana Faheem on 8/26/21.
 //
+//  NOTE: This UIKit version is replaced by SwiftUI HomeView + HomeHostingController
+//  Keeping for reference only - all code commented out
+//
 
 import UIKit
 
+/*
 class HomeViewController: BaseViewController {
     
     @IBOutlet weak var heightTableView: NSLayoutConstraint!
@@ -44,7 +48,8 @@ extension HomeViewController : UICollectionViewDelegate , UICollectionViewDataSo
             return self.selectedCat.sub_categories.subCategoryList.count
         }
     }
-    
+*/
+/*
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if(collectionView == self.categoryCollectionView){
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCollectionViewCell", for: indexPath) as! CategoryCollectionViewCell
@@ -215,5 +220,4 @@ extension HomeViewController{
         }
     }
 }
-
-
+*/

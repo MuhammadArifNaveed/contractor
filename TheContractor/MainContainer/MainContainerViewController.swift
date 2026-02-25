@@ -130,19 +130,20 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showHomeController()  {
-        self.topBarView.isHidden = false
-        let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "HomeVC") as! BaseNavigationController
+        // Hide the top bar for SwiftUI Home screen (it has its own navigation)
+        self.topBarView.isHidden = true
+        
+        let homeVC = HomeHostingController()
+        let controller = BaseNavigationController(rootViewController: homeVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
+        
         if let oldRef = baseNavigationController {
             oldRef.willMove(toParent: nil)
             oldRef.view.removeFromSuperview()
             oldRef.removeFromParent()
-
-            oldRef.view.removeFromSuperview()
         }
+        
         self.baseNavigationController = controller
         addChild(controller)
         controller.view.frame = self.containerView.bounds

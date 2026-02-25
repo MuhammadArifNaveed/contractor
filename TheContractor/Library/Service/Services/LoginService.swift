@@ -3358,6 +3358,8 @@ class LoginService: BaseService {
         }
     }
     
+    // NOTE: Old UIKit HomeViewModel removed - SwiftUI version makes direct API calls
+    /*
     func getHomeData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : HomeViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.home
         self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
@@ -3370,6 +3372,7 @@ class LoginService: BaseService {
             }
         }
     }
+    */
     
     func getEsstimationData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : CategoryListViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.homeEsstimation
