@@ -144,6 +144,14 @@
 		90C6FE9B2F20E20200BDA19A /* CompanyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9C2F20E20200BDA19A /* CompanyDetailView.swift */; };
 		90C6FE9D2F20E20300BDA19A /* CompanyDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9E2F20E20300BDA19A /* CompanyDetailViewModel.swift */; };
 		90C6FE9F2F20E20400BDA19A /* CompaniesListHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA02F20E20400BDA19A /* CompaniesListHostingController.swift */; };
+		90C6FEA12F20E30000BDA19A /* EnquiriesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA22F20E30000BDA19A /* EnquiriesListView.swift */; };
+		90C6FEA32F20E30100BDA19A /* EnquiriesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA42F20E30100BDA19A /* EnquiriesListViewModel.swift */; };
+		90C6FEA52F20E30200BDA19A /* SubmitEnquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA62F20E30200BDA19A /* SubmitEnquiryView.swift */; };
+		90C6FEA72F20E30300BDA19A /* SubmitEnquiryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEA82F20E30300BDA19A /* SubmitEnquiryViewModel.swift */; };
+		90C6FEA92F20E30400BDA19A /* QuotationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEAA2F20E30400BDA19A /* QuotationsListView.swift */; };
+		90C6FEAB2F20E30500BDA19A /* QuotationsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEAC2F20E30500BDA19A /* QuotationsListViewModel.swift */; };
+		90C6FEAD2F20E30600BDA19A /* SubmitQuotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEAE2F20E30600BDA19A /* SubmitQuotationView.swift */; };
+		90C6FEAF2F20E30700BDA19A /* SubmitQuotationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEB02F20E30700BDA19A /* SubmitQuotationViewModel.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -306,6 +314,14 @@
 		90C6FE9C2F20E20200BDA19A /* CompanyDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyDetailView.swift; path = TheContractor/SwiftUI/Views/CompanyDetailView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE9E2F20E20300BDA19A /* CompanyDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyDetailViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CompanyDetailViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEA02F20E20400BDA19A /* CompaniesListHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListHostingController.swift; path = TheContractor/HostingControllers/CompaniesListHostingController.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEA22F20E30000BDA19A /* EnquiriesListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnquiriesListView.swift; path = TheContractor/SwiftUI/Views/EnquiriesListView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEA42F20E30100BDA19A /* EnquiriesListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnquiriesListViewModel.swift; path = TheContractor/SwiftUI/ViewModels/EnquiriesListViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEA62F20E30200BDA19A /* SubmitEnquiryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubmitEnquiryView.swift; path = TheContractor/SwiftUI/Views/SubmitEnquiryView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEA82F20E30300BDA19A /* SubmitEnquiryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubmitEnquiryViewModel.swift; path = TheContractor/SwiftUI/ViewModels/SubmitEnquiryViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEAA2F20E30400BDA19A /* QuotationsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QuotationsListView.swift; path = TheContractor/SwiftUI/Views/QuotationsListView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEAC2F20E30500BDA19A /* QuotationsListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QuotationsListViewModel.swift; path = TheContractor/SwiftUI/ViewModels/QuotationsListViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEAE2F20E30600BDA19A /* SubmitQuotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubmitQuotationView.swift; path = TheContractor/SwiftUI/Views/SubmitQuotationView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEB02F20E30700BDA19A /* SubmitQuotationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubmitQuotationViewModel.swift; path = TheContractor/SwiftUI/ViewModels/SubmitQuotationViewModel.swift; sourceTree = SOURCE_ROOT; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
@@ -1147,6 +1163,14 @@
 				90C6FE9B2F20E20200BDA19A /* CompanyDetailView.swift in Sources */,
 				90C6FE9D2F20E20300BDA19A /* CompanyDetailViewModel.swift in Sources */,
 				90C6FE9F2F20E20400BDA19A /* CompaniesListHostingController.swift in Sources */,
+				90C6FEA12F20E30000BDA19A /* EnquiriesListView.swift in Sources */,
+				90C6FEA32F20E30100BDA19A /* EnquiriesListViewModel.swift in Sources */,
+				90C6FEA52F20E30200BDA19A /* SubmitEnquiryView.swift in Sources */,
+				90C6FEA72F20E30300BDA19A /* SubmitEnquiryViewModel.swift in Sources */,
+				90C6FEA92F20E30400BDA19A /* QuotationsListView.swift in Sources */,
+				90C6FEAB2F20E30500BDA19A /* QuotationsListViewModel.swift in Sources */,
+				90C6FEAD2F20E30600BDA19A /* SubmitQuotationView.swift in Sources */,
+				90C6FEAF2F20E30700BDA19A /* SubmitQuotationViewModel.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
 				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
