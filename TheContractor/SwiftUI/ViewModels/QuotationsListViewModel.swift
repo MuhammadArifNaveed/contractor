@@ -102,11 +102,12 @@ class QuotationsListViewModel: ObservableObject {
     private func parseQuotation(_ json: JSON) -> QuotationModel {
         return QuotationModel(
             id: json["id"].stringValue,
+            status: json["status"].stringValue,
+            date: json["date"].stringValue,
             companyName: json["company_name"].stringValue,
             description: json["description"].stringValue,
             location: json["location"].stringValue,
-            dateTime: json["date_time"].stringValue,
-            status: json["status"].stringValue
+            dateTime: json["date_time"].stringValue
         )
     }
     

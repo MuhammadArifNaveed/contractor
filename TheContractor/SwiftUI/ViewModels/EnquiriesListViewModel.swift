@@ -104,33 +104,16 @@ class EnquiriesListViewModel: ObservableObject {
     private func parseEnquiry(_ json: JSON) -> EnquiryModel {
         return EnquiryModel(
             id: json["id"].stringValue,
-            companyNames: json["company_names"].stringValue,
-            date: json["date"].stringValue,
             status: json["status"].stringValue,
-            firstName: json["first_name"].stringValue,
-            lastName: json["last_name"].stringValue,
-            phone: json["phone"].stringValue,
-            email: json["email"].stringValue
+            date: json["date"].stringValue,
+            companyName: json["company_name"].stringValue,
+            description: json["description"].stringValue,
+            response: json["response"].stringValue
         )
     }
     
     func selectEnquiry(_ enquiry: EnquiryModel) {
         // Navigate to enquiry detail
-        // TODO: Implement navigation
         print("Selected enquiry: \(enquiry.id)")
-    }
-}
-
-// MARK: - EnquiryModel Extension
-extension EnquiryModel {
-    init(id: String, companyNames: String, date: String, status: String, firstName: String, lastName: String, phone: String, email: String) {
-        self.id = id
-        self.companyNames = companyNames
-        self.date = date
-        self.status = status
-        self.firstName = firstName
-        self.lastName = lastName
-        self.phone = phone
-        self.email = email
     }
 }

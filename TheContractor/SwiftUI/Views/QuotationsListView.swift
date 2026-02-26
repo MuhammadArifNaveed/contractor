@@ -135,28 +135,31 @@ struct QuotationCard: View {
 // MARK: - Quotation Model
 struct QuotationModel: Identifiable {
     let id: String
+    let status: String
+    let date: String
     let companyName: String
     let description: String
     let location: String
     let dateTime: String
-    let status: String
     
     init() {
         self.id = ""
+        self.status = "Pending"
+        self.date = ""
         self.companyName = ""
         self.description = ""
         self.location = ""
         self.dateTime = ""
-        self.status = "Pending"
     }
     
-    init(id: String, companyName: String, description: String, location: String, dateTime: String, status: String) {
+    init(id: String, status: String, date: String, companyName: String = "", description: String = "", location: String = "", dateTime: String = "") {
         self.id = id
+        self.status = status
+        self.date = date
         self.companyName = companyName
         self.description = description
         self.location = location
         self.dateTime = dateTime
-        self.status = status
     }
 }
 

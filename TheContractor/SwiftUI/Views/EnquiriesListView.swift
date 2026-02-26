@@ -99,8 +99,8 @@ struct EnquiryCard: View {
                     StatusBadge(status: enquiry.status)
                 }
                 
-                if !enquiry.companyNames.isEmpty {
-                    Text("Companies: \(enquiry.companyNames)")
+                if !enquiry.companyName.isEmpty {
+                    Text("Company: \(enquiry.companyName)")
                         .font(AppTheme.Fonts.regular(14))
                         .foregroundColor(AppTheme.Colors.textSecondary)
                         .lineLimit(2)
@@ -154,23 +154,28 @@ struct StatusBadge: View {
 // MARK: - Enquiry Model
 struct EnquiryModel: Identifiable {
     let id: String
-    let companyNames: String
-    let date: String
     let status: String
-    let firstName: String
-    let lastName: String
-    let phone: String
-    let email: String
+    let date: String
+    let companyName: String
+    let description: String
+    let response: String
     
     init() {
         self.id = ""
-        self.companyNames = ""
-        self.date = ""
         self.status = "Pending"
-        self.firstName = ""
-        self.lastName = ""
-        self.phone = ""
-        self.email = ""
+        self.date = ""
+        self.companyName = ""
+        self.description = ""
+        self.response = ""
+    }
+    
+    init(id: String, status: String, date: String, companyName: String = "", description: String = "", response: String = "") {
+        self.id = id
+        self.status = status
+        self.date = date
+        self.companyName = companyName
+        self.description = description
+        self.response = response
     }
 }
 
