@@ -213,6 +213,13 @@
 		90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */; };
 		90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */; };
 		90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */; };
+		90C6FF2B2F20ED0000BDA19A /* VendorFreelancerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2C2F20ED0000BDA19A /* VendorFreelancerDetailView.swift */; };
+		90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */; };
+		90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */; };
+		90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */; };
+		90C6FF332F20ED0400BDA19A /* VendorStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF342F20ED0400BDA19A /* VendorStatisticsView.swift */; };
+		90C6FF352F20ED0500BDA19A /* VendorMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF362F20ED0500BDA19A /* VendorMessagesView.swift */; };
+		90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -444,6 +451,13 @@
 		90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorReviewsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorReviewsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSettingsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEditProfileView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEditProfileView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF2C2F20ED0000BDA19A /* VendorFreelancerDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorFreelancerDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorFreelancerDetailView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddFreelancerView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorNotificationsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorNotificationsView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddWorkshopItemView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddWorkshopItemView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF342F20ED0400BDA19A /* VendorStatisticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorStatisticsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorStatisticsView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF362F20ED0500BDA19A /* VendorMessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorMessagesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorMessagesView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSubscriptionView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSubscriptionView.swift; sourceTree = SOURCE_ROOT; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
@@ -1354,6 +1368,13 @@
 				90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */,
 				90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */,
 				90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */,
+				90C6FF2B2F20ED0000BDA19A /* VendorFreelancerDetailView.swift in Sources */,
+				90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */,
+				90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */,
+				90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */,
+				90C6FF332F20ED0400BDA19A /* VendorStatisticsView.swift in Sources */,
+				90C6FF352F20ED0500BDA19A /* VendorMessagesView.swift in Sources */,
+				90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
 				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
