@@ -2,7 +2,8 @@
 import SwiftUI
 
 class ForgotPasswordViewModel: ObservableObject {
-    @Published var phone = "", errorMessage = ""
+    @Published var phone = ""
+    @Published var errorMessage = ""
     @Published var isLoading = false
     
     func sendCode() {

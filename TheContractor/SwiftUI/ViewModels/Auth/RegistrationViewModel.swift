@@ -2,7 +2,12 @@
 import SwiftUI
 
 class RegistrationViewModel: ObservableObject {
-    @Published var firstName = "", lastName = "", phone = "", password = "", confirmPassword = "", errorMessage = ""
+    @Published var firstName = ""
+    @Published var lastName = ""
+    @Published var phone = ""
+    @Published var password = ""
+    @Published var confirmPassword = ""
+    @Published var errorMessage = ""
     @Published var isLoading = false
     var isFormValid: Bool { !firstName.isEmpty && !lastName.isEmpty && !phone.isEmpty && !password.isEmpty && password == confirmPassword }
     

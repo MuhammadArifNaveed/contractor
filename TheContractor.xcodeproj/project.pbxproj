@@ -174,6 +174,14 @@
 		90C6FED72F20E70100BDA19A /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FED82F20E70100BDA19A /* CartViewModel.swift */; };
 		90C6FED92F20E70200BDA19A /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDA2F20E70200BDA19A /* CheckoutView.swift */; };
 		90C6FEDB2F20E70300BDA19A /* CheckoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDC2F20E70300BDA19A /* CheckoutViewModel.swift */; };
+		90C6FEDD2F20E80000BDA19A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDE2F20E80000BDA19A /* LoginView.swift */; };
+		90C6FEDF2F20E80100BDA19A /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE02F20E80100BDA19A /* LoginViewModel.swift */; };
+		90C6FEE12F20E80200BDA19A /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE22F20E80200BDA19A /* RegistrationView.swift */; };
+		90C6FEE32F20E80300BDA19A /* RegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE42F20E80300BDA19A /* RegistrationViewModel.swift */; };
+		90C6FEE52F20E80400BDA19A /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE62F20E80400BDA19A /* ForgotPasswordView.swift */; };
+		90C6FEE72F20E80500BDA19A /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE82F20E80500BDA19A /* ForgotPasswordViewModel.swift */; };
+		90C6FEE92F20E80600BDA19A /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEEA2F20E80600BDA19A /* WorkshopView.swift */; };
+		90C6FEEB2F20E80700BDA19A /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEEC2F20E80700BDA19A /* WorkshopViewModel.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -366,6 +374,14 @@
 		90C6FED82F20E70100BDA19A /* CartViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CartViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CartViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEDA2F20E70200BDA19A /* CheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckoutView.swift; path = TheContractor/SwiftUI/Views/CheckoutView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEDC2F20E70300BDA19A /* CheckoutViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckoutViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CheckoutViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEDE2F20E80000BDA19A /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginView.swift; path = TheContractor/SwiftUI/Views/Auth/LoginView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEE02F20E80100BDA19A /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/LoginViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEE22F20E80200BDA19A /* RegistrationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegistrationView.swift; path = TheContractor/SwiftUI/Views/Auth/RegistrationView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEE42F20E80300BDA19A /* RegistrationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegistrationViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/RegistrationViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEE62F20E80400BDA19A /* ForgotPasswordView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ForgotPasswordView.swift; path = TheContractor/SwiftUI/Views/Auth/ForgotPasswordView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEE82F20E80500BDA19A /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ForgotPasswordViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/ForgotPasswordViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEEA2F20E80600BDA19A /* WorkshopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WorkshopView.swift; path = TheContractor/SwiftUI/Views/WorkshopView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEEC2F20E80700BDA19A /* WorkshopViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WorkshopViewModel.swift; path = TheContractor/SwiftUI/ViewModels/WorkshopViewModel.swift; sourceTree = SOURCE_ROOT; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
@@ -1237,6 +1253,14 @@
 				90C6FED72F20E70100BDA19A /* CartViewModel.swift in Sources */,
 				90C6FED92F20E70200BDA19A /* CheckoutView.swift in Sources */,
 				90C6FEDB2F20E70300BDA19A /* CheckoutViewModel.swift in Sources */,
+				90C6FEDD2F20E80000BDA19A /* LoginView.swift in Sources */,
+				90C6FEDF2F20E80100BDA19A /* LoginViewModel.swift in Sources */,
+				90C6FEE12F20E80200BDA19A /* RegistrationView.swift in Sources */,
+				90C6FEE32F20E80300BDA19A /* RegistrationViewModel.swift in Sources */,
+				90C6FEE52F20E80400BDA19A /* ForgotPasswordView.swift in Sources */,
+				90C6FEE72F20E80500BDA19A /* ForgotPasswordViewModel.swift in Sources */,
+				90C6FEE92F20E80600BDA19A /* WorkshopView.swift in Sources */,
+				90C6FEEB2F20E80700BDA19A /* WorkshopViewModel.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
 				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
