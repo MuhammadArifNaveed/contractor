@@ -14,8 +14,15 @@ struct SubCategoriesView: View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(viewModel.subCategories.indices, id: \.self) { i in
-                    SubCategoryCard(subCategory: viewModel.subCategories[i]) {
-                        viewModel.selectSubCategory(viewModel.subCategories[i])
+                    Button(action: { viewModel.selectSubCategory(viewModel.subCategories[i]) }) {
+                        VStack(spacing: 8) {
+                            Circle().fill(AppTheme.Colors.primary.opacity(0.2)).frame(height: 100)
+                                .overlay(Image(systemName: "tag").font(.system(size: 40)).foregroundColor(AppTheme.Colors.primary))
+                            Text(viewModel.subCategories[i].name).font(AppTheme.Fonts.semibold(14)).lineLimit(2).multilineTextAlignment(.center)
+                        }
+                        .padding(8)
+                        .background(Color.white)
+                        .cornerRadius(8)
                     }
                 }
             }
@@ -23,23 +30,5 @@ struct SubCategoriesView: View {
         }
         .navigationTitle(category.name)
         .onAppear { viewModel.loadSubCategories() }
-    }
-}
-
-struct SubCategoryCard: View {
-    let subCategory: SubCategoryViewModel
-    let onTap: () -> Void
-    var body: some View {
-        Button(action: onTap) {
-            VStack(spacing: 8) {
-                AsyncImage(url: URL(string: subCategory.icon)) { img in img.resizable().aspectRatio(contentMode: .fill) } placeholder: { Color.gray.opacity(0.2) }
-                    .frame(height: 100)
-                    .cornerRadius(8)
-                Text(subCategory.name).font(AppTheme.Fonts.semibold(14)).lineLimit(2).multilineTextAlignment(.center)
-            }
-            .padding(8)
-            .background(Color.white)
-            .cornerRadius(8)
-        }
     }
 }
