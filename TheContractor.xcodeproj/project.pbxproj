@@ -162,6 +162,10 @@
 		90C6FEBF2F20E40700BDA19A /* JobDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEC02F20E40700BDA19A /* JobDetailViewModel.swift */; };
 		90C6FEC12F20E40800BDA19A /* SearchJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEC22F20E40800BDA19A /* SearchJobsView.swift */; };
 		90C6FEC32F20E40900BDA19A /* SearchJobsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEC42F20E40900BDA19A /* SearchJobsViewModel.swift */; };
+		90C6FEC52F20E50000BDA19A /* ReviewsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEC62F20E50000BDA19A /* ReviewsListView.swift */; };
+		90C6FEC72F20E50100BDA19A /* ReviewsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEC82F20E50100BDA19A /* ReviewsListViewModel.swift */; };
+		90C6FEC92F20E50200BDA19A /* AddReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FECA2F20E50200BDA19A /* AddReviewView.swift */; };
+		90C6FECB2F20E50300BDA19A /* AddReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FECC2F20E50300BDA19A /* AddReviewViewModel.swift */; };
 		80C6FE7F2F10E7210014E3EF /* FreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */; };
 		80C6FE802F10E7210014E3EF /* SearchFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -342,6 +346,10 @@
 		90C6FEC02F20E40700BDA19A /* JobDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JobDetailViewModel.swift; path = TheContractor/SwiftUI/ViewModels/JobDetailViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEC22F20E40800BDA19A /* SearchJobsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchJobsView.swift; path = TheContractor/SwiftUI/Views/SearchJobsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEC42F20E40900BDA19A /* SearchJobsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchJobsViewModel.swift; path = TheContractor/SwiftUI/ViewModels/SearchJobsViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEC62F20E50000BDA19A /* ReviewsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReviewsListView.swift; path = TheContractor/SwiftUI/Views/ReviewsListView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FEC82F20E50100BDA19A /* ReviewsListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReviewsListViewModel.swift; path = TheContractor/SwiftUI/ViewModels/ReviewsListViewModel.swift; sourceTree = SOURCE_ROOT; };
+		90C6FECA2F20E50200BDA19A /* AddReviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddReviewView.swift; path = TheContractor/SwiftUI/Views/AddReviewView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FECC2F20E50300BDA19A /* AddReviewViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddReviewViewModel.swift; path = TheContractor/SwiftUI/ViewModels/AddReviewViewModel.swift; sourceTree = SOURCE_ROOT; };
 		80C6FE7A2F10E7210014E3EF /* FreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancersView.swift; sourceTree = "<group>"; };
 		80C6FE7B2F10E7210014E3EF /* SearchFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFreelancerView.swift; sourceTree = "<group>"; };
 		80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreelancerViewModel.swift; sourceTree = "<group>"; };
@@ -1201,6 +1209,10 @@
 				90C6FEBF2F20E40700BDA19A /* JobDetailViewModel.swift in Sources */,
 				90C6FEC12F20E40800BDA19A /* SearchJobsView.swift in Sources */,
 				90C6FEC32F20E40900BDA19A /* SearchJobsViewModel.swift in Sources */,
+				90C6FEC52F20E50000BDA19A /* ReviewsListView.swift in Sources */,
+				90C6FEC72F20E50100BDA19A /* ReviewsListViewModel.swift in Sources */,
+				90C6FEC92F20E50200BDA19A /* AddReviewView.swift in Sources */,
+				90C6FECB2F20E50300BDA19A /* AddReviewViewModel.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				90327A1D2F1D500000BDA19A /* CompanyRegistrationView.swift in Sources */,
 				90327A1F2F1D500100BDA19A /* CompanyRegistrationViewModel.swift in Sources */,
