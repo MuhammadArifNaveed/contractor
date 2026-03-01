@@ -65,145 +65,183 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - Top Section
+    // MARK: - Top Section (Android style)
     private var topSection: some View {
-        VStack(spacing: AppTheme.Spacing.medium) {
-            // Top Categories Horizontal Scroll
+        VStack(spacing: 16) {
+            // Top Categories - Horizontal Text-Only Pills (Android style)
             if !viewModel.topCategories.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: AppTheme.Spacing.small) {
+                    HStack(spacing: 8) {
                         ForEach(viewModel.topCategories.indices, id: \.self) { index in
-                            TopCategoryCard(category: viewModel.topCategories[index]) {
-                                viewModel.selectCategory(viewModel.topCategories[index])
-                            }
+                            Text(viewModel.topCategories[index].name)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(20)
+                                .onTapGesture {
+                                    viewModel.selectCategory(viewModel.topCategories[index])
+                                }
                         }
                     }
-                    .padding(.horizontal, AppTheme.Spacing.medium)
+                    .padding(.horizontal, 16)
                 }
+                .padding(.top, 20)
             }
             
             // Search Bar
             Button(action: { showSearch = true }) {
-                HStack(spacing: AppTheme.Spacing.small) {
+                HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.black)
                     
                     Text("Search for companies")
-                        .font(AppTheme.Fonts.regular(14))
+                        .font(.system(size: 14))
                         .foregroundColor(.black.opacity(0.6))
                     
                     Spacer()
                 }
-                .padding(AppTheme.Spacing.medium)
+                .padding(15)
                 .background(Color.white)
-                .cornerRadius(AppTheme.CornerRadius.small)
+                .cornerRadius(8)
             }
-            .padding(.horizontal, AppTheme.Spacing.medium)
-            .padding(.bottom, AppTheme.Spacing.medium)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
         }
-        .padding(.top, AppTheme.Spacing.large)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    AppTheme.Colors.primary.opacity(0.15),
-                    AppTheme.Colors.primary.opacity(0.05)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color(red: 242/255, green: 190/255, blue: 54/255))
     }
     
-    // MARK: - Browse Categories Card
+    // MARK: - Browse Categories Card (Android style)
     private var browseCategoriesCard: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+        VStack(alignment: .leading, spacing: 10) {
             // Section Header
             VStack(alignment: .leading, spacing: 4) {
                 Text("Browse Categories")
-                    .font(AppTheme.Fonts.semibold(18))
-                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.black)
                 
                 Rectangle()
-                    .fill(AppTheme.Colors.primary)
+                    .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
                     .frame(width: 50, height: 3)
             }
+            .padding(.horizontal, 10)
             
-            // Categories Grid
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: AppTheme.Spacing.medium),
-                    GridItem(.flexible(), spacing: AppTheme.Spacing.medium),
-                    GridItem(.flexible(), spacing: AppTheme.Spacing.medium)
-                ],
-                spacing: AppTheme.Spacing.medium
-            ) {
-                ForEach(viewModel.categories.indices, id: \.self) { index in
-                    CategoryCard(category: viewModel.categories[index]) {
-                        viewModel.selectCategory(viewModel.categories[index])
+            // Categories - Horizontal Scrolling Tabs (Android style, text-only)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(viewModel.categories.indices, id: \.self) { index in
+                        let category = viewModel.categories[index]
+                        let isSelected = viewModel.selectedCategory?.id == category.id
+                        
+                        VStack(spacing: 4) {
+                            Text(category.name)
+                                .font(.system(size: 14, weight: isSelected ? .bold : .regular))
+                                .foregroundColor(.black)
+                            
+                            if isSelected {
+                                Rectangle()
+                                    .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
+                                    .frame(height: 3)
+                            } else {
+                                Rectangle()
+                                    .fill(Color.clear)
+                                    .frame(height: 3)
+                            }
+                        }
+                        .onTapGesture {
+                            viewModel.selectCategory(category)
+                        }
                     }
                 }
+                .padding(.horizontal, 10)
             }
+            .padding(.top, 10)
             
             // Divider
             if viewModel.selectedCategory != nil {
-                Divider()
-                    .padding(.vertical, AppTheme.Spacing.small)
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(height: 0.5)
+                    .padding(.vertical, 10)
             }
             
-            // Subcategories Grid (if category selected)
+            // Subcategories - 2 Column Grid (Android style, text-only)
             if let selectedCategory = viewModel.selectedCategory,
                !selectedCategory.sub_categories.subCategoryList.isEmpty {
                 LazyVGrid(
                     columns: [
-                        GridItem(.flexible(), spacing: AppTheme.Spacing.small),
-                        GridItem(.flexible(), spacing: AppTheme.Spacing.small)
+                        GridItem(.flexible(), spacing: 10),
+                        GridItem(.flexible(), spacing: 10)
                     ],
-                    spacing: AppTheme.Spacing.small
+                    spacing: 10
                 ) {
                     ForEach(selectedCategory.sub_categories.subCategoryList.indices, id: \.self) { index in
-                        SubCategoryCard(
-                            subCategory: selectedCategory.sub_categories.subCategoryList[index]
-                        ) {
-                            viewModel.selectSubCategory(selectedCategory.sub_categories.subCategoryList[index])
-                        }
+                        Text(selectedCategory.sub_categories.subCategoryList[index].name)
+                            .font(.system(size: 14))
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                            .onTapGesture {
+                                viewModel.selectSubCategory(selectedCategory.sub_categories.subCategoryList[index])
+                            }
                     }
                 }
+                .padding(.horizontal, 10)
             }
         }
-        .padding(AppTheme.Spacing.medium)
+        .padding(10)
         .background(Color.white)
-        .cornerRadius(AppTheme.CornerRadius.small)
+        .cornerRadius(5)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-        .padding(.horizontal, AppTheme.Spacing.medium)
-        .padding(.top, AppTheme.Spacing.large)
+        .padding(.horizontal, 10)
+        .padding(.top, 20)
     }
     
-    // MARK: - Companies Section
+    // MARK: - Companies Section (Android style)
     private func companiesSection(title: String, companies: [CompanyViewModel]) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+        VStack(alignment: .leading, spacing: 10) {
             // Section Header
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(AppTheme.Fonts.semibold(18))
-                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.black)
                 
                 Rectangle()
-                    .fill(AppTheme.Colors.primary)
+                    .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
                     .frame(width: 50, height: 3)
             }
-            .padding(.horizontal, AppTheme.Spacing.medium)
+            .padding(.horizontal, 10)
             
-            // Companies List
-            VStack(spacing: AppTheme.Spacing.small) {
-                ForEach(companies.indices, id: \.self) { index in
-                    CompanyCard(company: companies[index]) {
-                        viewModel.selectCompany(companies[index])
+            // Companies - Horizontal Scroll for Titanium, Vertical for Top
+            if title == "Titanium Companies" {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(companies.indices, id: \.self) { index in
+                            CompanyCard(company: companies[index]) {
+                                viewModel.selectCompany(companies[index])
+                            }
+                            .frame(width: 150)
+                        }
                     }
-                    .padding(.horizontal, AppTheme.Spacing.medium)
+                    .padding(.horizontal, 10)
+                }
+            } else {
+                // Vertical list for Top Companies
+                VStack(spacing: 10) {
+                    ForEach(companies.indices, id: \.self) { index in
+                        CompanyCard(company: companies[index]) {
+                            viewModel.selectCompany(companies[index])
+                        }
+                        .padding(.horizontal, 10)
+                    }
                 }
             }
         }
-        .padding(.top, AppTheme.Spacing.medium)
+        .padding(.top, 10)
     }
 }
 

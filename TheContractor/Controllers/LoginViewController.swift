@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class LoginViewController: BaseViewController {
     
@@ -66,14 +67,10 @@ class LoginViewController: BaseViewController {
     }
 
     @IBAction func actionLoginAsCompany(_ sender: Any) {
-        // Temporarily disabled - CompanyLoginHostingController removed
-        /*
-        let controller = CompanyLoginHostingController()
+        let companyLoginView = CompanyLoginView()
+        let controller = UIHostingController(rootView: companyLoginView)
+        controller.navigationController?.setNavigationBarHidden(true, animated: false)
         self.navigationController?.pushViewController(controller, animated: true)
-        */
-        let alert = UIAlertController(title: "Coming Soon", message: "Company login will be available in an upcoming update.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        self.present(alert, animated: true)
     }
     
 }

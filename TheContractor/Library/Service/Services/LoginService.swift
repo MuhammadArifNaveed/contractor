@@ -46,6 +46,24 @@ class LoginService: BaseService {
         }
     }
     
+    // MARK: - Company (Vendor) Login
+    /// Login for company/vendor accounts
+    func loginCompany(email: String, pinCode: String, firebaseToken: String,
+                     completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/login"
+        let params: [String: String] = ["email": email, "pin_code": pinCode, "firebase_token": firebaseToken]
+        
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json {
+                // Save vendor session similar to user login
+                // The API should return vendor data that can be stored in Global
+                completion(message, true, json)
+            } else {
+                completion(message, false, nil)
+            }
+        }
+    }
+    
     // MARK: - Company (Vendor) Registration
     /// Registers a new company/vendor account.
     func registerCompany(params: [String: String],

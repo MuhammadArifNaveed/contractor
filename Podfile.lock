@@ -8,6 +8,7 @@ PODS:
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
   - SwiftyJSON (5.0.1)
+  - XNLogger (3.0.0)
 
 DEPENDENCIES:
   - Alamofire
@@ -17,6 +18,7 @@ DEPENDENCIES:
   - MBProgressHUD
   - SDWebImage
   - SwiftyJSON
+  - XNLogger
 
 SPEC REPOS:
   trunk:
@@ -27,6 +29,7 @@ SPEC REPOS:
     - MBProgressHUD
     - SDWebImage
     - SwiftyJSON
+    - XNLogger
 
 SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
@@ -36,7 +39,8 @@ SPEC CHECKSUMS:
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
+  XNLogger: 8690f35deeba041721d71ccf3f83bca622dc445d
 
-PODFILE CHECKSUM: cf693c098134215ead9e29a7e2af19fe4e5cdfe8
+PODFILE CHECKSUM: 86f9c3c74d1ca4530be162f6040e5157186caefd
 
 COCOAPODS: 1.16.2

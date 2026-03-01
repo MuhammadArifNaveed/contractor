@@ -10,6 +10,7 @@ target 'TheContractor' do
   pod 'IQKeyboardManagerSwift'
   pod 'Cosmos'
   pod 'iOSDropDown'
+  pod 'XNLogger'
 end
 
 

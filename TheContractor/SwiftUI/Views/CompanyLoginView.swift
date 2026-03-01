@@ -126,19 +126,22 @@ struct CompanyLoginView: View {
     private var forgotPassword: some View {
         HStack {
             Spacer()
-            NavigationLink(destination: VendorForgotPasswordView()) {
+            Button(action: {
+                // TODO: Navigate to forgot password when view is added to target
+            }) {
                 Text("Forgot password")
                     .font(AppTheme.Fonts.caption)
                     .foregroundColor(AppTheme.Colors.textPrimary)
             }
-            .buttonStyle(.plain)
         }
         .padding(.top, AppTheme.Spacing.small)
     }
 
     private var switchToUserButton: some View {
         VStack(spacing: AppTheme.Spacing.small) {
-            NavigationLink(destination: CompanyRegistrationView()) {
+            Button(action: {
+                // TODO: Navigate to company registration when view is added to target
+            }) {
                 Text("Not a Member? Create Account")
                     .font(AppTheme.Fonts.body)
                     .foregroundColor(AppTheme.Colors.textPrimary)

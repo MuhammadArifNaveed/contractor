@@ -22,7 +22,10 @@ class SideMenuViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        // Defer reload to avoid layout warning
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
     
     private func setupNotifications() {
@@ -97,49 +100,77 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showHomeController()
             
         case "Inbox":
-            showComingSoonAlert(in: mainVC, feature: "Inbox")
+            mainVC.showChatListController()
             
         case "Company Finder":
             mainVC.showSearchCompanyController()
             
         case "Submit Enquiry":
-            showComingSoonAlert(in: mainVC, feature: "Submit Enquiry")
+            mainVC.showCartController()
             
         case "Enquiries":
-            showComingSoonAlert(in: mainVC, feature: "Enquiries")
+            if Global.shared.isLogedIn {
+                mainVC.showEnquiriesController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Submit Quotation":
-            showComingSoonAlert(in: mainVC, feature: "Submit Quotation")
+            if Global.shared.isLogedIn {
+                mainVC.showSubmitQuotationController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Quotations":
-            showComingSoonAlert(in: mainVC, feature: "Quotations")
+            if Global.shared.isLogedIn {
+                mainVC.showQuotationsController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Complaints":
-            showComingSoonAlert(in: mainVC, feature: "Complaints")
+            if Global.shared.isLogedIn {
+                mainVC.showComplaintsController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Estimations":
             mainVC.showEsstimationController()
             
         case "24/7 Maintenance":
-            showComingSoonAlert(in: mainVC, feature: "24/7 Maintenance")
+            mainVC.show24x7MaintenanceController()
             
         case "Advertise Company":
-            showComingSoonAlert(in: mainVC, feature: "Advertise Company")
+            mainVC.showAdvertiseCompanyController()
             
         case "Available Jobs":
-            showComingSoonAlert(in: mainVC, feature: "Available Jobs")
+            mainVC.showAvailableJobsController()
             
         case "My Job Applies":
-            showComingSoonAlert(in: mainVC, feature: "My Job Applies")
+            if Global.shared.isLogedIn {
+                mainVC.showMyJobApplicationsController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Direct Hiring":
-            showComingSoonAlert(in: mainVC, feature: "Direct Hiring")
+            if Global.shared.isLogedIn {
+                mainVC.showDirectHiringController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Freelancers":
             mainVC.showFreelancersController()
             
         case "Freelancer Dashboard":
-            showComingSoonAlert(in: mainVC, feature: "Freelancer Dashboard")
+            if Global.shared.isLogedIn {
+                mainVC.showFreelanceDashboardController()
+            } else {
+                mainVC.loginUser()
+            }
             
         case "Workshop Ad":
             mainVC.showWorkshopController()
@@ -190,20 +221,17 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showHomeController()
         }
         else if title == "Inbox" {
-            // TODO: Navigate to Inbox (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Inbox")
+            mainVC.showChatListController()
         }
         else if title == "Vendor Rating" {
             // TODO: Navigate to Vendor Rating (will be implemented in separate feature)
             showComingSoonAlert(in: mainVC, feature: "Vendor Rating")
         }
         else if title == "Enquiries" {
-            // TODO: Navigate to Vendor Enquiries (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Enquiries")
+            mainVC.showEnquiriesController()
         }
         else if title == "Quotations" {
-            // TODO: Navigate to Vendor Quotations (will be implemented in separate feature)
-            showComingSoonAlert(in: mainVC, feature: "Quotations")
+            mainVC.showQuotationsController()
         }
         else if title == "Post Workshop" {
             // TODO: Navigate to Post Workshop (will be implemented in separate feature)
@@ -232,16 +260,11 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showFreelancersController()
         }
         else if title == "Freelancer Dashboard" {
-            // Temporarily disabled - showFreelanceDashboardController removed
-            /*
             if Global.shared.isLogedIn {
                 mainVC.showFreelanceDashboardController()
-            }
-            else {
+            } else {
                 mainVC.loginUser()
             }
-            */
-            showComingSoonAlert(in: mainVC, feature: "Freelancer Dashboard")
         }
         else if title == "Memberships" {
             // TODO: Navigate to Memberships (will be implemented in separate feature)

@@ -23,8 +23,8 @@ class HomeViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        // Call the API endpoint directly to get JSON
-        let completeURL = "https://contractor.bidcont.com/rest/Home/home_page"
+        // Use the correct endpoint matching Android app
+        let completeURL = EndPoints.BASE_URL + EndPoints.home
         LoginService.shared().makeGetAPICall(with: completeURL, params: [:]) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
                 self?.isLoading = false
@@ -34,6 +34,13 @@ class HomeViewModel: ObservableObject {
                     let categoryList = CategoryListViewModel(list: json["categories"])
                     self?.categories = categoryList.categoryList
                     self?.topCategories = Array(categoryList.categoryList.prefix(6))
+                    
+                    // Set "Consultants" as default selected category (matching Android)
+                    if let consultantsCategory = categoryList.categoryList.first(where: { $0.name.lowercased().contains("consultant") }) {
+                        self?.selectedCategory = consultantsCategory
+                    } else if !categoryList.categoryList.isEmpty {
+                        self?.selectedCategory = categoryList.categoryList.first
+                    }
                     
                     // Parse companies using CompanyListViewModel
                     let companyList = CompanyListViewModel(list: json["companies_list"])

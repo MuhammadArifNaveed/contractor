@@ -8,11 +8,7 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="montserrat_regular.ttf">
-            <string>Montserrat-Regular</string>
-        </array>
-    </customFonts>
+    <customFonts key="customFonts"/>
     <scenes>
         <!--Drawer Controller-->
         <scene sceneID="i2K-8d-fut">
@@ -85,7 +81,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="24" id="Bk5-4e-Tu2"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <state key="normal" title="Home">
                                                             <color key="titleColor" red="0.95031052829999996" green="0.74568039180000001" blue="0.21096661689999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
@@ -125,7 +121,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="24" id="FKT-mb-cuq"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <state key="normal" title="Workshop">
                                                             <color key="titleColor" red="0.99853879209999996" green="0.3219557703" blue="0.36184298990000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
@@ -165,7 +161,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="24" id="zwg-gS-MC0"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <state key="normal" title="Search">
                                                             <color key="titleColor" red="0.99853879209999996" green="0.3219557703" blue="0.36184298990000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
@@ -205,7 +201,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="24" id="aSz-l0-04V"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <state key="normal" title="Estimation">
                                                             <color key="titleColor" red="0.99853879209999996" green="0.3219557703" blue="0.36184298990000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
@@ -245,7 +241,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="24" id="7qU-u1-AEA"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <state key="normal" title="Profile">
                                                             <color key="titleColor" red="1" green="0.32156862749999998" blue="0.36078431370000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
@@ -513,7 +509,7 @@
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IAo-K4-8sB">
                                                             <rect key="frame" x="52" y="35" width="44.5" height="21"/>
-                                                            <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="18"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>

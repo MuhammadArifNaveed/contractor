@@ -1,0 +1,6 @@
+framework module XNLogger {
+  umbrella header "XNLogger-umbrella.h"
+
+  export *
+  module * { export * }
+}

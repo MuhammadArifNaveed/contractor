@@ -23,9 +23,9 @@ class CompaniesListViewController: BaseViewController ,TopBarDelegate{
         if let container = self.mainContainer{
             container.setBackButton(isback: true)
             container.delegate = self
-            container.imgLogo.isHidden = true
-            container.lblTitle.isHidden = false
-            container.lblTitle.text = "Company List"
+            container.imgLogo?.isHidden = true
+            container.lblTitle?.isHidden = false
+            container.lblTitle?.text = "Company List"
         }
     }
     
@@ -33,9 +33,9 @@ class CompaniesListViewController: BaseViewController ,TopBarDelegate{
     func actionBack() {
         if let container = self.mainContainer{
             container.setBackButton()
-            container.imgLogo.isHidden = false
-            container.lblTitle.isHidden = true
-            container.lblTitle.text = ""
+            container.imgLogo?.isHidden = false
+            container.lblTitle?.isHidden = true
+            container.lblTitle?.text = ""
         }
         self.navigationController?.popViewController(animated: true)
     }
