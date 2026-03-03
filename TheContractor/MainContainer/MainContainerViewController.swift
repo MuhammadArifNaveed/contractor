@@ -343,9 +343,14 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showWorkshopController()  {
-        let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "WorkshopVC") as! BaseNavigationController
+        // Workshop requires login (matching Android behavior)
+        guard Global.shared.isLogedIn else {
+            loginUser()
+            return
+        }
+        
+        let workshopVC = WorkshopPostHostingController()
+        let controller = BaseNavigationController(rootViewController: workshopVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
 
@@ -681,33 +686,16 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showFreelancersController() {
-        // Hide the top bar for Freelancers screen (it has its own navigation)
-        self.topBarView?.isHidden = true
-        
-        let freelancersVC = FreelancersHostingController()
-        let controller = BaseNavigationController(rootViewController: freelancersVC)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
-
-        guard let containerView = self.containerView else {
-            return
-        }
-        
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-        
-        baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
+        let alert = UIAlertController(
+            title: "Coming Soon",
+            message: "Freelancers will be available in an upcoming update.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
 
-    
     
     
    

@@ -98,7 +98,13 @@ private struct CompanyFreelancerCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             HStack(alignment: .top, spacing: AppTheme.Spacing.small) {
-                ProfileImageView(imageUrl: item.imageUrl, size: 48)
+                Circle()
+                    .fill(AppTheme.Colors.secondaryBackground)
+                    .frame(width: 48, height: 48)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    )
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
@@ -122,8 +128,18 @@ private struct CompanyFreelancerCard: View {
             }
 
             if !item.skills.isEmpty {
-                FlowLayoutView(items: item.skills, spacing: 8) { skill in
-                    SkillTag(text: skill)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(item.skills, id: \.self) { skill in
+                            Text(skill)
+                                .font(AppTheme.Fonts.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(AppTheme.Colors.primary.opacity(0.1))
+                                .foregroundColor(AppTheme.Colors.primary)
+                                .cornerRadius(12)
+                        }
+                    }
                 }
             }
 

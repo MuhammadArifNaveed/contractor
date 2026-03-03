@@ -133,15 +133,15 @@ private struct FreelancingOrderCard: View {
 
             HStack(alignment: .top, spacing: AppTheme.Spacing.large) {
                 VStack(alignment: .leading, spacing: 6) {
-                    InfoRow(title: "Registered On Date", value: order.registeredOnDate)
-                    InfoRow(title: "Response", value: order.response)
+                    FreelancingOrderInfoRow(title: "Registered On Date", value: order.registeredOnDate)
+                    FreelancingOrderInfoRow(title: "Response", value: order.response)
                 }
 
                 Spacer()
 
                 VStack(alignment: .leading, spacing: 6) {
-                    InfoRow(title: "Response Time", value: order.responseTime)
-                    InfoRow(title: "Status", value: order.status)
+                    FreelancingOrderInfoRow(title: "Response Time", value: order.responseTime)
+                    FreelancingOrderInfoRow(title: "Status", value: order.status)
                 }
             }
 
@@ -181,7 +181,7 @@ private struct FreelancingOrderCard: View {
     }
 }
 
-private struct InfoRow: View {
+private struct FreelancingOrderInfoRow: View {
     let title: String
     let value: String
 

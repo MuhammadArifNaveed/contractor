@@ -331,14 +331,16 @@ final class FreelancingService: BaseService {
     private func defaultIdentityParams() -> [String: String] {
         // Build identity from the current logged-in session. Supports both
         // normal users and company (vendor) users.
-        if Global.shared.loginType == "company", let vendor = Global.shared.companyVendor {
-            let userId = vendor.userId.isEmpty ? vendor.id : vendor.userId
-            return [
-                "user_id": userId,
-                "user_type": "companies",
-                "vendor_id": vendor.id
-            ]
-        } else if let user = Global.shared.user {
+        // Company vendor login temporarily disabled
+        // if Global.shared.loginType == "company", let vendor = Global.shared.companyVendor {
+        //     let userId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        //     return [
+        //         "user_id": userId,
+        //         "user_type": "companies",
+        //         "vendor_id": vendor.id
+        //     ]
+        // } else 
+        if let user = Global.shared.user {
             let userId = user.id
             let userType = user.userType.isEmpty ? "users" : user.userType
             return [

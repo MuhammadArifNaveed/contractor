@@ -806,11 +806,13 @@ struct UpdateFreelancerView: View {
         // Show loader immediately
         isSubmitting = true
         
-        guard let vendor = Global.shared.companyVendor else {
+        // Company vendor temporarily disabled
+        guard let user = Global.shared.user else {
             isSubmitting = false
-            showToast("Company session not found")
+            showToast("User session not found")
             return
         }
+        let vendor = user // Use user as vendor for now
 
         guard let primaryAddress = currentAddressForRegistration() else {
             isSubmitting = false
@@ -827,8 +829,8 @@ struct UpdateFreelancerView: View {
 
         // Identity params for company user
         var params: [String: String] = [:]
-        let userId = vendor.userId.isEmpty ? vendor.id : vendor.userId
-        params["user_id"] = userId
+        let freelancerId = vendor.id
+        params["user_id"] = freelancerId
         params["user_type"] = "companies"
         params["vendor_id"] = vendor.id
 
@@ -902,12 +904,14 @@ struct UpdateFreelancerView: View {
     private func fetchFreelancerAddresses() {
         print("📍 Fetch addresses called - mode: \(mode), step: \(step)")
         
-        guard let vendor = Global.shared.companyVendor else { 
-            print("📍 No vendor found")
+        // Company vendor temporarily disabled
+        guard let user = Global.shared.user else { 
+            print("📍 No user found")
             return 
         }
+        let vendor = user // Use user as vendor for now
         
-        let freelancerId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        let freelancerId = vendor.id
         print("📍 Fetching addresses for freelancer ID: \(freelancerId)")
         
         FreelancingService.shared.fetchFreelancerAddresses(freelancerId: freelancerId) { message, success, json in
@@ -971,9 +975,11 @@ struct UpdateFreelancerView: View {
     }
     
     private func addAddress(_ address: FreelancerAddress) {
-        guard let vendor = Global.shared.companyVendor else { return }
+        // Company vendor temporarily disabled
+        guard let user = Global.shared.user else { return }
+        let vendor = user // Use user as vendor for now
         
-        let freelancerId = vendor.userId.isEmpty ? vendor.id : vendor.userId
+        let freelancerId = vendor.id
         
         FreelancingService.shared.addFreelancerAddress(
             freelancerId: freelancerId,

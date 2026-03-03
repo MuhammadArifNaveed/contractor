@@ -179,7 +179,13 @@ struct CheckoutFreelancerCard: View {
             // Header row with name, profession, rate, location
             HStack(alignment: .top, spacing: AppTheme.Spacing.small) {
                 // Profile placeholder
-                ProfileImageView(imageUrl: selection.profileImage, size: 50)
+                Circle()
+                    .fill(AppTheme.Colors.secondaryBackground)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    )
                 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
