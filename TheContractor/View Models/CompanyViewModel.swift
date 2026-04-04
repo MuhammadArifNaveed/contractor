@@ -31,7 +31,9 @@ class CompanyViewModel{
         category_id = json["category_id"].stringValue
         company_name = json["company_name"].stringValue
         company_logo = json["company_logo"].stringValue
-        company_logo = "https://contractor.thecontractor.ae/uploads/companies/" + company_logo
+        if !company_logo.isEmpty {
+            company_logo = "https://contractor.thecontractor.ae/uploads/companies/" + company_logo
+        }
         company_discription = json["company_discription"].stringValue
         total_rating = json["total_rating"].stringValue
         category_name = json["category_name"].stringValue

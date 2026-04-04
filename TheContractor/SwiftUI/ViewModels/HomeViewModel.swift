@@ -19,6 +19,12 @@ class HomeViewModel: ObservableObject {
     @Published var titaniumCompanies: [CompanyViewModel] = []
     @Published var topCompanies: [CompanyViewModel] = []
     
+    // Navigation
+    @Published var selectedCompany: CompanyViewModel?
+    @Published var showCompanyDetail = false
+    @Published var selectedSubCategory: SubCategoryViewModel?
+    @Published var showSubCategoryCompanies = false
+    
     func loadHomeData() {
         isLoading = true
         errorMessage = nil
@@ -65,14 +71,12 @@ class HomeViewModel: ObservableObject {
     }
     
     func selectSubCategory(_ subCategory: SubCategoryViewModel) {
-        // Navigate to companies by subcategory
-        // TODO: Implement navigation
-        print("Selected subcategory: \(subCategory.name)")
+        self.selectedSubCategory = subCategory
+        self.showSubCategoryCompanies = true
     }
     
     func selectCompany(_ company: CompanyViewModel) {
-        // Navigate to company details
-        // TODO: Implement navigation
-        print("Selected company: \(company.company_name)")
+        self.selectedCompany = company
+        self.showCompanyDetail = true
     }
 }

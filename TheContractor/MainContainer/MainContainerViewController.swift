@@ -192,17 +192,47 @@ class MainContainerViewController: BaseViewController{
 
     
     func resetAllBottomViews(){
-        
-    self.lblHome?.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblWorkshop?.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblSearch?.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblEstimation?.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.lblProfile?.setTitleColor(UIColor.init(hexFromString: "A0A0A0"), for: .normal)
-    self.imgHome?.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgWorkshop?.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgSearch?.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgEstimation?.tintColor = UIColor.init(hexFromString: "A0A0A0")
-    self.imgProfile?.tintColor = UIColor.init(hexFromString: "A0A0A0")
+        let gray = UIColor.init(hexFromString: "A0A0A0")
+        self.lblHome?.setTitleColor(gray, for: .normal)
+        self.lblWorkshop?.setTitleColor(gray, for: .normal)
+        self.lblSearch?.setTitleColor(gray, for: .normal)
+        self.lblEstimation?.setTitleColor(gray, for: .normal)
+        self.lblProfile?.setTitleColor(gray, for: .normal)
+        self.imgHome?.tintColor = gray
+        self.imgWorkshop?.tintColor = gray
+        self.imgSearch?.tintColor = gray
+        self.imgEstimation?.tintColor = gray
+        self.imgProfile?.tintColor = gray
+        // lblFavorite/imgHeart are the actual Estimation tab outlets (storyboard naming)
+        self.lblFavorite?.setTitleColor(gray, for: .normal)
+        self.imgHeart?.tintColor = gray
+        // Search button outlet not connected - find by title traversal
+        setTabButton(withTitle: "Search", color: gray, in: bottomBarView)
+        // Also reset ALL imageViews in bottom bar that are tab icons
+        resetAllTabImageViews(in: bottomBarView, color: gray)
+    }
+
+    // MARK: - Tab color helpers
+    private func setTabButton(withTitle title: String, color: UIColor, in view: UIView?) {
+        guard let view = view else { return }
+        for sub in view.subviews {
+            if let btn = sub as? UIButton, btn.title(for: .normal) == title {
+                btn.setTitleColor(color, for: .normal)
+                btn.tintColor = color
+                return
+            }
+            setTabButton(withTitle: title, color: color, in: sub)
+        }
+    }
+
+    private func resetAllTabImageViews(in view: UIView?, color: UIColor) {
+        guard let view = view else { return }
+        for sub in view.subviews {
+            if let img = sub as? UIImageView, img.isUserInteractionEnabled == false {
+                img.tintColor = color
+            }
+            resetAllTabImageViews(in: sub, color: color)
+        }
     }
     
     @IBAction func actionSearch(_ sender: Any) {
@@ -233,15 +263,28 @@ class MainContainerViewController: BaseViewController{
             self.showWorkshopController()
         }
         else if(sender.tag == 2){
-            // Search
+            // Search - outlet not connected, find button by title and highlight sibling imageView
             self.lblSearch?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgSearch?.tintColor = UIColor.init(hexFromString: "F2BE36")
+            setTabButton(withTitle: "Search", color: UIColor.init(hexFromString: "F2BE36"), in: bottomBarView)
+            if let container = sender.superview {
+                for sub in container.subviews where sub is UIImageView {
+                    (sub as! UIImageView).tintColor = UIColor.init(hexFromString: "F2BE36")
+                }
+            }
             self.showSearchController()
         }
         else if(sender.tag == 3){
-            // Estimation
+            // Estimation - lblFavorite/imgHeart are the actual storyboard outlets
             self.lblEstimation?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+            self.lblFavorite?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgEstimation?.tintColor = UIColor.init(hexFromString: "F2BE36")
+            self.imgHeart?.tintColor = UIColor.init(hexFromString: "F2BE36")
+            if let container = sender.superview {
+                for sub in container.subviews where sub is UIImageView {
+                    (sub as! UIImageView).tintColor = UIColor.init(hexFromString: "F2BE36")
+                }
+            }
             self.showEsstimationController()
         }
         else{
@@ -319,9 +362,10 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showSearchController()  {
-        let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "SearchVC") as! BaseNavigationController
+        self.topBarView?.isHidden = false
+        
+        let searchVC = SearchHostingController()
+        let controller = BaseNavigationController(rootViewController: searchVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
 
@@ -333,8 +377,6 @@ class MainContainerViewController: BaseViewController{
             oldRef.willMove(toParent: nil)
             oldRef.view.removeFromSuperview()
             oldRef.removeFromParent()
-
-            oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
         addChild(controller)
@@ -374,9 +416,10 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showProfileController()  {
-        let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "ProfileVC") as! BaseNavigationController
+        self.topBarView?.isHidden = false
+        
+        let profileVC = ProfileHostingController()
+        let controller = BaseNavigationController(rootViewController: profileVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
 
@@ -388,7 +431,6 @@ class MainContainerViewController: BaseViewController{
             oldRef.willMove(toParent: nil)
             oldRef.view.removeFromSuperview()
             oldRef.removeFromParent()
-            oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
         addChild(controller)

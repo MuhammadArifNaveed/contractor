@@ -26,31 +26,34 @@ struct HomeView: View {
                     message: "No content available at the moment."
                 )
             } else {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // Top Section with gradient background
-                        topSection
-                        
-                        // Browse Categories Card
-                        browseCategoriesCard
-                        
-                        // Titanium Companies Section
-                        if !viewModel.titaniumCompanies.isEmpty {
-                            companiesSection(
-                                title: "Titanium Companies",
-                                companies: viewModel.titaniumCompanies
-                            )
+                VStack(spacing: 0) {
+                    // Top Section with gradient background (fixed position)
+                    topSection
+                    
+                    // Scrollable content below top section
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // Browse Categories Card
+                            browseCategoriesCard
+                            
+                            // Titanium Companies Section
+                            if !viewModel.titaniumCompanies.isEmpty {
+                                companiesSection(
+                                    title: "Titanium Companies",
+                                    companies: viewModel.titaniumCompanies
+                                )
+                            }
+                            
+                            // Top Companies Section
+                            if !viewModel.topCompanies.isEmpty {
+                                companiesSection(
+                                    title: "Top Companies",
+                                    companies: viewModel.topCompanies
+                                )
+                            }
+                            
+                            Spacer(minLength: 20)
                         }
-                        
-                        // Top Companies Section
-                        if !viewModel.topCompanies.isEmpty {
-                            companiesSection(
-                                title: "Top Companies",
-                                companies: viewModel.topCompanies
-                            )
-                        }
-                        
-                        Spacer(minLength: 20)
                     }
                 }
                 .background(AppTheme.Colors.background)
@@ -62,6 +65,24 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showSearch) {
             SearchCompaniesView()
+        }
+        .sheet(isPresented: $viewModel.showCompanyDetail) {
+            if let company = viewModel.selectedCompany {
+                NavigationView {
+                    CompanyDetailView(company: company)
+                }
+            }
+        }
+        .sheet(isPresented: $viewModel.showSubCategoryCompanies) {
+            if let sub = viewModel.selectedSubCategory {
+                NavigationView {
+                    CompaniesListView(
+                        categoryId: viewModel.selectedCategory?.id,
+                        subCategoryId: sub.id,
+                        title: sub.name
+                    )
+                }
+            }
         }
     }
     
@@ -219,12 +240,11 @@ struct HomeView: View {
             // Companies - Horizontal Scroll for Titanium, Vertical for Top
             if title == "Titanium Companies" {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
+                    HStack(spacing: 12) {
                         ForEach(companies.indices, id: \.self) { index in
-                            CompanyCard(company: companies[index]) {
+                            TitaniumCompanyCard(company: companies[index]) {
                                 viewModel.selectCompany(companies[index])
                             }
-                            .frame(width: 150)
                         }
                     }
                     .padding(.horizontal, 10)
@@ -242,6 +262,49 @@ struct HomeView: View {
             }
         }
         .padding(.top, 10)
+    }
+}
+
+// MARK: - Titanium Company Card (compact, horizontal scroll)
+struct TitaniumCompanyCard: View {
+    let company: CompanyViewModel
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 6) {
+                ZStack(alignment: .bottomTrailing) {
+                    AsyncImage(url: URL(string: company.company_logo.isEmpty ? "" : company.company_logo)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().aspectRatio(contentMode: .fill)
+                        default:
+                            Image(systemName: "building.2")
+                                .font(.system(size: 36))
+                                .foregroundColor(Color(UIColor.systemGray3))
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                    }
+                    .frame(width: 110, height: 90)
+                    .background(Color(UIColor.systemGray6))
+                    .clipped()
+                    .cornerRadius(8)
+
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(red: 242/255, green: 190/255, blue: 54/255))
+                        .padding(6)
+                }
+
+                Text(company.company_name)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.black)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .frame(width: 110)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

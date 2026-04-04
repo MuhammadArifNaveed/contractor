@@ -6,162 +6,293 @@
 //
 
 import SwiftUI
+import SafariServices
 
 struct UserProfileView: View {
     @StateObject private var viewModel = UserProfileViewModel()
-    @State private var showEditProfile = false
-    
+    @State private var showLogoutAlert = false
+    @State private var safariURL: URL? = nil
+    @State private var isLoggedIn = false
+
     var body: some View {
         ScrollView {
-            VStack(spacing: AppTheme.Spacing.medium) {
-                // Profile Header
-                profileHeader
-                
-                // Profile Options
+            VStack(spacing: 0) {
+                if isLoggedIn {
+                    loggedInHeader
+                }
+
                 VStack(spacing: 0) {
-                    ProfileOptionRow(icon: "person.crop.circle", title: "Edit Profile", showDivider: true) {
-                        showEditProfile = true
+                    if !isLoggedIn {
+                        loginCreateAccountRow
                     }
-                    
-                    ProfileOptionRow(icon: "doc.text", title: "My Enquiries", showDivider: true) {
-                        viewModel.navigateToEnquiries()
+
+                    if isLoggedIn {
+                        loggedInMenuSection
                     }
-                    
-                    ProfileOptionRow(icon: "doc.text.fill", title: "My Quotations", showDivider: true) {
-                        viewModel.navigateToQuotations()
-                    }
-                    
-                    ProfileOptionRow(icon: "briefcase", title: "My Job Applications", showDivider: true) {
-                        viewModel.navigateToJobApplications()
-                    }
-                    
-                    ProfileOptionRow(icon: "exclamationmark.bubble", title: "My Complaints", showDivider: true) {
-                        viewModel.navigateToComplaints()
-                    }
-                    
-                    ProfileOptionRow(icon: "cart", title: "My Cart", showDivider: true) {
-                        viewModel.navigateToCart()
-                    }
-                    
-                    ProfileOptionRow(icon: "gearshape", title: "Settings", showDivider: true) {
-                        viewModel.navigateToSettings()
-                    }
-                    
-                    ProfileOptionRow(icon: "arrow.right.square", title: "Logout", showDivider: false, isDestructive: true) {
-                        viewModel.logout()
-                    }
+
+                    commonMenuSection
                 }
                 .background(Color.white)
-                .cornerRadius(AppTheme.CornerRadius.medium)
-                .padding(.horizontal, AppTheme.Spacing.medium)
-                
-                Spacer(minLength: 20)
             }
-            .padding(.top, AppTheme.Spacing.medium)
         }
-        .background(AppTheme.Colors.background)
-        .navigationTitle("Profile")
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showEditProfile) {
-            EditProfileView()
+        .background(Color(UIColor.systemGroupedBackground))
+        .alert("Logout", isPresented: $showLogoutAlert) {
+            Button("Yes", role: .destructive) { viewModel.logout() }
+            Button("No", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to logout?")
+        }
+        .sheet(item: $safariURL) { url in
+            SFSafariViewWrapper(url: url)
+        }
+        .onAppear {
+            isLoggedIn = Global.shared.isLogedIn
+            viewModel.loadUserInfo()
         }
     }
-    
-    // MARK: - Profile Header
-    private var profileHeader: some View {
-        VStack(spacing: AppTheme.Spacing.medium) {
-            // Profile Image
+
+    // MARK: - Logged-In Header
+    private var loggedInHeader: some View {
+        VStack(spacing: 12) {
             Circle()
-                .fill(AppTheme.Colors.primary.opacity(0.2))
-                .frame(width: 100, height: 100)
+                .fill(Color(UIColor.systemGray5))
+                .frame(width: 90, height: 90)
                 .overlay(
                     Image(systemName: "person.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.system(size: 44))
+                        .foregroundColor(Color(UIColor.systemGray2))
                 )
-            
-            // User Info
-            VStack(spacing: 4) {
-                Text(viewModel.userName)
-                    .font(AppTheme.Fonts.bold(20))
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                if !viewModel.userEmail.isEmpty {
-                    Text(viewModel.userEmail)
-                        .font(AppTheme.Fonts.regular(14))
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
-                
-                if !viewModel.userPhone.isEmpty {
-                    Text(viewModel.userPhone)
-                        .font(AppTheme.Fonts.regular(14))
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
+
+            Text(viewModel.userName.isEmpty ? "User" : viewModel.userName)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.black)
+
+            if !viewModel.userPhone.isEmpty {
+                Text(viewModel.userPhone)
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
             }
         }
-        .padding(AppTheme.Spacing.large)
         .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    AppTheme.Colors.primary.opacity(0.1),
-                    Color.white
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .cornerRadius(AppTheme.CornerRadius.medium)
-        .padding(.horizontal, AppTheme.Spacing.medium)
+        .padding(.vertical, 24)
+        .background(Color.white)
+        .padding(.bottom, 12)
+    }
+
+    // MARK: - Guest: Login/Create Account
+    private var loginCreateAccountRow: some View {
+        VStack(spacing: 0) {
+            Button {
+                viewModel.goToLogin()
+            } label: {
+                HStack(spacing: 14) {
+                    Image(systemName: "person.crop.circle.badge.plus")
+                        .font(.system(size: 22))
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .frame(width: 28)
+
+                    Text("Login / Create Account")
+                        .font(.system(size: 16))
+                        .foregroundColor(.black)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 16)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .background(Color.white)
+
+            Divider().padding(.leading, 58)
+        }
+    }
+
+    // MARK: - Logged-In Menu Section
+    private var loggedInMenuSection: some View {
+        VStack(spacing: 0) {
+            ProfileRow(icon: "person.crop.circle", title: "Edit Profile") {
+                viewModel.navigateToEditProfile()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "lock", title: "Change Password") {
+                viewModel.navigateToChangePassword()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "doc.text", title: "My Enquiries") {
+                viewModel.navigateToEnquiries()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "doc.text.fill", title: "My Quotations") {
+                viewModel.navigateToQuotations()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "briefcase", title: "My Job Applications") {
+                viewModel.navigateToJobApplications()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "exclamationmark.bubble", title: "My Complaints") {
+                viewModel.navigateToComplaints()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "cart", title: "My Cart") {
+                viewModel.navigateToCart()
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "phone", title: "Contact Us") {
+                openWeb(AppLinks.AboutUS, title: "Contact Us")
+            }
+            Divider().padding(.leading, 58)
+        }
+    }
+
+    // MARK: - Common Menu Section (shown for all users)
+    private var commonMenuSection: some View {
+        VStack(spacing: 0) {
+            ProfileRow(icon: "info.circle", title: "About Us") {
+                openWeb(AppLinks.AboutUS, title: "About Us")
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "megaphone", title: "Advertisement") {
+                openWeb(AppLinks.Advertisment, title: "Advertisement")
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "building.2", title: "Register Company") {
+                openWeb(AppLinks.Vendor, title: "Register Company")
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "lock.shield", title: "Privacy Policy") {
+                openWeb(AppLinks.Privacy, title: "Privacy Policy")
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "doc.plaintext", title: "Terms and Conditions") {
+                openWeb(AppLinks.Terms, title: "Terms and Conditions")
+            }
+            Divider().padding(.leading, 58)
+            ProfileRow(icon: "book", title: "Guide") {
+                openWeb(AppLinks.Guide, title: "Guide")
+            }
+
+            if isLoggedIn {
+                Divider().padding(.leading, 58)
+                Button {
+                    showLogoutAlert = true
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "arrow.right.square")
+                            .font(.system(size: 22))
+                            .foregroundColor(.red)
+                            .frame(width: 28)
+
+                        Text("Logout")
+                            .font(.system(size: 16))
+                            .foregroundColor(.red)
+
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+
+    private func openWeb(_ urlString: String, title: String) {
+        if let url = URL(string: urlString) {
+            safariURL = url
+        }
     }
 }
 
-// MARK: - Profile Option Row
+// MARK: - Profile Row
+struct ProfileRow: View {
+    let icon: String
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 28)
+
+                Text(title)
+                    .font(.system(size: 16))
+                    .foregroundColor(.black)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
+            .background(Color.white)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - SFSafariViewController wrapper
+struct SFSafariViewWrapper: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let vc = SFSafariViewController(url: url)
+        vc.preferredControlTintColor = UIColor(red: 242/255, green: 190/255, blue: 54/255, alpha: 1)
+        return vc
+    }
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+
+// Allow URL to be used as sheet item
+extension URL: Identifiable {
+    public var id: String { absoluteString }
+}
+
+// MARK: - Profile Option Row (kept for backward compat)
 struct ProfileOptionRow: View {
     let icon: String
     let title: String
     let showDivider: Bool
     var isDestructive: Bool = false
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppTheme.Spacing.medium) {
+            HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 20))
                     .foregroundColor(isDestructive ? .red : AppTheme.Colors.primary)
-                    .frame(width: 24)
-                
+                    .frame(width: 28)
                 Text(title)
-                    .font(AppTheme.Fonts.regular(16))
-                    .foregroundColor(isDestructive ? .red : AppTheme.Colors.textPrimary)
-                
+                    .font(.system(size: 16))
+                    .foregroundColor(isDestructive ? .red : .black)
                 Spacer()
-                
                 if !isDestructive {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14))
-                        .foregroundColor(AppTheme.Colors.gray)
+                        .foregroundColor(.gray)
                 }
             }
-            .padding(.horizontal, AppTheme.Spacing.medium)
+            .padding(.horizontal, 16)
             .padding(.vertical, 16)
             .background(Color.white)
         }
         .buttonStyle(PlainButtonStyle())
-        
-        if showDivider {
-            Divider()
-                .padding(.leading, 60)
-        }
+        if showDivider { Divider().padding(.leading, 58) }
     }
 }
 
 // MARK: - Preview
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            UserProfileView()
-        }
+        UserProfileView()
     }
 }

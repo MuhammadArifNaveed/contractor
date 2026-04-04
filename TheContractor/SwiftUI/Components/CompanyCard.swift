@@ -16,18 +16,28 @@ struct CompanyCard: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 HStack(spacing: AppTheme.Spacing.medium) {
                     // Company Logo
-                    AsyncImage(url: URL(string: company.company_logo)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Image(systemName: "building.2")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(AppTheme.Colors.gray)
-                            .padding(AppTheme.Spacing.small)
+                    AsyncImage(url: URL(string: company.company_logo)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 80, height: 80)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 80, height: 80)
+                                .clipped()
+                        case .failure(_):
+                            Image(systemName: "building.2")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(AppTheme.Colors.gray)
+                                .padding(AppTheme.Spacing.small)
+                                .frame(width: 80, height: 80)
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
-                    .frame(width: 80, height: 80)
                     .background(AppTheme.Colors.secondaryBackground)
                     .cornerRadius(AppTheme.CornerRadius.small)
                     

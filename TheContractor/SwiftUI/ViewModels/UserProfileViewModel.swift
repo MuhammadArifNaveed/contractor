@@ -17,17 +17,32 @@ class UserProfileViewModel: ObservableObject {
         loadUserInfo()
     }
     
-    private func loadUserInfo() {
+    func loadUserInfo() {
         if let user = UserDefaultsManager.shared.userInfo {
             userName = "\(user.name) \(user.surname)"
             userPhone = user.phone
-            // Email not in UserViewModel, using placeholder
             userEmail = ""
         }
     }
     
+    func goToLogin() {
+        NotificationCenter.default.post(name: NSNotification.Name("GoToLogin"), object: nil)
+    }
+    
+    func navigateToEditProfile() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToEditProfile"), object: nil)
+    }
+    
+    func navigateToChangePassword() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToChangePassword"), object: nil)
+    }
+    
+    func navigateToLanguage() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToLanguage"), object: nil)
+    }
+    
     func navigateToEnquiries() {
-        print("Navigate to Enquiries")
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToEnquiries"), object: nil)
     }
     
     func navigateToQuotations() {
@@ -51,8 +66,10 @@ class UserProfileViewModel: ObservableObject {
     }
     
     func logout() {
+        Global.shared.user = nil
+        Global.shared.isLogedIn = false
+        Global.shared.user = UserViewModel()
         UserDefaultsManager.shared.clearAllLoginData()
-        // TODO: Navigate to login screen
-        print("Logout")
+        NotificationCenter.default.post(name: NSNotification.Name("UserDidLogout"), object: nil)
     }
 }

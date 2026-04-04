@@ -37,7 +37,6 @@
 		18C1BCB326F965E70001EB73 /* SubCategoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCB226F965E70001EB73 /* SubCategoryListViewModel.swift */; };
 		18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCB526F9DB4E0001EB73 /* CityViewModel.swift */; };
 		18C1BCB926F9DB610001EB73 /* CitiesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCB826F9DB610001EB73 /* CitiesListViewModel.swift */; };
-		18C1BCBC26F9DB700001EB73 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCBB26F9DB700001EB73 /* SearchViewModel.swift */; };
 		18C1BCBF26F9DBA00001EB73 /* AreaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCBE26F9DBA00001EB73 /* AreaViewModel.swift */; };
 		18C1BCC226F9DBAE0001EB73 /* AreasListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCC126F9DBAE0001EB73 /* AreasListViewModel.swift */; };
 		18C4FD8426D2AC88009A197E /* CompanyHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C4FD8326D2AC88009A197E /* CompanyHeaderTableViewCell.swift */; };
@@ -148,6 +147,8 @@
 		800504E72F54CD3800D106BC /* ComplaintsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 800504D12F54CD3800D106BC /* ComplaintsHostingController.swift */; };
 		800504E82F54CD3800D106BC /* CartHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 800504CE2F54CD3800D106BC /* CartHostingController.swift */; };
 		806CA8DA2F57683900D31D28 /* WorkshopPostHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8D92F57683900D31D28 /* WorkshopPostHostingController.swift */; };
+		80SEARCH012F58000000D106BC /* SearchHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80SEARCH002F58000000D106BC /* SearchHostingController.swift */; };
+		80PROFIL012F58000000D106BC /* ProfileHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80PROFIL002F58000000D106BC /* ProfileHostingController.swift */; };
 		806CA8FF2F57689000D31D28 /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8E82F57689000D31D28 /* CartViewModel.swift */; };
 		806CA9002F57689000D31D28 /* MyJobApplicationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8F32F57689000D31D28 /* MyJobApplicationsViewModel.swift */; };
 		806CA9012F57689000D31D28 /* CompaniesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8EB2F57689000D31D28 /* CompaniesListViewModel.swift */; };
@@ -282,6 +283,9 @@
 		90C6FE8F2F20E10000BDA19A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE902F20E10000BDA19A /* HomeView.swift */; };
 		90C6FE912F20E10100BDA19A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE922F20E10100BDA19A /* HomeViewModel.swift */; };
 		90C6FE932F20E10200BDA19A /* SearchCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE942F20E10200BDA19A /* SearchCompaniesView.swift */; };
+		90SRES012F58200000D106BC /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SRES002F58200000D106BC /* SearchResultsView.swift */; };
+		90SEARCH032F58100000D106BC /* SearchCompaniesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SEARCH022F58100000D106BC /* SearchCompaniesViewModel.swift */; };
+		18C1BCBC26F9DB700001EB73 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCBB26F9DB700001EB73 /* SearchViewModel.swift */; };
 		90C6FE952F20E10300BDA19A /* HomeHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE962F20E10300BDA19A /* HomeHostingController.swift */; };
 		90C6FE972F20E20000BDA19A /* CompaniesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE982F20E20000BDA19A /* CompaniesListView.swift */; };
 		90C6FE992F20E20100BDA19A /* CompaniesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FE9A2F20E20100BDA19A /* CompaniesListViewModel.swift */; };
@@ -540,6 +544,8 @@
 		800504D82F54CD3800D106BC /* SubmitQuotationHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitQuotationHostingController.swift; sourceTree = "<group>"; };
 		800504D92F54CD3800D106BC /* TwentyFourSevenHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwentyFourSevenHostingController.swift; sourceTree = "<group>"; };
 		806CA8D92F57683900D31D28 /* WorkshopPostHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPostHostingController.swift; sourceTree = "<group>"; };
+		80SEARCH002F58000000D106BC /* SearchHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHostingController.swift; sourceTree = "<group>"; };
+		80PROFIL002F58000000D106BC /* ProfileHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHostingController.swift; sourceTree = "<group>"; };
 		806CA8DB2F57689000D31D28 /* CategoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCard.swift; sourceTree = "<group>"; };
 		806CA8DC2F57689000D31D28 /* CompanyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCard.swift; sourceTree = "<group>"; };
 		806CA8DD2F57689000D31D28 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
@@ -674,6 +680,9 @@
 		90C6FE902F20E10000BDA19A /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeView.swift; path = TheContractor/SwiftUI/Views/HomeView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE922F20E10100BDA19A /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = TheContractor/SwiftUI/ViewModels/HomeViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE942F20E10200BDA19A /* SearchCompaniesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchCompaniesView.swift; path = TheContractor/SwiftUI/Views/SearchCompaniesView.swift; sourceTree = SOURCE_ROOT; };
+		90SRES002F58200000D106BC /* SearchResultsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchResultsView.swift; path = TheContractor/SwiftUI/Views/SearchResultsView.swift; sourceTree = SOURCE_ROOT; };
+		90SEARCH022F58100000D106BC /* SearchCompaniesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchCompaniesViewModel.swift; path = TheContractor/SwiftUI/ViewModels/SearchCompaniesViewModel.swift; sourceTree = SOURCE_ROOT; };
+		18C1BCBB26F9DB700001EB73 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		90C6FE962F20E10300BDA19A /* HomeHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeHostingController.swift; path = TheContractor/HostingControllers/HomeHostingController.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE982F20E20000BDA19A /* CompaniesListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListView.swift; path = TheContractor/SwiftUI/Views/CompaniesListView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FE9A2F20E20100BDA19A /* CompaniesListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesListViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CompaniesListViewModel.swift; sourceTree = SOURCE_ROOT; };
@@ -1268,6 +1277,7 @@
 				90C6FE902F20E10000BDA19A /* HomeView.swift */,
 				90C6FE922F20E10100BDA19A /* HomeViewModel.swift */,
 				90C6FE942F20E10200BDA19A /* SearchCompaniesView.swift */,
+				90SRES002F58200000D106BC /* SearchResultsView.swift */,
 				90C6FE962F20E10300BDA19A /* HomeHostingController.swift */,
 				90C6FE982F20E20000BDA19A /* CompaniesListView.swift */,
 				90C6FE9A2F20E20100BDA19A /* CompaniesListViewModel.swift */,
@@ -1385,7 +1395,9 @@
 				800504D42F54CD3800D106BC /* FreelanceDashboardHostingController.swift */,
 				800504D52F54CD3800D106BC /* HomeHostingController.swift */,
 				800504D62F54CD3800D106BC /* MyJobApplicationsHostingController.swift */,
+				80PROFIL002F58000000D106BC /* ProfileHostingController.swift */,
 				800504D72F54CD3800D106BC /* QuotationsHostingController.swift */,
+				80SEARCH002F58000000D106BC /* SearchHostingController.swift */,
 				800504D82F54CD3800D106BC /* SubmitQuotationHostingController.swift */,
 				800504D92F54CD3800D106BC /* TwentyFourSevenHostingController.swift */,
 			);
@@ -1436,6 +1448,7 @@
 				806CA8F42F57689000D31D28 /* QuotationsListViewModel.swift */,
 				806CA8F52F57689000D31D28 /* ReviewsListViewModel.swift */,
 				806CA8F62F57689000D31D28 /* SearchJobsViewModel.swift */,
+				90SEARCH022F58100000D106BC /* SearchCompaniesViewModel.swift */,
 				806CA8F72F57689000D31D28 /* SubCategoriesViewModel.swift */,
 				806CA8F82F57689000D31D28 /* SubmitComplaintViewModel.swift */,
 				806CA8F92F57689000D31D28 /* SubmitEnquiryViewModel.swift */,
@@ -1540,6 +1553,7 @@
 				806CA96A2F5768C600D31D28 /* QuotationsListView.swift */,
 				806CA96B2F5768C600D31D28 /* ReviewsListView.swift */,
 				806CA96C2F5768C600D31D28 /* SearchCompaniesView.swift */,
+				90SRES002F58200000D106BC /* SearchResultsView.swift */,
 				806CA96E2F5768C600D31D28 /* SearchJobsView.swift */,
 				806CA96F2F5768C600D31D28 /* SubCategoriesView.swift */,
 				806CA9702F5768C600D31D28 /* SubmitComplaintView.swift */,
@@ -1833,7 +1847,6 @@
 				18EA188026D28820003DF2FC /* RequestMessages.swift in Sources */,
 				18EA187D26D28820003DF2FC /* ParsedResponseMessage.swift in Sources */,
 				18C4FD8F26D2F9CE009A197E /* QuotationDetailsTableViewCell.swift in Sources */,
-				18C1BCBC26F9DB700001EB73 /* SearchViewModel.swift in Sources */,
 				186871D126D6E4B20079736E /* SearchViewController.swift in Sources */,
 				1807146526D6C10100B0944B /* EstimationViewController.swift in Sources */,
 				18EA189826D28820003DF2FC /* KYEmbedMainControllerSegue.swift in Sources */,
@@ -1850,6 +1863,8 @@
 				189A769026D7018F00F28786 /* RegistrationViewController.swift in Sources */,
 				18EA18A426D28820003DF2FC /* ACFloatingTextfield.swift in Sources */,
 				806CA8DA2F57683900D31D28 /* WorkshopPostHostingController.swift in Sources */,
+				80SEARCH012F58000000D106BC /* SearchHostingController.swift in Sources */,
+				80PROFIL012F58000000D106BC /* ProfileHostingController.swift in Sources */,
 				186C512326D30EB0005C5C2E /* SelectedCompaniesListViewController.swift in Sources */,
 				180FE33626D85B5600D1D3C3 /* ProfileTableViewCell.swift in Sources */,
 				18EA18A926D28820003DF2FC /* RegexParser.swift in Sources */,
@@ -1912,6 +1927,9 @@
 				90C6FE8F2F20E10000BDA19A /* HomeView.swift in Sources */,
 				90C6FE912F20E10100BDA19A /* HomeViewModel.swift in Sources */,
 				90C6FE932F20E10200BDA19A /* SearchCompaniesView.swift in Sources */,
+				90SRES012F58200000D106BC /* SearchResultsView.swift in Sources */,
+						90SEARCH032F58100000D106BC /* SearchCompaniesViewModel.swift in Sources */,
+				18C1BCBC26F9DB700001EB73 /* SearchViewModel.swift in Sources */,
 				90C6FE952F20E10300BDA19A /* HomeHostingController.swift in Sources */,
 				90C6FE972F20E20000BDA19A /* CompaniesListView.swift in Sources */,
 				90C6FE992F20E20100BDA19A /* CompaniesListViewModel.swift in Sources */,
