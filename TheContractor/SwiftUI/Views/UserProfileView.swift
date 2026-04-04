@@ -12,7 +12,12 @@ struct UserProfileView: View {
     @StateObject private var viewModel = UserProfileViewModel()
     @State private var showLogoutAlert = false
     @State private var safariURL: URL? = nil
-    @State private var isLoggedIn = false
+    @State private var refreshTrigger = UUID()
+
+    private var isLoggedIn: Bool {
+        let _ = refreshTrigger
+        return Global.shared.isLogedIn
+    }
 
     var body: some View {
         ScrollView {
@@ -23,7 +28,7 @@ struct UserProfileView: View {
 
                 VStack(spacing: 0) {
                     if !isLoggedIn {
-                        loginCreateAccountRow
+                        guestLoginCard
                     }
 
                     if isLoggedIn {
@@ -34,6 +39,7 @@ struct UserProfileView: View {
                 }
                 .background(Color.white)
             }
+            .padding(.top, 150)
         }
         .background(Color(UIColor.systemGroupedBackground))
         .alert("Logout", isPresented: $showLogoutAlert) {
@@ -46,7 +52,7 @@ struct UserProfileView: View {
             SFSafariViewWrapper(url: url)
         }
         .onAppear {
-            isLoggedIn = Global.shared.isLogedIn
+            refreshTrigger = UUID()
             viewModel.loadUserInfo()
         }
     }
@@ -79,36 +85,40 @@ struct UserProfileView: View {
         .padding(.bottom, 12)
     }
 
-    // MARK: - Guest: Login/Create Account
-    private var loginCreateAccountRow: some View {
-        VStack(spacing: 0) {
-            Button {
-                viewModel.goToLogin()
-            } label: {
-                HStack(spacing: 14) {
-                    Image(systemName: "person.crop.circle.badge.plus")
-                        .font(.system(size: 22))
-                        .foregroundColor(AppTheme.Colors.primary)
-                        .frame(width: 28)
-
-                    Text("Login / Create Account")
-                        .font(.system(size: 16))
+    // MARK: - Guest: Login/Create Account Card (matches Android layout)
+    private var guestLoginCard: some View {
+        HStack(spacing: 12) {
+            Button(action: { viewModel.goToLogin() }) {
+                HStack {
+                    Text("Login or Create Account")
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.black)
-
                     Spacer()
-
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 16)
+                .padding(.vertical, 18)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
             }
             .buttonStyle(PlainButtonStyle())
-            .background(Color.white)
 
-            Divider().padding(.leading, 58)
+            Circle()
+                .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
+                .frame(width: 58, height: 58)
+                .overlay(
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(.white)
+                )
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(Color.white)
     }
 
     // MARK: - Logged-In Menu Section

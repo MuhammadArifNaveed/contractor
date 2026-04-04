@@ -32,7 +32,7 @@ class CompanyViewModel{
         company_name = json["company_name"].stringValue
         company_logo = json["company_logo"].stringValue
         if !company_logo.isEmpty {
-            company_logo = "https://contractor.thecontractor.ae/uploads/companies/" + company_logo
+            company_logo = "https://contractor.bidcont.com/uploads/companies/" + company_logo
         }
         company_discription = json["company_discription"].stringValue
         total_rating = json["total_rating"].stringValue

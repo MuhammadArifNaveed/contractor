@@ -7,238 +7,410 @@
 
 import SwiftUI
 
+private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+
 struct CompanyDetailView: View {
     @StateObject private var viewModel: CompanyDetailViewModel
     @Environment(\.presentationMode) var presentationMode
-    
+    @State private var selectedTab = 0
+    @State private var showComplaintSheet = false
+
     init(company: CompanyViewModel) {
         _viewModel = StateObject(wrappedValue: CompanyDetailViewModel(company: company))
     }
-    
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                // Company Header
-                companyHeader
-                
-                // Action Buttons
-                actionButtons
-                
-                // Company Info Sections
-                VStack(spacing: AppTheme.Spacing.medium) {
-                    // About Section
-                    if !viewModel.company.company_discription.isEmpty {
-                        infoSection(title: "About", content: viewModel.company.company_discription)
+        VStack(spacing: 0) {
+            topBar
+
+            if viewModel.isLoading {
+                Spacer()
+                ProgressView("Loading...")
+                    .padding()
+                Spacer()
+            } else {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        companyHeaderCard
+                        tabBar
+                        tabContent
                     }
-                    
-                    // Contact Information
-                    contactSection
-                    
-                    // Rating & Reviews
-                    ratingSection
                 }
-                .padding(AppTheme.Spacing.medium)
+                .background(Color(UIColor.systemGroupedBackground))
             }
         }
-        .background(AppTheme.Colors.background)
-        .navigationTitle("Company Details")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    // MARK: - Company Header
-    private var companyHeader: some View {
-        VStack(spacing: AppTheme.Spacing.medium) {
-            // Company Logo
-            AsyncImage(url: URL(string: viewModel.company.company_logo)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Image(systemName: "building.2")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(AppTheme.Colors.gray)
-                    .padding(40)
-            }
-            .frame(width: 120, height: 120)
-            .background(AppTheme.Colors.secondaryBackground)
-            .cornerRadius(AppTheme.CornerRadius.medium)
-            
-            // Company Name
-            Text(viewModel.company.company_name)
-                .font(AppTheme.Fonts.semibold(20))
-                .foregroundColor(AppTheme.Colors.textPrimary)
-                .multilineTextAlignment(.center)
-            
-            // Category
-            if !viewModel.company.category_name.isEmpty {
-                Text(viewModel.company.category_name)
-                    .font(AppTheme.Fonts.regular(14))
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-            
-            // Rating
-            HStack(spacing: 8) {
-                RatingView(rating: Double(viewModel.company.total_rating) ?? 0.0, size: 18)
-                
-                Text(viewModel.company.total_rating)
-                    .font(AppTheme.Fonts.semibold(16))
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                Text("(\(viewModel.company.review_count) reviews)")
-                    .font(AppTheme.Fonts.regular(14))
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-        }
-        .padding(AppTheme.Spacing.large)
-        .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    AppTheme.Colors.primary.opacity(0.1),
-                    Color.white
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
+        .navigationBarHidden(true)
+        .onAppear { viewModel.loadDetails() }
+        .sheet(isPresented: $showComplaintSheet) {
+            ComplaintSheet(
+                isPresented: $showComplaintSheet,
+                onSubmit: { text in
+                    let uid = Global.shared.user?.id ?? ""
+                    viewModel.submitComplaint(text: text, userId: uid)
+                }
             )
-        )
-    }
-    
-    // MARK: - Action Buttons
-    private var actionButtons: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            ActionButton(title: "Enquiry", icon: "envelope.fill", color: AppTheme.Colors.primary) {
-                viewModel.submitEnquiry()
-            }
-            
-            ActionButton(title: "Quotation", icon: "doc.text.fill", color: AppTheme.Colors.darkGreen) {
-                viewModel.requestQuotation()
-            }
-            
-            ActionButton(title: "Call", icon: "phone.fill", color: AppTheme.Colors.darkBlue) {
-                viewModel.callCompany()
-            }
         }
-        .padding(AppTheme.Spacing.medium)
     }
-    
-    // MARK: - Contact Section
-    private var contactSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-            Text("Contact Information")
-                .font(AppTheme.Fonts.semibold(16))
-                .foregroundColor(AppTheme.Colors.textPrimary)
-            
-            if !viewModel.company.login_email.isEmpty {
-                ContactRow(icon: "envelope", text: viewModel.company.login_email)
+
+    // MARK: - Top Bar
+    private var topBar: some View {
+        HStack(spacing: 0) {
+            Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 44, height: 44)
             }
+
+            Text("Company Details")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.white)
+
+            Spacer()
+
+            Image(systemName: "cart")
+                .font(.system(size: 20))
+                .foregroundColor(.white)
+                .padding(.trailing, 16)
         }
-        .padding(AppTheme.Spacing.medium)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(AppTheme.CornerRadius.medium)
+        .frame(height: 56)
+        .background(yellow)
     }
-    
-    // MARK: - Rating Section
-    private var ratingSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Text("Ratings & Reviews")
-                    .font(AppTheme.Fonts.semibold(16))
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
+
+    // MARK: - Company Header Card
+    private var companyHeaderCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                AsyncImage(url: URL(string: viewModel.company.company_logo.isEmpty ? "" : viewModel.company.company_logo)) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable().aspectRatio(contentMode: .fill)
+                    default:
+                        Image(systemName: "building.2")
+                            .font(.system(size: 30))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+                .frame(width: 80, height: 70)
+                .background(Color(UIColor.systemGray6))
+                .clipped()
+                .cornerRadius(4)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(viewModel.company.company_name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
+
+                    Text(viewModel.company.category_name)
+                        .font(.system(size: 13))
+                        .foregroundColor(.gray)
+
+                    HStack(spacing: 6) {
+                        starsView(rating: Double(viewModel.company.total_rating) ?? 0)
+
+                        Text("(\(viewModel.company.review_count))")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+
+                        if viewModel.isVerified {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(.green)
+                                .font(.system(size: 16))
+                        }
+
+                        if viewModel.is24Hours {
+                            Text("24h")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 3)
+                                .padding(.vertical, 2)
+                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
+                        }
+                    }
+                }
+
                 Spacer()
-                
-                Button(action: { viewModel.showAllReviews() }) {
-                    Text("View All")
-                        .font(AppTheme.Fonts.medium(14))
-                        .foregroundColor(AppTheme.Colors.primary)
+            }
+
+            HStack(spacing: 10) {
+                if !viewModel.companyPhone.isEmpty {
+                    Button(action: { viewModel.callCompany() }) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "phone.fill").font(.system(size: 12))
+                            Text("Phone").font(.system(size: 13, weight: .medium))
+                        }
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 14).padding(.vertical, 8)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.4), lineWidth: 1))
+                    }
+                }
+
+                if !viewModel.companyEmail.isEmpty || !viewModel.company.login_email.isEmpty {
+                    Button(action: { viewModel.emailCompany() }) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "envelope.fill").font(.system(size: 12))
+                            Text("Email").font(.system(size: 13, weight: .medium))
+                        }
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 14).padding(.vertical, 8)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.4), lineWidth: 1))
+                    }
+                }
+                Spacer()
+            }
+
+            HStack(spacing: 10) {
+                Button(action: {}) {
+                    Text("Select Company")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(yellow, lineWidth: 1.5))
+                }
+
+                Button(action: { showComplaintSheet = true }) {
+                    Text("Complaint")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.green)
+                        .cornerRadius(4)
                 }
             }
-            
-            // Rating Summary
-            HStack(spacing: AppTheme.Spacing.large) {
-                VStack {
-                    Text(viewModel.company.total_rating)
-                        .font(AppTheme.Fonts.bold(32))
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                    
-                    RatingView(rating: Double(viewModel.company.total_rating) ?? 0.0, size: 16)
-                    
-                    Text("\(viewModel.company.review_count) reviews")
-                        .font(AppTheme.Fonts.regular(12))
-                        .foregroundColor(AppTheme.Colors.textSecondary)
+        }
+        .padding(14)
+        .background(Color.white)
+    }
+
+    // MARK: - Tab Bar
+    private var tabBar: some View {
+        let tabs = ["Details", "Opening Hours", "Reviews"]
+        return HStack(spacing: 0) {
+            ForEach(tabs.indices, id: \.self) { i in
+                Button(action: { selectedTab = i }) {
+                    VStack(spacing: 0) {
+                        Text(tabs[i])
+                            .font(.system(size: 14, weight: selectedTab == i ? .semibold : .regular))
+                            .foregroundColor(selectedTab == i ? .black : .gray)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+
+                        Rectangle()
+                            .fill(selectedTab == i ? yellow : Color.clear)
+                            .frame(height: 3)
+                    }
                 }
-                
-                Spacer()
             }
         }
-        .padding(AppTheme.Spacing.medium)
-        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
-        .cornerRadius(AppTheme.CornerRadius.medium)
     }
-    
-    // MARK: - Info Section Helper
-    private func infoSection(title: String, content: String) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-            Text(title)
-                .font(AppTheme.Fonts.semibold(16))
-                .foregroundColor(AppTheme.Colors.textPrimary)
-            
-            Text(content)
-                .font(AppTheme.Fonts.regular(14))
-                .foregroundColor(AppTheme.Colors.textSecondary)
-                .lineSpacing(4)
+
+    // MARK: - Tab Content
+    @ViewBuilder
+    private var tabContent: some View {
+        if selectedTab == 0 {
+            detailsTab
+        } else if selectedTab == 1 {
+            openingHoursTab
+        } else {
+            reviewsTab
         }
-        .padding(AppTheme.Spacing.medium)
+    }
+
+    // MARK: - Details Tab
+    private var detailsTab: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if !viewModel.companyAddress.isEmpty {
+                detailSection("Address") {
+                    Text(viewModel.companyAddress)
+                        .font(.system(size: 14)).foregroundColor(.black)
+                }
+            }
+
+            HStack(spacing: 0) {
+                infoColumn(title: "City", value: viewModel.cityName)
+                Divider().frame(height: 70)
+                infoColumn(title: "Area", value: viewModel.areaName)
+            }
+            .background(Color.white)
+
+            Divider().padding(.horizontal, 0)
+
+            HStack(spacing: 0) {
+                infoColumn(title: "Since", value: viewModel.companySince)
+                Divider().frame(height: 70)
+                infoColumn(title: "No of Employees", value: viewModel.companyEmployees)
+            }
+            .background(Color.white)
+
+            if !viewModel.subCategories.isEmpty {
+                detailSection("Sub Categories") {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                        ForEach(viewModel.subCategories) { sub in
+                            Text(sub.name)
+                                .font(.system(size: 13))
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+                                .padding(12)
+                                .background(Color.white)
+                                .cornerRadius(6)
+                                .shadow(color: Color.black.opacity(0.08), radius: 3, x: 0, y: 1)
+                        }
+                    }
+                }
+            }
+
+            Spacer(minLength: 24)
+        }
+    }
+
+    // MARK: - Opening Hours Tab
+    private var openingHoursTab: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if viewModel.openingHours.isEmpty {
+                Text("No Opening Hours Available")
+                    .font(.system(size: 14)).foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(40)
+            } else {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Opening Hours")
+                            .font(.system(size: 16, weight: .semibold))
+                        Rectangle().fill(yellow).frame(width: 50, height: 3)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16).padding(.top, 16).padding(.bottom, 10)
+
+                ForEach(viewModel.openingHours) { hour in
+                    HStack {
+                        Text(hour.day).font(.system(size: 14)).foregroundColor(.black)
+                        Spacer()
+                        Text("\(hour.openTime)-\(hour.closeTime)")
+                            .font(.system(size: 14)).foregroundColor(.black)
+                    }
+                    .padding(.horizontal, 16).padding(.vertical, 14)
+                    .background(Color.white)
+                    .padding(.horizontal, 16).padding(.bottom, 4)
+                }
+            }
+            Spacer(minLength: 24)
+        }
+    }
+
+    // MARK: - Reviews Tab
+    private var reviewsTab: some View {
+        VStack {
+            if viewModel.reviews.isEmpty {
+                Text("No Reviews Found")
+                    .font(.system(size: 14)).foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(60)
+            } else {
+                ForEach(viewModel.reviews) { review in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(review.userName)
+                                .font(.system(size: 14, weight: .semibold))
+                            Spacer()
+                            starsView(rating: Double(review.rating) ?? 0)
+                        }
+                        if !review.comment.isEmpty {
+                            Text(review.comment)
+                                .font(.system(size: 13)).foregroundColor(.gray)
+                        }
+                        if !review.date.isEmpty {
+                            Text(review.date)
+                                .font(.system(size: 11)).foregroundColor(.gray.opacity(0.7))
+                        }
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.white)
+                    .cornerRadius(6)
+                    .padding(.horizontal, 16).padding(.top, 8)
+                }
+            }
+            Spacer(minLength: 24)
+        }
+    }
+
+    // MARK: - Helpers
+    private func starsView(rating: Double) -> some View {
+        HStack(spacing: 2) {
+            ForEach(1...5, id: \.self) { star in
+                Image(systemName: Double(star) <= rating ? "star.fill" : "star")
+                    .font(.system(size: 11))
+                    .foregroundColor(yellow)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func detailSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(.system(size: 15, weight: .semibold))
+            Rectangle().fill(yellow).frame(width: 40, height: 3)
+            content()
+        }
+        .padding(.horizontal, 16).padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
-        .cornerRadius(AppTheme.CornerRadius.medium)
+        .padding(.top, 6)
+    }
+
+    private func infoColumn(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.system(size: 12)).foregroundColor(.gray)
+            Rectangle().fill(yellow).frame(width: 30, height: 2)
+            Text(value.isEmpty ? "-" : value).font(.system(size: 14)).foregroundColor(.black)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-// MARK: - Action Button
-struct ActionButton: View {
-    let title: String
-    let icon: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                
-                Text(title)
-                    .font(AppTheme.Fonts.medium(13))
-                    .foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(color)
-            .cornerRadius(AppTheme.CornerRadius.medium)
-        }
-    }
-}
+// MARK: - Complaint Sheet
+struct ComplaintSheet: View {
+    @Binding var isPresented: Bool
+    let onSubmit: (String) -> Void
+    @State private var complaintText = ""
 
-// MARK: - Contact Row
-struct ContactRow: View {
-    let icon: String
-    let text: String
-    
     var body: some View {
-        HStack(spacing: AppTheme.Spacing.small) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundColor(AppTheme.Colors.primary)
-                .frame(width: 24)
-            
-            Text(text)
-                .font(AppTheme.Fonts.regular(14))
-                .foregroundColor(AppTheme.Colors.textPrimary)
+        NavigationView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Describe your complaint:")
+                    .font(.system(size: 14)).foregroundColor(.gray)
+
+                TextEditor(text: $complaintText)
+                    .frame(minHeight: 120)
+                    .padding(8)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Submit Complaint")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") { isPresented = false }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Submit") {
+                        if !complaintText.isEmpty {
+                            onSubmit(complaintText)
+                            isPresented = false
+                        }
+                    }
+                    .font(.system(size: 15, weight: .semibold))
+                }
+            }
         }
     }
 }
@@ -246,8 +418,6 @@ struct ContactRow: View {
 // MARK: - Preview
 struct CompanyDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            CompanyDetailView(company: CompanyViewModel())
-        }
+        CompanyDetailView(company: CompanyViewModel())
     }
 }
