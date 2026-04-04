@@ -205,6 +205,18 @@ struct CompanyLoginView: View {
         if let root = storyboard.instantiateViewController(withIdentifier: "KYDrawerController") as? KYDrawerController {
             window.rootViewController = root
             window.makeKeyAndVisible()
+            
+            // Navigate to pending screen if any
+            if let pending = Global.shared.pendingNavigationAfterLogin {
+                Global.shared.pendingNavigationAfterLogin = nil
+                GCD.async(.Main, delay: 0.5) {
+                    if let mainContainer = root.mainViewController as? MainContainerViewController {
+                        if pending == "workshop" {
+                            mainContainer.showWorkshopController()
+                        }
+                    }
+                }
+            }
         } else {
             dismiss()
         }

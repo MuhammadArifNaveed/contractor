@@ -345,6 +345,8 @@ class MainContainerViewController: BaseViewController{
     func showWorkshopController()  {
         // Workshop requires login (matching Android behavior)
         guard Global.shared.isLogedIn else {
+            // Store that user wants to navigate to Workshop after login
+            Global.shared.pendingNavigationAfterLogin = "workshop"
             loginUser()
             return
         }

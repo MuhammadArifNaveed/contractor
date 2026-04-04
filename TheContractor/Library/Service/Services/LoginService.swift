@@ -50,13 +50,41 @@ class LoginService: BaseService {
     /// Login for company/vendor accounts
     func loginCompany(email: String, pinCode: String, firebaseToken: String,
                      completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
-        let completeURL = EndPoints.BASE_URL + "vendor/login"
-        let params: [String: String] = ["email": email, "pin_code": pinCode, "firebase_token": firebaseToken]
+        let completeURL = EndPoints.BASE_URL + "vendor/login_company"
+        let params: [String: String] = [
+            "login_email": email,
+            "login_password": pinCode,
+            "device_type": "iOS",
+            "firebase_token": firebaseToken
+        ]
         
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             if success, let json = json {
-                // Save vendor session similar to user login
-                // The API should return vendor data that can be stored in Global
+                // Parse and save vendor data
+                if let vendorJSON = json["Vendor"].dictionaryObject {
+                    // Convert to JSON Data for UserDefaults (property list compatible)
+                    if let jsonData = try? JSONSerialization.data(withJSONObject: vendorJSON, options: []) {
+                        UserDefaults.standard.set(jsonData, forKey: "vendor")
+                    }
+                    
+                    UserDefaults.standard.set(true, forKey: "isLogedIn")
+                    UserDefaults.standard.set(true, forKey: "isVendor")
+                    UserDefaults.standard.set("company", forKey: "loginType")
+                    UserDefaults.standard.synchronize()
+                    
+                    // Update Global session
+                    Global.shared.isLogedIn = true
+                    Global.shared.isVendor = true
+                    Global.shared.loginType = "company"
+                    
+                    // Create a UserViewModel from vendor data for compatibility
+                    var user = UserViewModel()
+                    user.id = vendorJSON["id"] as? String ?? ""
+                    user.name = vendorJSON["company_name"] as? String ?? ""
+                    user.phone = vendorJSON["company_phone"] as? String ?? ""
+                    user.userType = "companies"
+                    Global.shared.user = user
+                }
                 completion(message, true, json)
             } else {
                 completion(message, false, nil)

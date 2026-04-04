@@ -30,5 +30,9 @@ class Global {
     var controllerTitle = ""
     var currentNavigationController = ""
     var currentStoryBoard = ""
+    
+    // MARK: - Navigation
+    /// Stores the tab/screen to navigate to after successful login
+    var pendingNavigationAfterLogin: String? = nil
 }
 

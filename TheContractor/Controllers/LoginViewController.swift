@@ -86,6 +86,18 @@ extension LoginViewController{
                         let vc = storyBoard.instantiateViewController(withIdentifier: "KYDrawerController") as! KYDrawerController
                         Global.shared.isLogedIn = true
                         self.navigationController?.pushViewController(vc, animated: true)
+                        
+                        // Navigate to pending screen if any
+                        if let pending = Global.shared.pendingNavigationAfterLogin {
+                            Global.shared.pendingNavigationAfterLogin = nil
+                            GCD.async(.Main, delay: 0.5) {
+                                if let mainContainer = vc.mainViewController as? MainContainerViewController {
+                                    if pending == "workshop" {
+                                        mainContainer.showWorkshopController()
+                                    }
+                                }
+                            }
+                        }
                     }
                     else{
                         self.showAlertView(message: message)
