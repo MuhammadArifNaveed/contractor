@@ -730,13 +730,163 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showFreelancersController() {
-        let alert = UIAlertController(
-            title: "Coming Soon",
-            message: "Freelancers will be available in an upcoming update.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        self.topBarView?.isHidden = false
+        let freelancersVC = FreelancersHostingController()
+        let controller = BaseNavigationController(rootViewController: freelancersVC)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showCompanyLoginController() {
+        self.topBarView?.isHidden = false
+        let companyLoginVC = CompanyLoginHostingController()
+        let controller = BaseNavigationController(rootViewController: companyLoginVC)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorEnquiriesController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorEnquiriesHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorQuotationsController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorQuotationsHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorJobsController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorJobsHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorJobApplicantsController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorJobApplicantsHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorWorkshopController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorWorkshopHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    func showVendorAddWorkshopController() {
+        self.topBarView?.isHidden = false
+        let vc = VendorAddWorkshopHostingController()
+        let controller = BaseNavigationController(rootViewController: vc)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
+        }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
     }
     
 

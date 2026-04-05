@@ -10,192 +10,165 @@ import SwiftUI
 struct AvailableJobsView: View {
     @StateObject private var viewModel = AvailableJobsViewModel()
     @State private var showSearch = false
-    
+    @State private var selectedJob: JobModel?
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.jobs.isEmpty {
-                LoadingView(message: "Loading jobs...")
-            } else if let error = viewModel.errorMessage, viewModel.jobs.isEmpty {
-                ErrorView(message: error) {
-                    viewModel.loadJobs()
-                }
-            } else if viewModel.jobs.isEmpty {
-                EmptyStateView(
-                    icon: "briefcase",
-                    title: "No Jobs Available",
-                    message: "There are no job postings at the moment."
-                )
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.small) {
-                        ForEach(viewModel.jobs.indices, id: \.self) { index in
-                            JobCard(job: viewModel.jobs[index]) {
-                                viewModel.selectJob(viewModel.jobs[index])
-                            }
-                            .padding(.horizontal, AppTheme.Spacing.medium)
-                            
-                            if index == viewModel.jobs.count - 2 {
-                                Color.clear
-                                    .frame(height: 1)
-                                    .onAppear {
-                                        viewModel.loadMoreIfNeeded()
-                                    }
-                            }
-                        }
-                        
-                        if viewModel.isLoadingMore {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                    .padding()
-                                Spacer()
-                            }
-                        }
-                        
-                        Spacer(minLength: 20)
-                    }
-                    .padding(.top, AppTheme.Spacing.medium)
-                }
-                .background(AppTheme.Colors.background)
-            }
-        }
-        .navigationTitle("Available Jobs")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+        VStack(spacing: 0) {
+            // Custom yellow top bar
+            HStack(spacing: 0) {
+                Text("Available Jobs")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.leading, 16)
+                Spacer()
                 Button(action: { showSearch = true }) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                .padding(.trailing, 8)
+            }
+            .frame(height: 56)
+            .background(yellow)
+
+            ZStack {
+                if viewModel.isLoading && viewModel.jobs.isEmpty {
+                    LoadingView(message: "Loading jobs...")
+                } else if let error = viewModel.errorMessage, viewModel.jobs.isEmpty {
+                    ErrorView(message: error) { viewModel.loadJobs() }
+                } else if viewModel.jobs.isEmpty {
+                    EmptyStateView(icon: "briefcase", title: "No Jobs Available", message: "There are no job postings at the moment.")
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: AppTheme.Spacing.small) {
+                            ForEach(viewModel.jobs.indices, id: \.self) { index in
+                                JobCard(job: viewModel.jobs[index]) {
+                                    selectedJob = viewModel.jobs[index]
+                                }
+                                .padding(.horizontal, AppTheme.Spacing.medium)
+                                if index == viewModel.jobs.count - 2 {
+                                    Color.clear.frame(height: 1).onAppear { viewModel.loadMoreIfNeeded() }
+                                }
+                            }
+                            if viewModel.isLoadingMore {
+                                HStack { Spacer(); ProgressView().padding(); Spacer() }
+                            }
+                            Spacer(minLength: 20)
+                        }
+                        .padding(.top, AppTheme.Spacing.medium)
+                    }
+                    .background(AppTheme.Colors.background)
                 }
             }
         }
-        .sheet(isPresented: $showSearch) {
-            SearchJobsView()
-        }
-        .onAppear {
-            if viewModel.jobs.isEmpty {
-                viewModel.loadJobs()
-            }
-        }
+        .navigationBarHidden(true)
+        .sheet(isPresented: $showSearch) { SearchJobsView() }
+        .sheet(item: $selectedJob) { job in JobDetailView(job: job) }
+        .onAppear { if viewModel.jobs.isEmpty { viewModel.loadJobs() } }
     }
 }
 
-// MARK: - Job Card
+// MARK: - Job Model (matches AvailableJobListingModel from Android)
+struct JobModel: Identifiable {
+    let id = UUID()
+    let companyId: String
+    let companyName: String
+    let companyLogo: String
+    let companyCategory: String
+    let cityName: String
+    let jobUuid: String
+    let jobTitle: String
+    let jobDescription: String
+    let jobType: String
+    let salary: String
+    let deadline: String
+    let jobLocation: String
+    let jobCategory: String
+
+    init(companyId: String = "", companyName: String = "", companyLogo: String = "",
+         companyCategory: String = "", cityName: String = "", jobUuid: String = "",
+         jobTitle: String = "", jobDescription: String = "", jobType: String = "",
+         salary: String = "", deadline: String = "", jobLocation: String = "", jobCategory: String = "") {
+        self.companyId = companyId; self.companyName = companyName
+        self.companyLogo = companyLogo; self.companyCategory = companyCategory
+        self.cityName = cityName; self.jobUuid = jobUuid
+        self.jobTitle = jobTitle; self.jobDescription = jobDescription
+        self.jobType = jobType; self.salary = salary
+        self.deadline = deadline; self.jobLocation = jobLocation
+        self.jobCategory = jobCategory
+    }
+}
+
+// MARK: - Job Card (matches Android AvailableJobAdapter layout)
 struct JobCard: View {
     let job: JobModel
     let onTap: () -> Void
-    
+    private let logoBase = "https://contractor.bidcont.com/uploads/companies/"
+
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                HStack {
-                    Text(job.title)
-                        .font(AppTheme.Fonts.semibold(16))
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                        .lineLimit(2)
-                    
-                    Spacer()
-                }
-                
-                if !job.companyName.isEmpty {
-                    HStack(spacing: 6) {
-                        Image(systemName: "building.2")
-                            .font(.system(size: 12))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                        
+            VStack(alignment: .leading, spacing: 8) {
+                // Company row: logo + name + category
+                HStack(alignment: .top, spacing: 10) {
+                    AsyncImage(url: URL(string: logoBase + job.companyLogo)) { phase in
+                        if let img = phase.image { img.resizable().scaledToFill() }
+                        else { Image(systemName: "building.2").foregroundColor(.gray) }
+                    }
+                    .frame(width: 48, height: 48)
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(4)
+                    .clipped()
+
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(job.companyName)
-                            .font(AppTheme.Fonts.regular(14))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                        Text(job.companyCategory)
+                            .font(.system(size: 13))
+                            .foregroundColor(.gray)
                             .lineLimit(1)
                     }
                 }
-                
-                HStack(spacing: 12) {
-                    if !job.location.isEmpty {
-                        Label(job.location, systemImage: "location")
-                            .font(AppTheme.Fonts.regular(13))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                    
-                    if !job.jobType.isEmpty {
-                        Label(job.jobType, systemImage: "briefcase")
-                            .font(AppTheme.Fonts.regular(13))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                }
-                
-                if !job.salary.isEmpty {
-                    Text(job.salary)
-                        .font(AppTheme.Fonts.semibold(14))
-                        .foregroundColor(AppTheme.Colors.primary)
-                }
-                
-                HStack {
-                    Label(job.postedDate, systemImage: "calendar")
-                        .font(AppTheme.Fonts.regular(12))
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12))
-                        .foregroundColor(AppTheme.Colors.gray)
+
+                // Job title with category in brackets
+                let titleDisplay = job.jobCategory.isEmpty
+                    ? job.jobTitle
+                    : "\(job.jobTitle) ( \(job.jobCategory) )"
+                Text(titleDisplay)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+
+                // Pill tags: type | deadline | location
+                HStack(spacing: 6) {
+                    if !job.jobType.isEmpty { PillTag(text: job.jobType) }
+                    if !job.deadline.isEmpty { PillTag(text: job.deadline) }
+                    if !job.jobLocation.isEmpty { PillTag(text: job.jobLocation) }
+                    else if !job.cityName.isEmpty { PillTag(text: job.cityName) }
                 }
             }
-            .padding(AppTheme.Spacing.medium)
+            .padding(12)
             .background(Color.white)
-            .cornerRadius(AppTheme.CornerRadius.medium)
-            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+            .cornerRadius(8)
+            .shadow(color: Color.black.opacity(0.06), radius: 3, x: 0, y: 1)
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
 
-// MARK: - Job Model
-struct JobModel: Identifiable {
-    let id: String
-    let title: String
-    let companyName: String
-    let location: String
-    let jobType: String
-    let salary: String
-    let description: String
-    let requirements: String
-    let postedDate: String
-    let category: String
-    
-    init() {
-        self.id = ""
-        self.title = ""
-        self.companyName = ""
-        self.location = ""
-        self.jobType = ""
-        self.salary = ""
-        self.description = ""
-        self.requirements = ""
-        self.postedDate = ""
-        self.category = ""
-    }
-    
-    init(id: String, title: String, companyName: String, location: String, jobType: String, salary: String, description: String, requirements: String, postedDate: String, category: String) {
-        self.id = id
-        self.title = title
-        self.companyName = companyName
-        self.location = location
-        self.jobType = jobType
-        self.salary = salary
-        self.description = description
-        self.requirements = requirements
-        self.postedDate = postedDate
-        self.category = category
+// MARK: - Pill Tag
+private struct PillTag: View {
+    let text: String
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12))
+            .foregroundColor(.primary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(UIColor.systemGray3), lineWidth: 1))
     }
 }
 
-// MARK: - Preview
-struct AvailableJobsView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            AvailableJobsView()
-        }
-    }
-}

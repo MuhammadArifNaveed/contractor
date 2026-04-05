@@ -54,20 +54,21 @@ class SearchJobsViewModel: ObservableObject {
     
     private func parseJob(_ json: JSON) -> JobModel {
         return JobModel(
-            id: json["id"].stringValue,
-            title: json["title"].stringValue,
+            companyId: json["id"].stringValue,
             companyName: json["company_name"].stringValue,
-            location: json["location"].stringValue,
+            companyLogo: json["company_logo"].stringValue,
+            companyCategory: json["category_name"].stringValue,
+            cityName: json["city_name"].stringValue,
+            jobUuid: json["job_uuid"].stringValue,
+            jobTitle: json["job_title"].stringValue,
+            jobDescription: json["job_description"].stringValue,
             jobType: json["job_type"].stringValue,
             salary: json["salary"].stringValue,
-            description: json["description"].stringValue,
-            requirements: json["requirements"].stringValue,
-            postedDate: json["posted_date"].stringValue,
-            category: json["category"].stringValue
+            deadline: json["deadline"].stringValue,
+            jobLocation: json["job_location_name"].stringValue,
+            jobCategory: json["job_category_title"].stringValue
         )
     }
-    
-    func selectJob(_ job: JobModel) {
-        print("Selected job: \(job.title)")
-    }
+
+    func selectJob(_ job: JobModel) {}
 }

@@ -20,29 +20,27 @@ class JobDetailViewModel: ObservableObject {
     }
     
     func applyForJob() {
-        guard let userId = UserDefaultsManager.shared.userInfo?.id, !userId.isEmpty else {
-            errorMessage = "User not logged in"
+        guard Global.shared.isLogedIn, let userId = Global.shared.user?.id, !userId.isEmpty else {
+            errorMessage = "Please login to apply for jobs."
             showErrorAlert = true
             return
         }
-        
+        guard !job.jobUuid.isEmpty else {
+            errorMessage = "Invalid job."
+            showErrorAlert = true
+            return
+        }
         isApplying = true
-        
-        let params = [
-            "user_id": userId,
-            "job_id": job.id
-        ]
-        
-        let completeURL = "https://contractor.bidcont.com/rest/Home/apply_for_job"
-        LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, _, _ in
+        let params: [String: Any] = ["user_id": userId, "job_uuid": job.jobUuid]
+        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/jobs/job_apply", params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
-                self?.isApplying = false
-                
-                if success {
-                    self?.showSuccessAlert = true
+                guard let self else { return }
+                self.isApplying = false
+                if success, let j = json, j["error"].stringValue == "false" {
+                    self.showSuccessAlert = true
                 } else {
-                    self?.errorMessage = message ?? "Failed to apply for job"
-                    self?.showErrorAlert = true
+                    self.errorMessage = json?["message"].stringValue ?? message ?? "Failed to apply for job"
+                    self.showErrorAlert = true
                 }
             }
         }

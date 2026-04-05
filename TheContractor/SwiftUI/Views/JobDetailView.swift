@@ -10,117 +10,122 @@ import SwiftUI
 struct JobDetailView: View {
     @StateObject private var viewModel: JobDetailViewModel
     @Environment(\.presentationMode) var presentationMode
-    
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let logoBase = "https://contractor.bidcont.com/uploads/companies/"
+
     init(job: JobModel) {
         _viewModel = StateObject(wrappedValue: JobDetailViewModel(job: job))
     }
-    
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-                // Job Header
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    Text(viewModel.job.title)
-                        .font(AppTheme.Fonts.bold(22))
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                    
-                    Text(viewModel.job.companyName)
-                        .font(AppTheme.Fonts.semibold(16))
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                    
-                    HStack(spacing: 16) {
-                        if !viewModel.job.location.isEmpty {
-                            Label(viewModel.job.location, systemImage: "location")
-                                .font(AppTheme.Fonts.regular(14))
-                                .foregroundColor(AppTheme.Colors.textSecondary)
-                        }
-                        
-                        if !viewModel.job.jobType.isEmpty {
-                            Label(viewModel.job.jobType, systemImage: "briefcase")
-                                .font(AppTheme.Fonts.regular(14))
-                                .foregroundColor(AppTheme.Colors.textSecondary)
-                        }
-                    }
-                    
-                    if !viewModel.job.salary.isEmpty {
-                        Text(viewModel.job.salary)
-                            .font(AppTheme.Fonts.bold(18))
-                            .foregroundColor(AppTheme.Colors.primary)
-                    }
+        VStack(spacing: 0) {
+            // Yellow top bar
+            HStack(spacing: 0) {
+                Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
                 }
-                .padding(AppTheme.Spacing.medium)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(AppTheme.CornerRadius.medium)
-                
-                // Job Description
-                if !viewModel.job.description.isEmpty {
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                        Text("Job Description")
-                            .font(AppTheme.Fonts.semibold(16))
-                            .foregroundColor(AppTheme.Colors.textPrimary)
-                        
-                        Text(viewModel.job.description)
-                            .font(AppTheme.Fonts.regular(14))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                            .lineSpacing(4)
-                    }
-                    .padding(AppTheme.Spacing.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .cornerRadius(AppTheme.CornerRadius.medium)
-                }
-                
-                // Requirements
-                if !viewModel.job.requirements.isEmpty {
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                        Text("Requirements")
-                            .font(AppTheme.Fonts.semibold(16))
-                            .foregroundColor(AppTheme.Colors.textPrimary)
-                        
-                        Text(viewModel.job.requirements)
-                            .font(AppTheme.Fonts.regular(14))
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                            .lineSpacing(4)
-                    }
-                    .padding(AppTheme.Spacing.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .cornerRadius(AppTheme.CornerRadius.medium)
-                }
-                
+                Text("Job Detail")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
                 Spacer()
             }
-            .padding(AppTheme.Spacing.medium)
-        }
-        .background(AppTheme.Colors.background)
-        .navigationTitle("Job Details")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { viewModel.applyForJob() }) {
-                    if viewModel.isApplying {
-                        ProgressView()
-                    } else {
-                        Text("Apply")
-                            .fontWeight(.semibold)
+            .padding(.horizontal, 8)
+            .frame(height: 56)
+            .background(yellow)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Company header
+                    HStack(alignment: .center, spacing: 12) {
+                        AsyncImage(url: URL(string: logoBase + viewModel.job.companyLogo)) { phase in
+                            if let img = phase.image { img.resizable().scaledToFill() }
+                            else { Image(systemName: "building.2").foregroundColor(.gray) }
+                        }
+                        .frame(width: 60, height: 60)
+                        .background(Color(UIColor.systemGray6))
+                        .cornerRadius(6)
+                        .clipped()
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(viewModel.job.companyName).font(.system(size: 16, weight: .bold))
+                            Text(viewModel.job.companyCategory).font(.system(size: 13)).foregroundColor(.gray)
+                            Text(viewModel.job.cityName).font(.system(size: 13)).foregroundColor(.gray)
+                        }
+                        Spacer()
                     }
+                    .padding(16)
+                    .background(Color.white)
+
+                    Divider()
+                    detailRow(label: "Job Title", value: viewModel.job.jobTitle)
+                    Divider().padding(.leading, 16)
+                    twoColRow(l1: "Job Category", v1: viewModel.job.jobCategory,
+                              l2: "Job Type", v2: viewModel.job.jobType)
+                    Divider().padding(.leading, 16)
+                    twoColRow(l1: "Job Location",
+                              v1: viewModel.job.jobLocation.isEmpty ? viewModel.job.cityName : viewModel.job.jobLocation,
+                              l2: "Job Salary", v2: viewModel.job.salary)
+                    Divider().padding(.leading, 16)
+                    detailRow(label: "Deadline", value: viewModel.job.deadline)
+                    Divider().padding(.leading, 16)
+                    detailRow(label: "Description", value: viewModel.job.jobDescription)
+
+                    // Apply button
+                    Button(action: { viewModel.applyForJob() }) {
+                        HStack {
+                            Spacer()
+                            if viewModel.isApplying {
+                                ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .black))
+                            } else {
+                                Text("Apply").font(.system(size: 17, weight: .semibold)).foregroundColor(.black)
+                            }
+                            Spacer()
+                        }
+                        .frame(height: 52)
+                        .background(yellow)
+                        .cornerRadius(6)
+                    }
+                    .disabled(viewModel.isApplying)
+                    .padding(16)
                 }
-                .disabled(viewModel.isApplying)
             }
+            .background(Color(UIColor.systemGroupedBackground))
         }
+        .navigationBarHidden(true)
         .alert("Success", isPresented: $viewModel.showSuccessAlert) {
-            Button("OK") {
-                presentationMode.wrappedValue.dismiss()
-            }
-        } message: {
-            Text("Application submitted successfully!")
-        }
+            Button("OK") { presentationMode.wrappedValue.dismiss() }
+        } message: { Text("Application submitted successfully!") }
         .alert("Error", isPresented: $viewModel.showErrorAlert) {
-            Button("OK") { }
-        } message: {
-            Text(viewModel.errorMessage ?? "Failed to apply for job")
+            Button("OK") {}
+        } message: { Text(viewModel.errorMessage ?? "Failed to apply for job") }
+    }
+
+    private func detailRow(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label).font(.system(size: 12)).foregroundColor(.gray)
+            Text(value.isEmpty ? "-" : value).font(.system(size: 15, weight: .medium))
         }
+        .padding(.horizontal, 16).padding(.vertical, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+    }
+
+    private func twoColRow(l1: String, v1: String, l2: String, v2: String) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(l1).font(.system(size: 12)).foregroundColor(.gray)
+                Text(v1.isEmpty ? "-" : v1).font(.system(size: 15, weight: .medium))
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            Divider()
+            VStack(alignment: .leading, spacing: 4) {
+                Text(l2).font(.system(size: 12)).foregroundColor(.gray)
+                Text(v2.isEmpty ? "-" : v2).font(.system(size: 15, weight: .medium))
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 16).padding(.vertical, 12)
+        .background(Color.white)
     }
 }
 

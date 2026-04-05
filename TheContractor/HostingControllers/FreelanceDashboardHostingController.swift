@@ -8,19 +8,10 @@
 import UIKit
 import SwiftUI
 
-// Simple wrapper view for FreelanceDashboard
-struct FreelanceDashboardWrapper: View {
-    var body: some View {
-        Text("Freelance Dashboard")
-            .font(.largeTitle)
-            .navigationBarHidden(true)
-    }
-}
+class FreelanceDashboardHostingController: UIHostingController<FreelanceDashboardView> {
 
-class FreelanceDashboardHostingController: UIHostingController<FreelanceDashboardWrapper> {
-    
     init() {
-        super.init(rootView: FreelanceDashboardWrapper())
+        super.init(rootView: FreelanceDashboardView(onBack: nil))
     }
     
     override func viewWillAppear(_ animated: Bool) {

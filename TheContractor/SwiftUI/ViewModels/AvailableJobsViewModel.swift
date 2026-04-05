@@ -18,93 +18,63 @@ class AvailableJobsViewModel: ObservableObject {
     private var currentPage = 1
     private var lastPage = 1
     private var canLoadMore = true
-    
+
+    private let jobsURL = "https://contractor.bidcont.com/rest/jobs/search_jobs"
+
     func loadJobs(refresh: Bool = false) {
-        if refresh {
-            currentPage = 1
-            jobs.removeAll()
-            canLoadMore = true
-        }
-        
+        if refresh { currentPage = 1; jobs.removeAll(); canLoadMore = true }
         guard !isLoading else { return }
-        
-        isLoading = true
-        errorMessage = nil
-        
-        let params = ["page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_available_jobs"
-        
-        LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
+        isLoading = true; errorMessage = nil
+        let params: [String: Any] = ["page": "\(currentPage)", "jobs": "", "job_category": "", "job_city": ""]
+        LoginService.shared().makePostAPICall(with: jobsURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
-                self?.isLoading = false
-                
+                guard let self else { return }
+                self.isLoading = false
                 if success, let json = json {
-                    self?.lastPage = json["last_page"].intValue
-                    
-                    if let jobsArray = json["jobs"].array {
-                        let newJobs = jobsArray.map { self?.parseJob($0) ?? JobModel() }
-                        
-                        if refresh {
-                            self?.jobs = newJobs
-                        } else {
-                            self?.jobs.append(contentsOf: newJobs)
-                        }
-                    }
-                    
-                    if let currentPage = self?.currentPage, let lastPage = self?.lastPage {
-                        self?.canLoadMore = currentPage < lastPage
-                    }
+                    self.lastPage = json["total_page"].intValue
+                    let newJobs = json["available_jobs"].arrayValue.map { self.parseJob($0) }
+                    if refresh { self.jobs = newJobs } else { self.jobs.append(contentsOf: newJobs) }
+                    self.canLoadMore = self.currentPage < self.lastPage
                 } else {
-                    self?.errorMessage = message ?? "Failed to load jobs"
+                    self.errorMessage = message ?? "Failed to load jobs"
                 }
             }
         }
     }
-    
+
     func loadMoreIfNeeded() {
         guard canLoadMore, !isLoading, !isLoadingMore else { return }
-        
-        isLoadingMore = true
-        currentPage += 1
-        
-        let params = ["page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_available_jobs"
-        
-        LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
+        isLoadingMore = true; currentPage += 1
+        let params: [String: Any] = ["page": "\(currentPage)", "jobs": "", "job_category": "", "job_city": ""]
+        LoginService.shared().makePostAPICall(with: jobsURL, params: params) { [weak self] _, success, json, _ in
             DispatchQueue.main.async {
-                self?.isLoadingMore = false
-                
+                guard let self else { return }
+                self.isLoadingMore = false
                 if success, let json = json {
-                    if let jobsArray = json["jobs"].array {
-                        let newJobs = jobsArray.map { self?.parseJob($0) ?? JobModel() }
-                        self?.jobs.append(contentsOf: newJobs)
-                    }
-                    
-                    if let currentPage = self?.currentPage, let lastPage = self?.lastPage {
-                        self?.canLoadMore = currentPage < lastPage
-                    }
+                    self.jobs.append(contentsOf: json["available_jobs"].arrayValue.map { self.parseJob($0) })
+                    self.canLoadMore = self.currentPage < self.lastPage
                 }
             }
         }
     }
-    
+
     private func parseJob(_ json: JSON) -> JobModel {
         return JobModel(
-            id: json["id"].stringValue,
-            title: json["title"].stringValue,
+            companyId: json["id"].stringValue,
             companyName: json["company_name"].stringValue,
-            location: json["location"].stringValue,
+            companyLogo: json["company_logo"].stringValue,
+            companyCategory: json["category_name"].stringValue,
+            cityName: json["city_name"].stringValue,
+            jobUuid: json["job_uuid"].stringValue,
+            jobTitle: json["job_title"].stringValue,
+            jobDescription: json["job_description"].stringValue,
             jobType: json["job_type"].stringValue,
             salary: json["salary"].stringValue,
-            description: json["description"].stringValue,
-            requirements: json["requirements"].stringValue,
-            postedDate: json["posted_date"].stringValue,
-            category: json["category"].stringValue
+            deadline: json["deadline"].stringValue,
+            jobLocation: json["job_location_name"].stringValue,
+            jobCategory: json["job_category_title"].stringValue
         )
     }
-    
-    func selectJob(_ job: JobModel) {
-        // Navigate to job details
-        print("Selected job: \(job.title)")
-    }
+
+    func selectJob(_ job: JobModel) {}
 }

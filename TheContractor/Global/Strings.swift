@@ -30,8 +30,27 @@ struct AssetNames {
 }
 
 struct SideMenu {
-    static let MENULIST = [
-        ["title":"Select Language","image":"language"],
+    // Guest mode: only public items visible (no auth required)
+    static let GUEST_MENU = [
+        ["title":"Home","image":"home"],
+        ["title":"Company Finder","image":"company-finder"],
+        ["title":"24/7 Maintenance","image":"24-7"],
+        ["title":"Advertise Company","image":"advertisement"],
+        ["title":"Available Jobs","image":"advertisement"],
+        ["title":"Freelancers","image":"become-a-vendor"],
+        ["title":"Freelancer Dashboard","image":"become-a-vendor"],
+        ["title":"About Us","image":"guide"],
+        ["title":"Advertisement","image":"advertisement"],
+        ["title":"Register your Company","image":"become-a-vendor"],
+        ["title":"Privacy Polices","image":"privacy-policy"],
+        ["title":"Terms & Conditions","image":"terms-and-conditions"],
+        ["title":"Guide","image":"guide"],
+        ["title":"Rate Us","image":"rate"],
+        ["title":"Share","image":"share"]
+    ]
+
+    // Logged-in user: all items visible
+    static let USER_MENU = [
         ["title":"Home","image":"home"],
         ["title":"Inbox","image":"inbox"],
         ["title":"Company Finder","image":"company-finder"],
@@ -52,7 +71,7 @@ struct SideMenu {
         ["title":"About Us","image":"guide"],
         ["title":"Advertisement","image":"advertisement"],
         ["title":"Become a Vendor","image":"become-a-vendor"],
-        ["title":"Privacy Policy","image":"privacy-policy"],
+        ["title":"Privacy Polices","image":"privacy-policy"],
         ["title":"Terms & Conditions","image":"terms-and-conditions"],
         ["title":"Guide","image":"guide"],
         ["title":"Contact Us","image":"contact"],
@@ -60,6 +79,9 @@ struct SideMenu {
         ["title":"Share","image":"share"],
         ["title":"Logout","image":"logout"]
     ]
+
+    // Backwards compat alias
+    static let MENULIST = USER_MENU
 }
 
 struct VendorMenu {
