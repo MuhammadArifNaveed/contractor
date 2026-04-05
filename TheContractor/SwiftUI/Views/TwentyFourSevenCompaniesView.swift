@@ -2,14 +2,13 @@
 import SwiftUI
 struct TwentyFourSevenCompaniesView: View {
     @StateObject private var viewModel = TwentyFourSevenCompaniesViewModel()
-    @Environment(\.presentationMode) private var presentationMode
     private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
 
     var body: some View {
         VStack(spacing: 0) {
             // Custom yellow top bar
             HStack(spacing: 0) {
-                Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.white)

@@ -2,22 +2,33 @@
 import SwiftUI
 struct VendorEnquiriesView: View {
     @StateObject private var viewModel = VendorEnquiriesViewModel()
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.enquiries.isEmpty { LoadingView(message: "Loading...") }
-            else if viewModel.enquiries.isEmpty { EmptyStateView(icon: "envelope", title: "No Enquiries", message: "No enquiries received yet") }
-            else {
-                List(viewModel.enquiries.indices, id: \.self) { i in
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack { Text("Enquiry #\(viewModel.enquiries[i].id)").font(AppTheme.Fonts.semibold(16)); Spacer(); Text(viewModel.enquiries[i].status).font(AppTheme.Fonts.medium(12)).foregroundColor(.blue) }
-                        Text(viewModel.enquiries[i].userName).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
-                        Text(viewModel.enquiries[i].date).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
+                }
+                Text("Enquiries").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
+                Spacer()
+            }
+            .padding(.horizontal, 4).frame(height: 56).background(yellow)
+            ZStack {
+                if viewModel.isLoading && viewModel.enquiries.isEmpty { LoadingView(message: "Loading...") }
+                else if viewModel.enquiries.isEmpty { EmptyStateView(icon: "envelope", title: "No Enquiries", message: "No enquiries received yet") }
+                else {
+                    List(viewModel.enquiries.indices, id: \.self) { i in
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack { Text("Enquiry #\(viewModel.enquiries[i].id)").font(AppTheme.Fonts.semibold(16)); Spacer(); Text(viewModel.enquiries[i].status).font(AppTheme.Fonts.medium(12)).foregroundColor(.blue) }
+                            Text(viewModel.enquiries[i].userName).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
+                            Text(viewModel.enquiries[i].date).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
+                        }
                     }
                 }
             }
+            .onAppear { viewModel.loadEnquiries() }
         }
-        .navigationTitle("Enquiries")
-        .onAppear { viewModel.loadEnquiries() }
+        .navigationBarHidden(true)
     }
 }
 class VendorEnquiriesViewModel: ObservableObject {

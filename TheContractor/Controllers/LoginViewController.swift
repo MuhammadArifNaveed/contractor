@@ -28,11 +28,31 @@ class LoginViewController: BaseViewController {
         return button
     }()
 
+    private lazy var forgotPasswordButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Forgot Password?", for: .normal)
+        button.titleLabel?.font = AppFonts.CenturyGolthicRegularWith(size: 14)
+        button.setTitleColor(AppColors.yellow, for: .normal)
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(actionForgetPassword(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Add "Login as a Company" button programmatically so no storyboard changes are needed.
         setupLoginAsCompanyButton()
+        setupForgotPasswordButton()
+    }
+
+    private func setupForgotPasswordButton() {
+        view.addSubview(forgotPasswordButton)
+        NSLayoutConstraint.activate([
+            forgotPasswordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            forgotPasswordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            forgotPasswordButton.bottomAnchor.constraint(equalTo: loginAsCompanyButton.topAnchor, constant: -12),
+            forgotPasswordButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
     }
 
     private func setupLoginAsCompanyButton() {

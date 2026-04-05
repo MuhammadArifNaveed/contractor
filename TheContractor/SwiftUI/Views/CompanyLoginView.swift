@@ -12,6 +12,7 @@ struct CompanyLoginView: View {
     @State private var pinCode: String = ""
     @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
+    @State private var showForgotPassword = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -48,6 +49,12 @@ struct CompanyLoginView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage ?? "")
+        }
+        .sheet(isPresented: $showForgotPassword) {
+            NavigationView {
+                VendorForgotPasswordView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
         .navigationBarHidden(true)
     }
@@ -126,9 +133,7 @@ struct CompanyLoginView: View {
     private var forgotPassword: some View {
         HStack {
             Spacer()
-            Button(action: {
-                // TODO: Navigate to forgot password when view is added to target
-            }) {
+            Button(action: { showForgotPassword = true }) {
                 Text("Forgot password")
                     .font(AppTheme.Fonts.caption)
                     .foregroundColor(AppTheme.Colors.textPrimary)

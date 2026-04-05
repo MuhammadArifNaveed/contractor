@@ -46,14 +46,37 @@ class MainContainerViewController: BaseViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      //  self.btnSeach.isHidden = true
         setupTopNavigationBar()
         setupWorkshopTab()
         resetAllBottomViews()
         self.lblHome?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
         self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
         self.showHomeController()
-    
+        NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
+    }
+
+    deinit { NotificationCenter.default.removeObserver(self) }
+
+    // MARK: - Tab bar / top bar visibility helpers
+
+    /// Call this before showing any side-menu screen. Hides the global top bar and bottom tab bar.
+    func hideForSideMenu() {
+        topBarView?.isHidden = true
+        bottomBarView?.isHidden = true
+    }
+
+    /// Call this for every primary tab screen (Home, Workshop, Search, Estimation, Profile).
+    private func showBarsForTab() {
+        topBarView?.isHidden = false
+        bottomBarView?.isHidden = false
+    }
+
+    @objc private func handleGoBackToTabBar() {
+        showBarsForTab()
+        resetAllBottomViews()
+        lblHome?.setTitleColor(UIColor(hexFromString: "F2BE36"), for: .normal)
+        imgHome?.tintColor = UIColor(hexFromString: "F2BE36")
+        showHomeController()
     }
     
   
@@ -249,6 +272,7 @@ class MainContainerViewController: BaseViewController{
     
     @IBAction func bottomBarAction(_ sender: UIButton) {
         self.btnBack?.setImage(UIImage(named: "menu"), for: .normal)
+        self.showBarsForTab()
         self.resetAllBottomViews()
         if(sender.tag == 0){
             // Home
@@ -311,8 +335,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showHomeController()  {
-        // Keep the top bar visible for home screen to show navigation buttons
-        self.topBarView?.isHidden = false
+        self.showBarsForTab()
         
         let homeVC = HomeHostingController()
         let controller = BaseNavigationController(rootViewController: homeVC)
@@ -337,6 +360,7 @@ class MainContainerViewController: BaseViewController{
     }
    
     func showEsstimationController()  {
+        self.showBarsForTab()
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
         var controller = BaseNavigationController()
         controller = storyBoard.instantiateViewController(withIdentifier: "EsstimationVC") as! BaseNavigationController
@@ -362,7 +386,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showSearchController()  {
-        self.topBarView?.isHidden = false
+        self.showBarsForTab()
         
         let searchVC = SearchHostingController()
         let controller = BaseNavigationController(rootViewController: searchVC)
@@ -385,6 +409,7 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showWorkshopController()  {
+        self.showBarsForTab()
         // Workshop requires login (matching Android behavior)
         guard Global.shared.isLogedIn else {
             // Store that user wants to navigate to Workshop after login
@@ -416,7 +441,7 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     func showProfileController()  {
-        self.topBarView?.isHidden = false
+        self.showBarsForTab()
         
         let profileVC = ProfileHostingController()
         let controller = BaseNavigationController(rootViewController: profileVC)
@@ -442,7 +467,7 @@ class MainContainerViewController: BaseViewController{
     // MARK: - New Navigation Methods for Side Menu
     
     func showEnquiriesController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let enquiriesVC = EnquiriesHostingController()
         let controller = BaseNavigationController(rootViewController: enquiriesVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -463,7 +488,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showQuotationsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let quotationsVC = QuotationsHostingController()
         let controller = BaseNavigationController(rootViewController: quotationsVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -484,7 +509,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showComplaintsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let complaintsVC = ComplaintsHostingController()
         let controller = BaseNavigationController(rootViewController: complaintsVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -505,7 +530,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showChatListController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let chatVC = ChatListHostingController()
         let controller = BaseNavigationController(rootViewController: chatVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -526,7 +551,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showCartController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let cartVC = CartHostingController()
         let controller = BaseNavigationController(rootViewController: cartVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -547,7 +572,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showSubmitQuotationController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let submitQuotationVC = SubmitQuotationHostingController()
         let controller = BaseNavigationController(rootViewController: submitQuotationVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -568,7 +593,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func show24x7MaintenanceController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let maintenanceVC = TwentyFourSevenHostingController()
         let controller = BaseNavigationController(rootViewController: maintenanceVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -589,7 +614,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showAdvertiseCompanyController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let advertiseVC = AdvertiseCompanyHostingController()
         let controller = BaseNavigationController(rootViewController: advertiseVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -610,7 +635,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showAvailableJobsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let jobsVC = AvailableJobsHostingController()
         let controller = BaseNavigationController(rootViewController: jobsVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -631,7 +656,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showMyJobApplicationsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let applicationsVC = MyJobApplicationsHostingController()
         let controller = BaseNavigationController(rootViewController: applicationsVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -652,7 +677,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showDirectHiringController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let directHiringVC = DirectHiringHostingController()
         let controller = BaseNavigationController(rootViewController: directHiringVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -673,7 +698,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showFreelanceDashboardController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let dashboardVC = FreelanceDashboardHostingController()
         let controller = BaseNavigationController(rootViewController: dashboardVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -694,7 +719,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showWebController(title: String, link: String) {
-
+        self.hideForSideMenu()
         let storyBoard = UIStoryboard(name: "Home", bundle: nil)
 
         let controller = storyBoard.instantiateViewController(
@@ -730,7 +755,7 @@ class MainContainerViewController: BaseViewController{
     }
     
     func showFreelancersController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let freelancersVC = FreelancersHostingController()
         let controller = BaseNavigationController(rootViewController: freelancersVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -750,7 +775,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showCompanyLoginController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let companyLoginVC = CompanyLoginHostingController()
         let controller = BaseNavigationController(rootViewController: companyLoginVC)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -770,7 +795,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorEnquiriesController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorEnquiriesHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -790,7 +815,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorQuotationsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorQuotationsHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -810,7 +835,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorJobsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorJobsHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -830,7 +855,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorJobApplicantsController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorJobApplicantsHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -850,7 +875,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorWorkshopController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorWorkshopHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false
@@ -870,7 +895,7 @@ class MainContainerViewController: BaseViewController{
     }
 
     func showVendorAddWorkshopController() {
-        self.topBarView?.isHidden = false
+        self.hideForSideMenu()
         let vc = VendorAddWorkshopHostingController()
         let controller = BaseNavigationController(rootViewController: vc)
         controller.interactivePopGestureRecognizer?.isEnabled = false

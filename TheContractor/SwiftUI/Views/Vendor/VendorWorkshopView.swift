@@ -2,30 +2,40 @@
 import SwiftUI
 struct VendorWorkshopView: View {
     @StateObject private var viewModel = VendorWorkshopViewModel()
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.items.isEmpty { LoadingView(message: "Loading...") }
-            else if viewModel.items.isEmpty { EmptyStateView(icon: "wrench", title: "No Items", message: "No workshop items") }
-            else {
-                List(viewModel.items.indices, id: \.self) { i in
-                    HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: viewModel.items[i].image)) { img in img.resizable().aspectRatio(contentMode: .fill) } placeholder: { Color.gray.opacity(0.2) }
-                            .frame(width: 60, height: 60).cornerRadius(8)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(viewModel.items[i].title).font(AppTheme.Fonts.semibold(16))
-                            Text(viewModel.items[i].price).font(AppTheme.Fonts.bold(14)).foregroundColor(AppTheme.Colors.primary)
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
+                }
+                Text("Workshop Items").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
+                Spacer()
+                Button(action: { viewModel.addItem() }) {
+                    Image(systemName: "plus").font(.system(size: 18, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
+                }
+                .padding(.trailing, 4)
+            }
+            .padding(.horizontal, 4).frame(height: 56).background(yellow)
+            ZStack {
+                if viewModel.isLoading && viewModel.items.isEmpty { LoadingView(message: "Loading...") }
+                else if viewModel.items.isEmpty { EmptyStateView(icon: "wrench", title: "No Items", message: "No workshop items") }
+                else {
+                    List(viewModel.items.indices, id: \.self) { i in
+                        HStack(spacing: 12) {
+                            AsyncImage(url: URL(string: viewModel.items[i].image)) { img in img.resizable().aspectRatio(contentMode: .fill) } placeholder: { Color.gray.opacity(0.2) }
+                                .frame(width: 60, height: 60).cornerRadius(8)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(viewModel.items[i].title).font(AppTheme.Fonts.semibold(16))
+                                Text(viewModel.items[i].price).font(AppTheme.Fonts.bold(14)).foregroundColor(AppTheme.Colors.primary)
+                            }
                         }
                     }
                 }
             }
+            .onAppear { viewModel.loadItems() }
         }
-        .navigationTitle("Workshop Items")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { viewModel.addItem() }) { Image(systemName: "plus").foregroundColor(AppTheme.Colors.primary) }
-            }
-        }
-        .onAppear { viewModel.loadItems() }
+        .navigationBarHidden(true)
     }
 }
 class VendorWorkshopViewModel: ObservableObject {

@@ -3,26 +3,37 @@ import SwiftUI
 struct VendorJobApplicantsView: View {
     let jobId: String
     @StateObject private var viewModel = VendorJobApplicantsViewModel()
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.applicants.isEmpty { LoadingView(message: "Loading...") }
-            else if viewModel.applicants.isEmpty { EmptyStateView(icon: "person.2", title: "No Applicants", message: "No one has applied yet") }
-            else {
-                List(viewModel.applicants.indices, id: \.self) { i in
-                    HStack(spacing: 12) {
-                        Circle().fill(Color.blue.opacity(0.2)).frame(width: 50, height: 50).overlay(Image(systemName: "person.fill").foregroundColor(.blue))
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(viewModel.applicants[i].name).font(AppTheme.Fonts.semibold(16))
-                            Text(viewModel.applicants[i].appliedDate).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
+                }
+                Text("Applicants").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
+                Spacer()
+            }
+            .padding(.horizontal, 4).frame(height: 56).background(yellow)
+            ZStack {
+                if viewModel.isLoading && viewModel.applicants.isEmpty { LoadingView(message: "Loading...") }
+                else if viewModel.applicants.isEmpty { EmptyStateView(icon: "person.2", title: "No Applicants", message: "No one has applied yet") }
+                else {
+                    List(viewModel.applicants.indices, id: \.self) { i in
+                        HStack(spacing: 12) {
+                            Circle().fill(Color.blue.opacity(0.2)).frame(width: 50, height: 50).overlay(Image(systemName: "person.fill").foregroundColor(.blue))
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(viewModel.applicants[i].name).font(AppTheme.Fonts.semibold(16))
+                                Text(viewModel.applicants[i].appliedDate).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
+                            }
+                            Spacer()
+                            Button("View") { viewModel.viewApplicant(viewModel.applicants[i]) }.font(AppTheme.Fonts.medium(14)).foregroundColor(AppTheme.Colors.primary)
                         }
-                        Spacer()
-                        Button("View") { viewModel.viewApplicant(viewModel.applicants[i]) }.font(AppTheme.Fonts.medium(14)).foregroundColor(AppTheme.Colors.primary)
                     }
                 }
             }
+            .onAppear { viewModel.loadApplicants(jobId: jobId) }
         }
-        .navigationTitle("Applicants")
-        .onAppear { viewModel.loadApplicants(jobId: jobId) }
+        .navigationBarHidden(true)
     }
 }
 class VendorJobApplicantsViewModel: ObservableObject {

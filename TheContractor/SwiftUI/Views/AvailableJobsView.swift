@@ -17,10 +17,15 @@ struct AvailableJobsView: View {
         VStack(spacing: 0) {
             // Custom yellow top bar
             HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
                 Text("Available Jobs")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
-                    .padding(.leading, 16)
                 Spacer()
                 Button(action: { showSearch = true }) {
                     Image(systemName: "magnifyingglass")

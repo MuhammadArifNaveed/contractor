@@ -215,7 +215,7 @@ struct SearchCompaniesView: View {
                             .cornerRadius(8)
                     }
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 100)
 
                     if let err = viewModel.errorMessage {
                         Text(err)
@@ -243,7 +243,7 @@ struct SearchCompaniesView: View {
     
     private var topBar: some View {
         HStack(spacing: 0) {
-            Button(action: { presentationMode.wrappedValue.dismiss() }) {
+            Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(.white)

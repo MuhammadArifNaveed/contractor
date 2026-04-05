@@ -2,22 +2,33 @@
 import SwiftUI
 struct DirectHiringView: View {
     @StateObject private var viewModel = DirectHiringViewModel()
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.items.isEmpty { LoadingView(message: "Loading...") }
-            else if viewModel.items.isEmpty { EmptyStateView(icon: "person.2", title: "No Direct Hiring", message: "No direct hiring requests") }
-            else {
-                List(viewModel.items.indices, id: \.self) { i in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(viewModel.items[i].title).font(AppTheme.Fonts.semibold(16))
-                        Text(viewModel.items[i].company).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
-                        HStack { Text(viewModel.items[i].date).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray); Spacer(); Text(viewModel.items[i].status).font(AppTheme.Fonts.medium(12)).foregroundColor(.blue) }
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
+                }
+                Text("Direct Hiring").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
+                Spacer()
+            }
+            .padding(.horizontal, 4).frame(height: 56).background(yellow)
+            ZStack {
+                if viewModel.isLoading && viewModel.items.isEmpty { LoadingView(message: "Loading...") }
+                else if viewModel.items.isEmpty { EmptyStateView(icon: "person.2", title: "No Direct Hiring", message: "No direct hiring requests") }
+                else {
+                    List(viewModel.items.indices, id: \.self) { i in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(viewModel.items[i].title).font(AppTheme.Fonts.semibold(16))
+                            Text(viewModel.items[i].company).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
+                            HStack { Text(viewModel.items[i].date).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray); Spacer(); Text(viewModel.items[i].status).font(AppTheme.Fonts.medium(12)).foregroundColor(.blue) }
+                        }
                     }
                 }
             }
+            .onAppear { viewModel.loadItems() }
         }
-        .navigationTitle("Direct Hiring")
-        .onAppear { viewModel.loadItems() }
+        .navigationBarHidden(true)
     }
 }
 class DirectHiringViewModel: ObservableObject {

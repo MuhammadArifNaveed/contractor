@@ -108,6 +108,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
 
     // MARK: - User menu handler
     private func handleUserMenuItem(title: String, mainVC: MainContainerViewController) {
+        if title != "Home" && title != "Logout" && title != "Rate Us" && title != "Share" {
+            mainVC.hideForSideMenu()
+        }
         switch title {
         case "Home":
             mainVC.showHomeController()
@@ -201,6 +204,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
 
     // MARK: - Vendor menu handler
     private func handleVendorMenuItem(title: String, mainVC: MainContainerViewController) {
+        if title != "Home" && title != "Vendor Logout" {
+            mainVC.hideForSideMenu()
+        }
         switch title {
         case "Home":
             mainVC.showHomeController()

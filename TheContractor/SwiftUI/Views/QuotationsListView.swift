@@ -11,7 +11,33 @@ struct QuotationsListView: View {
     @StateObject private var viewModel = QuotationsListViewModel()
     @State private var showSubmitQuotation = false
     
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+
     var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                Text("Quotations")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                Spacer()
+                Button(action: { showSubmitQuotation = true }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                .padding(.trailing, 4)
+            }
+            .padding(.horizontal, 4)
+            .frame(height: 56)
+            .background(yellow)
+
         ZStack {
             if viewModel.isLoading && viewModel.quotations.isEmpty {
                 LoadingView(message: "Loading quotations...")
@@ -59,16 +85,6 @@ struct QuotationsListView: View {
                 .background(AppTheme.Colors.background)
             }
         }
-        .navigationTitle("Quotations")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showSubmitQuotation = true }) {
-                    Image(systemName: "plus")
-                        .foregroundColor(AppTheme.Colors.primary)
-                }
-            }
-        }
         .sheet(isPresented: $showSubmitQuotation) {
             SubmitQuotationView()
         }
@@ -77,6 +93,8 @@ struct QuotationsListView: View {
                 viewModel.loadQuotations()
             }
         }
+        } // end VStack
+        .navigationBarHidden(true)
     }
 }
 

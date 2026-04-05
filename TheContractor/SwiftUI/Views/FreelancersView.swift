@@ -17,12 +17,18 @@ struct FreelancersView: View {
             VStack(spacing: 0) {
                 // Top bar
                 HStack(spacing: 0) {
+                    Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                    }
                     Text("Freelancers")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
                     Spacer()
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 8)
                 .frame(height: 56)
                 .background(yellow)
 

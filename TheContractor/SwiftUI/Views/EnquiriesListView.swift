@@ -11,7 +11,33 @@ struct EnquiriesListView: View {
     @StateObject private var viewModel = EnquiriesListViewModel()
     @State private var showSubmitEnquiry = false
     
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+
     var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                Text("Enquiries")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                Spacer()
+                Button(action: { showSubmitEnquiry = true }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                .padding(.trailing, 4)
+            }
+            .padding(.horizontal, 4)
+            .frame(height: 56)
+            .background(yellow)
+
         ZStack {
             if viewModel.isLoading && viewModel.enquiries.isEmpty {
                 LoadingView(message: "Loading enquiries...")
@@ -60,16 +86,6 @@ struct EnquiriesListView: View {
                 .background(AppTheme.Colors.background)
             }
         }
-        .navigationTitle("Enquiries")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showSubmitEnquiry = true }) {
-                    Image(systemName: "plus")
-                        .foregroundColor(AppTheme.Colors.primary)
-                }
-            }
-        }
         .sheet(isPresented: $showSubmitEnquiry) {
             SubmitEnquiryView()
         }
@@ -78,6 +94,8 @@ struct EnquiriesListView: View {
                 viewModel.loadEnquiries()
             }
         }
+        } // end VStack
+        .navigationBarHidden(true)
     }
 }
 

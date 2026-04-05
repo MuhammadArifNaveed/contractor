@@ -11,7 +11,9 @@ import SwiftUI
 class FreelanceDashboardHostingController: UIHostingController<FreelanceDashboardView> {
 
     init() {
-        super.init(rootView: FreelanceDashboardView(onBack: nil))
+        super.init(rootView: FreelanceDashboardView(onBack: {
+            NotificationCenter.default.post(name: Notification.Name("GoBackToTabBar"), object: nil)
+        }))
     }
     
     override func viewWillAppear(_ animated: Bool) {
