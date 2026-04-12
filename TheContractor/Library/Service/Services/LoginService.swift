@@ -35,7 +35,7 @@ class LoginService: BaseService {
         self.makePostAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
             if success {
                 let data = UserViewModel( json!["user"])
-                Global.shared.user = data
+                self.saveUserInfo(data)
                 Global.shared.isLogedIn = true
                    
                 completion(message,true)
@@ -210,6 +210,43 @@ class LoginService: BaseService {
         let params: [String: String] = ["quotation_id": quotationId]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success, json)
+        }
+    }
+    
+    // MARK: - Quotation By Photo
+    /// Fetch all categories with their sub-categories
+    func getCategoriesWithSubCategories(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/categories_with_sub_categories"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+    
+    /// Submit quotation by photo with optional images
+    func requestQuotationByPhoto(userId: String, firstName: String, lastName: String, phone: String,
+                                  email: String, detail: String, categoryId: String, subCategoryId: String,
+                                  images: [Data]?,
+                                  completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/request_quotation"
+        let params: [String: String] = [
+            "user_id": userId,
+            "firstName": firstName,
+            "lastName": lastName,
+            "phone": phone,
+            "email": email,
+            "detail": detail,
+            "category_id": categoryId,
+            "sub_category_id": subCategoryId
+        ]
+        var imageDict: [String: Data] = [:]
+        if let images = images {
+            for (index, imageData) in images.enumerated() {
+                imageDict["images[\(index)]"] = imageData
+            }
+        }
+        let hasImages = !imageDict.isEmpty
+        self.makePostAPICallWithMultipart(with: completeURL, dict: hasImages ? imageDict : nil, params: params, isImageData: hasImages) { message, success, json in
+            completion(message, success)
         }
     }
     

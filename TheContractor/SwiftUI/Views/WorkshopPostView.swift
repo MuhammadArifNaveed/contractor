@@ -12,18 +12,38 @@ struct WorkshopPostView: View {
     @StateObject private var viewModel = WorkshopPostViewModel()
     @Environment(\.presentationMode) var presentationMode
     
+    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    
     var body: some View {
-        ZStack {
-            if viewModel.isLoadingFilters {
-                LoadingView(message: "Loading...")
-            } else {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Workshop Type Picker
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Workshop Type")
-                                .font(AppTheme.Fonts.medium(14))
-                                .foregroundColor(.gray)
+        VStack(spacing: 0) {
+            // Yellow top bar with back button
+            HStack(spacing: 0) {
+                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                }
+                Text("Workshop")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+            .frame(height: 56)
+            .background(yellow)
+            
+            ZStack {
+                if viewModel.isLoadingFilters {
+                    LoadingView(message: "Loading...")
+                } else {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            // Workshop Type Picker
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Workshop Type")
+                                    .font(AppTheme.Fonts.medium(14))
+                                    .foregroundColor(.gray)
                             
                             Picker("Select Type", selection: $viewModel.selectedTypeId) {
                                 ForEach(viewModel.workshopTypes) { type in
@@ -199,6 +219,7 @@ struct WorkshopPostView: View {
             viewModel.loadFilterData()
         }
     }
+}
 }
 
 // MARK: - Image Picker

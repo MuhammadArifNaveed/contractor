@@ -46,19 +46,31 @@ class UserProfileViewModel: ObservableObject {
     }
     
     func navigateToQuotations() {
-        print("Navigate to Quotations")
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToQuotations"), object: nil)
     }
     
     func navigateToJobApplications() {
-        print("Navigate to Job Applications")
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToJobApplications"), object: nil)
     }
     
     func navigateToComplaints() {
-        print("Navigate to Complaints")
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToComplaints"), object: nil)
     }
     
     func navigateToCart() {
-        print("Navigate to Cart")
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToCart"), object: nil)
+    }
+    
+    func navigateToQuotationByPhoto() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToSubmitQuotation"), object: nil)
+    }
+    
+    func navigateTo24x7Maintenance() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateTo24x7Maintenance"), object: nil)
+    }
+    
+    func navigateToEstimations() {
+        NotificationCenter.default.post(name: NSNotification.Name("NavigateToEstimations"), object: nil)
     }
     
     func navigateToSettings() {

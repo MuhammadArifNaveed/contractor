@@ -12,9 +12,18 @@ class EditProfileViewModel: ObservableObject {
     @Published var firstName = ""
     @Published var lastName = ""
     @Published var phone = ""
+    @Published var email = ""
+    @Published var selectedCity = ""
+    @Published var address = ""
+    @Published var selectedCategory = ""
+    @Published var availableForJob = false
+    @Published var notAvailableAsFreelancer = false
+    @Published var videoName = ""
+    @Published var cvName = ""
     @Published var errorMessage = ""
     @Published var successMessage = ""
     @Published var isUpdating = false
+    @Published var showImagePicker = false
     
     var isFormValid: Bool {
         !firstName.isEmpty && !lastName.isEmpty && !phone.isEmpty
