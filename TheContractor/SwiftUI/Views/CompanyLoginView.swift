@@ -211,15 +211,10 @@ struct CompanyLoginView: View {
             window.rootViewController = root
             window.makeKeyAndVisible()
             
-            // Navigate to pending screen if any
-            if let pending = Global.shared.pendingNavigationAfterLogin {
-                Global.shared.pendingNavigationAfterLogin = nil
-                GCD.async(.Main, delay: 0.5) {
-                    if let mainContainer = root.mainViewController as? MainContainerViewController {
-                        if pending == "workshop" {
-                            mainContainer.showWorkshopController()
-                        }
-                    }
+            // For company login, show VendorHomeView as main content
+            GCD.async(.Main, delay: 0.5) {
+                if let mainContainer = root.mainViewController as? MainContainerViewController {
+                    mainContainer.showVendorHome()
                 }
             }
         } else {

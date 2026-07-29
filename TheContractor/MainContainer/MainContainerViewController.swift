@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class MainContainerViewController: BaseViewController{
     
@@ -49,8 +50,16 @@ class MainContainerViewController: BaseViewController{
         setupTopNavigationBar()
         setupWorkshopTab()
         resetAllBottomViews()
-        self.lblHome?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
-        self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
+        
+        // Hide tabbar for vendor/company login (matching Android behavior)
+        if Global.shared.isVendor {
+            topBarView?.isHidden = true
+            bottomBarView?.isHidden = true
+        } else {
+            self.lblHome?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
+            self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
+        }
+        
         self.showHomeController()
         NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
     }
@@ -943,11 +952,20 @@ class MainContainerViewController: BaseViewController{
     }
     
     func logoutUser() {
-      
+        // Clear all user data including vendor data
         Global.shared.user = nil
         Global.shared.isLogedIn = false
+        Global.shared.isVendor = false
+        Global.shared.loginType = ""
         Global.shared.user = UserViewModel()
+        
+        // Clear UserDefaults including vendor data
         UserDefaultsManager.shared.clearUserData()
+        UserDefaults.standard.removeObject(forKey: "vendor")
+        UserDefaults.standard.removeObject(forKey: "isVendor")
+        UserDefaults.standard.removeObject(forKey: "loginType")
+        UserDefaults.standard.synchronize()
+        
         GCD.async(.Main, delay: 1) {
             let storyboard = UIStoryboard(name: "Registration", bundle: nil)
             let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
@@ -957,6 +975,17 @@ class MainContainerViewController: BaseViewController{
            }
          }
      }
+    
+    func showVendorHome() {
+        let vendorDashboardView = VendorDashboardView()
+        let hostingController = UIHostingController(rootView: vendorDashboardView)
+        hostingController.navigationItem.title = "Vendor Dashboard"
+        
+        // Replace the current view controller with vendor home
+        if let navController = self.navigationController {
+            navController.setViewControllers([hostingController], animated: true)
+        }
+    }
     func loginUser() {
         Global.shared.user = nil
         UserDefaultsManager.shared.clearUserData()

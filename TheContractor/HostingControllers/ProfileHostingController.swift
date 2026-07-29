@@ -133,8 +133,17 @@ class ProfileHostingController: UIHostingController<UserProfileView> {
     }
 
     private func triggerLogin() {
+        print("🔐 triggerLogin called")
         if let container = mainContainer() {
+            print("🔐 Container found, calling loginUser")
             container.loginUser()
+        } else {
+            print("🔐 Container not found, using fallback navigation")
+            // Fallback: Direct navigation to login screen
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController {
+                navigationController?.pushViewController(loginVC, animated: true)
+            }
         }
     }
 

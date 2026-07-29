@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SideMenuViewController: UIViewController {
 
@@ -209,7 +210,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         }
         switch title {
         case "Home":
-            mainVC.showHomeController()
+            mainVC.showVendorHome()
+        case "Profile":
+            showVendorProfile()
         case "Inbox":
             mainVC.showChatListController()
         case "Vendor Rating":
@@ -243,6 +246,12 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         default:
             break
         }
+    }
+    
+    private func showVendorProfile() {
+        let vendorSettingsView = VendorSettingsView()
+        let hostingController = UIHostingController(rootView: vendorSettingsView)
+        navigationController?.pushViewController(hostingController, animated: true)
     }
     
     private func showComingSoonAlert(in viewController: UIViewController, feature: String) {
@@ -282,4 +291,5 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         viewController.present(activityVC, animated: true)
     }
 }
+
 

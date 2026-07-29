@@ -18,6 +18,26 @@ struct UserProfileView: View {
         let _ = refreshTrigger
         return Global.shared.isLogedIn
     }
+    
+    private var isVendor: Bool {
+        return Global.shared.isVendor
+    }
+    
+    private var vendorName: String {
+        if let vendorData = UserDefaults.standard.data(forKey: "vendor"),
+           let vendorDict = try? JSONSerialization.jsonObject(with: vendorData) as? [String: Any] {
+            return vendorDict["company_name"] as? String ?? ""
+        }
+        return ""
+    }
+    
+    private var vendorPhone: String {
+        if let vendorData = UserDefaults.standard.data(forKey: "vendor"),
+           let vendorDict = try? JSONSerialization.jsonObject(with: vendorData) as? [String: Any] {
+            return vendorDict["company_phone"] as? String ?? ""
+        }
+        return ""
+    }
 
     var body: some View {
         ScrollView {
@@ -68,14 +88,26 @@ struct UserProfileView: View {
         HStack(spacing: 12) {
             // Left: Name and Phone
             VStack(alignment: .leading, spacing: 4) {
-                Text(viewModel.userName.isEmpty ? "User" : viewModel.userName)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.black)
-                
-                if !viewModel.userPhone.isEmpty {
-                    Text(viewModel.userPhone)
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                if isVendor {
+                    Text(vendorName.isEmpty ? "Company" : vendorName)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    if !vendorPhone.isEmpty {
+                        Text(vendorPhone)
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                    }
+                } else {
+                    Text(viewModel.userName.isEmpty ? "User" : viewModel.userName)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    if !viewModel.userPhone.isEmpty {
+                        Text(viewModel.userPhone)
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                    }
                 }
             }
             
@@ -86,7 +118,7 @@ struct UserProfileView: View {
                 .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
                 .frame(width: 60, height: 60)
                 .overlay(
-                    Image(systemName: "person.fill")
+                    Image(systemName: isVendor ? "building.2.fill" : "person.fill")
                         .font(.system(size: 28))
                         .foregroundColor(.white)
                 )

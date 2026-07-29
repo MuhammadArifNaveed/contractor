@@ -26,6 +26,7 @@ class UserProfileViewModel: ObservableObject {
     }
     
     func goToLogin() {
+        print("🔐 goToLogin called - posting GoToLogin notification")
         NotificationCenter.default.post(name: NSNotification.Name("GoToLogin"), object: nil)
     }
     
