@@ -349,7 +349,7 @@
 		90C6FF032F20EA0500BDA19A /* LanguageSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF042F20EA0500BDA19A /* LanguageSelectionView.swift */; };
 		90C6FF052F20EA0600BDA19A /* AdvertiseCompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF062F20EA0600BDA19A /* AdvertiseCompanyView.swift */; };
 		90C6FF072F20EA0700BDA19A /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF082F20EA0700BDA19A /* ChangePasswordView.swift */; };
-		90C6FF092F20EB0000BDA19A /* VendorDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0A2F20EB0000BDA19A /* VendorDashboardView.swift */; };
+		90C6FF092F20EB0000BDA19A /* VendorHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0A2F20EB0000BDA19A /* VendorHomeView.swift */; };
 		90C6FF0B2F20EB0100BDA19A /* VendorEnquiriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */; };
 		90C6FF0D2F20EB0200BDA19A /* VendorQuotationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */; };
 		90C6FF0F2F20EB0300BDA19A /* VendorJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */; };
@@ -750,7 +750,7 @@
 		90C6FF042F20EA0500BDA19A /* LanguageSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LanguageSelectionView.swift; path = TheContractor/SwiftUI/Views/LanguageSelectionView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF062F20EA0600BDA19A /* AdvertiseCompanyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AdvertiseCompanyView.swift; path = TheContractor/SwiftUI/Views/AdvertiseCompanyView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF082F20EA0700BDA19A /* ChangePasswordView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChangePasswordView.swift; path = TheContractor/SwiftUI/Views/ChangePasswordView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF0A2F20EB0000BDA19A /* VendorDashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorDashboardView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorDashboardView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF0A2F20EB0000BDA19A /* VendorHomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHomeView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHomeView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEnquiriesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEnquiriesView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorQuotationsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorQuotationsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorJobsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorJobsView.swift; sourceTree = SOURCE_ROOT; };
@@ -1351,7 +1351,7 @@
 				90C6FF042F20EA0500BDA19A /* LanguageSelectionView.swift */,
 				90C6FF062F20EA0600BDA19A /* AdvertiseCompanyView.swift */,
 				90C6FF082F20EA0700BDA19A /* ChangePasswordView.swift */,
-				90C6FF0A2F20EB0000BDA19A /* VendorDashboardView.swift */,
+				90C6FF0A2F20EB0000BDA19A /* VendorHomeView.swift */,
 				90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */,
 				90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */,
 				90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */,
@@ -2010,7 +2010,7 @@
 				90C6FF032F20EA0500BDA19A /* LanguageSelectionView.swift in Sources */,
 				90C6FF052F20EA0600BDA19A /* AdvertiseCompanyView.swift in Sources */,
 				90C6FF072F20EA0700BDA19A /* ChangePasswordView.swift in Sources */,
-				90C6FF092F20EB0000BDA19A /* VendorDashboardView.swift in Sources */,
+				90C6FF092F20EB0000BDA19A /* VendorHomeView.swift in Sources */,
 				90C6FF0B2F20EB0100BDA19A /* VendorEnquiriesView.swift in Sources */,
 				90C6FF0D2F20EB0200BDA19A /* VendorQuotationsView.swift in Sources */,
 				90C6FF0F2F20EB0300BDA19A /* VendorJobsView.swift in Sources */,

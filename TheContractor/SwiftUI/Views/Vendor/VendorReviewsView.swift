@@ -1,65 +1,155 @@
+//
 //  VendorReviewsView.swift
+//  TheContractor
+//
+//  Port of Android's `VendorRating` (drawer item "Rating") — POST vendor/rating with `vendor_id`,
+//  response key `rating_enquiries`, rows bound by `VendorRatingAdapter`.
+//
+
 import SwiftUI
+import SwiftyJSON
+
 struct VendorReviewsView: View {
-    @StateObject private var viewModel = VendorReviewsViewModel()
+    @State private var state: VendorLoadState = .loading
+    @State private var ratings: [VendorRatingRow] = []
+    @State private var errorMessage: String?
+
     var body: some View {
-        ZStack {
-            if viewModel.isLoading && viewModel.reviews.isEmpty { LoadingView(message: "Loading...") }
-            else if viewModel.reviews.isEmpty { EmptyStateView(icon: "star", title: "No Reviews", message: "No reviews yet") }
-            else {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        HStack(spacing: 20) {
-                            VStack {
-                                Text(viewModel.averageRating).font(AppTheme.Fonts.bold(40))
-                                RatingView(rating: Double(viewModel.averageRating) ?? 0, size: 16)
-                                Text("\(viewModel.totalReviews) reviews").font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
+        VStack(spacing: 0) {
+            VendorTopBar(title: "Rating")
+
+            ZStack {
+                VendorHomeStyle.background
+                    .ignoresSafeArea(edges: .bottom)
+
+                switch state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                case .noData:
+                    Text("Data Not Found")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                case .loaded:
+                    ScrollView {
+                        VStack(spacing: 10) {
+                            ForEach(ratings) { rating in
+                                VendorRatingRowCard(rating: rating)
                             }
                         }
-                        .padding(20).background(AppTheme.Colors.secondaryBackground).cornerRadius(12)
-                        
-                        LazyVStack(spacing: 12) {
-                            ForEach(viewModel.reviews.indices, id: \.self) { i in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack {
-                                        Text(viewModel.reviews[i].userName).font(AppTheme.Fonts.semibold(16))
-                                        Spacer()
-                                        RatingView(rating: Double(viewModel.reviews[i].rating) ?? 0, size: 14)
-                                    }
-                                    Text(viewModel.reviews[i].comment).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
-                                    Text(viewModel.reviews[i].date).font(AppTheme.Fonts.regular(12)).foregroundColor(.gray)
-                                }
-                                .padding(12).background(Color.white).cornerRadius(8)
-                            }
-                        }
-                    }
-                    .padding(16)
-                }
-            }
-        }
-        .navigationTitle("Reviews")
-        .onAppear { viewModel.loadReviews() }
-    }
-}
-class VendorReviewsViewModel: ObservableObject {
-    @Published var isLoading = false
-    @Published var reviews: [VendorReview] = []
-    @Published var averageRating = "0.0"
-    @Published var totalReviews = "0"
-    func loadReviews() {
-        isLoading = true
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/vendor_reviews", params: [:]) { [weak self] _, success, json, _ in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                if success {
-                    self?.averageRating = json?["average_rating"].stringValue ?? "0.0"
-                    self?.totalReviews = json?["total_reviews"].stringValue ?? "0"
-                    if let arr = json?["reviews"].array {
-                        self?.reviews = arr.map { VendorReview(id: $0["id"].stringValue, userName: $0["user_name"].stringValue, rating: $0["rating"].stringValue, comment: $0["comment"].stringValue, date: $0["date"].stringValue) }
+                        .padding(10)
                     }
                 }
             }
         }
+        .navigationBarHidden(true)
+        .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
+        }
+        .onAppear(perform: load)
+    }
+
+    private func load() {
+        let vendorId = VendorSession.currentVendorId
+        guard !vendorId.isEmpty else {
+            state = .noData
+            return
+        }
+
+        state = .loading
+        GCD.async(.Background) {
+            LoginService.shared().getVendorRating(vendorId: vendorId) { message, success, json in
+                GCD.async(.Main) {
+                    guard success, let json = json else {
+                        state = .noData
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                        return
+                    }
+                    ratings = json["rating_enquiries"].arrayValue.map(VendorRatingRow.init)
+                    state = ratings.isEmpty ? .noData : .loaded
+                }
+            }
+        }
     }
 }
-struct VendorReview: Identifiable { let id, userName, rating, comment, date: String }
+
+// MARK: - Model
+
+/// Android `VendorRatingModel`, reduced to what `VendorRatingAdapter` binds.
+struct VendorRatingRow: Identifiable {
+    let id: String
+    let name: String
+    let surname: String
+    let statusName: String
+    let color: String
+    let createdAt: String
+    let rating: Double
+
+    var reviewerName: String {
+        [name, surname].filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
+    init(_ json: JSON) {
+        self.id = json["id"].stringValue
+        self.name = json["name"].stringValue
+        self.surname = json["surname"].stringValue
+        self.statusName = json["s_name"].stringValue
+        self.color = json["color"].stringValue
+        self.createdAt = json["created_at"].stringValue
+        // Android does Float.parseFloat(getRating()) when the field is present and falls back to 0.
+        self.rating = json["rating"].double ?? Double(json["rating"].stringValue) ?? 0
+    }
+}
+
+// MARK: - Card
+
+/// Android `vendor_rating_custom_row.xml`.
+struct VendorRatingRowCard: View {
+    let rating: VendorRatingRow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(rating.reviewerName)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.black)
+
+            VendorStarRow(rating: rating.rating)
+
+            Text(VendorHomeStyle.formatDate(rating.createdAt))
+                .font(.system(size: 14))
+                .foregroundColor(Color(white: 0.4))
+
+            VendorStatusBadge(name: rating.statusName, color: rating.color)
+                .padding(.top, 3)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .cornerRadius(5)
+        .shadow(color: Color.black.opacity(0.12), radius: 2, x: 0, y: 1)
+    }
+}
+
+/// Android's read-only `RatingBar`, five stars with half-star precision.
+struct VendorStarRow: View {
+    let rating: Double
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(1...5, id: \.self) { position in
+                Image(systemName: symbol(for: position))
+                    .font(.system(size: 13))
+                    .foregroundColor(VendorHomeStyle.appColor)
+            }
+        }
+    }
+
+    private func symbol(for position: Int) -> String {
+        let value = Double(position)
+        if rating >= value { return "star.fill" }
+        if rating >= value - 0.5 { return "star.leadinghalf.filled" }
+        return "star"
+    }
+}

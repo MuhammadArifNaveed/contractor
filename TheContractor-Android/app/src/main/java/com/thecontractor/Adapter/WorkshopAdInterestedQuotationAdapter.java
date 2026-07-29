@@ -25,12 +25,12 @@ public class WorkshopAdInterestedQuotationAdapter extends RecyclerView.Adapter<W
     private List<WorkshopAdModel.QuotationsModel> list;
     private Context mContext;
     private String selectedLanguage;
-    private QuotationInterface quotationInterface;
+    private ChatReplyInterface chatReplyInterface;
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView companyName , price , message;
+        TextView companyName , price , message , chatReply;
         LinearLayout contactLayout;
         RecyclerView quotationChatRecyclerView;
         LinearLayoutManager linearLayoutManager ;
@@ -41,22 +41,23 @@ public class WorkshopAdInterestedQuotationAdapter extends RecyclerView.Adapter<W
             companyName = (TextView) view.findViewById(R.id.companyName);
             price = (TextView) view.findViewById(R.id.price);
             message = (TextView) view.findViewById(R.id.message);
+            chatReply = (TextView) view.findViewById(R.id.chatReply);
             contactLayout = (LinearLayout) view.findViewById(R.id.contactLayout);
 
             quotationChatRecyclerView = view.findViewById(R.id.quotationChatRecyclerView);
             linearLayoutManager = new LinearLayoutManager(mContext ,  LinearLayoutManager.VERTICAL , false);
             quotationChatRecyclerView.setLayoutManager(linearLayoutManager);
 
-//
-//            lockUnlock.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int pos = getAdapterPosition();
-//                    WorkshopAdModel.QuotationsModel quotationsModel = list.get(pos);
-//
-//                    quotationLockInterface.selectedQuotation(pos , quotationsModel);
-//                }
-//            });
+
+            chatReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    WorkshopAdModel.QuotationsModel quotationsModel = list.get(pos);
+
+                    chatReplyInterface.selectReply(pos , quotationsModel);
+                }
+            });
 
 
 
@@ -65,11 +66,11 @@ public class WorkshopAdInterestedQuotationAdapter extends RecyclerView.Adapter<W
     }
 
 
-    public WorkshopAdInterestedQuotationAdapter(Context context, List<WorkshopAdModel.QuotationsModel> list , String selectedLanguage , QuotationInterface quotationInterface) {
+    public WorkshopAdInterestedQuotationAdapter(Context context, List<WorkshopAdModel.QuotationsModel> list , String selectedLanguage , ChatReplyInterface chatReplyInterface) {
         this.list = list;
         this.mContext = context;
         this.selectedLanguage = selectedLanguage;
-        this.quotationInterface = quotationInterface;
+        this.chatReplyInterface = chatReplyInterface;
     }
 
     @Override
@@ -111,9 +112,9 @@ public class WorkshopAdInterestedQuotationAdapter extends RecyclerView.Adapter<W
         return position;
     }
 
-    public interface QuotationInterface
+    public interface ChatReplyInterface
     {
-        void selectedQuotation(int pos, WorkshopAdModel.QuotationsModel quotationsModel);
+        void selectReply(int pos, WorkshopAdModel.QuotationsModel quotationsModel);
     }
 }
 

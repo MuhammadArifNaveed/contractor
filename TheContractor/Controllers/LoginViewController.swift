@@ -72,8 +72,36 @@ class LoginViewController: BaseViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func actionLogin(_ sender: Any) {
-        let number = "+971\(self.txtNumber.text ?? "")"
-        let params : ParamsAny = ["user_phone" : number,"user_password": self.txtPin.text ?? "" , "device_type" :"ios","firebase_token" : "testtoken123"]
+        let phoneNumber = self.txtNumber.text ?? ""
+        let password = self.txtPin.text ?? ""
+
+        // Validate inputs (matching Android's Login.java exactly)
+        if phoneNumber.isEmpty {
+            self.showAlertView(message: "Enter phone number")
+            return
+        }
+
+        if password.isEmpty {
+            self.showAlertView(message: "Enter 4 digits pin code")
+            return
+        }
+
+        // Format phone number exactly like Android: three hardcoded Pakistan test
+        // numbers get +92, everything else (including UAE numbers) gets +971.
+        // This is a literal port of Login.java's exact-match check, not a prefix check.
+        let formattedPhone: String
+        if phoneNumber == "3124611478" || phoneNumber == "3024507881" || phoneNumber == "3034937427" {
+            formattedPhone = "+92" + phoneNumber
+        } else {
+            formattedPhone = "+971" + phoneNumber
+        }
+
+        let params : ParamsAny = [
+            "user_phone": formattedPhone,
+            "user_password": password,
+            "device_type": "ios",
+            "firebase_token": Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+        ]
         self.userLogin(params: params)
     }
     

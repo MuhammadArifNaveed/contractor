@@ -51,16 +51,17 @@ class MainContainerViewController: BaseViewController{
         setupWorkshopTab()
         resetAllBottomViews()
         
-        // Hide tabbar for vendor/company login (matching Android behavior)
+        // Companies get Android's VendorHome, not the consumer home screen, and Android's
+        // vendor activity has no bottom tab bar at all.
         if Global.shared.isVendor {
             topBarView?.isHidden = true
             bottomBarView?.isHidden = true
+            self.showVendorHome()
         } else {
             self.lblHome?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
+            self.showHomeController()
         }
-        
-        self.showHomeController()
         NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
     }
 
@@ -976,15 +977,53 @@ class MainContainerViewController: BaseViewController{
          }
      }
     
-    func showVendorHome() {
-        let vendorDashboardView = VendorDashboardView()
-        let hostingController = UIHostingController(rootView: vendorDashboardView)
-        hostingController.navigationItem.title = "Vendor Dashboard"
-        
-        // Replace the current view controller with vendor home
-        if let navController = self.navigationController {
-            navController.setViewControllers([hostingController], animated: true)
+    /// Embeds a SwiftUI vendor screen in the container the same way every UIKit screen is embedded,
+    /// so the drawer stays reachable. Replacing the drawer's own navigation stack (which the old
+    /// `showVendorHome()` did) tore the hamburger out of the hierarchy.
+    func showVendorScreen<Content: View>(_ rootView: Content) {
+        self.hideForSideMenu()
+        let hostingController = UIHostingController(rootView: rootView)
+        let controller = BaseNavigationController(rootViewController: hostingController)
+        controller.interactivePopGestureRecognizer?.isEnabled = false
+        controller.navigationBar.isHidden = true
+
+        guard let containerView = self.containerView else { return }
+
+        if let oldRef = baseNavigationController {
+            oldRef.willMove(toParent: nil)
+            oldRef.view.removeFromSuperview()
+            oldRef.removeFromParent()
         }
+        self.baseNavigationController = controller
+        addChild(controller)
+        controller.view.frame = containerView.bounds
+        containerView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+    }
+
+    /// Company landing screen — Android's `VendorHome`.
+    func showVendorHome() {
+        showVendorScreen(VendorHomeView())
+    }
+
+    /// Android `VendorRating`.
+    func showVendorRatingController() {
+        showVendorScreen(VendorReviewsView())
+    }
+
+    /// Android `VendorMembership`.
+    func showVendorMembershipsController() {
+        showVendorScreen(VendorSubscriptionView())
+    }
+
+    /// Android `VendorMyMembership`.
+    func showVendorMyMembershipController() {
+        showVendorScreen(VendorMyMembershipView())
+    }
+
+    /// Android `VendorInterestedWorkshops`.
+    func showVendorInterestedWorkshopsController() {
+        showVendorScreen(VendorInterestedWorkshopsView())
     }
     func loginUser() {
         Global.shared.user = nil

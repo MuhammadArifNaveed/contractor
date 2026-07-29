@@ -212,11 +212,11 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Home":
             mainVC.showVendorHome()
         case "Profile":
-            showVendorProfile()
+            mainVC.showVendorScreen(VendorSettingsView())
         case "Inbox":
             mainVC.showChatListController()
-        case "Vendor Rating":
-            showComingSoonAlert(in: mainVC, feature: "Vendor Rating")
+        case "Rating":
+            mainVC.showVendorRatingController()
         case "Enquiries":
             mainVC.showVendorEnquiriesController()
         case "Quotations":
@@ -228,7 +228,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "All Workshops":
             mainVC.showWorkshopController()
         case "Interested Workshops":
-            showComingSoonAlert(in: mainVC, feature: "Interested Workshops")
+            mainVC.showVendorInterestedWorkshopsController()
         case "Jobs Portal":
             mainVC.showVendorJobsController()
         case "Available Applicant":
@@ -238,30 +238,14 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Freelancer Dashboard":
             mainVC.showFreelanceDashboardController()
         case "Memberships":
-            showComingSoonAlert(in: mainVC, feature: "Memberships")
+            mainVC.showVendorMembershipsController()
         case "My Membership":
-            showComingSoonAlert(in: mainVC, feature: "My Membership")
+            mainVC.showVendorMyMembershipController()
         case "Vendor Logout":
             mainVC.logoutUser()
         default:
             break
         }
-    }
-    
-    private func showVendorProfile() {
-        let vendorSettingsView = VendorSettingsView()
-        let hostingController = UIHostingController(rootView: vendorSettingsView)
-        navigationController?.pushViewController(hostingController, animated: true)
-    }
-    
-    private func showComingSoonAlert(in viewController: UIViewController, feature: String) {
-        let alert = UIAlertController(
-            title: "Coming Soon",
-            message: "\(feature) will be available in an upcoming update.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        viewController.present(alert, animated: true)
     }
     
     private func rateApp(in viewController: UIViewController) {

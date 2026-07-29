@@ -79,7 +79,7 @@
         android:id="@+id/submitComplainBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/submit_complain"
+        android:text="@string/submit_btn"
         style="@style/buttonStyle"
         android:layout_marginTop="20dp"/>
 

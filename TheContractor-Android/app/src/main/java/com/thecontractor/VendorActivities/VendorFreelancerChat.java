@@ -1,6 +1,7 @@
 package com.thecontractor.VendorActivities;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -10,40 +11,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.annotations.Nullable;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.PusherEvent;
+import com.pusher.client.channel.SubscriptionEventListener;
 import com.thecontractor.Adapter.FreelancerChatAdapter;
-import com.thecontractor.Adapter.FreelancersChatConnectionAdapter;
-import com.thecontractor.Adapter.VendorChatAdapter;
 import com.thecontractor.Global.ApiUrls;
+import com.thecontractor.Global.MyApp;
 import com.thecontractor.Global.SharedPrefManager;
 import com.thecontractor.Model.BasicResponseModel;
-import com.thecontractor.Model.ChatModel;
 import com.thecontractor.Model.FreelancerChatModel;
 import com.thecontractor.Model.UserModel;
 import com.thecontractor.Model.VendorSharedPrefModel;
@@ -51,15 +38,10 @@ import com.thecontractor.R;
 import com.thecontractor.RetrofitLibrary.RetrofitApi;
 import com.thecontractor.RetrofitLibrary.SSSHandShake;
 
-import java.text.SimpleDateFormat;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -72,6 +54,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VendorFreelancerChat extends AppCompatActivity {
+    RelativeLayout chatLayout , bottomBar;
     String selectedLanguage = "en";
     String orderId;
     String from;
@@ -89,7 +72,9 @@ public class VendorFreelancerChat extends AppCompatActivity {
     FreelancerChatAdapter freelancerChatAdapter;
     private boolean userConnection = false;
     String getTxtMessage;
-
+    private static final String CHANNEL_NAME = "freelancing-chats-";
+    private static final String EVENT_NAME = "send-message";
+    private Channel channel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +93,7 @@ public class VendorFreelancerChat extends AppCompatActivity {
             getVendorDataFromSP();
         }
 
+        implementPusher();
         initiate();
         clickListener();
         getChat();
@@ -180,12 +166,67 @@ public class VendorFreelancerChat extends AppCompatActivity {
         }
     }
 
+    public void implementPusher(){
+        // 🔹 Ensure connected
+        MyApp.connectPusher();
+
+        // 🔹 Get Pusher
+        Pusher pusher = MyApp.getPusher();
+
+        // 🔹 Subscribe safely
+        channel = MyApp.subscribeChannel(CHANNEL_NAME + orderId);
+
+        // 🔹 Bind event
+        if (channel != null) {
+            channel.bind(EVENT_NAME, new SubscriptionEventListener() {
+                @Override
+                public void onEvent(PusherEvent event) {
+                    Log.e("tag", "Pusher Data EVENT_CREATED : " + event.toString());
+                    runOnUiThread(() -> {
+
+                        if(freelancerChatAdapter == null){
+                            getChat();
+                        }else {
+
+                            try {
+                                JSONObject jsonObject = new JSONObject(event.getData());
+                                FreelancerChatModel freelancerChatModel = new FreelancerChatModel();
+                                freelancerChatModel.setMessage(jsonObject.getString("message"));
+                                freelancerChatModel.setCreated_at(jsonObject.getString("created_at"));
+                                freelancerChatModel.setSender_name(jsonObject.getString("sender_name"));
+                                freelancerChatModel.setSender_id(jsonObject.getString("sender_id"));
+                                freelancerChatModel.setOrder_id(jsonObject.getString("order_id"));
+                                freelancerChatModel.setSender_type(jsonObject.getString("sender_type"));
+
+                                Log.e("tag", "onEvent message is : "+jsonObject.getString("message"));
+                               list.add(freelancerChatModel);
+
+                                freelancerChatAdapter.notifyItemRangeInserted(list.size() , list.size());
+                                chatRV.smoothScrollToPosition(list.size() - 1);
+
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+
+
+                        }
+
+                    });
+                }
+            });
+
+        }
+    }
+
 
 
     public void initiate()
     {
         progressDialog = new ProgressDialog(VendorFreelancerChat.this);
 
+        chatLayout = (RelativeLayout) findViewById(R.id.chatLayout);
+        bottomBar = (RelativeLayout) findViewById(R.id.bottomBar);
+        bottomBar.setVisibility(GONE);
         noData = (TextView) findViewById(R.id.noData);
         noData.setVisibility(GONE);
         messageEditText = findViewById(R.id.messageEditTxt);
@@ -217,7 +258,7 @@ public class VendorFreelancerChat extends AppCompatActivity {
                     Toast.makeText(VendorFreelancerChat.this, "Write message before send", Toast.LENGTH_SHORT).show();
                 }else
                 {
-                    //sendNotification(getTxtMessage);
+                    sendMessage(getTxtMessage);
                 }
 
             }
@@ -273,17 +314,30 @@ public class VendorFreelancerChat extends AppCompatActivity {
                 {
                     if(response.body().getError().equals("false")) {
 
-                        list = response.body().getChats();
 
-                        Log.e("tag" , "list size is : "+list.size());
 
-                        freelancerChatAdapter = new FreelancerChatAdapter(VendorFreelancerChat.this , list , selectedLanguage , userId);
-                        chatRV.setAdapter(freelancerChatAdapter);
+                        if(response.body().getSending().equals("false")){
+                            bottomBar.setVisibility(GONE);
+                            noData.setVisibility(VISIBLE);
+                            noData.setText("Order Expired / Rejected");
+                        }else {
+                            bottomBar.setVisibility(VISIBLE);
+                            list = response.body().getChats();
+
+                            Log.e("tag" , "list size is : "+list.size());
+
+                            freelancerChatAdapter = new FreelancerChatAdapter(VendorFreelancerChat.this , list , userId , userType);
+                            chatRV.setAdapter(freelancerChatAdapter);
+                        }
+
 
                     }
                     else
                     {
-                        noData.setVisibility(View.VISIBLE);
+                        bottomBar.setVisibility(VISIBLE);
+                        noData.setVisibility(VISIBLE);
+                        noData.setText(response.body().getMessage());
+
                         //Toast.makeText(Companies.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -313,84 +367,86 @@ public class VendorFreelancerChat extends AppCompatActivity {
 
 
 
-//    private void sendNotification(String message) {
-//
-//        RequestBody msg = RequestBody.create(message , MediaType.parse("text/plain"));
-//        RequestBody user_name = RequestBody.create(userName , MediaType.parse("text/plain"));
-//        RequestBody chat_uuid = RequestBody.create(chatUUID , MediaType.parse("text/plain"));
-//        RequestBody vendor_serial_no = RequestBody.create(vendorSerialNo , MediaType.parse("text/plain"));
-//
-//        //The gson builder
-//        Gson gson = new GsonBuilder()
-//                .setLenient()
-//                .create();
-//
-//        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-//                .connectTimeout(120, TimeUnit.SECONDS)
-//                .readTimeout(120, TimeUnit.SECONDS)
-//                .writeTimeout(120, TimeUnit.SECONDS)
-//                .build();
-//
-//        //creating retrofit object
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(ApiUrls.API_URL)
-//                .client(SSSHandShake.getUnsafeOkHttpClient())
-//                .addConverterFactory(GsonConverterFactory.create(gson))
-//                .build();
-//
-//        showProgress();
-//
-//
-//        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-//
-//        //creating a call and calling the upload image method
-//        call = retrofitApi.sendNotificationVendor(msg , user_name , chat_uuid , vendor_serial_no);
-//
-//        //finally performing the call
-//        call.enqueue(new Callback<BasicResponseModel>() {
-//            @Override
-//            public void onResponse(Call<BasicResponseModel> call, Response<BasicResponseModel> response) {
-//
-//
-//                Log.e("tag", "API response is : "+new Gson().toJson(response.body()) );
-//
-//
-//                hideProgress();
-//                if(response.isSuccessful())
-//                {
-//                    if(response.body().getError().equals("false")) {
-//
-//                        Log.e("tag" , response.body().getMessage());
-//
-//                    }
-//                    else
-//                    {
-//                        Log.e("tag" , response.body().getMessage());
-//                    }
-//                }
-//                else
-//                {
-//                    Toast.makeText(VendorFreelancerChat.this, "error : "+response.code(), Toast.LENGTH_SHORT).show();
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BasicResponseModel> call, Throwable t) {
-//                if(call.isCanceled())
-//                {
-//                    Log.e("tag" , "request is cancelled");
-//                }
-//                else
-//                {
-//                    hideProgress();
-//                    Toast.makeText(VendorFreelancerChat.this , getResources().getString(R.string.serviceError), Toast.LENGTH_LONG).show();
-//                    Log.e("tag", "on failure error : " + t.getMessage());
-//
-//                }
-//            }
-//        });
-//    }
+    private void sendMessage(String getTxtMessage) {
+
+        RequestBody order_id = RequestBody.create(orderId , MediaType.parse("text/plain"));
+        RequestBody message = RequestBody.create(getTxtMessage , MediaType.parse("text/plain"));
+        RequestBody user_id = RequestBody.create(userId , MediaType.parse("text/plain"));
+        RequestBody user_type = RequestBody.create(userType , MediaType.parse("text/plain"));
+
+
+
+        //The gson builder
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .build();
+
+        //creating retrofit object
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiUrls.API_URL)
+                .client(SSSHandShake.getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+
+        showProgress();
+
+        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+
+        //creating a call and calling the upload image method
+        call = retrofitApi.freelancerSendMessage(order_id , message , user_id , user_type);
+
+
+        //finally performing the call
+        call.enqueue(new Callback<BasicResponseModel>() {
+            @Override
+            public void onResponse(Call<BasicResponseModel> call, Response<BasicResponseModel> response) {
+
+
+                Log.e("tag", "API response is : "+new Gson().toJson(response.body()) );
+
+
+                hideProgress();
+                if(response.isSuccessful())
+                {
+                    if(response.body().getError().equals("false")) {
+                        messageEditText.setText("");
+                        //Toast.makeText(VendorFreelancerChat.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(VendorFreelancerChat.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(VendorFreelancerChat.this, getResources().getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<BasicResponseModel> call, Throwable t) {
+                if(call.isCanceled())
+                {
+                    Log.e("tag" , "request is cancelled");
+                }
+                else
+                {
+                    hideProgress();
+                    Toast.makeText(VendorFreelancerChat.this , getResources().getString(R.string.serviceError), Toast.LENGTH_LONG).show();
+                    Log.e("tag", "on failure error : " + t.getMessage());
+
+                }
+            }
+        });
+    }
 
 
 
@@ -407,4 +463,11 @@ public class VendorFreelancerChat extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (channel != null) {
+            MyApp.unsubscribeChannel(CHANNEL_NAME);
+        }
+    }
 }

@@ -85,7 +85,7 @@ struct SideMenu {
 }
 
 struct VendorMenu {
-    static let MENULIST = [["title":"Home","image":"home"],["title":"Profile","image":"user"],["title":"Inbox","image":"inbox"],["title":"Vendor Rating","image":"rate"],["title":"Enquiries","image":"enquiries"],["title":"Quotations","image":"quotation"],["title":"Post Workshop","image":"become-a-vendor"],["title":"My Workshops","image":"become-a-vendor"],["title":"All Workshops","image":"become-a-vendor"],["title":"Interested Workshops","image":"become-a-vendor"],["title":"Jobs Portal","image":"become-a-vendor"],["title":"Available Applicant","image":"become-a-vendor"],["title":"Freelancers","image":"become-a-vendor"],["title":"Freelancer Dashboard","image":"become-a-vendor"],["title":"Memberships","image":"become-a-vendor"],["title":"My Membership","image":"become-a-vendor"],["title":"Vendor Logout","image":"logout"]]
+    static let MENULIST = [["title":"Home","image":"home"],["title":"Profile","image":"user"],["title":"Inbox","image":"inbox"],["title":"Rating","image":"rate"],["title":"Enquiries","image":"enquiries"],["title":"Quotations","image":"quotation"],["title":"Post Workshop","image":"become-a-vendor"],["title":"My Workshops","image":"become-a-vendor"],["title":"All Workshops","image":"become-a-vendor"],["title":"Interested Workshops","image":"become-a-vendor"],["title":"Jobs Portal","image":"become-a-vendor"],["title":"Available Applicant","image":"become-a-vendor"],["title":"Freelancers","image":"become-a-vendor"],["title":"Freelancer Dashboard","image":"become-a-vendor"],["title":"Memberships","image":"become-a-vendor"],["title":"My Membership","image":"become-a-vendor"],["title":"Vendor Logout","image":"logout"]]
 }
 
 struct ProfileMenu {

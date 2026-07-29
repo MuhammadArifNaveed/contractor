@@ -965,6 +965,14 @@ public interface RetrofitApi {
     @Multipart
     @POST("freelancing/fetch_order_chats")
     Call<BasicResponseModel> freelancerOrderChat(@Part("order_id") RequestBody order_id);
+
+
+    @Multipart
+    @POST("freelancing/send_message")
+    Call<BasicResponseModel> freelancerSendMessage(@Part("order_id") RequestBody order_id,
+                                                   @Part("message") RequestBody message,
+                                                   @Part("user_id") RequestBody user_id,
+                                                   @Part("user_type") RequestBody user_type);
 }
 
 

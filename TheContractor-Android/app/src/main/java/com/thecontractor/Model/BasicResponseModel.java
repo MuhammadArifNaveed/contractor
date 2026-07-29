@@ -8,6 +8,7 @@ public class BasicResponseModel {
     private String message;
     private String status;
     private String current_status;
+    private String sending;
     private String quotation_price;
     private String view;
     private String is_email_verified;
@@ -110,6 +111,10 @@ public class BasicResponseModel {
 
     public String getCurrent_status() {
         return current_status;
+    }
+
+    public String getSending() {
+        return sending;
     }
 
     public String getQuotation_price() {

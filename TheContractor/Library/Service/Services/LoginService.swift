@@ -37,7 +37,9 @@ class LoginService: BaseService {
                 let data = UserViewModel( json!["user"])
                 self.saveUserInfo(data)
                 Global.shared.isLogedIn = true
-                   
+                Global.shared.isVendor = false
+                Global.shared.loginType = "user"
+
                 completion(message,true)
             }
             else{
@@ -47,49 +49,56 @@ class LoginService: BaseService {
     }
     
     // MARK: - Company (Vendor) Login
-    /// Login for company/vendor accounts
+    /// Login for company/vendor accounts.
+    ///
+    /// Mirrors Android's `VendorLogin.login()`: on `error == false` the `Vendor` object is copied
+    /// into a slim session record and the caller navigates to the dashboard. On failure the JSON is
+    /// handed back untouched so the caller can read `is_email_verified` — Android only offers the
+    /// "resend verification email" dialog on the failure path.
     func loginCompany(email: String, pinCode: String, firebaseToken: String,
                      completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "vendor/login_company"
         let params: [String: String] = [
             "login_email": email,
             "login_password": pinCode,
-            "device_type": "iOS",
+            "device_type": "ios",
             "firebase_token": firebaseToken
         ]
-        
+
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
-            if success, let json = json {
-                // Parse and save vendor data
-                if let vendorJSON = json["Vendor"].dictionaryObject {
-                    // Convert to JSON Data for UserDefaults (property list compatible)
-                    if let jsonData = try? JSONSerialization.data(withJSONObject: vendorJSON, options: []) {
-                        UserDefaults.standard.set(jsonData, forKey: "vendor")
-                    }
-                    
-                    UserDefaults.standard.set(true, forKey: "isLogedIn")
-                    UserDefaults.standard.set(true, forKey: "isVendor")
-                    UserDefaults.standard.set("company", forKey: "loginType")
-                    UserDefaults.standard.synchronize()
-                    
-                    // Update Global session
-                    Global.shared.isLogedIn = true
-                    Global.shared.isVendor = true
-                    Global.shared.loginType = "company"
-                    
-                    // Create a UserViewModel from vendor data for compatibility
-                    var user = UserViewModel()
-                    user.id = vendorJSON["id"] as? String ?? ""
-                    user.name = vendorJSON["company_name"] as? String ?? ""
-                    user.phone = vendorJSON["company_phone"] as? String ?? ""
-                    user.userType = "companies"
-                    Global.shared.user = user
-                }
-                completion(message, true, json)
-            } else {
-                completion(message, false, nil)
+            guard success, let json = json, json["Vendor"].exists() else {
+                completion(message, false, json)
+                return
             }
+
+            self.saveVendorSession(VendorSession(json["Vendor"]))
+            completion(message, true, json)
         }
+    }
+
+    /// Persists the vendor session the way Android's `SharedPrefManager.vendorLogin()` does — only
+    /// the handful of fields the app actually reads, never the password hash or verification tokens
+    /// that `vendor/login_company` also returns.
+    fileprivate func saveVendorSession(_ vendor: VendorSession) {
+        if let data = try? JSONEncoder().encode(vendor) {
+            UserDefaults.standard.set(data, forKey: "vendor")
+        }
+        UserDefaults.standard.set(true, forKey: "isLogedIn")
+        UserDefaults.standard.set(true, forKey: "isVendor")
+        UserDefaults.standard.set("company", forKey: "loginType")
+
+        Global.shared.isLogedIn = true
+        Global.shared.isVendor = true
+        Global.shared.loginType = "company"
+
+        // The drawer header and other shared UI read Global.shared.user, so mirror the company
+        // into it the way Android reuses its nav header for both account types.
+        var user = UserViewModel()
+        user.id = vendor.id
+        user.name = vendor.company_name
+        user.phone = vendor.company_phone
+        user.userType = vendor.user_type.isEmpty ? "companies" : vendor.user_type
+        Global.shared.user = user
     }
     
     // MARK: - Company (Vendor) Registration
@@ -131,12 +140,23 @@ class LoginService: BaseService {
                             completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "vendor/update_password"
         let params: [String: String] = ["password": password, "email": email]
-        
+
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
         }
     }
-    
+
+    /// Resend vendor verification email
+    func resendVendorVerificationEmail(email: String,
+                                      completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/resent_company_email_verification_mail"
+        let params: [String: String] = ["email": email]
+
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
     // MARK: - Cart System
     /// Check cart limit for current user
     func checkCartLimit(userId: String,
@@ -392,13 +412,175 @@ class LoginService: BaseService {
     // MARK: - Vendor Dashboard
     /// Get vendor dashboard stats
     func getVendorDashboard(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
-        let completeURL = EndPoints.BASE_URL + "Vendor/dashboard"
+        // Matches Android's RetrofitApi.vendorDashboard(): POST vendor/dashboard, vendor_id part.
+        let completeURL = EndPoints.BASE_URL + "vendor/dashboard"
         let params: [String: String] = ["vendor_id": vendorId]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success, json)
         }
     }
     
+    // MARK: - Vendor Enquiries
+    /// Every enquiry status with its count — the "Enquiries" drawer screen.
+    /// Android: `RetrofitApi.vendorEnquiriesStatus()`, response key `vendor_dashboard_counts`.
+    func getVendorEnquiryStatuses(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/enquiries_status"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The enquiries sitting in one status. `id` is the status id, not an enquiry id.
+    /// Android: `RetrofitApi.vendorParticularEnquiries()` → `POST vendor/view`, key `vendor_enquiries`.
+    func getVendorParticularEnquiries(statusId: String, vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/view"
+        let params: [String: String] = ["id": statusId, "vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One enquiry in full. Android: `RetrofitApi.vendorParticularEnquiryDetail()` → `POST vendor/enquiry`.
+    func getVendorEnquiryDetail(enquiryId: String, vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/enquiry"
+        let params: [String: String] = ["id": enquiryId, "vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Accept / progress an enquiry. Android: `RetrofitApi.updateEnquiryStatus()`.
+    /// The response's `status` field comes back as `"reject"` when the chosen status needs a
+    /// rejection reason, which is what drives Android's follow-up dialog.
+    func updateVendorEnquiryStatus(enquiryId: String, vendorId: String, statusId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/update_enquiry_status"
+        let params: [String: String] = ["enquiry_id": enquiryId, "vendor_id": vendorId, "status_id": statusId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Reject an enquiry with a reason. Android: `RetrofitApi.updateEnquiryRejectionStatus()`.
+    func rejectVendorEnquiry(enquiryId: String, vendorId: String, statusId: String, reason: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/enquiry_rejection_reason"
+        let params: [String: String] = ["enquiry_id": enquiryId, "vendor_id": vendorId, "status_id": statusId, "reason": reason]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Vendor Quotations
+    /// Every quotation status with its count — the "Quotations" drawer screen.
+    /// Android: `RetrofitApi.vendorQuotationsStatus()`. The endpoint really is spelled
+    /// `quotations_dashnoard` server-side; do not "fix" it.
+    func getVendorQuotationStatuses(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/quotations_dashnoard"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The quotations sitting in one status. Android: `RetrofitApi.vendorParticularQuotations()`.
+    func getVendorParticularQuotations(statusId: String, vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/quotations"
+        let params: [String: String] = ["id": statusId, "vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One quotation in full. Android: `RetrofitApi.vendorParticularQuotationDetail()` — this one
+    /// takes only `id`, no `vendor_id`.
+    func getVendorQuotationDetail(quotationId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/quotation"
+        let params: [String: String] = ["id": quotationId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Android: `RetrofitApi.updateQuotationStatus()`. Like the enquiry version, a `"reject"`
+    /// response means the backend wants a reason first.
+    func updateVendorQuotationStatus(quotationId: String, vendorId: String, statusId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/update_quotation_status"
+        let params: [String: String] = ["quotation_id": quotationId, "vendor_id": vendorId, "status_id": statusId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Android: `RetrofitApi.updateQuotationRejectionStatus()`.
+    func rejectVendorQuotation(quotationId: String, vendorId: String, statusId: String, reason: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/quotation_rejection_reason"
+        let params: [String: String] = ["quotation_id": quotationId, "vendor_id": vendorId, "status_id": statusId, "reason": reason]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Vendor Rating
+    /// The reviews customers left on this company. Android: `RetrofitApi.vendorRating()`,
+    /// response key `rating_enquiries`.
+    func getVendorRating(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/rating"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    // MARK: - Vendor Memberships
+    /// The plans on offer. Android: `RetrofitApi.vendorMembership()`, response key `memberships_list`.
+    func getVendorMemberships(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/memberships"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The plans this company has bought. Android: `RetrofitApi.myMembership()`,
+    /// response key `my_memberships`.
+    func getVendorMyMemberships(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/my_memberships"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Redeem a membership coupon. Android: `RetrofitApi.buyMembershipByCoupon()`.
+    /// The card-payment sibling (`vendor/buy_membership_online`) needs a payment gateway and is
+    /// deliberately not wired up here.
+    func buyVendorMembershipByCoupon(vendorId: String, membershipId: String, couponCode: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/buy_membership_by_coupon"
+        let params: [String: String] = ["vendor_id": vendorId, "membership_id": membershipId, "coupon_code": couponCode]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Interested Workshops
+    /// The workshop ads this company has bid on. Android: `RetrofitApi.interestedWorkshops()` →
+    /// `POST workshop/workshop_my_page`, response keys `workshops` and `total_page`.
+    /// `bidType` is `"open"` or `"close"` — Android's two tabs.
+    func getInterestedWorkshops(vendorId: String, userId: String, userType: String, bidType: String, page: String,
+                                completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/workshop_my_page"
+        let params: [String: String] = [
+            "vendor_id": vendorId,
+            "user_id": userId,
+            "user_type": userType,
+            "bid_type": bidType,
+            "page": page
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     /// Get vendor enquiries
     func getVendorEnquiries(vendorId: String, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Vendor/enquiries"
@@ -3495,5 +3677,58 @@ class LoginService: BaseService {
               completion(message,false,nil)
             }
         }
+    }
+}
+
+// MARK: - Vendor session
+
+/// The subset of `vendor/login_company`'s `Vendor` object that the app keeps on disk.
+///
+/// Port of Android's `VendorSharedPrefModel` (see `VendorLogin.java:261-275`), which deliberately
+/// copies ten fields out of the login response rather than storing the whole thing — the response
+/// also carries the bcrypt password hash, `otp` and `verified_token`, none of which belong in
+/// UserDefaults. `company_email` is the one addition Android doesn't have; iOS screens display it.
+///
+/// Encoded as a flat string dictionary so the existing
+/// `JSONSerialization.jsonObject(with:) as? [String: Any]` readers keep working unchanged.
+struct VendorSession: Codable {
+    var id: String = ""
+    var uuid: String = ""
+    var company_serial_number: String = ""
+    var company_name: String = ""
+    var login_email: String = ""
+    var company_email: String = ""
+    var company_phone: String = ""
+    var city_name: String = ""
+    var company_address: String = ""
+    var user_id: String = ""
+    var user_type: String = ""
+
+    init() {}
+
+    init(_ json: JSON) {
+        self.id = json["id"].stringValue
+        self.uuid = json["uuid"].stringValue
+        self.company_serial_number = json["company_serial_number"].stringValue
+        self.company_name = json["company_name"].stringValue
+        self.login_email = json["login_email"].stringValue
+        self.company_email = json["company_email"].stringValue
+        self.company_phone = json["company_phone"].stringValue
+        self.city_name = json["city_name"].stringValue
+        self.company_address = json["company_address"].stringValue
+        self.user_id = json["user_id"].stringValue
+        self.user_type = json["user_type"].stringValue
+    }
+
+    /// The logged-in company's id, or `""` when no company is signed in. Every vendor endpoint
+    /// needs this as its `vendor_id` part.
+    static var currentVendorId: String {
+        current?.id ?? ""
+    }
+
+    /// The stored session, if a company is signed in.
+    static var current: VendorSession? {
+        guard let data = UserDefaults.standard.data(forKey: "vendor") else { return nil }
+        return try? JSONDecoder().decode(VendorSession.self, from: data)
     }
 }

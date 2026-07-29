@@ -64,7 +64,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class VendorInterestedWorkshopDetail extends AppCompatActivity implements WorkshopAdInterestedQuotationAdapter.QuotationInterface{
+public abstract class VendorInterestedWorkshopDetail extends AppCompatActivity implements WorkshopAdInterestedQuotationAdapter.ChatReplyInterface{
     String vendorId;
     String userId;
     String userType;
@@ -464,10 +464,7 @@ public class VendorInterestedWorkshopDetail extends AppCompatActivity implements
     }
  
 
-    @Override
-    public void selectedQuotation(int pos, WorkshopAdModel.QuotationsModel quotationsModel) {
 
-    }
 
 
     private AlertDialog AlertDialog(String message , String type)

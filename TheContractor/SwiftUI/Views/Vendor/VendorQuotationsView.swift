@@ -1,49 +1,205 @@
+//
 //  VendorQuotationsView.swift
+//  TheContractor
+//
+//  Two screens from Android's vendor drawer:
+//    • `VendorDashboardQuotations` — every quotation status with its count
+//      (POST vendor/quotations_dashnoard — the typo is the backend's, not ours)
+//    • `VendorParticularQuotations` — the quotations sitting in one status (POST vendor/quotations)
+//
+
 import SwiftUI
+import SwiftyJSON
+
+// MARK: - Quotations (all statuses)
+
 struct VendorQuotationsView: View {
-    @StateObject private var viewModel = VendorQuotationsViewModel()
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    @State private var state: VendorLoadState = .loading
+    @State private var counts: [VendorDashboardCount] = []
+    @State private var errorMessage: String?
+
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
-                }
-                Text("Quotations").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
-                Spacer()
-            }
-            .padding(.horizontal, 4).frame(height: 56).background(yellow)
-            ZStack {
-                if viewModel.isLoading && viewModel.quotations.isEmpty { LoadingView(message: "Loading...") }
-                else if viewModel.quotations.isEmpty { EmptyStateView(icon: "doc.text", title: "No Quotations", message: "No quotation requests yet") }
-                else {
-                    List(viewModel.quotations.indices, id: \.self) { i in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack { Text("Request #\(viewModel.quotations[i].id)").font(AppTheme.Fonts.semibold(16)); Spacer(); Text(viewModel.quotations[i].status).font(AppTheme.Fonts.medium(12)).foregroundColor(.green) }
-                            Text(viewModel.quotations[i].userName).font(AppTheme.Fonts.regular(14)).foregroundColor(.gray)
-                            Text(viewModel.quotations[i].description).font(AppTheme.Fonts.regular(13)).foregroundColor(.gray).lineLimit(2)
+        NavigationView {
+            VStack(spacing: 0) {
+                VendorTopBar(title: "Quotations")
+
+                ZStack {
+                    VendorHomeStyle.background
+                        .ignoresSafeArea(edges: .bottom)
+
+                    switch state {
+                    case .loading:
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    case .noData:
+                        Text("Data Not Found")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.black)
+                    case .loaded:
+                        ScrollView {
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
+                                      spacing: 4) {
+                                ForEach(counts) { count in
+                                    NavigationLink(destination: VendorParticularQuotationsView(status: count)) {
+                                        VendorDashboardCountCard(count: count)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .padding(10)
                         }
                     }
                 }
             }
-            .onAppear { viewModel.loadQuotations() }
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
+        .navigationViewStyle(StackNavigationViewStyle())
+        .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
+        }
+        .onAppear(perform: load)
     }
-}
-class VendorQuotationsViewModel: ObservableObject {
-    @Published var isLoading = false
-    @Published var quotations: [VendorQuotation] = []
-    func loadQuotations() {
-        isLoading = true
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/vendor_quotations", params: [:]) { [weak self] _, success, json, _ in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                if success, let arr = json?["quotations"].array {
-                    self?.quotations = arr.map { VendorQuotation(id: $0["id"].stringValue, userName: $0["user_name"].stringValue, description: $0["description"].stringValue, status: $0["status"].stringValue) }
+
+    private func load() {
+        let vendorId = VendorSession.currentVendorId
+        guard !vendorId.isEmpty else {
+            state = .noData
+            return
+        }
+
+        state = .loading
+        GCD.async(.Background) {
+            LoginService.shared().getVendorQuotationStatuses(vendorId: vendorId) { message, success, json in
+                GCD.async(.Main) {
+                    guard success, let json = json else {
+                        state = .noData
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                        return
+                    }
+                    counts = json["quotation_counts"].arrayValue.map(VendorDashboardCount.init)
+                    state = counts.isEmpty ? .noData : .loaded
                 }
             }
         }
     }
 }
-struct VendorQuotation: Identifiable { let id, userName, description, status: String }
+
+// MARK: - Quotations in one status
+
+struct VendorParticularQuotationsView: View {
+    let status: VendorDashboardCount
+
+    @State private var state: VendorLoadState = .loading
+    @State private var quotations: [VendorQuotationRow] = []
+    @State private var errorMessage: String?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            VendorTopBar(title: status.name, onBack: { dismiss() })
+
+            ZStack {
+                VendorHomeStyle.background
+                    .ignoresSafeArea(edges: .bottom)
+
+                switch state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                case .noData:
+                    Text("Data Not Found")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                case .loaded:
+                    ScrollView {
+                        VStack(spacing: 10) {
+                            ForEach(quotations) { quotation in
+                                NavigationLink(destination: VendorQuotationDetailView(quotationId: quotation.id)) {
+                                    VendorQuotationRowCard(quotation: quotation)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding(10)
+                    }
+                }
+            }
+        }
+        .navigationBarHidden(true)
+        .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
+        }
+        .onAppear(perform: load)
+    }
+
+    private func load() {
+        let vendorId = VendorSession.currentVendorId
+        guard !vendorId.isEmpty else {
+            state = .noData
+            return
+        }
+
+        state = .loading
+        GCD.async(.Background) {
+            LoginService.shared().getVendorParticularQuotations(statusId: status.id, vendorId: vendorId) { message, success, json in
+                GCD.async(.Main) {
+                    guard success, let json = json else {
+                        state = .noData
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                        return
+                    }
+                    quotations = json["vendor_quotations"].arrayValue.map(VendorQuotationRow.init)
+                    state = quotations.isEmpty ? .noData : .loaded
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Models
+
+/// Android `VendorQuotationModel` reduced to what `VendorQuotationAdapter` binds.
+struct VendorQuotationRow: Identifiable {
+    let id: String
+    let quotationNumber: String
+    let statusName: String
+    let color: String
+    let createdAt: String
+
+    init(_ json: JSON) {
+        self.id = json["id"].stringValue
+        self.quotationNumber = json["quotation_number"].stringValue
+        self.statusName = json["status_name"].stringValue
+        self.color = json["color"].stringValue
+        self.createdAt = json["created_at"].stringValue
+    }
+}
+
+/// Android `vendor_quotation_custom_row.xml` — same shape as the enquiry row.
+struct VendorQuotationRowCard: View {
+    let quotation: VendorQuotationRow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(quotation.quotationNumber)
+                .font(.system(size: 14))
+                .foregroundColor(.black)
+
+            Text(VendorHomeStyle.formatDate(quotation.createdAt))
+                .font(.system(size: 14))
+                .foregroundColor(Color(white: 0.4))
+
+            VendorStatusBadge(name: quotation.statusName, color: quotation.color)
+                .padding(.top, 5)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .cornerRadius(5)
+        .shadow(color: Color.black.opacity(0.12), radius: 2, x: 0, y: 1)
+    }
+}

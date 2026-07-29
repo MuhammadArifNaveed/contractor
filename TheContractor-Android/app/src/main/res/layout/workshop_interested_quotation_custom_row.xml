@@ -77,5 +77,18 @@
             android:layout_marginTop="5dp"/>
 
 
+        <TextView
+            android:id="@+id/chatReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reply"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"/>
+
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

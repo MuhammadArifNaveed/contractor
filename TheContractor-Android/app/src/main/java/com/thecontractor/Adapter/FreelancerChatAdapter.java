@@ -23,7 +23,8 @@ public class FreelancerChatAdapter extends RecyclerView.Adapter<FreelancerChatAd
     private List<FreelancerChatModel> list;
     private Context mContext;
     private String selectedLanguage;
-    private String vendorUUID;
+    private String userId;
+    private String userType;
 
     public static final int VIEW_MY_MESSAGES = 1;
     public static final int VIEW_OTHER_MESSAGES = 2;
@@ -44,10 +45,11 @@ public class FreelancerChatAdapter extends RecyclerView.Adapter<FreelancerChatAd
     }
 
 
-    public FreelancerChatAdapter(Context context, List<FreelancerChatModel> list , String selectedLanguage, String vendorUUID) {
+    public FreelancerChatAdapter(Context context, List<FreelancerChatModel> list , String userId, String userType) {
         this.list = list;
         this.mContext = context;
-        this.vendorUUID = vendorUUID;
+        this.userId = userId;
+        this.userType = userType;
     }
 
     @Override
@@ -101,13 +103,13 @@ public class FreelancerChatAdapter extends RecyclerView.Adapter<FreelancerChatAd
         FreelancerChatModel ad = list.get(position);
 
 
-//        if(ad.getSent_by().equals("company"))
-//        {
-//            return VIEW_MY_MESSAGES;
-//        }else
-//        {
+        if(ad.getSender_id().equals(userId) && ad.getSender_type().equals(userType))
+        {
+            return VIEW_MY_MESSAGES;
+        }else
+        {
             return VIEW_OTHER_MESSAGES;
-//        }
+        }
     }
 
     public String parseDateToddMMyyyy(String time) {

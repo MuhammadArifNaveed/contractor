@@ -213,17 +213,11 @@ class BaseService {
                 print("==================================================================")
                 
                 let json = JSON(response.data ?? Data())
-                let success = statusCode == 200
-                
-                if success {
-                    completion("", true, json)
-                } else {
-                    let message = json["message"].stringValue.isEmpty ? "Something went wrong" : json["message"].stringValue
-                    completion(message, false, json)
-                }
+                let result = BaseService.parseMultipartResult(statusCode: statusCode, json: json)
+                completion(result.message, result.success, json)
         }
     }
-    
+
     //MARK:- Enhanced Multipart Post API Call with proper file handling
     func makePostAPICallWithMultipartWithFiles(with completeURL:String, params:[String:String]?, imageData: Data?, videoData: Data?, headers: HTTPHeaders? = nil, completion: @escaping (_ error: String, _ success: Bool, _ jsonData:JSON?)->Void) {
         print("\n==================== API REQUEST (MULTIPART) ====================")
@@ -284,15 +278,27 @@ class BaseService {
                 print("==================================================================")
                 
                 let json = JSON(response.data ?? Data())
-                let success = statusCode == 200
-                
-                if success {
-                    completion("", true, json)
-                } else {
-                    let message = json["message"].stringValue.isEmpty ? "Something went wrong" : json["message"].stringValue
-                    completion(message, false, json)
-                }
+                let result = BaseService.parseMultipartResult(statusCode: statusCode, json: json)
+                completion(result.message, result.success, json)
         }
     }
-    
+
+    /// Decides success/failure for the multipart endpoints.
+    ///
+    /// The backend answers *every* request with HTTP 200 and carries the real outcome in the
+    /// body's `error` flag — `{"message":"Invalid email & password","error":true}` arrives as a
+    /// 200. Android reads `response.body().getError()` for exactly this reason
+    /// (see VendorLogin.java / VendorHome.java), so the status code alone must never decide.
+    /// `message` is always passed through so callers can surface the server's own text the way
+    /// Android's toasts do.
+    static func parseMultipartResult(statusCode: Int, json: JSON) -> (message: String, success: Bool) {
+        let message = json["message"].stringValue
+        guard statusCode == 200 else {
+            return (message.isEmpty ? PopupMessages.SomethingWentWrong : message, false)
+        }
+        if json["error"].boolValue {
+            return (message.isEmpty ? PopupMessages.SomethingWentWrong : message, false)
+        }
+        return (message, true)
+    }
 }

@@ -1,0 +1,203 @@
+# iOS ⇄ Android parity: company (vendor) side
+
+Working log for bringing the iOS company/vendor experience in line with the Android app.
+Android is the source of truth — `TheContractor-Android/.../RetrofitLibrary/RetrofitApi.java` is
+authoritative for every endpoint path and part name, and the `VendorActivities/*.java` + matching
+`res/layout/*.xml` pairs are authoritative for behaviour and layout.
+
+## Ground rules established
+
+- **Never invent an endpoint.** If it is not in `RetrofitApi.java`, it does not exist. A large part
+  of the pre-existing iOS `LoginService.swift` is fabricated (fleet management, QR codes, tender
+  bids, KPI targets …) and calls URLs the backend has never served.
+- Paths are **case-sensitive** on the server: Android uses `vendor/...` lowercase for the vendor
+  API and `Account/...` / `Home/...` capitalised elsewhere.
+- Backend typos are real and must be preserved, e.g. `vendor/quotations_dashnoard`.
+- Keep Android's literal behaviour even when it looks wrong (example: the date formatter uses
+  `yyyy-dd-MM`, swapping day and month — matching what users see beats being correct).
+
+## Status
+
+| Phase | Scope | State |
+|---|---|---|
+| 1 | Multipart transport honours the body `error` flag | ✅ done |
+| 2 | Company login parity with `VendorLogin` | ✅ done |
+| 3 | Vendor landing dashboard = `VendorHome` | ✅ code complete, build not yet verified |
+| 4 | Enquiry drill-downs | ✅ code complete, build not yet verified |
+| 5 | Quotations chain | ✅ code complete, build not yet verified |
+| 6 | Replace the four "Coming Soon" drawer items | ✅ code complete, build not yet verified |
+| 7 | Vendor jobs, workshops, freelancing | ⬜ not started |
+| 8 | Service-layer cleanup, remove fabricated views | ⬜ not started |
+| 9 | Simulator test pass, then commit and push | ⬜ blocked — see below |
+
+> **Blocker right now:** the sandbox classifier that gates write/build commands is intermittently
+> unavailable, so `xcodebuild` and `git` cannot run. Everything from Phase 3 onward is written but
+> **not yet compiled**. First action when tooling recovers:
+> `bash <scratchpad>/build.sh`, fix whatever it reports, then run the login + dashboard test pass.
+
+## Phase 1 — transport
+
+`makePostAPICallWithMultipart` previously reported success purely from the HTTP status, so a
+`{"error":"true"}` body looked like a win. It now reads the body's `error` flag the way every
+Android `onResponse` does, and hands the parsed JSON back to callers so they can read sibling
+fields such as `is_email_verified` and `status`.
+
+## Phase 2 — company login (`VendorLogin.java`)
+
+- `POST vendor/login_company` with `login_email`, `login_password`, `device_type`, `firebase_token`.
+- Both account types use a **4-digit pin**, not a password — Android's `activity_login.xml` and
+  `activity_vendor_login.xml` both say "4 Digits Pin Code" with `maxLength="4"`. An earlier iOS
+  change had relabelled the company field "Password"; reverted.
+- Validation strings copied verbatim: `Enter email address` / `Enter valid email address` /
+  `Enter 4 digits pin code`, with Android's exact email regex.
+- `is_email_verified == "No"` is checked on the **failure** branch only
+  (`VendorLogin.java:287-296`) — an unverified company cannot log in, and that is where Android
+  offers the resend dialog. Resend goes to `vendor/resent_company_email_verification_mail`.
+- The session stores the same ten fields as Android's `VendorSharedPrefModel` (plus
+  `company_email`, which iOS screens display) — never the password hash, otp, or verified token
+  that the login response also returns. See `VendorSession` at the bottom of `LoginService.swift`;
+  `VendorSession.currentVendorId` is the accessor every vendor screen uses.
+- Login replaces the navigation stack with the drawer, mirroring Android's
+  `FLAG_ACTIVITY_CLEAR_TASK`, and keeps the drawer *inside* a navigation controller so logout can
+  get back to the login screen.
+
+### User login, for reference
+
+`POST Account/user_login` with `user_phone`, `user_password`, `device_type`, `firebase_token`.
+Phone prefixing is an **exact match against three hard-coded test numbers** that get `+92`
+(`3124611478`, `3024507881`, `3034937427`); everything else gets `+971`. It is not prefix-based —
+an earlier iOS version guessed `hasPrefix("312")` and was wrong.
+
+## Phase 3 — vendor landing dashboard
+
+`POST vendor/dashboard` with `vendor_id` → `vendor_dashboard_counts`, `pending_enquiries`,
+`accepted_enquiries`, `today_enquiries`.
+
+The screen that used to load after company login was `VendorDashboardView` — four hard-coded
+SwiftUI stat tiles hitting a non-existent `Home/vendor_dashboard`. Replaced by `VendorHomeView`,
+which follows `content_vendor_home.xml`: yellow bar with hamburger and the `topicon` logo, then
+"Enquiries Dashboard" with its short yellow rule, a 3-column grid of square name/count/"See All"
+cards, then Pending and Accepted as horizontal scrollers and Today as a full-width list. Sections
+hide when empty; the whole body stays hidden until the response lands; a failure shows
+"Data Not Found".
+
+Two navigation bugs fixed along the way:
+
+- `showVendorHome()` called `navigationController.setViewControllers([...])`, which replaced the
+  drawer's own stack and tore out the hamburger. It now embeds the screen in `containerView` like
+  every other `show*Controller()`.
+- `CompanyLoginView` tried `drawer.mainViewController as? MainContainerViewController`, but the
+  drawer's main view controller is a `UINavigationController` wrapping it, so that cast always
+  failed and companies silently landed on the consumer home screen. `MainContainerViewController`
+  now routes to `showVendorHome()` itself when `Global.shared.isVendor`.
+
+## Phase 4 — enquiries
+
+| Screen | Android | Endpoint | Response key |
+|---|---|---|---|
+| Enquiries (all statuses) | `VendorDashboardEnquiries` | `vendor/enquiries_status` | `vendor_dashboard_counts` |
+| One status | `VendorParticularEnquiries` | `vendor/view` (`id` = **status** id) | `vendor_enquiries` |
+| Detail | `VendorEnquiryDetail` | `vendor/enquiry` | `vendor_enquiry` |
+| Change status | — | `vendor/update_enquiry_status` | `status` (`"reject"` ⇒ ask for a reason) |
+| Reject | — | `vendor/enquiry_rejection_reason` | — |
+
+The rejection prompt is a sheet rather than an alert because the deployment target is iOS 15, where
+alerts cannot host a text field. Android's `adminNoteLayout` is set to `GONE` unconditionally and
+never populated, so it is deliberately not ported.
+
+## Phase 5 — quotations
+
+| Screen | Android | Endpoint | Response key |
+|---|---|---|---|
+| Quotations (all statuses) | `VendorDashboardQuotations` | `vendor/quotations_dashnoard` | `quotation_counts` |
+| One status | `VendorParticularQuotations` | `vendor/quotations` (`id` = **status** id) | `vendor_quotations` |
+| Detail | `VendorQuotationDetail` | `vendor/quotation` (`id` only, no `vendor_id`) | `vendor_quotation` |
+| Change status | — | `vendor/update_quotation_status` | `status` |
+| Reject | — | `vendor/quotation_rejection_reason` | — |
+
+Detail shows category, sub-category, number, status badge, date, the user's note when non-empty,
+user information, the attached images (`uploads/quotations/<image_path>`), and the status chips.
+
+**Deliberately not ported yet:** Android also lets the company attach a document when the
+quotation is at status `2` ("Select Document") or `5` ("Resubmit Document"), via
+`vendor/upload_document` with `quotation_id`, `vendor_id`, and a file part. That needs a document
+picker and is tracked as follow-up work.
+
+## Shared vendor UI
+
+Living in `VendorHomeView.swift`, reused by every vendor screen:
+
+- `VendorLoadState` — Android's loading / loaded / `noData` triple.
+- `VendorDashboardCount` (`VendorDashboardCountModel`) and `VendorEnquiryRow` (`VendorEnquiryModel`).
+- `VendorDashboardCountCard` (`vendor_dashboard_row.xml`), `VendorEnquiryRowCard`
+  (`vendor_enquiry_custom_row.xml`), `VendorStatusBadge` (the API-coloured pill Android builds with
+  a `MaterialShapeDrawable`).
+- `VendorSection` — the heading + short yellow rule Android repeats above each list.
+- `VendorHomeStyle` — `#f2be36` app colour, `#f7f7f7` background, `Color.parseColor` equivalent,
+  and the `parseDateToddMMyyyy` port.
+- `VendorNavigation.openDrawer()` — the vendor screens draw their own hamburger because the shared
+  top bar is hidden for companies.
+
+`VendorTopBar` lives in `VendorEnquiriesView.swift`: no `onBack` ⇒ hamburger (drawer-rooted screen),
+`onBack` supplied ⇒ up arrow (pushed screen).
+
+## Xcode project note
+
+`TheContractor.xcodeproj` is an old-style project with explicit file references, and several files
+were listed **twice** in the single Sources phase. Rather than add new references, Phase 3 repointed
+the duplicate `VendorDashboardView.swift` reference (`90C6FF0A…`) at `VendorHomeView.swift` — which
+both removed a duplicate-compile warning and got the new file into the target with no structural
+edit. Phases 4 and 5 rewrote files that were already members, so they needed no project change.
+
+`VendorDashboardView.swift` is still a target member because it also defines `StatCard`, which
+`VendorStatisticsView.swift` uses. Removing both is Phase 8 work.
+
+## Phase 6 — the four "Coming Soon" drawer items
+
+All four now open real screens instead of an alert:
+
+| Drawer item | Android | Endpoint | Response key |
+|---|---|---|---|
+| Rating | `VendorRating` | `vendor/rating` | `rating_enquiries` |
+| Memberships | `VendorMembership` | `vendor/memberships` | `memberships_list` |
+| My Membership | `VendorMyMembership` | `vendor/my_memberships` | `my_memberships` |
+| Interested Workshops | `VendorInterestedWorkshops` | `workshop/workshop_my_page` | `workshops`, `total_page` |
+
+- The drawer title was "Vendor Rating"; Android's menu says **"Rating"**, so `VendorMenu.MENULIST`
+  and the switch case were both aligned.
+- Membership cards reproduce `membership_custom_row.xml` perk-by-perk, including Android's rule
+  that a `"0"` value renders a cross, a non-zero value renders its days/capacity, and a plain
+  inclusion renders a tick. A bought plan hides the Buy button and shows the status/buy-type block.
+- Interested Workshops has Android's two tabs (Open Bid / Close Bid), each resetting to page 1,
+  with infinite scroll bounded by `total_page`. Note this screen's adapter parses dates as
+  `yyyy-MM-dd` while the enquiry adapter uses `yyyy-dd-MM`, so `VendorHomeStyle` exposes both
+  `formatDate` and `formatWorkshopDate`.
+- **Deliberately not ported:** `vendor/buy_membership_online`. Android takes a card payment through
+  its gateway; only the coupon path (`vendor/buy_membership_by_coupon`) is wired up.
+- Two navigation bugs fixed in passing: `MainContainerViewController` gained a generic
+  `showVendorScreen(_:)` so every vendor screen embeds in the container consistently, and the
+  drawer's "Profile" item no longer pushes onto the *side menu's* own navigation stack.
+
+## Remaining work
+
+### Phase 7 — jobs, workshops, freelancing
+
+Audit `showVendorJobsController`, `showVendorJobApplicantsController`,
+`showVendorWorkshopController`, `showVendorAddWorkshopController`, `showFreelancersController`, and
+`showFreelanceDashboardController` against their Android activities. Android passes a mode through
+these screens (`intent.putExtra("type", "vendor")`, `putExtra("from", "vendor")`) that iOS has no
+equivalent for yet.
+
+### Phase 8 — service-layer cleanup
+
+Delete the fabricated `LoginService` methods and the fabricated vendor views that call them, and
+drop `VendorDashboardView` once `StatCard` has a home. Roughly 150 methods hit URLs that do not
+exist.
+
+### Phase 9 — verification
+
+1. Build for the simulator.
+2. User login: `03139970317` / `3187` → expect `+971` prefixing and the consumer home screen.
+3. Company login: `bilaljan318718@gmail.com` / `3187` → expect the vendor dashboard.
+4. Walk the dashboard → status grid → enquiry detail, and the quotations chain.
+5. Commit and push to `origin/feature/arif`.
