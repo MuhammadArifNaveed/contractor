@@ -193,7 +193,6 @@
 		806CA9802F5768C600D31D28 /* VendorEnquiryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */; };
 		806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9452F5768C600D31D28 /* VendorWorkshopView.swift */; };
 		806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96A2F5768C600D31D28 /* QuotationsListView.swift */; };
-		806CA9842F5768C600D31D28 /* VendorDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92B2F5768C600D31D28 /* VendorDashboardView.swift */; };
 		806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA97C2F5768C600D31D28 /* WorkshopView.swift */; };
 		806CA9862F5768C600D31D28 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9212F5768C600D31D28 /* LoginView.swift */; };
 		806CA9872F5768C600D31D28 /* VendorJobApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */; };
@@ -203,12 +202,9 @@
 		806CA98B2F5768C600D31D28 /* HiredFreelancerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9622F5768C600D31D28 /* HiredFreelancerListView.swift */; };
 		806CA98C2F5768C600D31D28 /* VendorForgotPasswordPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9762F5768C600D31D28 /* VendorForgotPasswordPinView.swift */; };
 		806CA98D2F5768C600D31D28 /* HiredFreelancerSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9632F5768C600D31D28 /* HiredFreelancerSummaryView.swift */; };
-		806CA98E2F5768C600D31D28 /* VendorGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9332F5768C600D31D28 /* VendorGalleryView.swift */; };
 		806CA98F2F5768C600D31D28 /* VerifyNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9792F5768C600D31D28 /* VerifyNumberView.swift */; };
 		806CA9902F5768C600D31D28 /* VendorReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9402F5768C600D31D28 /* VendorReviewsView.swift */; };
-		806CA9912F5768C600D31D28 /* VendorPromotionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA93C2F5768C600D31D28 /* VendorPromotionsView.swift */; };
 		806CA9922F5768C600D31D28 /* SubCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96F2F5768C600D31D28 /* SubCategoriesView.swift */; };
-		806CA9932F5768C600D31D28 /* VendorStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9432F5768C600D31D28 /* VendorStatisticsView.swift */; };
 		806CA9942F5768C600D31D28 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94D2F5768C600D31D28 /* ChatListView.swift */; };
 		806CA9952F5768C600D31D28 /* SearchCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96C2F5768C600D31D28 /* SearchCompaniesView.swift */; };
 		806CA9962F5768C600D31D28 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94E2F5768C600D31D28 /* CheckoutView.swift */; };
@@ -221,32 +217,24 @@
 		806CA99D2F5768C600D31D28 /* VendorJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9362F5768C600D31D28 /* VendorJobsView.swift */; };
 		806CA99E2F5768C600D31D28 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94B2F5768C600D31D28 /* CartView.swift */; };
 		806CA99F2F5768C600D31D28 /* SearchJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96E2F5768C600D31D28 /* SearchJobsView.swift */; };
-		806CA9A02F5768C600D31D28 /* VendorServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9412F5768C600D31D28 /* VendorServicesView.swift */; };
-		806CA9A12F5768C600D31D28 /* VendorPostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA93A2F5768C600D31D28 /* VendorPostJobView.swift */; };
 		806CA9A22F5768C600D31D28 /* ContactUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9572F5768C600D31D28 /* ContactUsView.swift */; };
 		806CA9A32F5768C600D31D28 /* ComplaintsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9562F5768C600D31D28 /* ComplaintsListView.swift */; };
 		806CA9A42F5768C600D31D28 /* AdvertiseCompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9492F5768C600D31D28 /* AdvertiseCompanyView.swift */; };
 		806CA9A62F5768C600D31D28 /* TwentyFourSevenCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9732F5768C600D31D28 /* TwentyFourSevenCompaniesView.swift */; };
-		806CA9A72F5768C600D31D28 /* VendorCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9282F5768C600D31D28 /* VendorCategoriesView.swift */; };
 		806CA9A82F5768C600D31D28 /* LanguageSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9662F5768C600D31D28 /* LanguageSelectionView.swift */; };
 		806CA9A92F5768C600D31D28 /* VendorAddWorkshopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9252F5768C600D31D28 /* VendorAddWorkshopItemView.swift */; };
 		806CA9AA2F5768C600D31D28 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9642F5768C600D31D28 /* HomeView.swift */; };
 		806CA9AB2F5768C600D31D28 /* UpdateFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9742F5768C600D31D28 /* UpdateFreelancerView.swift */; };
 		806CA9AC2F5768C600D31D28 /* FreelancingOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9612F5768C600D31D28 /* FreelancingOrdersView.swift */; };
-		806CA9AD2F5768C600D31D28 /* VendorNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9382F5768C600D31D28 /* VendorNotificationsView.swift */; };
 		806CA9AE2F5768C600D31D28 /* CompanyRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9542F5768C600D31D28 /* CompanyRegistrationView.swift */; };
 		806CA9AF2F5768C600D31D28 /* DirectHiringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9582F5768C600D31D28 /* DirectHiringView.swift */; };
 		806CA9B02F5768C600D31D28 /* CompanyFreelancersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9522F5768C600D31D28 /* CompanyFreelancersListView.swift */; };
 		806CA9B12F5768C600D31D28 /* AboutUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9472F5768C600D31D28 /* AboutUsView.swift */; };
 		806CA9B22F5768C600D31D28 /* JobDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9652F5768C600D31D28 /* JobDetailView.swift */; };
-		806CA9B32F5768C600D31D28 /* VendorMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9372F5768C600D31D28 /* VendorMessagesView.swift */; };
-		806CA9B42F5768C600D31D28 /* VendorComplaintsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9292F5768C600D31D28 /* VendorComplaintsView.swift */; };
 		806CA9B52F5768C600D31D28 /* CompaniesByCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94F2F5768C600D31D28 /* CompaniesByCategoryView.swift */; };
 		806CA9B62F5768C600D31D28 /* ComplaintDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9552F5768C600D31D28 /* ComplaintDetailView.swift */; };
-		806CA9B72F5768C600D31D28 /* VendorEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92E2F5768C600D31D28 /* VendorEditProfileView.swift */; };
 		806CA9B82F5768C600D31D28 /* VendorQuotationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA93D2F5768C600D31D28 /* VendorQuotationDetailView.swift */; };
 		806CA9B92F5768C600D31D28 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9202F5768C600D31D28 /* ForgotPasswordView.swift */; };
-		806CA9BA2F5768C600D31D28 /* VendorDocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92D2F5768C600D31D28 /* VendorDocumentsView.swift */; };
 		806CA9BB2F5768C600D31D28 /* AddReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9482F5768C600D31D28 /* AddReviewView.swift */; };
 		806CA9BC2F5768C600D31D28 /* EnquiryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA95B2F5768C600D31D28 /* EnquiryDetailView.swift */; };
 		806CA9BD2F5768C600D31D28 /* VendorNewPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9782F5768C600D31D28 /* VendorNewPasswordView.swift */; };
@@ -260,21 +248,16 @@
 		806CA9C52F5768C600D31D28 /* ReviewsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96B2F5768C600D31D28 /* ReviewsListView.swift */; };
 		806CA9C72F5768C600D31D28 /* VendorQuotationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA93E2F5768C600D31D28 /* VendorQuotationsView.swift */; };
 		806CA9C82F5768C600D31D28 /* VendorEnquiriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */; };
-		806CA9C92F5768C600D31D28 /* VendorDirectHiringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92C2F5768C600D31D28 /* VendorDirectHiringView.swift */; };
 		806CA9CA2F5768C600D31D28 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9592F5768C600D31D28 /* EditProfileView.swift */; };
 		806CA9CB2F5768C600D31D28 /* VendorApplicantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */; };
 		806CA9CC2F5768C600D31D28 /* MyJobApplicationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9682F5768C600D31D28 /* MyJobApplicationsView.swift */; };
 		806CA9CD2F5768C600D31D28 /* VendorFreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9322F5768C600D31D28 /* VendorFreelancersView.swift */; };
-		806CA9CE2F5768C600D31D28 /* VendorAddFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9242F5768C600D31D28 /* VendorAddFreelancerView.swift */; };
-		806CA9CF2F5768C600D31D28 /* VendorAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9262F5768C600D31D28 /* VendorAnalyticsView.swift */; };
 		806CA9D02F5768C600D31D28 /* WebContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA97A2F5768C600D31D28 /* WebContentView.swift */; };
 		806CA9D12F5768C600D31D28 /* AvailableJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94A2F5768C600D31D28 /* AvailableJobsView.swift */; };
 		806CA9D22F5768C600D31D28 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9752F5768C600D31D28 /* UserProfileView.swift */; };
 		806CA9D32F5768C600D31D28 /* SubmitEnquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9712F5768C600D31D28 /* SubmitEnquiryView.swift */; };
 		806CA9D42F5768C600D31D28 /* EnquiriesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA95A2F5768C600D31D28 /* EnquiriesListView.swift */; };
-		806CA9D52F5768C600D31D28 /* VendorPaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9392F5768C600D31D28 /* VendorPaymentsView.swift */; };
 		806CA9D62F5768C600D31D28 /* SubmitQuotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9722F5768C600D31D28 /* SubmitQuotationView.swift */; };
-		806CA9D72F5768C600D31D28 /* VendorCustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92A2F5768C600D31D28 /* VendorCustomersView.swift */; };
 		806CA9D82F5768C600D31D28 /* VendorForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9772F5768C600D31D28 /* VendorForgotPasswordView.swift */; };
 		80C6FE7E2F10E7210014E3EF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE782F10E7210014E3EF /* AppTheme.swift */; };
 		80C6FE822F10E7440014E3EF /* FreelancerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6FE812F10E7440014E3EF /* FreelancerViewModel.swift */; };
@@ -352,7 +335,6 @@
 		90C6FF0B2F20EB0100BDA19A /* VendorEnquiriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */; };
 		90C6FF0D2F20EB0200BDA19A /* VendorQuotationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */; };
 		90C6FF0F2F20EB0300BDA19A /* VendorJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */; };
-		90C6FF112F20EB0400BDA19A /* VendorPostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF122F20EB0400BDA19A /* VendorPostJobView.swift */; };
 		90C6FF132F20EB0500BDA19A /* VendorFreelancersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF142F20EB0500BDA19A /* VendorFreelancersView.swift */; };
 		90C6FF152F20EB0600BDA19A /* VendorProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF162F20EB0600BDA19A /* VendorProfileView.swift */; };
 		90C6FF172F20EC0000BDA19A /* VendorEnquiryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF182F20EC0000BDA19A /* VendorEnquiryDetailView.swift */; };
@@ -360,17 +342,11 @@
 		90C6FF1B2F20EC0200BDA19A /* VendorJobDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF1C2F20EC0200BDA19A /* VendorJobDetailView.swift */; };
 		90C6FF1D2F20EC0300BDA19A /* VendorJobApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF1E2F20EC0300BDA19A /* VendorJobApplicantsView.swift */; };
 		90C6FF1F2F20EC0400BDA19A /* VendorApplicantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF202F20EC0400BDA19A /* VendorApplicantDetailView.swift */; };
-		90C6FF212F20EC0500BDA19A /* VendorDirectHiringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF222F20EC0500BDA19A /* VendorDirectHiringView.swift */; };
 		90C6FF232F20EC0600BDA19A /* VendorWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF242F20EC0600BDA19A /* VendorWorkshopView.swift */; };
 		90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */; };
 		90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */; };
-		90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */; };
 		90C6FF2B2F20ED0000BDA19A /* VendorWorkshopAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */; };
-		90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */; };
-		90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */; };
 		90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */; };
-		90C6FF332F20ED0400BDA19A /* VendorStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF342F20ED0400BDA19A /* VendorStatisticsView.swift */; };
-		90C6FF352F20ED0500BDA19A /* VendorMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF362F20ED0500BDA19A /* VendorMessagesView.swift */; };
 		90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */; };
 		90C6FF392F20EE0000BDA19A /* AboutUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */; };
 		90C6FF3B2F20EE0100BDA19A /* ContactUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */; };
@@ -378,16 +354,7 @@
 		90C6FF3F2F20EE0300BDA19A /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF402F20EE0300BDA19A /* MapView.swift */; };
 		90C6FF412F20EE0400BDA19A /* CompaniesByCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */; };
 		90C6FF432F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */; };
-		90C6FF452F20EE0600BDA19A /* VendorComplaintsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF462F20EE0600BDA19A /* VendorComplaintsView.swift */; };
-		90C6FF472F20EE0700BDA19A /* VendorAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF482F20EE0700BDA19A /* VendorAnalyticsView.swift */; };
 		90C6FF492F20EE0800BDA19A /* VendorReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF4A2F20EE0800BDA19A /* VendorReportsView.swift */; };
-		90C6FF4B2F20EE0900BDA19A /* VendorPaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF4C2F20EE0900BDA19A /* VendorPaymentsView.swift */; };
-		90C6FF4D2F20EF0000BDA19A /* VendorCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF4E2F20EF0000BDA19A /* VendorCategoriesView.swift */; };
-		90C6FF4F2F20EF0100BDA19A /* VendorServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF502F20EF0100BDA19A /* VendorServicesView.swift */; };
-		90C6FF512F20EF0200BDA19A /* VendorPromotionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF522F20EF0200BDA19A /* VendorPromotionsView.swift */; };
-		90C6FF532F20EF0300BDA19A /* VendorGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF542F20EF0300BDA19A /* VendorGalleryView.swift */; };
-		90C6FF552F20EF0400BDA19A /* VendorDocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF562F20EF0400BDA19A /* VendorDocumentsView.swift */; };
-		90C6FF572F20EF0500BDA19A /* VendorCustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF582F20EF0500BDA19A /* VendorCustomersView.swift */; };
 		90SEARCH032F58100000D106BC /* SearchCompaniesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SEARCH022F58100000D106BC /* SearchCompaniesViewModel.swift */; };
 		90SRES012F58200000D106BC /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SRES002F58200000D106BC /* SearchResultsView.swift */; };
 		ADA69BED3567D410EFA62928 /* VendorJobsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5A0B744778F590FFDBDD5 /* VendorJobsHostingController.swift */; };
@@ -591,37 +558,20 @@
 		806CA9202F5768C600D31D28 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		806CA9212F5768C600D31D28 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		806CA9222F5768C600D31D28 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
-		806CA9242F5768C600D31D28 /* VendorAddFreelancerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAddFreelancerView.swift; sourceTree = "<group>"; };
 		806CA9252F5768C600D31D28 /* VendorAddWorkshopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAddWorkshopItemView.swift; sourceTree = "<group>"; };
-		806CA9262F5768C600D31D28 /* VendorAnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAnalyticsView.swift; sourceTree = "<group>"; };
 		806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorApplicantDetailView.swift; sourceTree = "<group>"; };
-		806CA9282F5768C600D31D28 /* VendorCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorCategoriesView.swift; sourceTree = "<group>"; };
-		806CA9292F5768C600D31D28 /* VendorComplaintsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorComplaintsView.swift; sourceTree = "<group>"; };
-		806CA92A2F5768C600D31D28 /* VendorCustomersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorCustomersView.swift; sourceTree = "<group>"; };
-		806CA92B2F5768C600D31D28 /* VendorDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDashboardView.swift; sourceTree = "<group>"; };
-		806CA92C2F5768C600D31D28 /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDirectHiringView.swift; sourceTree = "<group>"; };
-		806CA92D2F5768C600D31D28 /* VendorDocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDocumentsView.swift; sourceTree = "<group>"; };
-		806CA92E2F5768C600D31D28 /* VendorEditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEditProfileView.swift; sourceTree = "<group>"; };
 		806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEnquiriesView.swift; sourceTree = "<group>"; };
 		806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEnquiryDetailView.swift; sourceTree = "<group>"; };
 		806CA9322F5768C600D31D28 /* VendorFreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorFreelancersView.swift; sourceTree = "<group>"; };
-		806CA9332F5768C600D31D28 /* VendorGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorGalleryView.swift; sourceTree = "<group>"; };
 		806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorJobApplicantsView.swift; sourceTree = "<group>"; };
 		806CA9352F5768C600D31D28 /* VendorJobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorJobDetailView.swift; sourceTree = "<group>"; };
 		806CA9362F5768C600D31D28 /* VendorJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorJobsView.swift; sourceTree = "<group>"; };
-		806CA9372F5768C600D31D28 /* VendorMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMessagesView.swift; sourceTree = "<group>"; };
-		806CA9382F5768C600D31D28 /* VendorNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorNotificationsView.swift; sourceTree = "<group>"; };
-		806CA9392F5768C600D31D28 /* VendorPaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorPaymentsView.swift; sourceTree = "<group>"; };
-		806CA93A2F5768C600D31D28 /* VendorPostJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorPostJobView.swift; sourceTree = "<group>"; };
 		806CA93B2F5768C600D31D28 /* VendorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorProfileView.swift; sourceTree = "<group>"; };
-		806CA93C2F5768C600D31D28 /* VendorPromotionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorPromotionsView.swift; sourceTree = "<group>"; };
 		806CA93D2F5768C600D31D28 /* VendorQuotationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorQuotationDetailView.swift; sourceTree = "<group>"; };
 		806CA93E2F5768C600D31D28 /* VendorQuotationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorQuotationsView.swift; sourceTree = "<group>"; };
 		806CA93F2F5768C600D31D28 /* VendorReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorReportsView.swift; sourceTree = "<group>"; };
 		806CA9402F5768C600D31D28 /* VendorReviewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorReviewsView.swift; sourceTree = "<group>"; };
-		806CA9412F5768C600D31D28 /* VendorServicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorServicesView.swift; sourceTree = "<group>"; };
 		806CA9422F5768C600D31D28 /* VendorSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorSettingsView.swift; sourceTree = "<group>"; };
-		806CA9432F5768C600D31D28 /* VendorStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorStatisticsView.swift; sourceTree = "<group>"; };
 		806CA9442F5768C600D31D28 /* VendorSubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorSubscriptionView.swift; sourceTree = "<group>"; };
 		806CA9452F5768C600D31D28 /* VendorWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorWorkshopView.swift; sourceTree = "<group>"; };
 		806CA9472F5768C600D31D28 /* AboutUsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsView.swift; sourceTree = "<group>"; };
@@ -752,7 +702,6 @@
 		90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEnquiriesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEnquiriesView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorQuotationsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorQuotationsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorJobsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorJobsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF122F20EB0400BDA19A /* VendorPostJobView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPostJobView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPostJobView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF142F20EB0500BDA19A /* VendorFreelancersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorFreelancersView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorFreelancersView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF162F20EB0600BDA19A /* VendorProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorProfileView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorProfileView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF182F20EC0000BDA19A /* VendorEnquiryDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEnquiryDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEnquiryDetailView.swift; sourceTree = SOURCE_ROOT; };
@@ -760,17 +709,11 @@
 		90C6FF1C2F20EC0200BDA19A /* VendorJobDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorJobDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorJobDetailView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF1E2F20EC0300BDA19A /* VendorJobApplicantsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorJobApplicantsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorJobApplicantsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF202F20EC0400BDA19A /* VendorApplicantDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorApplicantDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorApplicantDetailView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF222F20EC0500BDA19A /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorDirectHiringView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorDirectHiringView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF242F20EC0600BDA19A /* VendorWorkshopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorReviewsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorReviewsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSettingsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSettingsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEditProfileView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEditProfileView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopAdsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorWorkshopAdsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddFreelancerView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorNotificationsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorNotificationsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddWorkshopItemView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddWorkshopItemView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF342F20ED0400BDA19A /* VendorStatisticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorStatisticsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorStatisticsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF362F20ED0500BDA19A /* VendorMessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorMessagesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorMessagesView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSubscriptionView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSubscriptionView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AboutUsView.swift; path = TheContractor/SwiftUI/Views/AboutUsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContactUsView.swift; path = TheContractor/SwiftUI/Views/ContactUsView.swift; sourceTree = SOURCE_ROOT; };
@@ -778,16 +721,7 @@
 		90C6FF402F20EE0300BDA19A /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapView.swift; path = TheContractor/SwiftUI/Views/MapView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesByCategoryView.swift; path = TheContractor/SwiftUI/Views/CompaniesByCategoryView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TwentyFourSevenCompaniesView.swift; path = TheContractor/SwiftUI/Views/TwentyFourSevenCompaniesView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF462F20EE0600BDA19A /* VendorComplaintsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorComplaintsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorComplaintsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF482F20EE0700BDA19A /* VendorAnalyticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAnalyticsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAnalyticsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF4A2F20EE0800BDA19A /* VendorReportsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorReportsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorReportsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF4C2F20EE0900BDA19A /* VendorPaymentsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPaymentsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPaymentsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF4E2F20EF0000BDA19A /* VendorCategoriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorCategoriesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorCategoriesView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF502F20EF0100BDA19A /* VendorServicesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorServicesView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorServicesView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF522F20EF0200BDA19A /* VendorPromotionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPromotionsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPromotionsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF542F20EF0300BDA19A /* VendorGalleryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorGalleryView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorGalleryView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF562F20EF0400BDA19A /* VendorDocumentsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorDocumentsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorDocumentsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF582F20EF0500BDA19A /* VendorCustomersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorCustomersView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorCustomersView.swift; sourceTree = SOURCE_ROOT; };
 		90SEARCH022F58100000D106BC /* SearchCompaniesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchCompaniesViewModel.swift; path = TheContractor/SwiftUI/ViewModels/SearchCompaniesViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90SRES002F58200000D106BC /* SearchResultsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchResultsView.swift; path = TheContractor/SwiftUI/Views/SearchResultsView.swift; sourceTree = SOURCE_ROOT; };
 		A5CC8B6726772F58ED6713FA /* Pods-TheContractor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.debug.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1353,7 +1287,6 @@
 				90C6FF0C2F20EB0100BDA19A /* VendorEnquiriesView.swift */,
 				90C6FF0E2F20EB0200BDA19A /* VendorQuotationsView.swift */,
 				90C6FF102F20EB0300BDA19A /* VendorJobsView.swift */,
-				90C6FF122F20EB0400BDA19A /* VendorPostJobView.swift */,
 				90C6FF142F20EB0500BDA19A /* VendorFreelancersView.swift */,
 				90C6FF162F20EB0600BDA19A /* VendorProfileView.swift */,
 				90C6FF182F20EC0000BDA19A /* VendorEnquiryDetailView.swift */,
@@ -1361,17 +1294,11 @@
 				90C6FF1C2F20EC0200BDA19A /* VendorJobDetailView.swift */,
 				90C6FF1E2F20EC0300BDA19A /* VendorJobApplicantsView.swift */,
 				90C6FF202F20EC0400BDA19A /* VendorApplicantDetailView.swift */,
-				90C6FF222F20EC0500BDA19A /* VendorDirectHiringView.swift */,
 				90C6FF242F20EC0600BDA19A /* VendorWorkshopView.swift */,
 				90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */,
 				90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */,
-				90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */,
 				90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */,
-				90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */,
-				90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */,
 				90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */,
-				90C6FF342F20ED0400BDA19A /* VendorStatisticsView.swift */,
-				90C6FF362F20ED0500BDA19A /* VendorMessagesView.swift */,
 				90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */,
 				90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */,
 				90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */,
@@ -1379,16 +1306,7 @@
 				90C6FF402F20EE0300BDA19A /* MapView.swift */,
 				90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */,
 				90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */,
-				90C6FF462F20EE0600BDA19A /* VendorComplaintsView.swift */,
-				90C6FF482F20EE0700BDA19A /* VendorAnalyticsView.swift */,
 				90C6FF4A2F20EE0800BDA19A /* VendorReportsView.swift */,
-				90C6FF4C2F20EE0900BDA19A /* VendorPaymentsView.swift */,
-				90C6FF4E2F20EF0000BDA19A /* VendorCategoriesView.swift */,
-				90C6FF502F20EF0100BDA19A /* VendorServicesView.swift */,
-				90C6FF522F20EF0200BDA19A /* VendorPromotionsView.swift */,
-				90C6FF542F20EF0300BDA19A /* VendorGalleryView.swift */,
-				90C6FF562F20EF0400BDA19A /* VendorDocumentsView.swift */,
-				90C6FF582F20EF0500BDA19A /* VendorCustomersView.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1493,37 +1411,20 @@
 		806CA9462F5768C600D31D28 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				806CA9242F5768C600D31D28 /* VendorAddFreelancerView.swift */,
 				806CA9252F5768C600D31D28 /* VendorAddWorkshopItemView.swift */,
-				806CA9262F5768C600D31D28 /* VendorAnalyticsView.swift */,
 				806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */,
-				806CA9282F5768C600D31D28 /* VendorCategoriesView.swift */,
-				806CA9292F5768C600D31D28 /* VendorComplaintsView.swift */,
-				806CA92A2F5768C600D31D28 /* VendorCustomersView.swift */,
-				806CA92B2F5768C600D31D28 /* VendorDashboardView.swift */,
-				806CA92C2F5768C600D31D28 /* VendorDirectHiringView.swift */,
-				806CA92D2F5768C600D31D28 /* VendorDocumentsView.swift */,
-				806CA92E2F5768C600D31D28 /* VendorEditProfileView.swift */,
 				806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */,
 				806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */,
 				806CA9322F5768C600D31D28 /* VendorFreelancersView.swift */,
-				806CA9332F5768C600D31D28 /* VendorGalleryView.swift */,
 				806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */,
 				806CA9352F5768C600D31D28 /* VendorJobDetailView.swift */,
 				806CA9362F5768C600D31D28 /* VendorJobsView.swift */,
-				806CA9372F5768C600D31D28 /* VendorMessagesView.swift */,
-				806CA9382F5768C600D31D28 /* VendorNotificationsView.swift */,
-				806CA9392F5768C600D31D28 /* VendorPaymentsView.swift */,
-				806CA93A2F5768C600D31D28 /* VendorPostJobView.swift */,
 				806CA93B2F5768C600D31D28 /* VendorProfileView.swift */,
-				806CA93C2F5768C600D31D28 /* VendorPromotionsView.swift */,
 				806CA93D2F5768C600D31D28 /* VendorQuotationDetailView.swift */,
 				806CA93E2F5768C600D31D28 /* VendorQuotationsView.swift */,
 				806CA93F2F5768C600D31D28 /* VendorReportsView.swift */,
 				806CA9402F5768C600D31D28 /* VendorReviewsView.swift */,
-				806CA9412F5768C600D31D28 /* VendorServicesView.swift */,
 				806CA9422F5768C600D31D28 /* VendorSettingsView.swift */,
-				806CA9432F5768C600D31D28 /* VendorStatisticsView.swift */,
 				806CA9442F5768C600D31D28 /* VendorSubscriptionView.swift */,
 				806CA9452F5768C600D31D28 /* VendorWorkshopView.swift */,
 			);
@@ -1769,7 +1670,6 @@
 				806CA9802F5768C600D31D28 /* VendorEnquiryDetailView.swift in Sources */,
 				806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */,
 				806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */,
-				806CA9842F5768C600D31D28 /* VendorDashboardView.swift in Sources */,
 				806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */,
 				806CA9862F5768C600D31D28 /* LoginView.swift in Sources */,
 				806CA9872F5768C600D31D28 /* VendorJobApplicantsView.swift in Sources */,
@@ -1779,12 +1679,9 @@
 				806CA98B2F5768C600D31D28 /* HiredFreelancerListView.swift in Sources */,
 				806CA98C2F5768C600D31D28 /* VendorForgotPasswordPinView.swift in Sources */,
 				806CA98D2F5768C600D31D28 /* HiredFreelancerSummaryView.swift in Sources */,
-				806CA98E2F5768C600D31D28 /* VendorGalleryView.swift in Sources */,
 				806CA98F2F5768C600D31D28 /* VerifyNumberView.swift in Sources */,
 				806CA9902F5768C600D31D28 /* VendorReviewsView.swift in Sources */,
-				806CA9912F5768C600D31D28 /* VendorPromotionsView.swift in Sources */,
 				806CA9922F5768C600D31D28 /* SubCategoriesView.swift in Sources */,
-				806CA9932F5768C600D31D28 /* VendorStatisticsView.swift in Sources */,
 				806CA9942F5768C600D31D28 /* ChatListView.swift in Sources */,
 				806CA9952F5768C600D31D28 /* SearchCompaniesView.swift in Sources */,
 				806CA9962F5768C600D31D28 /* CheckoutView.swift in Sources */,
@@ -1797,32 +1694,24 @@
 				806CA99D2F5768C600D31D28 /* VendorJobsView.swift in Sources */,
 				806CA99E2F5768C600D31D28 /* CartView.swift in Sources */,
 				806CA99F2F5768C600D31D28 /* SearchJobsView.swift in Sources */,
-				806CA9A02F5768C600D31D28 /* VendorServicesView.swift in Sources */,
-				806CA9A12F5768C600D31D28 /* VendorPostJobView.swift in Sources */,
 				806CA9A22F5768C600D31D28 /* ContactUsView.swift in Sources */,
 				806CA9A32F5768C600D31D28 /* ComplaintsListView.swift in Sources */,
 				806CA9A42F5768C600D31D28 /* AdvertiseCompanyView.swift in Sources */,
 				806CA9A62F5768C600D31D28 /* TwentyFourSevenCompaniesView.swift in Sources */,
-				806CA9A72F5768C600D31D28 /* VendorCategoriesView.swift in Sources */,
 				806CA9A82F5768C600D31D28 /* LanguageSelectionView.swift in Sources */,
 				806CA9A92F5768C600D31D28 /* VendorAddWorkshopItemView.swift in Sources */,
 				806CA9AA2F5768C600D31D28 /* HomeView.swift in Sources */,
 				806CA9AB2F5768C600D31D28 /* UpdateFreelancerView.swift in Sources */,
 				806CA9AC2F5768C600D31D28 /* FreelancingOrdersView.swift in Sources */,
-				806CA9AD2F5768C600D31D28 /* VendorNotificationsView.swift in Sources */,
 				806CA9AE2F5768C600D31D28 /* CompanyRegistrationView.swift in Sources */,
 				806CA9AF2F5768C600D31D28 /* DirectHiringView.swift in Sources */,
 				806CA9B02F5768C600D31D28 /* CompanyFreelancersListView.swift in Sources */,
 				806CA9B12F5768C600D31D28 /* AboutUsView.swift in Sources */,
 				806CA9B22F5768C600D31D28 /* JobDetailView.swift in Sources */,
-				806CA9B32F5768C600D31D28 /* VendorMessagesView.swift in Sources */,
-				806CA9B42F5768C600D31D28 /* VendorComplaintsView.swift in Sources */,
 				806CA9B52F5768C600D31D28 /* CompaniesByCategoryView.swift in Sources */,
 				806CA9B62F5768C600D31D28 /* ComplaintDetailView.swift in Sources */,
-				806CA9B72F5768C600D31D28 /* VendorEditProfileView.swift in Sources */,
 				806CA9B82F5768C600D31D28 /* VendorQuotationDetailView.swift in Sources */,
 				806CA9B92F5768C600D31D28 /* ForgotPasswordView.swift in Sources */,
-				806CA9BA2F5768C600D31D28 /* VendorDocumentsView.swift in Sources */,
 				806CA9BB2F5768C600D31D28 /* AddReviewView.swift in Sources */,
 				806CA9BC2F5768C600D31D28 /* EnquiryDetailView.swift in Sources */,
 				806CA9BD2F5768C600D31D28 /* VendorNewPasswordView.swift in Sources */,
@@ -1836,21 +1725,16 @@
 				806CA9C52F5768C600D31D28 /* ReviewsListView.swift in Sources */,
 				806CA9C72F5768C600D31D28 /* VendorQuotationsView.swift in Sources */,
 				806CA9C82F5768C600D31D28 /* VendorEnquiriesView.swift in Sources */,
-				806CA9C92F5768C600D31D28 /* VendorDirectHiringView.swift in Sources */,
 				806CA9CA2F5768C600D31D28 /* EditProfileView.swift in Sources */,
 				806CA9CB2F5768C600D31D28 /* VendorApplicantDetailView.swift in Sources */,
 				806CA9CC2F5768C600D31D28 /* MyJobApplicationsView.swift in Sources */,
 				806CA9CD2F5768C600D31D28 /* VendorFreelancersView.swift in Sources */,
-				806CA9CE2F5768C600D31D28 /* VendorAddFreelancerView.swift in Sources */,
-				806CA9CF2F5768C600D31D28 /* VendorAnalyticsView.swift in Sources */,
 				806CA9D02F5768C600D31D28 /* WebContentView.swift in Sources */,
 				806CA9D12F5768C600D31D28 /* AvailableJobsView.swift in Sources */,
 				806CA9D22F5768C600D31D28 /* UserProfileView.swift in Sources */,
 				806CA9D32F5768C600D31D28 /* SubmitEnquiryView.swift in Sources */,
 				806CA9D42F5768C600D31D28 /* EnquiriesListView.swift in Sources */,
-				806CA9D52F5768C600D31D28 /* VendorPaymentsView.swift in Sources */,
 				806CA9D62F5768C600D31D28 /* SubmitQuotationView.swift in Sources */,
-				806CA9D72F5768C600D31D28 /* VendorCustomersView.swift in Sources */,
 				806CA9D82F5768C600D31D28 /* VendorForgotPasswordView.swift in Sources */,
 				90C6FE832F20E00000BDA19A /* CompanyCard.swift in Sources */,
 				90C6FE852F20E00100BDA19A /* CategoryCard.swift in Sources */,
@@ -2010,7 +1894,6 @@
 				90C6FF0B2F20EB0100BDA19A /* VendorEnquiriesView.swift in Sources */,
 				90C6FF0D2F20EB0200BDA19A /* VendorQuotationsView.swift in Sources */,
 				90C6FF0F2F20EB0300BDA19A /* VendorJobsView.swift in Sources */,
-				90C6FF112F20EB0400BDA19A /* VendorPostJobView.swift in Sources */,
 				90C6FF132F20EB0500BDA19A /* VendorFreelancersView.swift in Sources */,
 				800504DB2F54CD3800D106BC /* SubmitQuotationHostingController.swift in Sources */,
 				800504DC2F54CD3800D106BC /* HomeHostingController.swift in Sources */,
@@ -2065,17 +1948,11 @@
 				90C6FF1B2F20EC0200BDA19A /* VendorJobDetailView.swift in Sources */,
 				90C6FF1D2F20EC0300BDA19A /* VendorJobApplicantsView.swift in Sources */,
 				90C6FF1F2F20EC0400BDA19A /* VendorApplicantDetailView.swift in Sources */,
-				90C6FF212F20EC0500BDA19A /* VendorDirectHiringView.swift in Sources */,
 				90C6FF232F20EC0600BDA19A /* VendorWorkshopView.swift in Sources */,
 				90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */,
 				90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */,
-				90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */,
 				90C6FF2B2F20ED0000BDA19A /* VendorWorkshopAdsView.swift in Sources */,
-				90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */,
-				90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */,
 				90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */,
-				90C6FF332F20ED0400BDA19A /* VendorStatisticsView.swift in Sources */,
-				90C6FF352F20ED0500BDA19A /* VendorMessagesView.swift in Sources */,
 				90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */,
 				90C6FF392F20EE0000BDA19A /* AboutUsView.swift in Sources */,
 				90C6FF3B2F20EE0100BDA19A /* ContactUsView.swift in Sources */,
@@ -2083,16 +1960,7 @@
 				90C6FF3F2F20EE0300BDA19A /* MapView.swift in Sources */,
 				90C6FF412F20EE0400BDA19A /* CompaniesByCategoryView.swift in Sources */,
 				90C6FF432F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift in Sources */,
-				90C6FF452F20EE0600BDA19A /* VendorComplaintsView.swift in Sources */,
-				90C6FF472F20EE0700BDA19A /* VendorAnalyticsView.swift in Sources */,
 				90C6FF492F20EE0800BDA19A /* VendorReportsView.swift in Sources */,
-				90C6FF4B2F20EE0900BDA19A /* VendorPaymentsView.swift in Sources */,
-				90C6FF4D2F20EF0000BDA19A /* VendorCategoriesView.swift in Sources */,
-				90C6FF4F2F20EF0100BDA19A /* VendorServicesView.swift in Sources */,
-				90C6FF512F20EF0200BDA19A /* VendorPromotionsView.swift in Sources */,
-				90C6FF532F20EF0300BDA19A /* VendorGalleryView.swift in Sources */,
-				90C6FF552F20EF0400BDA19A /* VendorDocumentsView.swift in Sources */,
-				90C6FF572F20EF0500BDA19A /* VendorCustomersView.swift in Sources */,
 				18C1BCB626F9DB4E0001EB73 /* CityViewModel.swift in Sources */,
 				18EA188626D28820003DF2FC /* TPKeyboardAvoidingTableView.m in Sources */,
 				18EA187226D28820003DF2FC /* Utilities.swift in Sources */,
