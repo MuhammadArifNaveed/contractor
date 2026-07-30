@@ -24,6 +24,10 @@ enum VendorTheme {
     /// Brand accent. The one value carried over unchanged from Android (`@color/appColor`).
     static let accent = Color(red: 242 / 255, green: 190 / 255, blue: 54 / 255)
 
+    /// Foreground for anything drawn on `accent`. The accent is a light yellow, so white text on it
+    /// fails contrast — Android uses white throughout and it is genuinely hard to read.
+    static let onAccent = Color(red: 26 / 255, green: 20 / 255, blue: 0)
+
     // MARK: Colours
     //
     // Resolved through UIColor so every surface has a real dark-mode value. Android is light-only;

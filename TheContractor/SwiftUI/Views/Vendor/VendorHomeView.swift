@@ -30,7 +30,7 @@ struct VendorHomeView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                VendorTopBar(title: companyName.isEmpty ? "Dashboard" : companyName, showsLogo: true)
+                VendorTopBar(title: companyName.isEmpty ? "Dashboard" : companyName)
 
                 ZStack {
                     VendorTheme.canvas.ignoresSafeArea(edges: .bottom)
@@ -292,35 +292,34 @@ struct VendorPressStyle: ButtonStyle {
 struct VendorTopBar: View {
     private let title: String
     private let onBack: (() -> Void)?
-    private let showsLogo: Bool
     private let trailingIcon: String?
     private let trailingAction: (() -> Void)?
 
     init(title: String,
          onBack: (() -> Void)? = nil,
-         showsLogo: Bool = false,
          trailingIcon: String? = nil,
          trailingAction: (() -> Void)? = nil) {
         self.title = title
         self.onBack = onBack
-        self.showsLogo = showsLogo
         self.trailingIcon = trailingIcon
         self.trailingAction = trailingAction
     }
 
     var body: some View {
-        HStack(spacing: VendorTheme.Space.m) {
+        HStack(spacing: 2) {
             Button(action: tapLeading) {
                 Image(systemName: onBack == nil ? "line.3.horizontal" : "chevron.left")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.black.opacity(0.85))
+                    .foregroundColor(VendorTheme.onAccent)
                     .frame(width: VendorTheme.minTapTarget, height: VendorTheme.minTapTarget)
             }
 
             Text(title)
                 .font(VendorTheme.Text.screenTitle)
-                .foregroundColor(.black.opacity(0.9))
+                .foregroundColor(VendorTheme.onAccent)
                 .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .padding(.leading, VendorTheme.Space.xs)
 
             Spacer(minLength: VendorTheme.Space.s)
 
@@ -328,21 +327,22 @@ struct VendorTopBar: View {
                 Button(action: trailingAction) {
                     Image(systemName: trailingIcon)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black.opacity(0.85))
+                        .foregroundColor(VendorTheme.onAccent)
                         .frame(width: VendorTheme.minTapTarget, height: VendorTheme.minTapTarget)
                 }
             }
-
-            if showsLogo {
-                Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 26)
-                    .padding(.trailing, VendorTheme.Space.m)
-            }
         }
-        .frame(height: 52)
-        .background(VendorTheme.accent)
+        .padding(.horizontal, VendorTheme.Space.s)
+        .frame(height: 56)
+        // The bar has to own the status bar area too, otherwise the yellow behind the clock and the
+        // yellow of the bar render as two disconnected bands with a white seam between them.
+        .background(VendorTheme.accent.ignoresSafeArea(edges: .top))
+        .overlay(
+            Rectangle()
+                .fill(Color.black.opacity(0.06))
+                .frame(height: 0.5),
+            alignment: .bottom
+        )
     }
 
     private func tapLeading() {

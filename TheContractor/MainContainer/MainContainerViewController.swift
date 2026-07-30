@@ -56,8 +56,15 @@ class MainContainerViewController: BaseViewController{
         if Global.shared.isVendor {
             topBarView?.isHidden = true
             bottomBarView?.isHidden = true
+            if let containerView = containerView {
+                containerView.backgroundColor = UIColor(hexFromString: "F4F4F6")
+                installStatusBarUnderlay(below: containerView)
+            }
             self.showVendorHome()
         } else {
+            if let topBarView = topBarView {
+                installStatusBarUnderlay(below: topBarView)
+            }
             self.lblHome?.setTitleColor(UIColor.init(hexFromString: "F2BE36"), for: .normal)
             self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
             self.showHomeController()
@@ -108,85 +115,109 @@ class MainContainerViewController: BaseViewController{
         btnBack?.tintColor = .white
         btnBack?.setImage(UIImage(named: "menu"), for: .normal)
         
-        // Create horizontal stack view for all elements
+        // The two actions used to be saturated green and red rectangles carrying 9pt text that
+        // shrank further to fit — three competing colours in one bar, below any legible size, and
+        // under the 44pt tap minimum. They are now consistent white pills: same shape, same type,
+        // the colour kept only on the icon so the actions stay recognisable.
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .fill
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 1. App Logo (after hamburger menu which is already in storyboard)
-        let logoImageView = UIImageView()
-        if let logoImage = UIImage(named: "topicon") {
-            logoImageView.image = logoImage
-            logoImageView.contentMode = .scaleAspectFit
-            logoImageView.translatesAutoresizingMaskIntoConstraints = false
-            logoImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-            logoImageView.heightAnchor.constraint(equalToConstant: 35).isActive = true
-            self.imgAppLogo = logoImageView
-            stackView.addArrangedSubview(logoImageView)
-        }
-        
-        // Spacer to push buttons to the right
+
+        // The storyboard ships its own logo image view in this bar. Leaving it visible put two copies
+        // of the mark on top of each other.
+        imgLogo?.isHidden = true
+
+        // Logo. The asset is letterboxed on an opaque white background, which reads as a sticker
+        // pasted onto the yellow, so it is clipped to a rounded rect to look deliberate.
+        let logoImageView = UIImageView(image: UIImage(named: "logo"))
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.clipsToBounds = true
+        logoImageView.layer.cornerRadius = 5
+        logoImageView.layer.cornerCurve = .continuous
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        logoImageView.widthAnchor.constraint(equalToConstant: 92).isActive = true
+        logoImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        self.imgAppLogo = logoImageView
+        stackView.addArrangedSubview(logoImageView)
+
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         stackView.addArrangedSubview(spacer)
-        
-        // 2. "Quotation By Photo" Button (Green)
-        let quotationButton = UIButton(type: .system)
-        quotationButton.setTitle("Quotation By Photo", for: .normal)
-        quotationButton.backgroundColor = UIColor(hexFromString: "#019C53")
-        quotationButton.setTitleColor(.white, for: .normal)
-        quotationButton.titleLabel?.font = .systemFont(ofSize: 9, weight: .medium)
-        quotationButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        quotationButton.titleLabel?.minimumScaleFactor = 0.7
-        quotationButton.layer.cornerRadius = 4
-        quotationButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 6, bottom: 5, right: 6)
-        quotationButton.translatesAutoresizingMaskIntoConstraints = false
-        quotationButton.addTarget(self, action: #selector(actionQuotationByPhoto), for: .touchUpInside)
+
+        let quotationButton = makeTopBarAction(
+            title: "Quote",
+            systemImage: "camera.fill",
+            tint: UIColor(hexFromString: "#019C53"),
+            action: #selector(actionQuotationByPhoto))
         self.btnQuotationByPhoto = quotationButton
         stackView.addArrangedSubview(quotationButton)
-        
-        // 3. "24/7 Maintenance" Button (Red)
-        let maintenanceButton = UIButton(type: .system)
-        maintenanceButton.setTitle("24/7 Maintenance", for: .normal)
-        maintenanceButton.backgroundColor = UIColor.init(hexFromString: "#D51F1F")
-        maintenanceButton.setTitleColor(.white, for: .normal)
-        maintenanceButton.titleLabel?.font = .systemFont(ofSize: 9, weight: .medium)
-        maintenanceButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        maintenanceButton.titleLabel?.minimumScaleFactor = 0.7
-        maintenanceButton.layer.cornerRadius = 4
-        maintenanceButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 6, bottom: 5, right: 6)
-        maintenanceButton.translatesAutoresizingMaskIntoConstraints = false
-        maintenanceButton.addTarget(self, action: #selector(action24x7Maintenance), for: .touchUpInside)
+
+        let maintenanceButton = makeTopBarAction(
+            title: "24/7",
+            systemImage: "wrench.and.screwdriver.fill",
+            tint: UIColor(hexFromString: "#D51F1F"),
+            action: #selector(action24x7Maintenance))
         self.btn24x7Maintenance = maintenanceButton
         stackView.addArrangedSubview(maintenanceButton)
-        
-        // 4. Cart Button (optional, can be added later if needed)
-        // Uncomment if cart functionality is required
-        /*
-        let cartButton = UIButton(type: .system)
-        cartButton.setImage(UIImage(systemName: "cart.fill"), for: .normal)
-        cartButton.tintColor = .white
-        cartButton.translatesAutoresizingMaskIntoConstraints = false
-        cartButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        cartButton.addTarget(self, action: #selector(actionCart), for: .touchUpInside)
-        self.btnCartTop = cartButton
-        stackView.addArrangedSubview(cartButton)
-        */
-        
-        // Add stack view to top bar
+
         topBar.addSubview(stackView)
-        
-        // Setup constraints
+
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: topBar.leadingAnchor, constant: 50), // Space for hamburger menu
+            // Clears the hamburger, which lives in the storyboard.
+            stackView.leadingAnchor.constraint(equalTo: topBar.leadingAnchor, constant: 52),
             stackView.trailingAnchor.constraint(equalTo: topBar.trailingAnchor, constant: -12),
             stackView.centerYAnchor.constraint(equalTo: topBar.centerYAnchor),
-            stackView.heightAnchor.constraint(equalTo: topBar.heightAnchor, multiplier: 0.8)
+            stackView.heightAnchor.constraint(equalToConstant: 38)
         ])
+    }
+
+    /// Fills the strip between the screen edge and the top bar with the accent, so the status bar and
+    /// the bar below it read as one surface.
+    ///
+    /// Neither bar reaches the screen edge on its own: the consumer `topBarView` starts at the safe
+    /// area, and for companies it is hidden entirely and the SwiftUI bar sits inside `containerView`,
+    /// which begins below the hidden slot. Either way the two yellows were separated by a white seam.
+    /// Tinting the whole view instead would bleed yellow into the hidden tab bar's slot at the bottom.
+    private func installStatusBarUnderlay(below anchorView: UIView) {
+        view.backgroundColor = UIColor(hexFromString: "F4F4F6")
+
+        let underlay = UIView()
+        underlay.backgroundColor = UIColor(hexFromString: "F2BE36")
+        underlay.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(underlay, at: 0)
+
+        NSLayoutConstraint.activate([
+            underlay.topAnchor.constraint(equalTo: view.topAnchor),
+            underlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            underlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            underlay.bottomAnchor.constraint(equalTo: anchorView.topAnchor)
+        ])
+    }
+
+    /// One shape for every top-bar action: white pill, tinted icon, 12pt semibold label, 38pt tall
+    /// with generous horizontal padding.
+    private func makeTopBarAction(title: String, systemImage: String, tint: UIColor, action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.setImage(UIImage(systemName: systemImage,
+                                withConfiguration: UIImage.SymbolConfiguration(pointSize: 12, weight: .semibold)),
+                        for: .normal)
+        button.tintColor = tint
+        button.setTitleColor(UIColor(hexFromString: "#1A1400"), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 19
+        button.layer.cornerCurve = .continuous
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 14)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 4)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        button.addTarget(self, action: action, for: .touchUpInside)
+        return button
     }
     
     // MARK: - Setup Workshop Tab
