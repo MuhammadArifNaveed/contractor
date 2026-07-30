@@ -27,7 +27,7 @@ authoritative for every endpoint path and part name, and the `VendorActivities/*
 | 5 | Quotations chain | ✅ built, endpoints verified live |
 | 6 | Replace the four "Coming Soon" drawer items | ✅ built, endpoints verified live |
 | 7 | Vendor jobs, workshops, freelancing | ✅ built, endpoints verified live |
-| 8 | Service-layer cleanup, remove fabricated views | ⬜ in progress |
+| 8 | Service-layer cleanup, remove fabricated views | ◐ service layer done and clean; 42 hardcoded URLs in views remain |
 | 9 | Simulator test pass | ✅ dashboard confirmed; see caveat below |
 
 ## Verification status
@@ -276,11 +276,66 @@ screens were silently rendering no logo at all. All six now use `logo`.
 
 ## Remaining work
 
-### Phase 8 — service-layer cleanup
+## Phase 8 — service-layer cleanup
 
-Delete the fabricated `LoginService` methods and the fabricated vendor views that call them, and
-drop `VendorDashboardView` once `StatCard` has a home. Roughly 150 methods hit URLs that do not
-exist.
+`LoginService.swift` went from **3887 lines / 353 endpoint methods to 1386 lines / 43**, and **every
+remaining endpoint is one Android declares**. 311 of the 353 called a path absent from
+`RetrofitApi.java` — fleet management, QR codes, tender bids, KPI targets, asset depreciation,
+procurement, subcontractor agreements, and so on. 310 were unreferenced dead code; the audit script
+that found them lives in the session scratchpad and can be re-run at any time to prove the file
+stays clean.
+
+Two lessons from doing this:
+
+- **Brace-match, don't line-split.** A naive "this func ends where the next begins" split would have
+  deleted ~680 extra lines, including the trailing `struct VendorSession` — the very type the whole
+  vendor session depends on. The script now brace-matches and asserts that `VendorSession`, the class
+  declaration, and `shared()` all survive.
+- **Match `LoginService.shared().name(` not just `name(`.** Six dead methods looked live because
+  view models define their own `submitComplaint`, `applyForJob`, `updateProfile`, `submitReview`,
+  `uploadDocument`, and `createPromotion` that call URLs directly.
+
+One live method was pointing at a fabricated path and is now corrected: `requestQuotationByPhoto`
+posted to `Home/request_quotation` with invented part names (`firstName`, `detail`, `category_id`).
+Android's is `Home/request_a_quotation` with `user_name`, `surname`, `user_phone`, `user_email`,
+`message`, `category`, `sub_category` — so "Quotation By Photo" was failing for every user.
+
+### Still outstanding: 42 fabricated URLs hardcoded in views
+
+Views bypass `LoginService` and call `makePostAPICall` with a literal URL, so cleaning the service
+layer did not reach them. **42 distinct paths that Android does not declare** remain, across 42
+files. They split into two groups.
+
+**Dead vendor screens — 17 files, zero references, safe to delete.** Android has no counterpart for
+any of them:
+
+`VendorAnalyticsView`, `VendorCategoriesView`, `VendorComplaintsView`, `VendorCustomersView`,
+`VendorDashboardView`, `VendorDirectHiringView`, `VendorDocumentsView`, `VendorGalleryView`,
+`VendorMessagesView`, `VendorNotificationsView`, `VendorPaymentsView`, `VendorPromotionsView`,
+`VendorServicesView`, `VendorStatisticsView`, `VendorAddFreelancerView`, `VendorPostJobView`,
+`VendorEditProfileView`.
+
+They are unreachable — nothing in the drawer or any other screen instantiates them — so they cause
+no user-visible harm, which is why they were left rather than removed in a hurry. Removing them
+means deleting each file plus its **two** duplicated `project.pbxproj` reference pairs (~130 hand
+edits), so it wants doing carefully in its own pass. `VendorDashboardView` must go last or together
+with `VendorStatisticsView`, because it is where `StatCard` is defined.
+
+**Live consumer screens on fabricated endpoints — needs a separate pass.** These are reachable and
+currently broken against the real backend:
+
+| View / view model | Fabricated path | Android's actual endpoint |
+|---|---|---|
+| `LoginViewModel` | `Home/login` | `Account/user_login` |
+| `RegistrationViewModel` | `Home/register` | `Account/user_register` |
+| `ForgotPasswordViewModel`, `ForgetPasswordViewController` | `Home/forgot_password`, `Account/forgot_password` | `Account/update_password` flow |
+| `EditProfileViewModel` | `Home/update_user_profile` | `Account/update_user_profile` |
+| `ChangePasswordView` | `Home/change_password` | `Account/change_password` |
+| `AddReviewViewModel` | `Home/submit_review` | **no endpoint exists** — needs a product decision |
+| `CartViewModel`, `CheckoutViewModel`, `ChatListViewModel`, `EnquiriesListViewModel`, `QuotationsListViewModel`, `ComplaintsListViewModel`, `ReviewsListViewModel`, `CompaniesListViewModel`, `CompaniesByCategoryView`, `TwentyFourSevenCompaniesView`, `WorkshopViewModel`, `SearchJobsViewModel`, `MyJobApplicationsViewModel`, `DirectHiringView`, `ContactUsView`, `VerifyNumberView` | assorted `Home/*` | each needs its path, parts, and response keys checked against `RetrofitApi.java` |
+
+This is consumer-side rather than company-side, so it sits outside what was asked for here — but it
+is the same class of defect and worth its own phase.
 
 ### Phase 9 — remaining verification
 
