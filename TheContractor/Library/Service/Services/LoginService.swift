@@ -443,6 +443,62 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Freelancers (vendor mode)
+    /// Browse freelancers. Android: `RetrofitApi.freelancerApi()` →
+    /// `POST freelancing/freelancers_frontend`, response key `freelancers`. Every filter may be
+    /// empty; Android's vendor mode passes the company as both `vendor_id` and `user_id`.
+    func getFreelancers(page: String, skills: String, rate: String, category: String, city: String,
+                        userId: String, userType: String, vendorId: String,
+                        completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/freelancers_frontend"
+        let params: [String: String] = [
+            "page": page, "skills": skills, "rate": rate, "category": category, "city": city,
+            "user_id": userId, "user_type": userType, "vendor_id": vendorId
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The skill / rate / category / city lists behind the freelancer filter.
+    /// Android: `RetrofitApi.freelancerDataAPI()` → `POST freelancing/get_freelancing_search`.
+    func getFreelancerSearchFields(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/get_freelancing_search"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// What it costs to bring one freelancer out. Android: `RetrofitApi.transportationApi()`.
+    func getFreelancerTransportationCharges(freelancerId: String, userId: String, userType: String,
+                                            completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/transportation_charges"
+        let params: [String: String] = ["freelancer_id": freelancerId, "user_id": userId, "user_type": userType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Hire freelancers. Android: `RetrofitApi.hireFreelancerApi()` →
+    /// `POST freelancing/hire_freelancers`.
+    ///
+    /// `freelancer_data` is a JSON *string* — Android sends `new Gson().toJson(list)` of its selected
+    /// freelancers, each carrying a nested `detail` object with the booking. Pass the already-encoded
+    /// JSON so the caller owns that shape.
+    func hireFreelancers(freelancerDataJSON: String, userId: String, userType: String, vendorId: String,
+                         completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/hire_freelancers"
+        let params: [String: String] = [
+            "freelancer_data": freelancerDataJSON,
+            "user_id": userId,
+            "user_type": userType,
+            "vendor_id": vendorId
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
     // MARK: - Post Workshop
     /// The three picker lists behind Android's post-workshop form.
     /// Android: `RetrofitApi.workshopFilterAPI()` → `POST workshop/workshop_filter_data`, returning

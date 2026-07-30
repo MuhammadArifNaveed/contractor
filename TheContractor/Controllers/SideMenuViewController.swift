@@ -222,7 +222,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Profile":
             mainVC.showVendorScreen(VendorProfileView())
         case "Inbox":
-            mainVC.showChatListController()
+            mainVC.showVendorInboxComingSoon()
         case "Rating":
             mainVC.showVendorRatingController()
         case "Enquiries":
@@ -244,7 +244,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         // Android's "Freelancers" reuses the consumer freelancer list with from=vendor;
         // "Freelancer Dashboard" is the vendor-only counts grid.
         case "Freelancers":
-            mainVC.showFreelancersController()
+            mainVC.showVendorHireFreelancerController()
         case "Freelancer Dashboard":
             mainVC.showVendorFreelancerDashboardController()
         case "Memberships":

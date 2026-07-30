@@ -1034,6 +1034,21 @@ class MainContainerViewController: BaseViewController{
         showVendorScreen(VendorMyMembershipView())
     }
 
+    /// Android `Freelancers` with `from=vendor`, plus the hire path.
+    func showVendorHireFreelancerController() {
+        showVendorScreen(VendorHireFreelancerView())
+    }
+
+    /// The vendor inbox is Firebase Firestore on Android and iOS has no Firebase set up, so this is a
+    /// placeholder rather than a screen wired to the wrong endpoint. See COMPANY_SIDE_ROADMAP.md.
+    func showVendorInboxComingSoon() {
+        showVendorScreen(VendorComingSoonView(
+            title: "Inbox",
+            icon: "bubble.left.and.bubble.right",
+            headline: "Messaging is not available yet",
+            detail: "Chat needs Firebase to be set up for the iOS app before it can be switched on."))
+    }
+
     /// Android `VendorPostWorkshop`.
     func showVendorPostWorkshopController() {
         showVendorScreen(VendorPostWorkshopView())

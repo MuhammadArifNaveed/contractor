@@ -75,7 +75,11 @@ not the `vendor_profile` Android's Gson field name implies.
 
 ### 2. Profile ✅ — same screen as the header, above
 
-### 3. Inbox ⬜ — blocked on a dependency, not on porting
+### 3. Inbox ⬜ — shows "not available yet"; blocked on a dependency, not on porting
+
+The drawer row now opens `VendorComingSoonView` saying messaging needs Firebase set up for iOS,
+rather than the consumer `ChatListView` it used to open — that screen calls `Home/get_chats`, which
+does not exist, so it could only ever show an error.
 
 **Correction to an earlier assumption in this document: the vendor inbox is not REST at all.**
 `VendorChatConnection` and `VendorChat` both use **Firebase Firestore** directly
@@ -218,14 +222,30 @@ Filter done. `jobs/get_job_search_fields` feeds category and city pickers; the t
 when a filter is active, and applying resets to page 1. Android uses two toolbar spinners; a single
 sheet of selectable chips shows both current selections at once and takes fewer taps.
 
-### 13. Freelancers ◐
+### 13. Freelancers ◐ — browse and hire done, multi-select and addresses not
 
-Routes to the consumer `FreelancersView`, which uses `freelancing/freelancers_frontend` — **a real
-endpoint**, so this one is closer than it looks. Android passes `from=vendor`, which changes what the
-screen offers (hire flow rather than browse).
+`VendorHireFreelancerView` replaces the consumer screen for companies: browse on
+`freelancing/freelancers_frontend` with a category/city filter from
+`freelancing/get_freelancing_search`, then a detail screen showing rates, skills and availability
+with transport cost from `freelancing/transportation_charges`, then a booking sheet (hourly or daily,
+a time window, one or more dates) that hires via `freelancing/hire_freelancers`.
 
-**Work:** audit against Android's `Freelancers` in vendor mode; add the vendor-mode hire path
-(`freelancing/hire_freelancers`, `freelancing/transportation_charges`, address selection).
+Android's vendor mode passes the company id as both `vendor_id` and `user_id`; that is reproduced.
+
+**The payload is the part to be careful with.** `freelancer_data` is not an object — it is a JSON
+**string** containing an *array*, because Android sends `new Gson().toJson(list)` of its selected
+freelancers. Each entry mirrors `SelectedFreelancersDatabaseModel`, including a nested `detail` with
+`isHourly`, `fromTime`, `toTime`, `isPicked` and a `dates` array. Every value is a string, so
+`isHourly` goes as `"1"`/`"0"` rather than a JSON boolean.
+
+**Not included:** Android's multi-freelancer selection (a local database acting as a cart) and the
+checkout's pick-up address management (`freelancing/get_freelancer_addresses`,
+`freelancing/add_freelancer_address`). This hires one freelancer at a time, which is a valid booking
+as far as `hire_freelancers` is concerned since it takes an array and a single entry is well-formed.
+Adding the cart is a UX change on top of a working call, not a correctness fix.
+
+**Untested against data:** `freelancers_frontend` returned zero rows for the test company, so only
+the empty state has actually rendered. The row fields come from Android's `FreelancerListModel`.
 
 ### 14. Freelancer Dashboard ✅
 
@@ -269,8 +289,8 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | ~~6~~ | ~~Applicant filter sheet~~ | done |
 | ~~7~~ | ~~Job create / edit~~ | done |
 | ~~8~~ | ~~Post Workshop form~~ | done |
-| 9 | Freelancers vendor mode | Multi-screen hire flow |
-| 10 | Inbox (+ workshop quotation chat) | Largest; wants its own plan |
+| ~~9~~ | ~~Freelancers vendor mode~~ | browse + single hire done; cart and addresses outstanding |
+| 10 | Inbox (+ workshop quotation chat) | blocked on Firebase iOS setup; placeholder in place |
 | — | Membership card payment | Blocked on a payment-gateway decision |
 
 ## Testing note that applies throughout

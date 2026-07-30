@@ -295,6 +295,27 @@ struct VendorSkeletonList: View {
     }
 }
 
+/// A screen for a feature that is genuinely not built yet, so the drawer says so plainly rather than
+/// opening something wired to the wrong endpoint.
+struct VendorComingSoonView: View {
+    let title: String
+    let icon: String
+    let headline: String
+    let detail: String
+
+    var body: some View {
+        VStack(spacing: 0) {
+            VendorTopBar(title: title)
+
+            ZStack {
+                VendorTheme.canvas.ignoresSafeArea(edges: .bottom)
+                VendorEmptyState(icon: icon, title: headline, message: detail)
+            }
+        }
+        .navigationBarHidden(true)
+    }
+}
+
 /// Compact spinner for work in flight over content that is already on screen — a mutation behind a
 /// dimmed overlay, or an infinite-scroll footer. A page skeleton would be wrong in both places,
 /// because the content it would stand in for is already visible.
