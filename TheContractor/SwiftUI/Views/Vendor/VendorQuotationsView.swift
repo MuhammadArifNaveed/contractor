@@ -24,17 +24,16 @@ struct VendorQuotationsView: View {
                 VendorTopBar(title: "Quotations")
 
                 ZStack {
-                    VendorHomeStyle.background
+                    VendorTheme.canvas
                         .ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        VendorSkeletonList()
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "doc.plaintext",
+                                     title: "No quotations yet",
+                                     message: "Quotation requests will appear here.")
                     case .loaded:
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
@@ -101,17 +100,16 @@ struct VendorParticularQuotationsView: View {
             VendorTopBar(title: status.name, onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "doc.plaintext",
+                                     title: "Nothing in this status",
+                                     message: "Quotations move here as their status changes.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -189,11 +187,11 @@ struct VendorQuotationRowCard: View {
                 .font(.system(size: 14))
                 .foregroundColor(.black)
 
-            Text(VendorHomeStyle.formatDate(quotation.createdAt))
+            Text(VendorTheme.date(quotation.createdAt))
                 .font(.system(size: 14))
-                .foregroundColor(Color(white: 0.4))
+                .foregroundColor(VendorTheme.textSecondary)
 
-            VendorStatusBadge(name: quotation.statusName, color: quotation.color)
+            VendorBadge(name: quotation.statusName, colorHex: quotation.color)
                 .padding(.top, 5)
         }
         .padding(10)

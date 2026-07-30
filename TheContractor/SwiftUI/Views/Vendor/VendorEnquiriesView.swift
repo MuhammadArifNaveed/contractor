@@ -23,17 +23,16 @@ struct VendorEnquiriesView: View {
                 VendorTopBar(title: "Enquiries")
 
                 ZStack {
-                    VendorHomeStyle.background
+                    VendorTheme.canvas
                         .ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        VendorSkeletonList()
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "tray",
+                                     title: "No enquiries yet",
+                                     message: "Enquiries from customers will appear here.")
                     case .loaded:
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
@@ -101,17 +100,16 @@ struct VendorParticularEnquiriesView: View {
             VendorTopBar(title: status.name, onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "tray",
+                                     title: "Nothing in this status",
+                                     message: "Enquiries move here as their status changes.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -160,46 +158,3 @@ struct VendorParticularEnquiriesView: View {
     }
 }
 
-// MARK: - Shared top bar
-
-/// The yellow action bar every vendor screen carries. A drawer-rooted screen leaves `onBack` nil
-/// and gets the hamburger, matching Android's `ActionBarDrawerToggle`; a pushed screen passes a
-/// dismiss closure and gets the up arrow Android's `setDisplayHomeAsUpEnabled(true)` shows.
-struct VendorTopBar: View {
-    private let title: String
-    private let onBack: (() -> Void)?
-
-    init(title: String, onBack: (() -> Void)? = nil) {
-        self.title = title
-        self.onBack = onBack
-    }
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Button(action: tapLeading) {
-                Image(systemName: onBack == nil ? "line.3.horizontal" : "chevron.left")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.white)
-            }
-            .frame(width: 32, height: 32)
-
-            Text(title)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
-                .lineLimit(1)
-
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 56)
-        .background(VendorHomeStyle.appColor)
-    }
-
-    private func tapLeading() {
-        if let onBack = onBack {
-            onBack()
-        } else {
-            VendorNavigation.openDrawer()
-        }
-    }
-}

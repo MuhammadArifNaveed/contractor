@@ -31,17 +31,16 @@ struct VendorQuotationDetailView: View {
             VendorTopBar(title: "Quotation Details", onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "doc.text.magnifyingglass",
+                                     title: "Quotation unavailable",
+                                     message: "This quotation could not be loaded.")
                 case .loaded:
                     if let quotation = quotation {
                         detail(quotation)
@@ -50,8 +49,7 @@ struct VendorQuotationDetailView: View {
 
                 if isUpdating {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -96,15 +94,15 @@ struct VendorQuotationDetailView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Quotation Status")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(Color(white: 0.35))
-                        VendorStatusBadge(name: quotation.statusName, color: quotation.color)
+                            .foregroundColor(VendorTheme.textSecondary)
+                        VendorBadge(name: quotation.statusName, colorHex: quotation.color)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 divider
 
-                field(label: "Date & Time", value: VendorHomeStyle.formatDate(quotation.createdAt))
+                field(label: "Date & Time", value: VendorTheme.date(quotation.createdAt))
 
                 // Android only shows the note block when the user actually left a message.
                 if !quotation.message.isEmpty {
@@ -156,7 +154,7 @@ struct VendorQuotationDetailView: View {
                         HStack(spacing: 8) {
                             ForEach(quotation.statusOptions) { option in
                                 Button(action: { updateStatus(to: option) }) {
-                                    VendorStatusBadge(name: option.name, color: option.color)
+                                    VendorBadge(name: option.name, colorHex: option.color)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -172,7 +170,7 @@ struct VendorQuotationDetailView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(Color(white: 0.35))
+                .foregroundColor(VendorTheme.textSecondary)
             Text(value)
                 .font(.system(size: 12))
                 .foregroundColor(.black)
@@ -183,7 +181,7 @@ struct VendorQuotationDetailView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(white: 0.85))
+            .fill(VendorTheme.separator)
             .frame(height: 0.5)
             .padding(.vertical, 10)
     }
@@ -340,10 +338,10 @@ struct VendorQuotationImageCell: View {
 
     private var placeholder: some View {
         ZStack {
-            Color(white: 0.92)
+            VendorTheme.surfaceRaised
             Image(systemName: "photo")
                 .font(.system(size: 22))
-                .foregroundColor(Color(white: 0.6))
+                .foregroundColor(VendorTheme.textTertiary)
         }
     }
 }

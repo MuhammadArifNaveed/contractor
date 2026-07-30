@@ -31,17 +31,16 @@ struct VendorSubscriptionView: View {
             VendorTopBar(title: "Memberships")
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "crown",
+                                     title: "No plans available",
+                                     message: "Membership plans could not be loaded.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -58,8 +57,7 @@ struct VendorSubscriptionView: View {
 
                 if isBuying {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -149,17 +147,16 @@ struct VendorMyMembershipView: View {
             VendorTopBar(title: "My Membership")
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "crown",
+                                     title: "No memberships yet",
+                                     message: "Plans you buy will be listed here.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -293,7 +290,7 @@ struct VendorMembershipCard: View {
             }
 
             Rectangle()
-                .fill(Color(white: 0.9))
+                .fill(VendorTheme.surfaceRaised)
                 .frame(height: 0.5)
 
             perk("Top 10 (Listed in 1st Page)", days: membership.topTenDays)
@@ -308,13 +305,13 @@ struct VendorMembershipCard: View {
 
             if membership.isOwned {
                 HStack(spacing: 6) {
-                    VendorStatusBadge(name: membership.statusName, color: membership.color)
+                    VendorBadge(name: membership.statusName, colorHex: membership.color)
                     Text(membership.buyType)
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.black)
                     Text("(\(membership.buyValue))")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(white: 0.35))
+                        .foregroundColor(VendorTheme.textSecondary)
                 }
                 .padding(.top, 4)
             } else {
@@ -324,7 +321,7 @@ struct VendorMembershipCard: View {
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(VendorHomeStyle.appColor)
+                        .background(VendorTheme.accent)
                         .cornerRadius(5)
                 }
                 .padding(.top, 4)
@@ -358,7 +355,7 @@ struct VendorMembershipCard: View {
         HStack(spacing: 6) {
             Image(systemName: value == nil ? "xmark" : "checkmark")
                 .font(.system(size: 11, weight: .bold))
-                .foregroundColor(value == nil ? Color(red: 0.84, green: 0.12, blue: 0.12) : Color(red: 0.00, green: 0.61, blue: 0.33))
+                .foregroundColor(value == nil ? VendorTheme.negative : VendorTheme.positive)
                 .frame(width: 14)
 
             Text(label)
@@ -370,7 +367,7 @@ struct VendorMembershipCard: View {
             if let value = value, !value.isEmpty {
                 Text(value)
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Color(white: 0.3))
+                    .foregroundColor(VendorTheme.textSecondary)
             }
         }
     }
@@ -396,11 +393,11 @@ struct VendorMyMembershipCard: View {
                 .font(.system(size: 13))
                 .foregroundColor(.black)
 
-            Text(VendorHomeStyle.formatDate(membership.createdAt))
+            Text(VendorTheme.date(membership.createdAt))
                 .font(.system(size: 13))
-                .foregroundColor(Color(white: 0.4))
+                .foregroundColor(VendorTheme.textSecondary)
 
-            VendorStatusBadge(name: membership.statusName, color: membership.color)
+            VendorBadge(name: membership.statusName, colorHex: membership.color)
                 .padding(.top, 3)
         }
         .padding(12)
@@ -435,7 +432,7 @@ struct VendorCouponSheet: View {
                     .padding(12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color(white: 0.8), lineWidth: 1)
+                            .stroke(VendorTheme.separator, lineWidth: 1)
                     )
 
                 Button(action: onSubmit) {
@@ -444,7 +441,7 @@ struct VendorCouponSheet: View {
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(VendorHomeStyle.appColor)
+                        .background(VendorTheme.accent)
                         .cornerRadius(5)
                 }
 
@@ -452,7 +449,7 @@ struct VendorCouponSheet: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(VendorHomeStyle.background)
+            .background(VendorTheme.canvas)
         }
     }
 }

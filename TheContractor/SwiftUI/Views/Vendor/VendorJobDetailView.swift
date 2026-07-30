@@ -22,17 +22,16 @@ struct VendorJobDetailView: View {
             VendorTopBar(title: "Job Details", onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "doc.text.magnifyingglass",
+                                     title: "Job unavailable",
+                                     message: "This job could not be loaded.")
                 case .loaded:
                     if let job = job {
                         detail(job)
@@ -59,8 +58,8 @@ struct VendorJobDetailView: View {
                     Spacer()
                     Text(job.approvalLabel)
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(job.approved == "1" ? Color(red: 0.00, green: 0.61, blue: 0.33)
-                                                             : Color(red: 0.84, green: 0.12, blue: 0.12))
+                        .foregroundColor(job.approved == "1" ? VendorTheme.positive
+                                                             : VendorTheme.negative)
                 }
 
                 divider
@@ -81,13 +80,13 @@ struct VendorJobDetailView: View {
 
                 HStack(alignment: .top, spacing: 10) {
                     field(label: "Salary", value: [job.currency, job.salary].filter { !$0.isEmpty }.joined(separator: " "))
-                    field(label: "Deadline", value: VendorHomeStyle.formatWorkshopDate(job.deadline))
+                    field(label: "Deadline", value: VendorTheme.date(job.deadline))
                 }
 
                 divider
 
                 HStack(alignment: .top, spacing: 10) {
-                    field(label: "Posted", value: VendorHomeStyle.formatWorkshopDate(job.createdAt))
+                    field(label: "Posted", value: VendorTheme.date(job.createdAt))
                     field(label: "Applications", value: job.applicationCount)
                 }
 
@@ -106,7 +105,7 @@ struct VendorJobDetailView: View {
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color(white: 0.45))
+                            .foregroundColor(VendorTheme.textSecondary)
                     }
                     .padding(12)
                     .background(Color.white)
@@ -122,7 +121,7 @@ struct VendorJobDetailView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(Color(white: 0.35))
+                .foregroundColor(VendorTheme.textSecondary)
             Text(value.isEmpty ? "—" : value)
                 .font(.system(size: 12))
                 .foregroundColor(.black)
@@ -133,7 +132,7 @@ struct VendorJobDetailView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(white: 0.85))
+            .fill(VendorTheme.separator)
             .frame(height: 0.5)
             .padding(.vertical, 10)
     }

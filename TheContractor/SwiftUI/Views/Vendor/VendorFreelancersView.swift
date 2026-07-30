@@ -23,17 +23,16 @@ struct VendorFreelancersView: View {
                 VendorTopBar(title: "Freelancer Dashboard")
 
                 ZStack {
-                    VendorHomeStyle.background
+                    VendorTheme.canvas
                         .ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        VendorSkeletonList()
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "person.crop.rectangle.stack",
+                                     title: "No freelancing data",
+                                     message: "Freelancing figures will appear here.")
                     case .loaded:
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),

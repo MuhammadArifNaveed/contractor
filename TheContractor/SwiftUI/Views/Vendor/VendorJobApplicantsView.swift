@@ -29,17 +29,16 @@ struct VendorJobApplicantsView: View {
             VendorTopBar(title: "Applicants", onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "person.2",
+                                     title: "No applicants yet",
+                                     message: "People who apply to this job appear here.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -62,8 +61,7 @@ struct VendorJobApplicantsView: View {
 
                 if isMutating {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -137,17 +135,16 @@ struct VendorAvailableApplicantsView: View {
                 VendorTopBar(title: "Available Applicant")
 
                 ZStack {
-                    VendorHomeStyle.background
+                    VendorTheme.canvas
                         .ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        VendorSkeletonList()
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "person.2",
+                                     title: "No applicants found",
+                                     message: "Try widening the category or city filter.")
                     case .loaded:
                         ScrollView {
                             VStack(spacing: 10) {
@@ -162,9 +159,8 @@ struct VendorAvailableApplicantsView: View {
                                 }
 
                                 if isLoadingMore {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
-                                        .padding(.vertical, 8)
+                                    VendorBusyIndicator()
+                                        .padding(.vertical, VendorTheme.Space.m)
                                 }
                             }
                             .padding(10)
@@ -302,11 +298,11 @@ struct VendorJobApplicationCard: View {
                     if !application.phone.isEmpty {
                         Text(application.phone)
                             .font(.system(size: 12))
-                            .foregroundColor(Color(white: 0.35))
+                            .foregroundColor(VendorTheme.textSecondary)
                     }
-                    Text(VendorHomeStyle.formatWorkshopDate(application.appliedAt))
+                    Text(VendorTheme.date(application.appliedAt))
                         .font(.system(size: 12))
-                        .foregroundColor(Color(white: 0.45))
+                        .foregroundColor(VendorTheme.textSecondary)
                 }
 
                 Spacer()
@@ -324,14 +320,14 @@ struct VendorJobApplicationCard: View {
                 Button(action: { onStatus("1") }) {
                     Text("Accept")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(Color(red: 0.00, green: 0.61, blue: 0.33))
+                        .foregroundColor(VendorTheme.positive)
                 }
                 .buttonStyle(PlainButtonStyle())
 
                 Button(action: { onStatus("2") }) {
                     Text("Reject")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(Color(red: 0.84, green: 0.12, blue: 0.12))
+                        .foregroundColor(VendorTheme.negative)
                 }
                 .buttonStyle(PlainButtonStyle())
 
@@ -366,14 +362,14 @@ struct VendorApplicantCard: View {
 
                 Text([applicant.cityName, applicant.countryName].filter { !$0.isEmpty }.joined(separator: " · "))
                     .font(.system(size: 12))
-                    .foregroundColor(Color(white: 0.4))
+                    .foregroundColor(VendorTheme.textSecondary)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(white: 0.6))
+                .foregroundColor(VendorTheme.textTertiary)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -393,10 +389,10 @@ struct VendorPersonAvatar: View {
                 image.resizable().scaledToFill()
             } else {
                 ZStack {
-                    Color(white: 0.9)
+                    VendorTheme.surfaceRaised
                     Image(systemName: "person.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(Color(white: 0.6))
+                        .foregroundColor(VendorTheme.textTertiary)
                 }
             }
         }

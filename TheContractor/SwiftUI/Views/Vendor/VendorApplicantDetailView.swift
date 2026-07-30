@@ -22,7 +22,7 @@ struct VendorApplicantDetailView: View {
             VendorTopBar(title: "Applicant Details", onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 ScrollView {
@@ -38,7 +38,7 @@ struct VendorApplicantDetailView: View {
                                 if !applicant.categoryTitle.isEmpty {
                                     Text(applicant.categoryTitle)
                                         .font(.system(size: 13))
-                                        .foregroundColor(Color(white: 0.35))
+                                        .foregroundColor(VendorTheme.textSecondary)
                                 }
                             }
 
@@ -66,7 +66,7 @@ struct VendorApplicantDetailView: View {
 
                         divider
 
-                        field(label: "Registered", value: VendorHomeStyle.formatWorkshopDate(applicant.createdAt))
+                        field(label: "Registered", value: VendorTheme.date(applicant.createdAt))
 
                         divider
 
@@ -76,7 +76,7 @@ struct VendorApplicantDetailView: View {
                                 .foregroundColor(.black)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
-                                .background(VendorHomeStyle.appColor)
+                                .background(VendorTheme.accent)
                                 .cornerRadius(5)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -86,8 +86,7 @@ struct VendorApplicantDetailView: View {
 
                 if isHiring {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -112,7 +111,7 @@ struct VendorApplicantDetailView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(Color(white: 0.35))
+                .foregroundColor(VendorTheme.textSecondary)
             Text(value.isEmpty ? "—" : value)
                 .font(.system(size: 12))
                 .foregroundColor(.black)
@@ -123,7 +122,7 @@ struct VendorApplicantDetailView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(white: 0.85))
+            .fill(VendorTheme.separator)
             .frame(height: 0.5)
             .padding(.vertical, 10)
     }

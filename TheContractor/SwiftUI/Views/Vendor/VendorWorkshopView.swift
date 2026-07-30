@@ -86,17 +86,16 @@ struct VendorInterestedWorkshopsView: View {
             tabs
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "hammer",
+                                     title: "No interested workshops",
+                                     message: "Workshops you bid on will be listed here.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -108,9 +107,8 @@ struct VendorInterestedWorkshopsView: View {
                             }
 
                             if isLoadingMore {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
-                                    .padding(.vertical, 8)
+                                VendorBusyIndicator()
+                                    .padding(.vertical, VendorTheme.Space.m)
                             }
                         }
                         .padding(10)
@@ -140,7 +138,7 @@ struct VendorInterestedWorkshopsView: View {
                         .padding(.vertical, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 5)
-                                .fill(tab == candidate ? VendorHomeStyle.appColor : Color.clear)
+                                .fill(tab == candidate ? VendorTheme.accent : Color.clear)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
@@ -151,7 +149,7 @@ struct VendorInterestedWorkshopsView: View {
             }
         }
         .padding(10)
-        .background(VendorHomeStyle.background)
+        .background(VendorTheme.canvas)
     }
 
     private func select(_ candidate: BidTab) {
@@ -270,11 +268,11 @@ struct VendorWorkshopAdCard: View {
                 Spacer()
                 Text(workshop.adId)
                     .font(.system(size: 12))
-                    .foregroundColor(Color(white: 0.4))
+                    .foregroundColor(VendorTheme.textSecondary)
             }
 
             if !workshop.statusName.isEmpty {
-                VendorStatusBadge(name: workshop.statusName, color: workshop.statusColor)
+                VendorBadge(name: workshop.statusName, colorHex: workshop.statusColor)
             }
 
             Text(workshop.posterName)
@@ -283,7 +281,7 @@ struct VendorWorkshopAdCard: View {
 
             Text([workshop.workSector, workshop.cityName].filter { !$0.isEmpty }.joined(separator: " · "))
                 .font(.system(size: 12))
-                .foregroundColor(Color(white: 0.35))
+                .foregroundColor(VendorTheme.textSecondary)
 
             if !workshop.description.isEmpty {
                 Text(workshop.description)
@@ -292,23 +290,23 @@ struct VendorWorkshopAdCard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Text(VendorHomeStyle.formatWorkshopDate(workshop.createdAt))
+            Text(VendorTheme.date(workshop.createdAt))
                 .font(.system(size: 12))
-                .foregroundColor(Color(white: 0.45))
+                .foregroundColor(VendorTheme.textSecondary)
 
             if !workshop.imagePaths.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(workshop.imagePaths, id: \.self) { path in
-                            AsyncImage(url: VendorHomeStyle.workshopImageURL(path)) { phase in
+                            AsyncImage(url: VendorTheme.workshopImageURL(path)) { phase in
                                 if case .success(let image) = phase {
                                     image.resizable().scaledToFill()
                                 } else {
                                     ZStack {
-                                        Color(white: 0.92)
+                                        VendorTheme.surfaceRaised
                                         Image(systemName: "photo")
                                             .font(.system(size: 18))
-                                            .foregroundColor(Color(white: 0.6))
+                                            .foregroundColor(VendorTheme.textTertiary)
                                     }
                                 }
                             }

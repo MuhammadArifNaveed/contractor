@@ -81,17 +81,16 @@ struct VendorWorkshopAdsList: View {
             tabs
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "hammer",
+                                     title: "No workshops here",
+                                     message: "Try the other bid tab.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -106,7 +105,7 @@ struct VendorWorkshopAdsList: View {
                                                 .foregroundColor(.black)
                                                 .frame(maxWidth: .infinity)
                                                 .padding(.vertical, 10)
-                                                .background(VendorHomeStyle.appColor)
+                                                .background(VendorTheme.accent)
                                                 .cornerRadius(5)
                                         }
                                         .buttonStyle(PlainButtonStyle())
@@ -119,9 +118,8 @@ struct VendorWorkshopAdsList: View {
                             }
 
                             if isLoadingMore {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
-                                    .padding(.vertical, 8)
+                                VendorBusyIndicator()
+                                    .padding(.vertical, VendorTheme.Space.m)
                             }
                         }
                         .padding(10)
@@ -130,8 +128,7 @@ struct VendorWorkshopAdsList: View {
 
                 if isMarking {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -162,7 +159,7 @@ struct VendorWorkshopAdsList: View {
                         .padding(.vertical, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 5)
-                                .fill(tab == candidate ? VendorHomeStyle.appColor : Color.clear)
+                                .fill(tab == candidate ? VendorTheme.accent : Color.clear)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
@@ -173,7 +170,7 @@ struct VendorWorkshopAdsList: View {
             }
         }
         .padding(10)
-        .background(VendorHomeStyle.background)
+        .background(VendorTheme.canvas)
     }
 
     private func select(_ candidate: BidTab) {

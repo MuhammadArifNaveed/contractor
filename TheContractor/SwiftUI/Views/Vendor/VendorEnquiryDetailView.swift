@@ -29,17 +29,16 @@ struct VendorEnquiryDetailView: View {
             VendorTopBar(title: "Enquiry Details", onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "doc.text.magnifyingglass",
+                                     title: "Enquiry unavailable",
+                                     message: "This enquiry could not be loaded.")
                 case .loaded:
                     if let enquiry = enquiry {
                         detail(enquiry)
@@ -48,8 +47,7 @@ struct VendorEnquiryDetailView: View {
 
                 if isUpdating {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -84,13 +82,13 @@ struct VendorEnquiryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 10) {
-                    field(label: "Order At", value: VendorHomeStyle.formatDate(enquiry.createdAt))
+                    field(label: "Order At", value: VendorTheme.date(enquiry.createdAt))
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Enquiry Status")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(Color(white: 0.35))
-                        VendorStatusBadge(name: enquiry.statusName, color: enquiry.color)
+                            .foregroundColor(VendorTheme.textSecondary)
+                        VendorBadge(name: enquiry.statusName, colorHex: enquiry.color)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -98,7 +96,7 @@ struct VendorEnquiryDetailView: View {
                 divider
 
                 HStack(alignment: .top, spacing: 10) {
-                    field(label: "Date & Time", value: VendorHomeStyle.formatDate(enquiry.dateTime))
+                    field(label: "Date & Time", value: VendorTheme.date(enquiry.dateTime))
                     field(label: "Enquiry Number", value: enquiry.enquiryNumber)
                 }
 
@@ -139,7 +137,7 @@ struct VendorEnquiryDetailView: View {
                         HStack(spacing: 8) {
                             ForEach(enquiry.statusOptions) { option in
                                 Button(action: { updateStatus(to: option) }) {
-                                    VendorStatusBadge(name: option.name, color: option.color)
+                                    VendorBadge(name: option.name, colorHex: option.color)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -155,7 +153,7 @@ struct VendorEnquiryDetailView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(Color(white: 0.35))
+                .foregroundColor(VendorTheme.textSecondary)
             Text(value)
                 .font(.system(size: 12))
                 .foregroundColor(.black)
@@ -166,7 +164,7 @@ struct VendorEnquiryDetailView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(white: 0.85))
+            .fill(VendorTheme.separator)
             .frame(height: 0.5)
             .padding(.vertical, 10)
     }
@@ -323,7 +321,7 @@ struct VendorRejectionSheet: View {
                     .padding(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color(white: 0.8), lineWidth: 1)
+                            .stroke(VendorTheme.separator, lineWidth: 1)
                     )
 
                 Button(action: onSubmit) {
@@ -332,14 +330,14 @@ struct VendorRejectionSheet: View {
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(VendorHomeStyle.appColor)
+                        .background(VendorTheme.accent)
                         .cornerRadius(5)
                 }
 
                 Spacer()
             }
             .padding(16)
-            .background(VendorHomeStyle.background)
+            .background(VendorTheme.canvas)
         }
     }
 }

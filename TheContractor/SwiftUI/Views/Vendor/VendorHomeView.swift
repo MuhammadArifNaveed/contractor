@@ -2,12 +2,15 @@
 //  VendorHomeView.swift
 //  TheContractor
 //
-//  Company (vendor) landing screen. Direct port of Android's `VendorHome` activity —
-//  `content_vendor_home.xml` for the layout, `VendorHome.vendorDashBoardAPI()` for the data,
-//  `VendorEnquiriesDashboardAdapter` / `VendorEnquiriesAdapter` for the two card styles.
+//  Company (vendor) landing screen — Android's `VendorHome`. The data contract comes straight from
+//  `VendorHome.vendorDashBoardAPI()`: POST vendor/dashboard returning `vendor_dashboard_counts`,
+//  `pending_enquiries`, `accepted_enquiries` and `today_enquiries`, with each enquiry section hidden
+//  when its array is empty.
 //
-//  This file also holds the pieces the other vendor enquiry screens reuse: the status/enquiry
-//  models, the two card styles, the section heading, and the Android colour helpers.
+//  The presentation is not a copy of `content_vendor_home.xml` — see VendorTheme.swift for why.
+//
+//  This file also holds the pieces the other vendor screens reuse: the shared load state, the
+//  status/enquiry models, the two card styles, and the top bar.
 //
 
 import SwiftUI
@@ -15,8 +18,6 @@ import SwiftyJSON
 
 struct VendorHomeView: View {
 
-    // Android keeps `vendorHomeLayout` hidden until the API answers and only shows `noData`
-    // when the response comes back with error == true.
     @State private var state: VendorLoadState = .loading
     @State private var dashboardCounts: [VendorDashboardCount] = []
     @State private var pendingEnquiries: [VendorEnquiryRow] = []
@@ -24,23 +25,25 @@ struct VendorHomeView: View {
     @State private var todayEnquiries: [VendorEnquiryRow] = []
     @State private var errorMessage: String?
 
+    private var companyName: String { VendorSession.current?.company_name ?? "" }
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                toolbar
+                VendorTopBar(title: companyName.isEmpty ? "Dashboard" : companyName, showsLogo: true)
 
                 ZStack {
-                    VendorHomeStyle.background
-                        .ignoresSafeArea(edges: .bottom)
+                    VendorTheme.canvas.ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        ScrollView { VendorSkeletonGrid(tiles: 4) }
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "tray",
+                                         title: "Nothing to show yet",
+                                         message: "Your enquiry dashboard will fill in as customers get in touch.",
+                                         actionTitle: "Try again",
+                                         action: loadDashboard)
                     case .loaded:
                         content
                     }
@@ -57,85 +60,70 @@ struct VendorHomeView: View {
         .onAppear(perform: loadDashboard)
     }
 
-    // MARK: - Toolbar (app_bar_vendor.xml: yellow bar, drawer toggle, topicon logo)
-
-    private var toolbar: some View {
-        HStack(spacing: 12) {
-            Button(action: VendorNavigation.openDrawer) {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.white)
-            }
-            .frame(width: 32, height: 32)
-
-            // Android's toolbar uses @drawable/topicon; the iOS asset catalog ships this as "logo".
-            Image("logo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 34)
-
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 56)
-        .background(VendorHomeStyle.appColor)
-    }
-
     // MARK: - Content
 
     private var content: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                VendorSection(title: "Enquiries Dashboard") {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
-                              spacing: 4) {
+            LazyVStack(alignment: .leading, spacing: VendorTheme.Space.xl) {
+                VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+                    VendorSectionHeader(title: "Enquiries")
+
+                    // Two columns rather than Android's three: the status names ("Completed",
+                    // "Accepted") no longer truncate and the tiles clear the 44pt tap target.
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: VendorTheme.Space.m), count: 2),
+                              spacing: VendorTheme.Space.m) {
                         ForEach(dashboardCounts) { count in
                             NavigationLink(destination: VendorParticularEnquiriesView(status: count)) {
                                 VendorDashboardCountCard(count: count)
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(VendorPressStyle())
                         }
                     }
                 }
 
                 if !pendingEnquiries.isEmpty {
-                    VendorSection(title: "Pending Enquiries") {
-                        horizontalEnquiries(pendingEnquiries)
-                    }
+                    section("Pending", pendingEnquiries, horizontal: true)
                 }
 
                 if !acceptedEnquiries.isEmpty {
-                    VendorSection(title: "Accepted Enquiries") {
-                        horizontalEnquiries(acceptedEnquiries)
-                    }
+                    section("Accepted", acceptedEnquiries, horizontal: true)
                 }
 
                 if !todayEnquiries.isEmpty {
-                    VendorSection(title: "Today Enquiries") {
-                        VStack(spacing: 10) {
-                            ForEach(todayEnquiries) { enquiry in
-                                NavigationLink(destination: VendorEnquiryDetailView(enquiryId: enquiry.id)) {
-                                    VendorEnquiryRowCard(enquiry: enquiry)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                    }
+                    section("Today", todayEnquiries, horizontal: false)
                 }
             }
-            .padding(10)
+            .padding(VendorTheme.Space.l)
         }
+        .refreshable { await reload() }
     }
 
-    private func horizontalEnquiries(_ enquiries: [VendorEnquiryRow]) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top, spacing: 8) {
-                ForEach(enquiries) { enquiry in
-                    NavigationLink(destination: VendorEnquiryDetailView(enquiryId: enquiry.id)) {
-                        VendorEnquiryRowCard(enquiry: enquiry)
-                            .frame(width: 190)
+    private func section(_ title: String, _ rows: [VendorEnquiryRow], horizontal: Bool) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: title, count: rows.count)
+
+            if horizontal {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: VendorTheme.Space.m) {
+                        ForEach(rows) { enquiry in
+                            NavigationLink(destination: VendorEnquiryDetailView(enquiryId: enquiry.id)) {
+                                VendorEnquiryRowCard(enquiry: enquiry)
+                                    .frame(width: 210)
+                            }
+                            .buttonStyle(VendorPressStyle())
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    // Let cards clear the section's own padding when scrolled.
+                    .padding(.horizontal, 1)
+                }
+            } else {
+                VStack(spacing: VendorTheme.Space.m) {
+                    ForEach(rows) { enquiry in
+                        NavigationLink(destination: VendorEnquiryDetailView(enquiryId: enquiry.id)) {
+                            VendorEnquiryRowCard(enquiry: enquiry)
+                        }
+                        .buttonStyle(VendorPressStyle())
+                    }
                 }
             }
         }
@@ -144,16 +132,27 @@ struct VendorHomeView: View {
     // MARK: - Data (VendorHome.vendorDashBoardAPI)
 
     private func loadDashboard() {
-        let vendorId = VendorSession.currentVendorId
-        guard !vendorId.isEmpty else {
+        guard !VendorSession.currentVendorId.isEmpty else {
             state = .noData
             return
         }
+        if dashboardCounts.isEmpty { state = .loading }
+        fetch()
+    }
 
-        state = .loading
+    /// `.refreshable` needs an async boundary; the service layer is callback-based.
+    private func reload() async {
+        await withCheckedContinuation { continuation in
+            fetch { continuation.resume() }
+        }
+    }
+
+    private func fetch(then finished: (() -> Void)? = nil) {
+        let vendorId = VendorSession.currentVendorId
         GCD.async(.Background) {
             LoginService.shared().getVendorDashboard(vendorId: vendorId) { message, success, json in
                 GCD.async(.Main) {
+                    defer { finished?() }
                     guard success, let json = json else {
                         state = .noData
                         errorMessage = message.isEmpty ? "Please try again" : message
@@ -182,8 +181,8 @@ enum VendorLoadState {
 
 // MARK: - Models
 
-/// Android `VendorDashboardCountModel`. `count` arrives as a JSON number on some rows and a
-/// string on others, so read it through `stringValue`.
+/// Android `VendorDashboardCountModel`. `count` arrives as a JSON number on some rows and a string
+/// on others, and `id` is sometimes `"all"` — so both go through `stringValue`.
 struct VendorDashboardCount: Identifiable, Hashable {
     let id: String
     let name: String
@@ -196,7 +195,7 @@ struct VendorDashboardCount: Identifiable, Hashable {
     }
 }
 
-/// Android `VendorEnquiryModel` — the fields `VendorEnquiriesAdapter` actually binds.
+/// Android `VendorEnquiryModel` — the fields `VendorEnquiriesAdapter` binds.
 struct VendorEnquiryRow: Identifiable {
     let id: String
     let enquiryNumber: String
@@ -213,113 +212,128 @@ struct VendorEnquiryRow: Identifiable {
     }
 }
 
-// MARK: - Section heading
-
-/// Android's repeated `heading + heading_line_bacground + RecyclerView` block.
-struct VendorSection<Content: View>: View {
-    private let title: String
-    private let content: Content
-
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
-
-            RoundedRectangle(cornerRadius: 2.5)
-                .fill(VendorHomeStyle.appColor)
-                .frame(width: 20, height: 2)
-                .padding(.top, 2)
-
-            content
-                .padding(.top, 10)
-        }
-    }
-}
-
 // MARK: - Cards
 
-/// Android `vendor_dashboard_row.xml` — a SquareLayout card holding name / count / "See All".
+/// The count tile. Android stacks name / count / "See All" centred in a square; a left-aligned
+/// metric with a chevron reads faster and gives the number room to be the focal point.
 struct VendorDashboardCountCard: View {
     let count: VendorDashboardCount
 
     var body: some View {
-        VStack(spacing: 2) {
-            // Android's statusName is wrap_content inside a SquareLayout, so longer labels such as
-            // "Completed" wrap rather than truncate.
+        VStack(alignment: .leading, spacing: VendorTheme.Space.xs) {
             Text(count.name)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-                .fixedSize(horizontal: false, vertical: true)
+                .font(VendorTheme.Text.cardTitle)
+                .foregroundColor(VendorTheme.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
 
             Text(count.count)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .font(VendorTheme.Text.metric)
+                .foregroundColor(VendorTheme.textPrimary)
 
-            Text("See All")
-                .font(.system(size: 14))
-                .foregroundColor(.black)
-                .padding(.top, 5)
+            HStack(spacing: 3) {
+                Text("See all")
+                    .font(VendorTheme.Text.meta)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 9, weight: .semibold))
+            }
+            .foregroundColor(VendorTheme.accent)
         }
-        .padding(4)
-        .frame(maxWidth: .infinity)
-        .aspectRatio(1, contentMode: .fit)
-        .background(Color.white)
-        .cornerRadius(5)
-        .shadow(color: Color.black.opacity(0.12), radius: 2, x: 0, y: 1)
+        .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+        .vendorCard()
     }
 }
 
-/// Android `vendor_enquiry_custom_row.xml` — enquiry number, formatted date, and a status
-/// badge filled with the colour the API sends down for that status.
+/// Android `vendor_enquiry_custom_row.xml` — enquiry number, date, and the API-coloured status pill.
 struct VendorEnquiryRowCard: View {
     let enquiry: VendorEnquiryRow
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(enquiry.enquiryNumber)
-                .font(.system(size: 14))
-                .foregroundColor(.black)
+        VStack(alignment: .leading, spacing: VendorTheme.Space.s) {
+            HStack(alignment: .top) {
+                Text(enquiry.enquiryNumber)
+                    .font(VendorTheme.Text.cardTitle)
+                    .foregroundColor(VendorTheme.textPrimary)
+                Spacer(minLength: VendorTheme.Space.s)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(VendorTheme.textTertiary)
+            }
 
-            Text(VendorHomeStyle.formatDate(enquiry.createdAt))
-                .font(.system(size: 14))
-                .foregroundColor(Color(white: 0.4))
+            Text(VendorTheme.date(enquiry.createdAt))
+                .font(VendorTheme.Text.meta)
+                .foregroundColor(VendorTheme.textSecondary)
 
-            VendorStatusBadge(name: enquiry.statusName, color: enquiry.color)
-                .padding(.top, 5)
+            VendorBadge(name: enquiry.statusName, colorHex: enquiry.color)
         }
-        .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(5)
-        .shadow(color: Color.black.opacity(0.12), radius: 2, x: 0, y: 1)
+        .vendorCard()
     }
 }
 
-/// The rounded, API-coloured status pill Android builds with a `MaterialShapeDrawable`.
-struct VendorStatusBadge: View {
-    let name: String
-    let color: String
+// MARK: - Interaction
+
+/// A restrained press response. `PlainButtonStyle` gives no feedback at all, which makes the cards
+/// feel dead; the default `NavigationLink` styling tints the whole card blue.
+struct VendorPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .opacity(configuration.isPressed ? 0.9 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Top bar
+
+/// The yellow action bar every vendor screen carries. Drawer-rooted screens leave `onBack` nil and
+/// get the hamburger, matching Android's `ActionBarDrawerToggle`; pushed screens pass a dismiss
+/// closure and get the back chevron.
+struct VendorTopBar: View {
+    private let title: String
+    private let onBack: (() -> Void)?
+    private let showsLogo: Bool
+
+    init(title: String, onBack: (() -> Void)? = nil, showsLogo: Bool = false) {
+        self.title = title
+        self.onBack = onBack
+        self.showsLogo = showsLogo
+    }
 
     var body: some View {
-        Text(name)
-            .font(.system(size: 14, weight: .bold))
-            .foregroundColor(.white)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(VendorHomeStyle.color(from: color))
-            )
+        HStack(spacing: VendorTheme.Space.m) {
+            Button(action: tapLeading) {
+                Image(systemName: onBack == nil ? "line.3.horizontal" : "chevron.left")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(.black.opacity(0.85))
+                    .frame(width: VendorTheme.minTapTarget, height: VendorTheme.minTapTarget)
+            }
+
+            Text(title)
+                .font(VendorTheme.Text.screenTitle)
+                .foregroundColor(.black.opacity(0.9))
+                .lineLimit(1)
+
+            Spacer(minLength: VendorTheme.Space.s)
+
+            if showsLogo {
+                Image("logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 26)
+                    .padding(.trailing, VendorTheme.Space.m)
+            }
+        }
+        .frame(height: 52)
+        .background(VendorTheme.accent)
+    }
+
+    private func tapLeading() {
+        if let onBack = onBack {
+            onBack()
+        } else {
+            VendorNavigation.openDrawer()
+        }
     }
 }
 
@@ -345,75 +359,6 @@ enum VendorNavigation {
             if let found = findDrawer(from: child) { return found }
         }
         return findDrawer(from: controller.presentedViewController)
-    }
-}
-
-// MARK: - Style
-
-/// The handful of Android resources the vendor screens depend on: `@color/appColor` (#f2be36),
-/// `@color/background` (#f7f7f7), the per-status colours the API returns, and the date format.
-enum VendorHomeStyle {
-    static let appColor = Color(red: 242 / 255, green: 190 / 255, blue: 54 / 255)
-    static let background = Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
-
-    /// `Color.parseColor()` equivalent for the `#rrggbb` / `#aarrggbb` strings the API sends.
-    /// Android throws on a malformed value; here an unusable colour just falls back to grey.
-    static func color(from hex: String) -> Color {
-        var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        if value.hasPrefix("#") { value.removeFirst() }
-
-        guard let number = UInt64(value, radix: 16) else { return Color(white: 0.45) }
-
-        let r, g, b, a: Double
-        switch value.count {
-        case 6:
-            r = Double((number & 0xFF0000) >> 16) / 255
-            g = Double((number & 0x00FF00) >> 8) / 255
-            b = Double(number & 0x0000FF) / 255
-            a = 1
-        case 8:
-            a = Double((number & 0xFF00_0000) >> 24) / 255
-            r = Double((number & 0x00FF_0000) >> 16) / 255
-            g = Double((number & 0x0000_FF00) >> 8) / 255
-            b = Double(number & 0x0000_00FF) / 255
-        default:
-            return Color(white: 0.45)
-        }
-
-        return Color(.sRGB, red: r, green: g, blue: b, opacity: a)
-    }
-
-    /// Literal port of `VendorEnquiriesAdapter.parseDateToddMMyyyy()`, including its swapped
-    /// day/month input pattern — matching Android's on-screen output matters more than being right.
-    static func formatDate(_ time: String) -> String {
-        reformat(time, from: "yyyy-dd-MM HH:mm:ss")
-    }
-
-    /// The workshop adapters use the same output pattern but parse the input correctly as
-    /// `yyyy-MM-dd`, so they need their own entry point.
-    static func formatWorkshopDate(_ time: String) -> String {
-        reformat(time, from: "yyyy-MM-dd HH:mm:ss")
-    }
-
-    private static func reformat(_ time: String, from inputPattern: String) -> String {
-        guard !time.isEmpty else { return "" }
-
-        let input = DateFormatter()
-        input.dateFormat = inputPattern
-        input.locale = Locale(identifier: "en_US_POSIX")
-
-        guard let date = input.date(from: time) else { return time }
-
-        let output = DateFormatter()
-        output.dateFormat = "yyyy-dd-MM h:mm a"
-        output.locale = Locale(identifier: "en_US_POSIX")
-        return output.string(from: date)
-    }
-
-    /// `ApiUrls.WORKSHOP_IMAGE_URL`.
-    static func workshopImageURL(_ path: String) -> URL? {
-        guard !path.isEmpty else { return nil }
-        return URL(string: "https://contractor.bidcont.com/uploads/workshop/" + path)
     }
 }
 

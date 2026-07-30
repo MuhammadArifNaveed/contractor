@@ -26,17 +26,16 @@ struct VendorJobsView: View {
                 VendorTopBar(title: "Jobs Portal")
 
                 ZStack {
-                    VendorHomeStyle.background
+                    VendorTheme.canvas
                         .ignoresSafeArea(edges: .bottom)
 
                     switch state {
                     case .loading:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                        VendorSkeletonList()
                     case .noData:
-                        Text("Data Not Found")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        VendorEmptyState(icon: "briefcase",
+                                     title: "No jobs yet",
+                                     message: "Jobs you post will be grouped by status here.")
                     case .loaded:
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
@@ -107,17 +106,16 @@ struct VendorJobListingView: View {
             VendorTopBar(title: status.name, onBack: { dismiss() })
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "briefcase",
+                                     title: "Nothing in this status",
+                                     message: "Jobs move here as their status changes.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -133,8 +131,7 @@ struct VendorJobListingView: View {
 
                 if isMutating {
                     Color.black.opacity(0.2).ignoresSafeArea()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorBusyIndicator()
                 }
             }
         }
@@ -281,17 +278,17 @@ struct VendorJobRowCard: View {
                         Spacer()
                         Text(job.approvalLabel)
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(job.approved == "1" ? Color(red: 0.00, green: 0.61, blue: 0.33)
-                                                                 : Color(red: 0.84, green: 0.12, blue: 0.12))
+                            .foregroundColor(job.approved == "1" ? VendorTheme.positive
+                                                                 : VendorTheme.negative)
                     }
 
                     Text(job.jobType)
                         .font(.system(size: 13))
                         .foregroundColor(.black)
 
-                    Text(VendorHomeStyle.formatWorkshopDate(job.createdAt))
+                    Text(VendorTheme.date(job.createdAt))
                         .font(.system(size: 12))
-                        .foregroundColor(Color(white: 0.45))
+                        .foregroundColor(VendorTheme.textSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -311,7 +308,7 @@ struct VendorJobRowCard: View {
                 Button(action: onDelete) {
                     Label("Delete", systemImage: "trash")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Color(red: 0.84, green: 0.12, blue: 0.12))
+                        .foregroundColor(VendorTheme.negative)
                 }
                 .buttonStyle(PlainButtonStyle())
 
@@ -319,7 +316,7 @@ struct VendorJobRowCard: View {
 
                 Text("\(job.applicationCount) applied")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(white: 0.4))
+                    .foregroundColor(VendorTheme.textSecondary)
             }
         }
         .padding(12)

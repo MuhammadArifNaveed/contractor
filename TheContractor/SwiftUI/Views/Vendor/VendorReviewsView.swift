@@ -19,17 +19,16 @@ struct VendorReviewsView: View {
             VendorTopBar(title: "Rating")
 
             ZStack {
-                VendorHomeStyle.background
+                VendorTheme.canvas
                     .ignoresSafeArea(edges: .bottom)
 
                 switch state {
                 case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: VendorHomeStyle.appColor))
+                    VendorSkeletonList()
                 case .noData:
-                    Text("Data Not Found")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                    VendorEmptyState(icon: "star",
+                                     title: "No ratings yet",
+                                     message: "Customer ratings appear here once clients review your work.")
                 case .loaded:
                     ScrollView {
                         VStack(spacing: 10) {
@@ -117,11 +116,11 @@ struct VendorRatingRowCard: View {
 
             VendorStarRow(rating: rating.rating)
 
-            Text(VendorHomeStyle.formatDate(rating.createdAt))
+            Text(VendorTheme.date(rating.createdAt))
                 .font(.system(size: 14))
-                .foregroundColor(Color(white: 0.4))
+                .foregroundColor(VendorTheme.textSecondary)
 
-            VendorStatusBadge(name: rating.statusName, color: rating.color)
+            VendorBadge(name: rating.statusName, colorHex: rating.color)
                 .padding(.top, 3)
         }
         .padding(10)
@@ -141,7 +140,7 @@ struct VendorStarRow: View {
             ForEach(1...5, id: \.self) { position in
                 Image(systemName: symbol(for: position))
                     .font(.system(size: 13))
-                    .foregroundColor(VendorHomeStyle.appColor)
+                    .foregroundColor(VendorTheme.accent)
             }
         }
     }
