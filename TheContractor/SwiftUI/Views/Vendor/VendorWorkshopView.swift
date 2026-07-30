@@ -80,6 +80,7 @@ struct VendorInterestedWorkshopsView: View {
     @State private var errorMessage: String?
 
     var body: some View {
+        NavigationView {
         VStack(spacing: 0) {
             VendorTopBar(title: "Interested Workshops")
 
@@ -100,7 +101,10 @@ struct VendorInterestedWorkshopsView: View {
                     ScrollView {
                         VStack(spacing: 10) {
                             ForEach(workshops) { workshop in
-                                VendorWorkshopAdCard(workshop: workshop)
+                                NavigationLink(destination: VendorWorkshopDetailView(workshopId: workshop.id)) {
+                                    VendorWorkshopAdCard(workshop: workshop)
+                                }
+                                    .buttonStyle(VendorPressStyle())
                                     .onAppear {
                                         if workshop.id == workshops.last?.id { loadNextPageIfNeeded() }
                                     }
@@ -117,6 +121,8 @@ struct VendorInterestedWorkshopsView: View {
             }
         }
         .navigationBarHidden(true)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
         .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
             Button("OK", role: .cancel) { }
         } message: {

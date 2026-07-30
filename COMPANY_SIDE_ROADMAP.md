@@ -52,24 +52,28 @@ Estimated: one focused pass. Everything after this is cheaper.
 
 Legend: ✅ done · ◐ partial · ⬜ missing
 
-### Header — View Profile ◐
+### Header — View Profile ✅
 
 Android `VendorProfile`: `POST vendor/my_company` for the full company record, plus an
 **online/offline toggle** (`POST vendor/is_online` with `vendor_id`, `is_online`).
 
-iOS today: the drawer's "Profile" row opens `VendorSettingsView`, which reads the four cached fields
-out of `UserDefaults` and calls no API. `VendorProfileView` exists in the target but hits no endpoint
-at all — it is an empty shell.
+Done. `VendorProfileView` now calls `vendor/my_company` and renders the record across five cards:
+identity (logo, name, category, plus Verified / Titanium / Trusted chips the response already carried
+and Android never surfaced), online state, about, location, registration, contact. Both the nav
+header's "View Profile" and the drawer's "Profile" row land here, as on Android.
 
-**Work:** wire `vendor/my_company`, render the real company record, add the online toggle as a
-header switch. Delete whichever of the two shells is not used. The nav-header "View Profile" text and
-the drawer's "Profile" row should both land here — Android sends both to the same activity.
+The online toggle is a single switch rather than Android's "Go Online" button plus a separate Yes/No
+label — same endpoint, same two states, one control. It flips optimistically and reverts if the
+server rejects it.
+
+**Gotcha for anyone else reading this response:** the key is `Vendor_profile` with a **capital V**,
+not the `vendor_profile` Android's Gson field name implies.
 
 ### 1. Home ✅
 
 `VendorHomeView`, verified rendering with live data. Phase A should widen the count grid.
 
-### 2. Profile ◐ — same as the header, above
+### 2. Profile ✅ — same screen as the header, above
 
 ### 3. Inbox ⬜
 
@@ -117,11 +121,21 @@ Second-largest item after Inbox.
 `workshop/workshops`, `workshop/show_workshops_for_interest` (+ `mark_workshop_interested`), and
 `workshop/workshop_my_page`. All paginated with Android's Open Bid / Close Bid tabs.
 
-**Missing across all three:** the workshop **detail** screen. Android has `VendorWorkshopDetail` and
-`VendorInterestedWorkshopDetail` on `workshop/get_workshop_details`, plus quotation submission
-(`workshop/add_workshop_quotation`) and `workshop/quotation_toggle_lock`. Cards are currently
-non-tappable. This is the highest-value single addition — three screens gain a destination from one
-piece of work.
+**Detail screen — done.** `VendorWorkshopDetailView` on `workshop/get_workshop_details` is now the
+destination for all three lists: the ad summary with Enabled/Disabled and Paid/Unpaid chips, the
+image strip, and the quotations already placed on it (showing the agreed price once one exists,
+falling back to the initial price, with a lock indicator).
+
+On All Workshops it also offers "Send a quotation" via `workshop/add_workshop_quotation`. Android
+branches on the response's `action` field, and that is reproduced: `posted` / `failed` /
+`'invalid id` report the message, while `need subscription` and `subscription expired` raise a
+dialog the company has to acknowledge.
+
+**Gotcha:** the part is `workshop_id` here, but `workshop_ad_id` on `mark_workshop_interested` —
+same value, two names.
+
+**Still missing:** `workshop/quotation_toggle_lock`, and the per-quotation chat thread (the
+`quotations[].chats` array the detail response already returns).
 
 ### 11. Jobs Portal ✅
 
@@ -179,8 +193,8 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | # | Item | Why here |
 |---|---|---|
 | 1 | Phase A design system | Every later screen is cheaper and consistent; fixes the "dated" look at the root |
-| 2 | View Profile + online toggle | Top of the drawer, currently a shell, small and self-contained |
-| 3 | Workshop detail (+ quotation submit) | One screen gives three existing lists a destination |
+| ~~2~~ | ~~View Profile + online toggle~~ | done |
+| ~~3~~ | ~~Workshop detail (+ quotation submit)~~ | done |
 | 4 | Quotation document upload | Completes an otherwise-finished chain |
 | 5 | My Membership detail | Data is already in hand; presentation only |
 | 6 | Applicant filter sheet | Small, needs one new endpoint |

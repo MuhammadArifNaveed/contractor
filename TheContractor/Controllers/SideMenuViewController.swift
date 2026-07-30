@@ -67,7 +67,15 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
                 self?.closeThenNavigate { $0.showCompanyLoginController() }
             }
             cell.onViewProfileTap = { [weak self] in
-                self?.closeThenNavigate { $0.showProfileController() }
+                // Android's nav header sends companies to VendorProfile and users to the consumer
+                // profile; the header is shared between both account types.
+                self?.closeThenNavigate { mainVC in
+                    if Global.shared.isVendor {
+                        mainVC.showVendorScreen(VendorProfileView())
+                    } else {
+                        mainVC.showProfileController()
+                    }
+                }
             }
             return cell
         } else {
@@ -212,7 +220,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Home":
             mainVC.showVendorHome()
         case "Profile":
-            mainVC.showVendorScreen(VendorSettingsView())
+            mainVC.showVendorScreen(VendorProfileView())
         case "Inbox":
             mainVC.showChatListController()
         case "Rating":

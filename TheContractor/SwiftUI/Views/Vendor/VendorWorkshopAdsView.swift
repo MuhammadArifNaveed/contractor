@@ -75,6 +75,7 @@ struct VendorWorkshopAdsList: View {
     @State private var noticeMessage: String?
 
     var body: some View {
+        NavigationView {
         VStack(spacing: 0) {
             VendorTopBar(title: title)
 
@@ -96,7 +97,12 @@ struct VendorWorkshopAdsList: View {
                         VStack(spacing: 10) {
                             ForEach(workshops) { workshop in
                                 VStack(spacing: 0) {
-                                    VendorWorkshopAdCard(workshop: workshop)
+                                    NavigationLink(destination: VendorWorkshopDetailView(
+                                        workshopId: workshop.id,
+                                        allowsQuotation: allowsMarkInterested)) {
+                                        VendorWorkshopAdCard(workshop: workshop)
+                                    }
+                                    .buttonStyle(VendorPressStyle())
 
                                     if allowsMarkInterested && !workshop.isInterested {
                                         Button(action: { markInterested(workshop) }) {
@@ -133,6 +139,8 @@ struct VendorWorkshopAdsList: View {
             }
         }
         .navigationBarHidden(true)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
         .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
             Button("OK", role: .cancel) { }
         } message: {

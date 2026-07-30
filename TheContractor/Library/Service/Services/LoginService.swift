@@ -407,6 +407,65 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Vendor Profile
+    /// The company's own record. Android: `RetrofitApi.vendorProfile()` → `POST vendor/my_company`.
+    ///
+    /// The response key is `Vendor_profile` with a capital V, not the `vendor_profile` Android's
+    /// model field implies — read what the server actually sends.
+    func getVendorProfile(vendorId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/my_company"
+        let params: [String: String] = ["vendor_id": vendorId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Flip the company's online/offline flag. Android: `RetrofitApi.vendorIsOnline()`.
+    /// `isOnline` goes over the wire as `"1"` / `"0"`.
+    func setVendorOnline(vendorId: String, isOnline: Bool, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/is_online"
+        let params: [String: String] = ["vendor_id": vendorId, "is_online": isOnline ? "1" : "0"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Workshop detail
+    /// One workshop ad in full, including its images and the quotations placed on it.
+    /// Android: `RetrofitApi.workshopAdDetails()` → `POST workshop/get_workshop_details`.
+    func getWorkshopDetails(workshopId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/get_workshop_details"
+        let params: [String: String] = ["workshop_id": workshopId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Place this company's quotation on a workshop ad.
+    /// Android: `RetrofitApi.workshopsQuotation()` → `POST workshop/add_workshop_quotation`.
+    ///
+    /// The response's `action` field drives Android's follow-up: `"posted"` / `"failed"` /
+    /// `"'invalid id"` just report the message, while `"need subscription"` and
+    /// `"subscription expired"` raise a dialog instead.
+    /// Note the part here is `workshop_id`, unlike `mark_workshop_interested` which wants
+    /// `workshop_ad_id` for the same value.
+    func addWorkshopQuotation(vendorId: String, userId: String, userType: String, workshopId: String,
+                              price: String, message: String,
+                              completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/add_workshop_quotation"
+        let params: [String: String] = [
+            "vendor_id": vendorId,
+            "user_id": userId,
+            "user_type": userType,
+            "workshop_id": workshopId,
+            "price": price,
+            "message": message
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     // MARK: - Vendor Rating
     /// The reviews customers left on this company. Android: `RetrofitApi.vendorRating()`,
     /// response key `rating_enquiries`.

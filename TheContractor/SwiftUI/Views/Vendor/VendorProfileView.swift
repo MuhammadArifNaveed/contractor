@@ -1,234 +1,359 @@
+//
 //  VendorProfileView.swift
+//  TheContractor
+//
+//  Port of Android's `VendorProfile`. The drawer header's "View Profile" and the drawer's own
+//  "Profile" row both land here, as they do on Android.
+//
+//  POST vendor/my_company → `Vendor_profile`, plus the online/offline switch on
+//  POST vendor/is_online. Presentation per VendorTheme, not Android's layout.
+//
+
 import SwiftUI
-import Alamofire
 import SwiftyJSON
 
 struct VendorProfileView: View {
-    @StateObject private var viewModel = VendorProfileViewModel()
-    @State private var isLoading = false
-    
+    @State private var state: VendorLoadState = .loading
+    @State private var profile: VendorCompanyProfile?
+    @State private var isOnline = false
+    @State private var isTogglingOnline = false
+    @State private var errorMessage: String?
+    @State private var noticeMessage: String?
+
     var body: some View {
-        ZStack {
-            Color(UIColor(hexFromString: "#F5F5F5"))
-                .ignoresSafeArea()
-            
-            if isLoading {
-                ProgressView()
-            } else if viewModel.isDataLoaded {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        // Company Header
-                        VStack(spacing: 12) {
-                            AsyncImage(url: URL(string: viewModel.companyLogo)) { image in
-                                image.resizable()
-                            } placeholder: {
-                                Circle()
-                                    .fill(Color(red: 242/255, green: 190/255, blue: 54/255))
-                                    .overlay(
-                                        Image(systemName: "building.2.fill")
-                                            .font(.system(size: 40))
-                                            .foregroundColor(.white)
-                                    )
-                            }
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            
-                            Text(viewModel.companyName)
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.black)
-                            
-                            Button(action: {
-                                viewModel.toggleOnlineStatus()
-                            }) {
-                                Text(viewModel.isOnline ? "Online" : "Offline")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 8)
-                                    .background(viewModel.isOnline ? Color.green : Color.red)
-                                    .cornerRadius(16)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(20)
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        
-                        // Company Details
-                        VStack(alignment: .leading, spacing: 0) {
-                            ProfileDetailRow(label: "Company Name", value: viewModel.companyName)
-                            Divider()
-                            ProfileDetailRow(label: "Company Phone", value: viewModel.companyPhone)
-                            Divider()
-                            ProfileDetailRow(label: "Company Email", value: viewModel.companyEmail)
-                            Divider()
-                            ProfileDetailRow(label: "Address", value: viewModel.address)
-                            Divider()
-                            ProfileDetailRow(label: "City", value: viewModel.city)
-                            Divider()
-                            ProfileDetailRow(label: "Area", value: viewModel.area)
-                            Divider()
-                            ProfileDetailRow(label: "Country", value: viewModel.country)
-                            Divider()
-                            ProfileDetailRow(label: "Registration Date", value: viewModel.registrationDate)
-                            Divider()
-                            ProfileDetailRow(label: "Company ID", value: viewModel.companyId)
-                            Divider()
-                            ProfileDetailRow(label: "Membership No", value: viewModel.membershipNo)
-                            Divider()
-                            ProfileDetailRow(label: "License Number", value: viewModel.licenseNumber)
-                            Divider()
-                            ProfileDetailRow(label: "No. of Employees", value: viewModel.noOfEmployees)
-                            Divider()
-                            ProfileDetailRow(label: "Owner Name", value: viewModel.ownerName)
-                            Divider()
-                            ProfileDetailRow(label: "Owner Contact", value: viewModel.ownerContact)
-                            Divider()
-                            ProfileDetailRow(label: "Owner Email", value: viewModel.ownerEmail)
-                            Divider()
-                            ProfileDetailRow(label: "Available 24/7", value: viewModel.available24x7 ? "Yes" : "No")
-                            Divider()
-                            ProfileDetailRow(label: "Account Status", value: viewModel.accountStatus)
-                            Divider()
-                            ProfileDetailRow(label: "Verified Company", value: viewModel.isVerified ? "Yes" : "No")
-                            Divider()
-                            ProfileDetailRow(label: "Company Approved", value: viewModel.isApproved ? "Yes" : "No")
-                        }
-                        .background(Color.white)
-                        .cornerRadius(12)
+        VStack(spacing: 0) {
+            VendorTopBar(title: "Profile")
+
+            ZStack {
+                VendorTheme.canvas.ignoresSafeArea(edges: .bottom)
+
+                switch state {
+                case .loading:
+                    ScrollView { VendorSkeletonList(rows: 3) }
+                case .noData:
+                    VendorEmptyState(icon: "building.2",
+                                     title: "Profile unavailable",
+                                     message: "Your company profile could not be loaded.",
+                                     actionTitle: "Try again",
+                                     action: load)
+                case .loaded:
+                    if let profile = profile {
+                        content(profile)
                     }
-                    .padding(16)
                 }
-            } else {
-                Text("No data available")
-                    .foregroundColor(.gray)
+
+                if isTogglingOnline {
+                    Color.black.opacity(0.2).ignoresSafeArea()
+                    VendorBusyIndicator()
+                }
             }
         }
-        .navigationTitle("Company Profile")
-        .onAppear {
-            viewModel.loadVendorProfile()
+        .navigationBarHidden(true)
+        .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
         }
+        .alert("", isPresented: Binding(get: { noticeMessage != nil }, set: { _ in noticeMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(noticeMessage ?? "")
+        }
+        .onAppear(perform: load)
     }
-}
 
-struct ProfileDetailRow: View {
-    let label: String
-    let value: String
-    
-    var body: some View {
-        HStack {
-            Text(label)
-                .font(.system(size: 14))
-                .foregroundColor(.gray)
-                .frame(width: 140, alignment: .leading)
-            
-            Text(value.isEmpty ? "N/A" : value)
-                .font(.system(size: 14))
-                .foregroundColor(.black)
-            
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-    }
-}
+    // MARK: - Layout
 
-class VendorProfileViewModel: ObservableObject {
-    @Published var companyName = ""
-    @Published var companyPhone = ""
-    @Published var companyEmail = ""
-    @Published var companyLogo = ""
-    @Published var address = ""
-    @Published var city = ""
-    @Published var area = ""
-    @Published var country = ""
-    @Published var registrationDate = ""
-    @Published var companyId = ""
-    @Published var membershipNo = ""
-    @Published var licenseNumber = ""
-    @Published var noOfEmployees = ""
-    @Published var ownerName = ""
-    @Published var ownerContact = ""
-    @Published var ownerEmail = ""
-    @Published var available24x7 = false
-    @Published var accountStatus = ""
-    @Published var isVerified = false
-    @Published var isApproved = false
-    @Published var isOnline = false
-    @Published var isDataLoaded = false
-    
-    private var vendorId: String {
-        if let vendorData = UserDefaults.standard.data(forKey: "vendor"),
-           let vendorDict = try? JSONSerialization.jsonObject(with: vendorData) as? [String: Any] {
-            return vendorDict["id"] as? String ?? ""
+    private func content(_ profile: VendorCompanyProfile) -> some View {
+        ScrollView {
+            VStack(spacing: VendorTheme.Space.l) {
+                header(profile)
+                onlineCard
+                aboutCard(profile)
+                locationCard(profile)
+                registrationCard(profile)
+                contactCard(profile)
+            }
+            .padding(VendorTheme.Space.l)
         }
-        return ""
+        .refreshable { await reload() }
     }
-    
-    func loadVendorProfile() {
+
+    private func header(_ profile: VendorCompanyProfile) -> some View {
+        HStack(spacing: VendorTheme.Space.m) {
+            AsyncImage(url: VendorTheme.companyLogoURL(profile.logo)) { phase in
+                if case .success(let image) = phase {
+                    image.resizable().scaledToFill()
+                } else {
+                    ZStack {
+                        VendorTheme.surfaceRaised
+                        Image(systemName: "building.2.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(VendorTheme.textTertiary)
+                    }
+                }
+            }
+            .frame(width: 64, height: 64)
+            .clipShape(RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(profile.companyName)
+                    .font(VendorTheme.Text.screenTitle)
+                    .foregroundColor(VendorTheme.textPrimary)
+
+                if !profile.categoryName.isEmpty {
+                    Text(profile.categoryName)
+                        .font(VendorTheme.Text.body)
+                        .foregroundColor(VendorTheme.textSecondary)
+                }
+
+                // Android does not surface these at all; they are already in the response and tell
+                // the company how customers see them.
+                HStack(spacing: VendorTheme.Space.xs) {
+                    if profile.isVerified { flag("Verified", "checkmark.seal.fill") }
+                    if profile.isTitanium { flag("Titanium", "star.fill") }
+                    if profile.isTrusted { flag("Trusted", "hand.thumbsup.fill") }
+                }
+                .padding(.top, 2)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
+    }
+
+    private func flag(_ title: String, _ icon: String) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon).font(.system(size: 8, weight: .bold))
+            Text(title).font(VendorTheme.Text.badge)
+        }
+        .foregroundColor(VendorTheme.textPrimary)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(Capsule().fill(VendorTheme.accent.opacity(0.28)))
+    }
+
+    /// Android splits this into a "Go Online" / "Go Offline" button plus a separate Yes/No label.
+    /// One switch carries both the state and the action.
+    private var onlineCard: some View {
+        HStack(spacing: VendorTheme.Space.m) {
+            Circle()
+                .fill(isOnline ? VendorTheme.positive : VendorTheme.textTertiary)
+                .frame(width: 10, height: 10)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(isOnline ? "Online" : "Offline")
+                    .font(VendorTheme.Text.cardTitle)
+                    .foregroundColor(VendorTheme.textPrimary)
+                Text(isOnline ? "Customers can reach you now" : "You are hidden from customers")
+                    .font(VendorTheme.Text.meta)
+                    .foregroundColor(VendorTheme.textSecondary)
+            }
+
+            Spacer(minLength: 0)
+
+            Toggle("", isOn: Binding(get: { isOnline }, set: { toggleOnline(to: $0) }))
+                .labelsHidden()
+                .tint(VendorTheme.accent)
+        }
+        .vendorCard()
+    }
+
+    private func aboutCard(_ profile: VendorCompanyProfile) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: "About")
+            VendorField(label: "Description",
+                        value: profile.description.isEmpty ? "Not added" : profile.description)
+            if !profile.speciality.isEmpty {
+                VendorField(label: "Speciality", value: profile.speciality)
+            }
+            if !profile.employees.isEmpty {
+                VendorField(label: "Employees", value: profile.employees)
+            }
+            if !profile.timing.isEmpty {
+                VendorField(label: "Working hours", value: profile.timing)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
+    }
+
+    private func locationCard(_ profile: VendorCompanyProfile) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: "Location")
+            VendorField(label: "Address", value: profile.address.isEmpty ? "Not added" : profile.address)
+            HStack(alignment: .top, spacing: VendorTheme.Space.m) {
+                VendorField(label: "City", value: profile.cityName.isEmpty ? "Not added" : profile.cityName)
+                VendorField(label: "Area", value: profile.areaName.isEmpty ? "Not added" : profile.areaName)
+            }
+            VendorField(label: "Country", value: profile.countryName.isEmpty ? "Not added" : profile.countryName)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
+    }
+
+    private func registrationCard(_ profile: VendorCompanyProfile) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: "Registration")
+            HStack(alignment: .top, spacing: VendorTheme.Space.m) {
+                VendorField(label: "Company ID", value: profile.serialNumber)
+                VendorField(label: "Registered", value: VendorTheme.shortDate(profile.createdAt))
+            }
+            HStack(alignment: .top, spacing: VendorTheme.Space.m) {
+                VendorField(label: "Membership no.",
+                            value: profile.membershipNumber.isEmpty ? "Not added" : profile.membershipNumber)
+                VendorField(label: "Licence",
+                            value: profile.license.isEmpty ? "Not added" : profile.license)
+            }
+            if !profile.since.isEmpty {
+                VendorField(label: "In business since", value: profile.since)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
+    }
+
+    private func contactCard(_ profile: VendorCompanyProfile) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: "Contact")
+            HStack(alignment: .top, spacing: VendorTheme.Space.m) {
+                VendorField(label: "Phone", value: profile.phone)
+                VendorField(label: "WhatsApp",
+                            value: profile.whatsapp.isEmpty ? "Not added" : profile.whatsapp)
+            }
+            VendorField(label: "Email", value: profile.email)
+            if !profile.website.isEmpty {
+                VendorField(label: "Website", value: profile.website)
+            }
+            if !profile.ownerName.isEmpty {
+                VendorField(label: "Owner", value: profile.ownerName)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
+    }
+
+    // MARK: - Data
+
+    private func load() {
+        guard !VendorSession.currentVendorId.isEmpty else {
+            state = .noData
+            return
+        }
+        if profile == nil { state = .loading }
+        fetch()
+    }
+
+    private func reload() async {
+        await withCheckedContinuation { continuation in
+            fetch { continuation.resume() }
+        }
+    }
+
+    private func fetch(then finished: (() -> Void)? = nil) {
+        let vendorId = VendorSession.currentVendorId
+        GCD.async(.Background) {
+            LoginService.shared().getVendorProfile(vendorId: vendorId) { message, success, json in
+                GCD.async(.Main) {
+                    defer { finished?() }
+                    guard success, let json = json, json["Vendor_profile"].exists() else {
+                        state = .noData
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                        return
+                    }
+                    let loaded = VendorCompanyProfile(json["Vendor_profile"])
+                    profile = loaded
+                    isOnline = loaded.isOnline
+                    state = .loaded
+                }
+            }
+        }
+    }
+
+    private func toggleOnline(to desired: Bool) {
+        let vendorId = VendorSession.currentVendorId
         guard !vendorId.isEmpty else { return }
-        
-        let completeURL = EndPoints.BASE_URL + "vendor/my_company"
-        let params: [String: String] = ["vendor_id": vendorId]
-        
-        AF.request(completeURL, method: .post, parameters: params)
-            .validate()
-            .responseJSON { [weak self] response in
-                guard let self = self else { return }
-                
-                switch response.result {
-                case .success(let value):
-                    let json = JSON(value)
-                    if json["error"].stringValue == "false" {
-                        self.parseVendorData(json["vendor_profile"])
+
+        // Flip optimistically, then reconcile with the server.
+        isOnline = desired
+        isTogglingOnline = true
+        GCD.async(.Background) {
+            LoginService.shared().setVendorOnline(vendorId: vendorId, isOnline: desired) { message, success in
+                GCD.async(.Main) {
+                    isTogglingOnline = false
+                    if success {
+                        noticeMessage = message.isEmpty
+                            ? (desired ? "You are now online." : "You are now offline.")
+                            : message
+                    } else {
+                        isOnline = !desired
+                        errorMessage = message.isEmpty ? "Please try again" : message
                     }
-                case .failure(let error):
-                    print("Error loading profile: \(error)")
                 }
             }
+        }
     }
-    
-    private func parseVendorData(_ json: JSON) {
-        companyName = json["company_name"].stringValue
-        companyPhone = json["company_phone"].stringValue
-        companyEmail = json["company_email"].stringValue
-        companyLogo = json["company_logo"].stringValue
-        address = json["address"].stringValue
-        city = json["city"].stringValue
-        area = json["area"].stringValue
-        country = json["country"].stringValue
-        registrationDate = json["registration_date"].stringValue
-        companyId = json["company_id"].stringValue
-        membershipNo = json["membership_no"].stringValue
-        licenseNumber = json["license_number"].stringValue
-        noOfEmployees = json["no_of_employees"].stringValue
-        ownerName = json["owner_name"].stringValue
-        ownerContact = json["owner_contact"].stringValue
-        ownerEmail = json["owner_email"].stringValue
-        available24x7 = json["available_24_7"].boolValue
-        accountStatus = json["account_status"].stringValue
-        isVerified = json["verified_company"].boolValue
-        isApproved = json["company_approved"].boolValue
-        isOnline = json["online_status"].boolValue
-        isDataLoaded = true
-    }
-    
-    func toggleOnlineStatus() {
-        isOnline.toggle()
-        // TODO: Call API to update online status
-    }
-    
-    func navigate(_ to: String) {
-        print("Navigate to: \(to)")
-    }
-    
-    func logout() {
-        Global.shared.user = nil
-        Global.shared.isLogedIn = false
-        Global.shared.isVendor = false
-        Global.shared.loginType = ""
-        UserDefaultsManager.shared.clearAllLoginData()
-        UserDefaults.standard.removeObject(forKey: "vendor")
-        UserDefaults.standard.synchronize()
+}
+
+// MARK: - Model
+
+/// Android's vendor profile record. The response also carries the bcrypt password, otp and
+/// verification tokens; none of those are read here.
+struct VendorCompanyProfile {
+    let id: String
+    let companyName: String
+    let categoryName: String
+    let description: String
+    let speciality: String
+    let employees: String
+    let timing: String
+    let since: String
+    let address: String
+    let cityName: String
+    let areaName: String
+    let countryName: String
+    let serialNumber: String
+    let membershipNumber: String
+    let license: String
+    let createdAt: String
+    let phone: String
+    let whatsapp: String
+    let email: String
+    let website: String
+    let ownerName: String
+    let logo: String
+    let isOnline: Bool
+    let isVerified: Bool
+    let isTitanium: Bool
+    let isTrusted: Bool
+
+    init(_ json: JSON) {
+        self.id = json["id"].stringValue
+        self.companyName = json["company_name"].stringValue
+        self.categoryName = json["category_name"].stringValue
+        self.description = json["company_discription"].stringValue
+        self.speciality = json["speciality"].stringValue
+        self.employees = json["company_employees"].stringValue
+        self.timing = json["company_timing"].stringValue
+        self.since = json["company_since"].stringValue
+        self.address = json["company_address"].stringValue
+        self.cityName = json["city_name"].stringValue
+        self.areaName = json["area_name"].stringValue
+        self.countryName = json["country_name"].stringValue
+        self.serialNumber = json["company_serial_number"].stringValue
+        self.membershipNumber = json["company_membership_number"].stringValue
+        self.license = json["company_license"].stringValue
+        self.createdAt = json["created_at"].stringValue
+        self.phone = json["company_phone"].stringValue
+        self.whatsapp = json["company_whatsapp"].stringValue
+        self.email = json["company_email"].stringValue
+        self.website = json["company_website"].stringValue
+        self.ownerName = json["company_owner_name"].stringValue
+        self.logo = json["company_logo"].stringValue
+        self.isOnline = json["is_online"].stringValue == "1"
+        self.isVerified = json["is_verified"].stringValue == "1"
+        self.isTitanium = json["is_titanium"].stringValue == "1"
+        self.isTrusted = json["is_trusted"].stringValue == "1"
     }
 }

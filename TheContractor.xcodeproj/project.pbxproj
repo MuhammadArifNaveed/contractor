@@ -361,6 +361,7 @@
 		E5FD036F0B7646A1894F4939 /* CompanyLoginHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2DE02893B945888A6B365F /* CompanyLoginHostingController.swift */; };
 		F6180782D77945FBB9E12365 /* CompanyLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E7D000CF994448A575062F /* CompanyLoginView.swift */; };
 		5AF8F9C4D0AF4660B4E26959 /* VendorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8353643BA8DCAD21C3788C75 /* VendorTheme.swift */; };
+		2781B8063222E557F9056E1A /* VendorWorkshopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -734,6 +735,7 @@
 		EEC619E2300B37FE01A5EA57 /* VendorQuotationsHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorQuotationsHostingController.swift; sourceTree = "<group>"; };
 		FD08BAB10D2E68BDE4609646 /* VendorAddWorkshopHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorAddWorkshopHostingController.swift; sourceTree = "<group>"; };
 		8353643BA8DCAD21C3788C75 /* VendorTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorTheme.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorTheme.swift; sourceTree = SOURCE_ROOT; };
+		239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorWorkshopDetailView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1413,6 +1415,7 @@
 		806CA9462F5768C600D31D28 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */,
 				8353643BA8DCAD21C3788C75 /* VendorTheme.swift */,
 				806CA9252F5768C600D31D28 /* VendorAddWorkshopItemView.swift */,
 				806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */,
@@ -1660,6 +1663,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2781B8063222E557F9056E1A /* VendorWorkshopDetailView.swift in Sources */,
 				5AF8F9C4D0AF4660B4E26959 /* VendorTheme.swift in Sources */,
 				E5FD036F0B7646A1894F4939 /* CompanyLoginHostingController.swift in Sources */,
 				F6180782D77945FBB9E12365 /* CompanyLoginView.swift in Sources */,

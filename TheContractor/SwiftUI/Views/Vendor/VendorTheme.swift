@@ -370,6 +370,7 @@ extension VendorTheme {
     private static let uploads = "https://contractor.bidcont.com/uploads/"
 
     static func workshopImageURL(_ path: String) -> URL? { uploadURL("workshop/", path) }
+    static func companyLogoURL(_ path: String) -> URL? { uploadURL("companies/", path) }
     static func profileImageURL(_ path: String) -> URL? { uploadURL("users/", path) }
     static func quotationImageURL(_ path: String) -> URL? { uploadURL("quotations/", path) }
 
