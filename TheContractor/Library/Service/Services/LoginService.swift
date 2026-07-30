@@ -429,6 +429,20 @@ class LoginService: BaseService {
         }
     }
 
+    /// Lock or unlock a quotation on a workshop ad.
+    /// Android: `RetrofitApi.updateWorkshopQuotationLock()` → `POST workshop/quotation_toggle_lock`.
+    ///
+    /// `chatEntryId` is the quotation's own id, and `action` is the literal `"lock"` / `"unlock"`
+    /// — Android sends the word, not a flag (`WorkshopAdDetail.updateLockAPI`).
+    func setWorkshopQuotationLock(quotationId: String, locked: Bool,
+                                  completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/quotation_toggle_lock"
+        let params: [String: String] = ["chatEntryId": quotationId, "action": locked ? "lock" : "unlock"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
     // MARK: - Post Workshop
     /// The three picker lists behind Android's post-workshop form.
     /// Android: `RetrofitApi.workshopFilterAPI()` → `POST workshop/workshop_filter_data`, returning

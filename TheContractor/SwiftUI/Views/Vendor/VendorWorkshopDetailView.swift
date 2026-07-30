@@ -233,9 +233,23 @@ struct VendorWorkshopDetailView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    Text([quotation.date, quotation.time].filter { !$0.isEmpty }.joined(separator: " · "))
-                        .font(VendorTheme.Text.meta)
-                        .foregroundColor(VendorTheme.textTertiary)
+                    HStack(spacing: VendorTheme.Space.m) {
+                        Text([quotation.date, quotation.time].filter { !$0.isEmpty }.joined(separator: " · "))
+                            .font(VendorTheme.Text.meta)
+                            .foregroundColor(VendorTheme.textTertiary)
+
+                        Spacer(minLength: 0)
+
+                        // Android exposes this as a lock toggle on each quotation row
+                        // (WorkshopAdDetail + WorkshopAdQuotationAdapter).
+                        Button(action: { toggleLock(quotation) }) {
+                            Label(quotation.isLocked ? "Unlock" : "Lock",
+                                  systemImage: quotation.isLocked ? "lock.open" : "lock")
+                                .font(VendorTheme.Text.meta)
+                                .foregroundColor(VendorTheme.textPrimary)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(VendorTheme.Space.m)
@@ -274,6 +288,26 @@ struct VendorWorkshopDetailView: View {
                     }
                     detail = VendorWorkshopDetail(json["workshop_details"])
                     state = .loaded
+                }
+            }
+        }
+    }
+
+    private func toggleLock(_ quotation: VendorWorkshopQuotation) {
+        isSubmitting = true
+        GCD.async(.Background) {
+            LoginService.shared().setWorkshopQuotationLock(quotationId: quotation.id,
+                                                           locked: !quotation.isLocked) { message, success in
+                GCD.async(.Main) {
+                    isSubmitting = false
+                    if success {
+                        noticeMessage = message.isEmpty
+                            ? (quotation.isLocked ? "Quotation unlocked." : "Quotation locked.")
+                            : message
+                        load()
+                    } else {
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                    }
                 }
             }
         }

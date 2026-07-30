@@ -32,6 +32,9 @@ struct VendorPostJobView: View {
     @State private var selectedCity: VendorJobFilterOption?
     @State private var selectedType: String?
 
+    @State private var jobImage: UIImage?
+    @State private var showPhotoPicker = false
+
     @State private var isLoadingFields = true
     @State private var isSaving = false
     @State private var errorMessage: String?
@@ -53,6 +56,7 @@ struct VendorPostJobView: View {
                         basicsCard
                         classificationCard
                         detailCard
+                        imageCard
                         saveButton
                     }
                     .padding(VendorTheme.Space.l)
@@ -76,7 +80,58 @@ struct VendorPostJobView: View {
         } message: {
             Text(savedMessage ?? "")
         }
+        .sheet(isPresented: $showPhotoPicker) {
+            VendorPhotoPicker(selectionLimit: 1) { picked in
+                jobImage = picked.first
+            }
+        }
         .onAppear(perform: prepare)
+    }
+
+    /// jobs/post_job and jobs/update_job both accept one optional image part.
+    private var imageCard: some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: "Image")
+
+            Text("Optional. Shown alongside the listing.")
+                .font(VendorTheme.Text.meta)
+                .foregroundColor(VendorTheme.textSecondary)
+
+            if let jobImage = jobImage {
+                ZStack(alignment: .topTrailing) {
+                    Image(uiImage: jobImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 140)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: VendorTheme.Radius.control,
+                                                    style: .continuous))
+
+                    Button(action: { self.jobImage = nil }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white)
+                            .shadow(radius: 2)
+                    }
+                    .padding(VendorTheme.Space.s)
+                }
+            }
+
+            Button(action: { showPhotoPicker = true }) {
+                Label(jobImage == nil ? "Add an image" : "Replace image",
+                      systemImage: "photo.on.rectangle.angled")
+                    .font(VendorTheme.Text.cardTitle)
+                    .foregroundColor(VendorTheme.textPrimary)
+                    .padding(.horizontal, VendorTheme.Space.l)
+                    .padding(.vertical, VendorTheme.Space.s)
+                    .background(Capsule().fill(VendorTheme.surfaceRaised))
+                    .overlay(Capsule().stroke(VendorTheme.separator, lineWidth: 0.5))
+            }
+            .buttonStyle(VendorPressStyle())
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .vendorCard()
     }
 
     // MARK: - Sections
@@ -319,7 +374,7 @@ struct VendorPostJobView: View {
                 vendorId: session.id,
                 userId: session.user_id,
                 userType: session.user_type,
-                imageData: nil
+                imageData: jobImage?.vendorUploadJPEG()
             ) { message, success in
                 GCD.async(.Main) {
                     isSaving = false

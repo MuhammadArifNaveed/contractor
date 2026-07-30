@@ -145,8 +145,12 @@ dialog the company has to acknowledge.
 **Gotcha:** the part is `workshop_id` here, but `workshop_ad_id` on `mark_workshop_interested` —
 same value, two names.
 
-**Still missing:** `workshop/quotation_toggle_lock`, and the per-quotation chat thread (the
-`quotations[].chats` array the detail response already returns).
+Quotation lock done: each quotation row carries a Lock / Unlock action on
+`workshop/quotation_toggle_lock`. The part is `chatEntryId` — the quotation's own id — and `action`
+is the literal word `"lock"` or `"unlock"`, not a flag (`WorkshopAdDetail.updateLockAPI`).
+
+**Still missing:** the per-quotation chat thread. The detail response already returns a
+`quotations[].chats` array, so the data is in hand; it belongs with the Inbox work.
 
 ### 11. Jobs Portal ✅
 
@@ -164,8 +168,8 @@ opens populated straight from the listing row without a second fetch, but the ro
 *names* while the form must post *ids*, so the selections are matched back onto the freshly loaded
 option lists.
 
-**Still missing:** the optional job image. `jobs/post_job` accepts a file part and the transport
-supports it (`imageData:`), but no picker is wired up yet.
+Job image done: one optional image via the same `PHPickerViewController` wrapper Post Workshop uses,
+downscaled and re-encoded through `vendorUploadJPEG()` before upload.
 
 ### 12. Available Applicant ✅
 
@@ -227,7 +231,7 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | ~~7~~ | ~~Job create / edit~~ | done |
 | ~~8~~ | ~~Post Workshop form~~ | done |
 | 9 | Freelancers vendor mode | Multi-screen hire flow |
-| 10 | Inbox | Largest; wants its own plan |
+| 10 | Inbox (+ workshop quotation chat) | Largest; wants its own plan |
 | — | Membership card payment | Blocked on a payment-gateway decision |
 
 ## Testing note that applies throughout
