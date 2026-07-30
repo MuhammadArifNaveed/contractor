@@ -19,11 +19,14 @@ struct VendorJobsView: View {
     @State private var state: VendorLoadState = .loading
     @State private var counts: [VendorDashboardCount] = []
     @State private var errorMessage: String?
+    @State private var showPostJob = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                VendorTopBar(title: "Jobs Portal")
+                VendorTopBar(title: "Jobs Portal",
+                             trailingIcon: "plus.circle.fill",
+                             trailingAction: { showPostJob = true })
 
                 ZStack {
                     VendorTheme.canvas
@@ -59,6 +62,9 @@ struct VendorJobsView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage ?? "")
+        }
+        .sheet(isPresented: $showPostJob, onDismiss: load) {
+            VendorPostJobView()
         }
         .onAppear(perform: load)
     }
@@ -99,6 +105,7 @@ struct VendorJobListingView: View {
     @State private var noticeMessage: String?
     @State private var isMutating = false
     @State private var pendingDelete: VendorJobRow?
+    @State private var editing: VendorJobRow?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -122,7 +129,8 @@ struct VendorJobListingView: View {
                             ForEach(jobs) { job in
                                 VendorJobRowCard(job: job,
                                                  onTogglePublish: { togglePublish(job) },
-                                                 onDelete: { pendingDelete = job })
+                                                 onDelete: { pendingDelete = job },
+                                                 onEdit: { editing = job })
                             }
                         }
                         .padding(10)
@@ -151,6 +159,9 @@ struct VendorJobListingView: View {
                 if let job = pendingDelete { pendingDelete = nil; delete(job) }
             }
             Button("Cancel", role: .cancel) { pendingDelete = nil }
+        }
+        .sheet(item: $editing, onDismiss: load) { job in
+            VendorPostJobView(existing: job)
         }
         .onAppear(perform: load)
     }
@@ -266,6 +277,7 @@ struct VendorJobRowCard: View {
     let job: VendorJobRow
     let onTogglePublish: () -> Void
     let onDelete: () -> Void
+    let onEdit: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -302,6 +314,13 @@ struct VendorJobRowCard: View {
                           systemImage: job.isPublished ? "eye.slash" : "eye")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.black)
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                Button(action: onEdit) {
+                    Label("Edit", systemImage: "square.and.pencil")
+                        .font(VendorTheme.Text.meta)
+                        .foregroundColor(VendorTheme.textPrimary)
                 }
                 .buttonStyle(PlainButtonStyle())
 

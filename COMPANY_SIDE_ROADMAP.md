@@ -144,8 +144,21 @@ same value, two names.
 ### 11. Jobs Portal ✅
 
 `jobs/app_jobs_dashboard` → `jobs/jobs_listing` → `jobs/view_job`, plus publish toggle, delete, and
-per-job applications with accept/reject. Android also has job **create/edit**
-(`jobs/post_job`, `jobs/update_job`) reached from the listing — currently absent.
+per-job applications with accept/reject.
+
+Create and edit done. `VendorPostJobView` serves both, as Android's `VendorPostJob` does —
+`jobs/post_job` and `jobs/update_job` take identical parts except the update adds `job_id`. Reached
+from a `+` on the dashboard toolbar and an Edit action on each row, matching
+`VendorJobListingAdapter`.
+
+Two things worth knowing: the vacancies part is spelled **`vaccancies`** server-side, and `job_types`
+comes back with only a `type` string and no id, so the label itself is what gets posted. Editing
+opens populated straight from the listing row without a second fetch, but the row carries display
+*names* while the form must post *ids*, so the selections are matched back onto the freshly loaded
+option lists.
+
+**Still missing:** the optional job image. `jobs/post_job` accepts a file part and the transport
+supports it (`imageData:`), but no picker is wired up yet.
 
 ### 12. Available Applicant ✅
 
@@ -204,7 +217,7 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | ~~4~~ | ~~Quotation document upload~~ | done |
 | ~~5~~ | ~~My Membership detail~~ | done |
 | ~~6~~ | ~~Applicant filter sheet~~ | done |
-| 7 | Job create / edit | Self-contained form, pattern reused from #8 |
+| ~~7~~ | ~~Job create / edit~~ | done |
 | 8 | Post Workshop form | Large: three pickers + multi-image upload |
 | 9 | Freelancers vendor mode | Multi-screen hire flow |
 | 10 | Inbox | Largest; wants its own plan |

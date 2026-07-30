@@ -580,6 +580,52 @@ class LoginService: BaseService {
         }
     }
 
+    /// Create or update a job posting. Android: `RetrofitApi.postJob()` / `updateJob()` —
+    /// `POST jobs/post_job` and `POST jobs/update_job`, identical part lists except that the update
+    /// adds `job_id`. Both accept an optional image part.
+    ///
+    /// Pass `jobId` to update, leave it nil to create.
+    func saveVendorJob(jobId: String?,
+                       title: String, arabicTitle: String,
+                       vacancies: String, description: String, arabicDescription: String,
+                       salary: String, categoryId: String, locationId: String, jobType: String,
+                       deadline: String,
+                       vendorId: String, userId: String, userType: String,
+                       imageData: Data?,
+                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + (jobId == nil ? "jobs/post_job" : "jobs/update_job")
+
+        // Android's part name is "vaccancies" — the backend's spelling, not a typo to fix here.
+        var params: [String: String] = [
+            "title": title,
+            "arabic_title": arabicTitle,
+            "vaccancies": vacancies,
+            "description": description,
+            "arabic_description": arabicDescription,
+            "salary": salary,
+            "job_category": categoryId,
+            "job_location": locationId,
+            "job_type": jobType,
+            "deadline": deadline,
+            "vendor_id": vendorId,
+            "user_id": userId,
+            "user_type": userType
+        ]
+        if let jobId = jobId { params["job_id"] = jobId }
+
+        if let imageData = imageData {
+            self.makePostAPICallWithDocument(with: completeURL, params: params,
+                                             fileData: imageData, fileName: "job.jpg",
+                                             mimeType: "image/jpeg") { message, success, _ in
+                completion(message, success)
+            }
+        } else {
+            self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+                completion(message, success)
+            }
+        }
+    }
+
     /// Android: `RetrofitApi.vendorUpdateJobPublishStatus()`. `check` is `"1"` / `"0"`.
     func setVendorJobPublished(jobId: String, published: Bool, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "jobs/toggle_job_publish"
