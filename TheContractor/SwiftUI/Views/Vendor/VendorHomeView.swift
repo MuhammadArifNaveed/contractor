@@ -293,11 +293,19 @@ struct VendorTopBar: View {
     private let title: String
     private let onBack: (() -> Void)?
     private let showsLogo: Bool
+    private let trailingIcon: String?
+    private let trailingAction: (() -> Void)?
 
-    init(title: String, onBack: (() -> Void)? = nil, showsLogo: Bool = false) {
+    init(title: String,
+         onBack: (() -> Void)? = nil,
+         showsLogo: Bool = false,
+         trailingIcon: String? = nil,
+         trailingAction: (() -> Void)? = nil) {
         self.title = title
         self.onBack = onBack
         self.showsLogo = showsLogo
+        self.trailingIcon = trailingIcon
+        self.trailingAction = trailingAction
     }
 
     var body: some View {
@@ -315,6 +323,15 @@ struct VendorTopBar: View {
                 .lineLimit(1)
 
             Spacer(minLength: VendorTheme.Space.s)
+
+            if let trailingIcon = trailingIcon, let trailingAction = trailingAction {
+                Button(action: trailingAction) {
+                    Image(systemName: trailingIcon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.black.opacity(0.85))
+                        .frame(width: VendorTheme.minTapTarget, height: VendorTheme.minTapTarget)
+                }
+            }
 
             if showsLogo {
                 Image("logo")

@@ -407,6 +407,28 @@ class LoginService: BaseService {
         }
     }
 
+    /// Attach a document to a quotation. Android: `RetrofitApi.uploadDocument()` →
+    /// `POST vendor/upload_document`, offered when the quotation is at status 2 or 5.
+    func uploadQuotationDocument(quotationId: String, vendorId: String,
+                                 fileData: Data, fileName: String, mimeType: String,
+                                 completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/upload_document"
+        let params: [String: String] = ["quotation_id": quotationId, "vendor_id": vendorId]
+        self.makePostAPICallWithDocument(with: completeURL, params: params,
+                                         fileData: fileData, fileName: fileName, mimeType: mimeType) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
+    /// The category / city / type lists behind Android's applicant and job filters.
+    /// Android: `RetrofitApi.jobDataAPI()` → `POST jobs/get_job_search_fields`.
+    func getJobSearchFields(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/get_job_search_fields"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     // MARK: - Vendor Profile
     /// The company's own record. Android: `RetrofitApi.vendorProfile()` → `POST vendor/my_company`.
     ///

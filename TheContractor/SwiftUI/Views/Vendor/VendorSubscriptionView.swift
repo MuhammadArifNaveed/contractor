@@ -143,6 +143,7 @@ struct VendorMyMembershipView: View {
     @State private var errorMessage: String?
 
     var body: some View {
+        NavigationView {
         VStack(spacing: 0) {
             VendorTopBar(title: "My Membership")
 
@@ -161,7 +162,10 @@ struct VendorMyMembershipView: View {
                     ScrollView {
                         VStack(spacing: 10) {
                             ForEach(memberships) { membership in
-                                VendorMyMembershipCard(membership: membership)
+                                NavigationLink(destination: VendorMyMembershipDetailView(membership: membership)) {
+                                    VendorMyMembershipCard(membership: membership)
+                                }
+                                .buttonStyle(VendorPressStyle())
                             }
                         }
                         .padding(10)
@@ -170,6 +174,8 @@ struct VendorMyMembershipView: View {
             }
         }
         .navigationBarHidden(true)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
         .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -257,6 +263,19 @@ struct VendorMyMembership: Identifiable {
     let statusName: String
     let color: String
     let createdAt: String
+    let buyType: String
+    let couponCode: String
+    let leadsCapacity: String
+    let leadsUsed: String
+    let quotationsCapacity: String
+    let quotationsUsed: String
+    let topTenStart: String
+    let topTenExpiry: String
+    let topTwentyStart: String
+    let topTwentyExpiry: String
+    let workshopIncluded: String
+    let workshopPrice: String
+    let detail: String
 
     init(_ json: JSON) {
         self.id = json["id"].stringValue
@@ -266,6 +285,19 @@ struct VendorMyMembership: Identifiable {
         self.statusName = json["s_name"].stringValue
         self.color = json["color"].stringValue
         self.createdAt = json["created_at"].stringValue
+        self.buyType = json["buy_type"].stringValue
+        self.couponCode = json["coupon_code"].stringValue
+        self.leadsCapacity = json["membership_leads_capacity"].stringValue
+        self.leadsUsed = json["leads_used"].stringValue
+        self.quotationsCapacity = json["membership_quotations_capacity"].stringValue
+        self.quotationsUsed = json["quotations_used"].stringValue
+        self.topTenStart = json["top_ten_start_date"].stringValue
+        self.topTenExpiry = json["top_ten_expiry_date"].stringValue
+        self.topTwentyStart = json["top_twenty_start_date"].stringValue
+        self.topTwentyExpiry = json["top_twenty_expiry_date"].stringValue
+        self.workshopIncluded = json["workshop_include"].stringValue
+        self.workshopPrice = json["workshop_price"].stringValue
+        self.detail = json["membership_detail"].stringValue
     }
 }
 

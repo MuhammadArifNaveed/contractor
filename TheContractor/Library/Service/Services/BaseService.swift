@@ -218,6 +218,41 @@ class BaseService {
         }
     }
 
+    //MARK:- Multipart Post with one arbitrary document
+    /// Sends a single file under `partName` with its real filename and MIME type.
+    ///
+    /// The two helpers above hardcode `image.jpg` / `video.mov`, which is fine for photos and wrong
+    /// for anything else — a PDF sent as `image.jpg` is rejected or stored unusable. Endpoints like
+    /// `vendor/upload_document` need the actual name and type.
+    func makePostAPICallWithDocument(with completeURL: String,
+                                     params: [String: String]?,
+                                     fileData: Data,
+                                     fileName: String,
+                                     mimeType: String,
+                                     partName: String = "file",
+                                     headers: HTTPHeaders? = nil,
+                                     completion: @escaping (_ error: String, _ success: Bool, _ jsonData: JSON?) -> Void) {
+        let requestHeaders = headers ?? self.getHeaders()
+        print("\n==================== API REQUEST (DOCUMENT) ====================")
+        print("URL: \(completeURL)")
+        print("Params: \(params ?? [:])  File: \(fileName) (\(mimeType), \(fileData.count) bytes)")
+
+        sessionManager.upload(multipartFormData: { form in
+            for (key, value) in params ?? [:] {
+                form.append(Data(value.utf8), withName: key)
+            }
+            form.append(fileData, withName: partName, fileName: fileName, mimeType: mimeType)
+        }, to: completeURL, headers: requestHeaders)
+        .responseData { response in
+            let statusCode = response.response?.statusCode ?? -1
+            print("Status: \(statusCode)")
+            print("Raw Response: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "undecodable")")
+            let json = JSON(response.data ?? Data())
+            let result = BaseService.parseMultipartResult(statusCode: statusCode, json: json)
+            completion(result.message, result.success, json)
+        }
+    }
+
     //MARK:- Enhanced Multipart Post API Call with proper file handling
     func makePostAPICallWithMultipartWithFiles(with completeURL:String, params:[String:String]?, imageData: Data?, videoData: Data?, headers: HTTPHeaders? = nil, completion: @escaping (_ error: String, _ success: Bool, _ jsonData:JSON?)->Void) {
         print("\n==================== API REQUEST (MULTIPART) ====================")

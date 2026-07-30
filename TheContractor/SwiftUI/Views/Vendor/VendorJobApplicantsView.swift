@@ -129,10 +129,25 @@ struct VendorAvailableApplicantsView: View {
     @State private var isLoadingMore = false
     @State private var errorMessage: String?
 
+    // Android's filter: the endpoint takes `category` and `city`, and the picker lists come from
+    // jobs/get_job_search_fields.
+    @State private var showFilter = false
+    @State private var categories: [VendorJobFilterOption] = []
+    @State private var cities: [VendorJobFilterOption] = []
+    @State private var selectedCategory: VendorJobFilterOption?
+    @State private var selectedCity: VendorJobFilterOption?
+
+    private var activeFilterCount: Int {
+        [selectedCategory != nil, selectedCity != nil].filter { $0 }.count
+    }
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                VendorTopBar(title: "Available Applicant")
+                VendorTopBar(title: "Available Applicant",
+                             trailingIcon: activeFilterCount > 0 ? "line.3.horizontal.decrease.circle.fill"
+                                                                 : "line.3.horizontal.decrease.circle",
+                             trailingAction: { showFilter = true })
 
                 ZStack {
                     VendorTheme.canvas
@@ -176,7 +191,45 @@ struct VendorAvailableApplicantsView: View {
         } message: {
             Text(errorMessage ?? "")
         }
-        .onAppear { if applicants.isEmpty { fetch() } }
+        .sheet(isPresented: $showFilter) {
+            VendorApplicantFilterSheet(categories: categories,
+                                       cities: cities,
+                                       selectedCategory: $selectedCategory,
+                                       selectedCity: $selectedCity) {
+                showFilter = false
+                reload()
+            } onCancel: {
+                showFilter = false
+            }
+        }
+        .onAppear {
+            if applicants.isEmpty { fetch() }
+            if categories.isEmpty { loadFilterOptions() }
+        }
+    }
+
+    private func reload() {
+        page = 1
+        lastPage = 0
+        applicants = []
+        state = .loading
+        fetch()
+    }
+
+    private func loadFilterOptions() {
+        GCD.async(.Background) {
+            LoginService.shared().getJobSearchFields { _, success, json in
+                GCD.async(.Main) {
+                    guard success, let json = json else { return }
+                    categories = json["job_categories"].arrayValue.map {
+                        VendorJobFilterOption(id: $0["id"].stringValue, name: $0["title"].stringValue)
+                    }
+                    cities = json["job_cities"].arrayValue.map {
+                        VendorJobFilterOption(id: $0["id"].stringValue, name: $0["name"].stringValue)
+                    }
+                }
+            }
+        }
     }
 
     private func loadNextPageIfNeeded() {
@@ -186,10 +239,11 @@ struct VendorAvailableApplicantsView: View {
         fetch()
     }
 
-    /// Android passes empty category and city until the user opens the filter sheet.
     private func fetch() {
+        let category = selectedCategory?.id ?? ""
+        let city = selectedCity?.id ?? ""
         GCD.async(.Background) {
-            LoginService.shared().getAvailableApplicants(page: String(page), category: "", city: "") { message, success, json in
+            LoginService.shared().getAvailableApplicants(page: String(page), category: category, city: city) { message, success, json in
                 GCD.async(.Main) {
                     isLoadingMore = false
                     guard success, let json = json else {
@@ -403,5 +457,122 @@ struct VendorPersonAvatar: View {
     static func url(_ path: String) -> URL? {
         guard !path.isEmpty else { return nil }
         return URL(string: "https://contractor.bidcont.com/uploads/users/" + path)
+    }
+}
+
+
+// MARK: - Applicant filter
+
+/// One option in the category or city picker, from `jobs/get_job_search_fields`. Categories arrive
+/// under `title`, cities under `name`.
+struct VendorJobFilterOption: Identifiable, Hashable {
+    let id: String
+    let name: String
+}
+
+/// Android puts category and city behind two spinners on the toolbar. A single sheet with a clear
+/// action is fewer taps and shows both current selections at once.
+struct VendorApplicantFilterSheet: View {
+    let categories: [VendorJobFilterOption]
+    let cities: [VendorJobFilterOption]
+    @Binding var selectedCategory: VendorJobFilterOption?
+    @Binding var selectedCity: VendorJobFilterOption?
+    let onApply: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            VendorTopBar(title: "Filter applicants", onBack: onCancel)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: VendorTheme.Space.l) {
+                    picker(title: "Category", options: categories, selection: $selectedCategory)
+                    picker(title: "City", options: cities, selection: $selectedCity)
+
+                    HStack(spacing: VendorTheme.Space.s) {
+                        Button(action: {
+                            selectedCategory = nil
+                            selectedCity = nil
+                            onApply()
+                        }) {
+                            Text("Clear")
+                                .font(VendorTheme.Text.cardTitle)
+                                .foregroundColor(VendorTheme.textPrimary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, VendorTheme.Space.m)
+                                .background(
+                                    RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                                        .fill(VendorTheme.surfaceRaised)
+                                )
+                        }
+                        .buttonStyle(VendorPressStyle())
+
+                        Button(action: onApply) {
+                            Text("Apply")
+                                .font(VendorTheme.Text.cardTitle)
+                                .foregroundColor(.black.opacity(0.85))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, VendorTheme.Space.m)
+                                .background(
+                                    RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                                        .fill(VendorTheme.accent)
+                                )
+                        }
+                        .buttonStyle(VendorPressStyle())
+                    }
+                }
+                .padding(VendorTheme.Space.l)
+            }
+            .background(VendorTheme.canvas)
+        }
+    }
+
+    private func picker(title: String,
+                        options: [VendorJobFilterOption],
+                        selection: Binding<VendorJobFilterOption?>) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.s) {
+            VendorSectionHeader(title: title)
+
+            if options.isEmpty {
+                VendorSkeleton(height: 32)
+            } else {
+                // Wrapping chips rather than a menu: with a handful of options every choice is
+                // visible without a second tap.
+                VendorChipRow(options: options, selection: selection)
+            }
+        }
+    }
+}
+
+/// A simple wrapping row of selectable chips.
+struct VendorChipRow: View {
+    let options: [VendorJobFilterOption]
+    @Binding var selection: VendorJobFilterOption?
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: VendorTheme.Space.s)],
+                  alignment: .leading,
+                  spacing: VendorTheme.Space.s) {
+            ForEach(options) { option in
+                let isSelected = selection?.id == option.id
+                Button(action: { selection = isSelected ? nil : option }) {
+                    Text(option.name)
+                        .font(VendorTheme.Text.meta)
+                        .foregroundColor(isSelected ? .black.opacity(0.85) : VendorTheme.textPrimary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, VendorTheme.Space.s)
+                        .background(
+                            RoundedRectangle(cornerRadius: VendorTheme.Radius.badge, style: .continuous)
+                                .fill(isSelected ? VendorTheme.accent : VendorTheme.surface)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: VendorTheme.Radius.badge, style: .continuous)
+                                .stroke(isSelected ? Color.clear : VendorTheme.separator, lineWidth: 0.5)
+                        )
+                }
+                .buttonStyle(VendorPressStyle())
+            }
+        }
     }
 }

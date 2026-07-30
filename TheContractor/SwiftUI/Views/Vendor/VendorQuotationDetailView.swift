@@ -24,6 +24,11 @@ struct VendorQuotationDetailView: View {
     @State private var rejectingStatusId = ""
     @State private var isUpdating = false
 
+    @State private var showDocumentPicker = false
+    @State private var pickedDocument: Data?
+    @State private var pickedDocumentName: String?
+    @State private var pickedDocumentMime = "application/octet-stream"
+
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -72,6 +77,11 @@ struct VendorQuotationDetailView: View {
                 showRejectionDialog = false
                 rejectionReason = ""
             }
+        }
+        .fileImporter(isPresented: $showDocumentPicker,
+                      allowedContentTypes: [.pdf, .image, .plainText, .spreadsheet, .data],
+                      allowsMultipleSelection: false) { result in
+            handlePickedDocument(result)
         }
         .onAppear(perform: load)
     }
@@ -161,9 +171,67 @@ struct VendorQuotationDetailView: View {
                         }
                     }
                 }
+
+                // Android offers the attachment only at status 2 ("Select Document") and status 5
+                // ("Resubmit Document"), and hides the existing filename in the resubmit case.
+                if quotation.allowsDocumentUpload {
+                    divider
+                    documentSection(quotation)
+                }
             }
             .padding(10)
         }
+    }
+
+    private func documentSection(_ quotation: VendorQuotationDetailModel) -> some View {
+        VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+            VendorSectionHeader(title: quotation.isResubmitStage ? "Resubmit Document" : "Upload Document")
+
+            Text(quotation.isResubmitStage
+                 ? "Your last document was not accepted. Attach a replacement."
+                 : "Attach the quotation document for this request.")
+                .font(VendorTheme.Text.meta)
+                .foregroundColor(VendorTheme.textSecondary)
+
+            if let name = pickedDocumentName {
+                HStack(spacing: VendorTheme.Space.s) {
+                    Image(systemName: "doc.fill").foregroundColor(VendorTheme.accent)
+                    Text(name)
+                        .font(VendorTheme.Text.body)
+                        .foregroundColor(VendorTheme.textPrimary)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+            }
+
+            HStack(spacing: VendorTheme.Space.s) {
+                Button(action: { showDocumentPicker = true }) {
+                    Text(pickedDocumentName == nil ? "Choose file" : "Change")
+                        .font(VendorTheme.Text.cardTitle)
+                        .foregroundColor(VendorTheme.textPrimary)
+                        .padding(.horizontal, VendorTheme.Space.l)
+                        .padding(.vertical, VendorTheme.Space.s)
+                        .background(Capsule().fill(VendorTheme.surfaceRaised))
+                        .overlay(Capsule().stroke(VendorTheme.separator, lineWidth: 0.5))
+                }
+                .buttonStyle(VendorPressStyle())
+
+                if pickedDocument != nil {
+                    Button(action: uploadDocument) {
+                        Text("Upload")
+                            .font(VendorTheme.Text.cardTitle)
+                            .foregroundColor(.black.opacity(0.85))
+                            .padding(.horizontal, VendorTheme.Space.l)
+                            .padding(.vertical, VendorTheme.Space.s)
+                            .background(Capsule().fill(VendorTheme.accent))
+                    }
+                    .buttonStyle(VendorPressStyle())
+                }
+
+                Spacer(minLength: 0)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func field(label: String, value: String) -> some View {
@@ -231,6 +299,67 @@ struct VendorQuotationDetailView: View {
         }
     }
 
+    /// The picker hands back a security-scoped URL, so the bytes have to be read inside a
+    /// start/stop access pair before the scope is released.
+    private func handlePickedDocument(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            let scoped = url.startAccessingSecurityScopedResource()
+            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+            do {
+                pickedDocument = try Data(contentsOf: url)
+                pickedDocumentName = url.lastPathComponent
+                pickedDocumentMime = VendorQuotationDetailView.mimeType(for: url)
+            } catch {
+                errorMessage = "That file could not be read."
+            }
+        }
+    }
+
+    private static func mimeType(for url: URL) -> String {
+        switch url.pathExtension.lowercased() {
+        case "pdf": return "application/pdf"
+        case "jpg", "jpeg": return "image/jpeg"
+        case "png": return "image/png"
+        case "doc": return "application/msword"
+        case "docx": return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        case "xls": return "application/vnd.ms-excel"
+        case "xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        case "txt": return "text/plain"
+        default: return "application/octet-stream"
+        }
+    }
+
+    private func uploadDocument() {
+        guard let data = pickedDocument, let name = pickedDocumentName else { return }
+        let vendorId = VendorSession.currentVendorId
+        guard !vendorId.isEmpty else { return }
+
+        isUpdating = true
+        GCD.async(.Background) {
+            LoginService.shared().uploadQuotationDocument(quotationId: quotationId,
+                                                          vendorId: vendorId,
+                                                          fileData: data,
+                                                          fileName: name,
+                                                          mimeType: pickedDocumentMime) { message, success in
+                GCD.async(.Main) {
+                    isUpdating = false
+                    if success {
+                        pickedDocument = nil
+                        pickedDocumentName = nil
+                        noticeMessage = message.isEmpty ? "Document uploaded." : message
+                        load()
+                    } else {
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                    }
+                }
+            }
+        }
+    }
+
     private func submitRejection() {
         let reason = rejectionReason.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !reason.isEmpty else {
@@ -281,6 +410,12 @@ struct VendorQuotationDetailModel {
     var fullName: String {
         [name, surname].filter { !$0.isEmpty }.joined(separator: " ")
     }
+
+    /// Android shows the upload block only at these two statuses
+    /// (`VendorQuotationDetail.setDataToWidget`).
+    var allowsDocumentUpload: Bool { statusId == "2" || statusId == "5" }
+    /// Status 5 is Android's "Resubmit Document" wording.
+    var isResubmitStage: Bool { statusId == "5" }
 
     init(_ json: JSON) {
         self.id = json["id"].stringValue

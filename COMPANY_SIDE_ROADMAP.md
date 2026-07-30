@@ -95,14 +95,18 @@ so only the empty path has been exercised — re-test on an account with ratings
 Full chain: `vendor/enquiries_status` → `vendor/view` → `vendor/enquiry`, with status updates and the
 rejection-reason flow. Untested against an account that actually has enquiries.
 
-### 6. Quotations ◐
+### 6. Quotations ✅
 
 Chain complete: `vendor/quotations_dashnoard` → `vendor/quotations` → `vendor/quotation`, with status
 updates, rejection, and the image grid.
 
-**Missing:** the document upload Android offers when a quotation is at status `2` ("Select Document")
-or `5` ("Resubmit Document") — `POST vendor/upload_document` with `quotation_id`, `vendor_id`, and a
-file part. Needs a `fileImporter` and a multipart file call.
+Document upload done. The section appears only at status `2` ("Upload Document") and `5`
+("Resubmit Document"), matching Android, and posts to `vendor/upload_document`.
+
+This needed a new transport: both existing multipart helpers hardcode `image.jpg` / `video.mov`, so
+a PDF went up as a JPEG. `BaseService.makePostAPICallWithDocument` sends the real filename and MIME
+type. The picker's URL is security-scoped, so the bytes are read inside a
+start/stopAccessingSecurityScopedResource pair.
 
 ### 7. Post Workshop ⬜
 
@@ -143,12 +147,13 @@ same value, two names.
 per-job applications with accept/reject. Android also has job **create/edit**
 (`jobs/post_job`, `jobs/update_job`) reached from the listing — currently absent.
 
-### 12. Available Applicant ◐
+### 12. Available Applicant ✅
 
 `jobs/search_applicants` with pagination and direct hire.
 
-**Missing:** Android's category/city filter. The endpoint takes `category` and `city`; iOS sends both
-empty. Needs a filter sheet fed by `jobs/get_job_search_fields`.
+Filter done. `jobs/get_job_search_fields` feeds category and city pickers; the toolbar icon fills in
+when a filter is active, and applying resets to page 1. Android uses two toolbar spinners; a single
+sheet of selectable chips shows both current selections at once and takes fewer taps.
 
 ### 13. Freelancers ◐
 
@@ -174,13 +179,14 @@ not an Android copy-paste bug. If it is a bug, the counts should drill into
 **Missing:** card payment (`vendor/buy_membership_online` with `paid_amount`, `transaction_no`).
 Needs a payment gateway decision — this is a product call, not a porting task.
 
-### 16. My Membership ◐
+### 16. My Membership ✅
 
 `vendor/my_memberships` list.
 
-**Missing:** the detail screen (Android's `activity_vendor_my_membership_detail`), showing top-10 /
-top-20 windows, leads used vs capacity, and quotations used vs capacity — all fields the list
-response already returns.
+Detail screen done. Rows are tappable into `VendorMyMembershipDetailView`, which needs no API call —
+every field was already in the `vendor/my_memberships` row, so the record is passed through. Shows
+the top-10 / top-20 listing windows, purchase details, and leads / quotations usage as meters rather
+than Android's raw "used / capacity" text, turning red when a limit is reached.
 
 ### 17. Logout ✅
 
@@ -195,9 +201,9 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | 1 | Phase A design system | Every later screen is cheaper and consistent; fixes the "dated" look at the root |
 | ~~2~~ | ~~View Profile + online toggle~~ | done |
 | ~~3~~ | ~~Workshop detail (+ quotation submit)~~ | done |
-| 4 | Quotation document upload | Completes an otherwise-finished chain |
-| 5 | My Membership detail | Data is already in hand; presentation only |
-| 6 | Applicant filter sheet | Small, needs one new endpoint |
+| ~~4~~ | ~~Quotation document upload~~ | done |
+| ~~5~~ | ~~My Membership detail~~ | done |
+| ~~6~~ | ~~Applicant filter sheet~~ | done |
 | 7 | Job create / edit | Self-contained form, pattern reused from #8 |
 | 8 | Post Workshop form | Large: three pickers + multi-image upload |
 | 9 | Freelancers vendor mode | Multi-screen hire flow |
