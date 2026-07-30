@@ -22,18 +22,69 @@ authoritative for every endpoint path and part name, and the `VendorActivities/*
 |---|---|---|
 | 1 | Multipart transport honours the body `error` flag | ✅ done |
 | 2 | Company login parity with `VendorLogin` | ✅ done |
-| 3 | Vendor landing dashboard = `VendorHome` | ✅ code complete, build not yet verified |
-| 4 | Enquiry drill-downs | ✅ code complete, build not yet verified |
-| 5 | Quotations chain | ✅ code complete, build not yet verified |
-| 6 | Replace the four "Coming Soon" drawer items | ✅ code complete, build not yet verified |
-| 7 | Vendor jobs, workshops, freelancing | ⬜ not started |
-| 8 | Service-layer cleanup, remove fabricated views | ⬜ not started |
-| 9 | Simulator test pass, then commit and push | ⬜ blocked — see below |
+| 3 | Vendor landing dashboard = `VendorHome` | ✅ built, rendered in simulator |
+| 4 | Enquiry drill-downs | ✅ built, endpoints verified live |
+| 5 | Quotations chain | ✅ built, endpoints verified live |
+| 6 | Replace the four "Coming Soon" drawer items | ✅ built, endpoints verified live |
+| 7 | Vendor jobs, workshops, freelancing | ✅ built, endpoints verified live |
+| 8 | Service-layer cleanup, remove fabricated views | ⬜ in progress |
+| 9 | Simulator test pass | ✅ dashboard confirmed; see caveat below |
 
-> **Blocker right now:** the sandbox classifier that gates write/build commands is intermittently
-> unavailable, so `xcodebuild` and `git` cannot run. Everything from Phase 3 onward is written but
-> **not yet compiled**. First action when tooling recovers:
-> `bash <scratchpad>/build.sh`, fix whatever it reports, then run the login + dashboard test pass.
+## Verification status
+
+The app **builds clean** for the simulator (0 errors) and the vendor dashboard **renders correctly**:
+yellow bar with hamburger and logo, "Enquiries Dashboard" with Android's short rule, and the
+3-column square grid showing the five status counts the live API returns (All / Pending / Accepted /
+Rejected / Completed), with the empty Pending/Accepted/Today sections correctly hidden.
+
+Every endpoint below was called against the live backend with the real company account
+(`bilaljan318718@gmail.com`, vendor id 706 "IT Modifiers") and the response keys confirmed to match
+what the SwiftUI parsers read. See the API-probe scripts in the session scratchpad.
+
+**One caveat on how it was tested:** the Claude Code iOS Simulator integration refused to attach
+(it wants `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, which needs a
+password), so there was no tap automation available. The dashboard was reached by seeding the vendor
+session into the app's `UserDefaults` via `xcrun simctl spawn <udid> defaults write`, exactly as a
+successful company login would leave it, then relaunching. **The login screens themselves were not
+driven by hand** — the login endpoints were verified by curl instead. Driving the actual
+email/pin form is still worth doing.
+
+### Live endpoint verification
+
+| Endpoint | Result |
+|---|---|
+| `vendor/login_company` | ✅ `error:false`, `Vendor.id=706`, `company_name`, `user_id`, `user_type=companies` |
+| `vendor/dashboard` | ✅ all four keys present; 5 count rows |
+| `vendor/enquiries_status` | ✅ 5 rows |
+| `vendor/quotations_dashnoard` | ✅ `quotation_counts`, 6 rows |
+| `vendor/rating` | ✅ reachable — returns `error:true, "Rating not found."` for this account, so the screen shows "Data Not Found" exactly as Android does |
+| `vendor/memberships` | ✅ `memberships_list`, 3 rows, all expected perk fields |
+| `vendor/my_memberships` | ✅ `my_memberships`, 1 row |
+| `workshop/workshop_my_page` | ✅ `workshops` 9 rows, `total_page` 1 |
+| `workshop/show_workshops_for_interest` | ✅ `workshops` 10 rows, `total_page` 3 |
+| `jobs/app_jobs_dashboard` | ✅ `vendor_dashboard_counts`, 4 rows |
+| `jobs/jobs_listing` | ✅ `jobs_list`, 42 rows |
+| `jobs/view_job` | ✅ `job_details` |
+| `jobs/view_applies` | ✅ `job_applies` |
+| `jobs/search_applicants` | ✅ `available_users` 2 rows, `total_page` |
+| `freelancing/freelancing_dashboard` | ✅ `freelancing_dashboard`, 2 rows |
+| `Account/user_login` | ✅ works — see the phone-number note below |
+
+### Two things the live probes taught us
+
+**`error` is a JSON boolean, not the string `"false"`.** Android compares
+`getError().equals("false")` and gets away with it because Gson coerces the boolean into its String
+field. iOS reads `json["error"].boolValue`, which SwiftyJSON resolves correctly for booleans *and*
+`"true"`/`"false"` strings — so Phase 1 is right, and now confirmed against the real payload.
+
+**The test phone number needs no leading zero.** `03139970317` fails with "Invalid credentials"; the
+account is `3139970317`, which Android's rule turns into `+9713139970317` → "Login successfully",
+user 45. Android does **no** zero-stripping (`Login.java:157-164`) and neither does iOS, so this is
+correct behaviour on both platforms — just enter the number without the `0`.
+
+Counts are also number-tolerant: `vendor_dashboard_counts` returns `count` as a JSON number and `id`
+as either `"all"` or a number, and `freelancing_dashboard` returns `id` as a number, so every count
+field is read through `stringValue`.
 
 ## Phase 1 — transport
 
@@ -178,15 +229,52 @@ All four now open real screens instead of an alert:
   `showVendorScreen(_:)` so every vendor screen embeds in the container consistently, and the
   drawer's "Profile" item no longer pushes onto the *side menu's* own navigation stack.
 
+## Phase 7 — jobs, workshops, freelancing
+
+| Drawer item | Android | Endpoint | Response key |
+|---|---|---|---|
+| Jobs Portal | `VendorDashboardJobs` | `jobs/app_jobs_dashboard` | `vendor_dashboard_counts` |
+| → one status | `VendorJobListing` | `jobs/jobs_listing` (`id` = status id) | `jobs_list` |
+| → job detail | `VendorJobDetail` | `jobs/view_job` (`job_uuid`) | `job_details` |
+| → applicants | — | `jobs/view_applies` | `job_applies` |
+| Available Applicant | `VendorApplicants` | `jobs/search_applicants` | `available_users`, `total_page` |
+| Freelancer Dashboard | `VendorDashboardFreelancer` | `freelancing/freelancing_dashboard` | `freelancing_dashboard` |
+| My Workshops | `WorkShopAds` (type=vendor) | `workshop/workshops` | `workshops`, `total_page` |
+| All Workshops | `VendorAllWorkshopsAds` | `workshop/show_workshops_for_interest` | `workshops`, `total_page` |
+
+Also wired: job publish toggle (`jobs/toggle_job_publish`), job delete (`jobs/delete_job`),
+application accept/reject (`jobs/update_job_application_status` — parts are `vendor_id`,
+`application_id`, `status`, **not** the `apply_id` an initial guess assumed), direct hire
+(`jobs/direct_hire`), and mark-interested (`workshop/mark_workshop_interested` — the part is
+`workshop_ad_id`, **not** `workshop_id`).
+
+Android's `VendorFreelancerDashboardAdapter` routes every tile to `VendorJobListing`, which looks
+like copy-paste in the Android source but is reproduced faithfully.
+
+Corrections made in this phase:
+
+- `VendorFreelancersView` was a fabricated freelancer list hitting `Home/vendor_freelancers`; it is
+  now the freelancer-counts dashboard. The matching fabricated `VendorFreelancerDetailView` was
+  **deleted** (file and project references).
+- `VendorJobApplicantsHostingController` now wraps `VendorAvailableApplicantsView`, since the
+  per-job applications list is pushed from the job detail rather than opened from the drawer.
+- "My Workshops" and "All Workshops" pointed at consumer screens; they now open the vendor ones.
+
+### Session-persistence bug fixed
+
+`SceneDelegate` restored only the *user* session — the company branch was commented out with
+"CompanyVendor model removed". A company that logged in and relaunched the app came back as a guest
+on the consumer home screen. It now rehydrates from the stored `VendorSession`, `loginCompany` sets
+`isCompanyLoggedIn` (which `SceneDelegate` gates on), and logout uses `clearAllLoginData()` so the
+flag does not survive and bounce the user straight back in.
+
+### Missing image assets
+
+`Image("splash_logo")` and `Image("topicon")` are referenced in six places but **neither asset
+exists** — the catalog ships `logo`. The company login, registration, and both forgot-password
+screens were silently rendering no logo at all. All six now use `logo`.
+
 ## Remaining work
-
-### Phase 7 — jobs, workshops, freelancing
-
-Audit `showVendorJobsController`, `showVendorJobApplicantsController`,
-`showVendorWorkshopController`, `showVendorAddWorkshopController`, `showFreelancersController`, and
-`showFreelanceDashboardController` against their Android activities. Android passes a mode through
-these screens (`intent.putExtra("type", "vendor")`, `putExtra("from", "vendor")`) that iOS has no
-equivalent for yet.
 
 ### Phase 8 — service-layer cleanup
 
@@ -194,10 +282,15 @@ Delete the fabricated `LoginService` methods and the fabricated vendor views tha
 drop `VendorDashboardView` once `StatCard` has a home. Roughly 150 methods hit URLs that do not
 exist.
 
-### Phase 9 — verification
+### Phase 9 — remaining verification
 
-1. Build for the simulator.
-2. User login: `03139970317` / `3187` → expect `+971` prefixing and the consumer home screen.
-3. Company login: `bilaljan318718@gmail.com` / `3187` → expect the vendor dashboard.
-4. Walk the dashboard → status grid → enquiry detail, and the quotations chain.
-5. Commit and push to `origin/feature/arif`.
+Test credentials are deliberately **not recorded here** — ask the team for the QA company and user
+accounts rather than committing them.
+
+1. ~~Build for the simulator.~~ done
+2. ~~Company login endpoint + dashboard render.~~ done (session seeded, see the caveat above)
+3. Drive the company email/pin form by hand and confirm it lands on the dashboard.
+4. Enter the QA user's phone **without a leading zero** and confirm the `+971` path.
+5. Walk dashboard → status grid → enquiry detail, and the quotations chain, against an account that
+   actually has enquiries — this one has zero, so only the empty states have been exercised.
+6. Exercise the "Rating" screen on an account that has ratings.

@@ -224,19 +224,21 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Post Workshop":
             mainVC.showVendorAddWorkshopController()
         case "My Workshops":
-            mainVC.showVendorWorkshopController()
+            mainVC.showVendorMyWorkshopsController()
         case "All Workshops":
-            mainVC.showWorkshopController()
+            mainVC.showVendorAllWorkshopsController()
         case "Interested Workshops":
             mainVC.showVendorInterestedWorkshopsController()
         case "Jobs Portal":
             mainVC.showVendorJobsController()
         case "Available Applicant":
-            mainVC.showVendorJobApplicantsController()
+            mainVC.showVendorAvailableApplicantsController()
+        // Android's "Freelancers" reuses the consumer freelancer list with from=vendor;
+        // "Freelancer Dashboard" is the vendor-only counts grid.
         case "Freelancers":
             mainVC.showFreelancersController()
         case "Freelancer Dashboard":
-            mainVC.showFreelanceDashboardController()
+            mainVC.showVendorFreelancerDashboardController()
         case "Memberships":
             mainVC.showVendorMembershipsController()
         case "My Membership":

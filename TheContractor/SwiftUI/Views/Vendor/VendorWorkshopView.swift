@@ -226,9 +226,18 @@ struct VendorWorkshopAd: Identifiable {
     let surname: String
     let createdAt: String
     let imagePaths: [String]
+    let statusName: String
+    let statusColor: String
+    let interested: String
 
     var posterName: String {
         [name, surname].filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
+    /// `show_workshops_for_interest` marks rows the company has already bid on.
+    var isInterested: Bool {
+        let flag = interested.lowercased()
+        return flag == "1" || flag == "yes" || flag == "true"
     }
 
     init(_ json: JSON) {
@@ -242,6 +251,9 @@ struct VendorWorkshopAd: Identifiable {
         self.surname = json["surname"].stringValue
         self.createdAt = json["created_at"].stringValue
         self.imagePaths = json["images"].arrayValue.map { $0["image_path"].stringValue }
+        self.statusName = json["status_name"].stringValue
+        self.statusColor = json["status_color"].stringValue
+        self.interested = json["interested"].stringValue
     }
 }
 
@@ -259,6 +271,10 @@ struct VendorWorkshopAdCard: View {
                 Text(workshop.adId)
                     .font(.system(size: 12))
                     .foregroundColor(Color(white: 0.4))
+            }
+
+            if !workshop.statusName.isEmpty {
+                VendorStatusBadge(name: workshop.statusName, color: workshop.statusColor)
             }
 
             Text(workshop.posterName)

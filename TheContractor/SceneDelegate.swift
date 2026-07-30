@@ -24,16 +24,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 Global.shared.isLogedIn = true
                 Global.shared.loginType = "user"
             }
-            // Temporarily disabled - CompanyVendor model removed
-            /*
-            else if UserDefaultsManager.shared.isCompanyLoggedIn,
-                      let storedCompany = UserDefaultsManager.shared.companyInfo {
-                Global.shared.user = nil
-                Global.shared.companyVendor = storedCompany
+            // Companies persist as a `VendorSession` under the "vendor" key, the way Android's
+            // `SharedPrefManager.getVendorObject()` works. Without this the flag stays false on a
+            // cold launch and a logged-in company lands on the consumer home screen instead of
+            // `VendorHomeView`.
+            else if let vendor = VendorSession.current, !vendor.id.isEmpty {
+                var user = UserViewModel()
+                user.id = vendor.id
+                user.name = vendor.company_name
+                user.phone = vendor.company_phone
+                user.userType = vendor.user_type.isEmpty ? "companies" : vendor.user_type
+                Global.shared.user = user
                 Global.shared.isLogedIn = true
+                Global.shared.isVendor = true
                 Global.shared.loginType = "company"
             }
-            */
 
             guard let windowScene = (scene as? UIWindowScene) else { return }
             let window = UIWindow(windowScene: windowScene)

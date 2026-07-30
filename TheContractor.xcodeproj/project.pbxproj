@@ -192,7 +192,6 @@
 		806CA97F2F5768C600D31D28 /* FreelanceWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9602F5768C600D31D28 /* FreelanceWalletView.swift */; };
 		806CA9802F5768C600D31D28 /* VendorEnquiryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */; };
 		806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9452F5768C600D31D28 /* VendorWorkshopView.swift */; };
-		806CA9822F5768C600D31D28 /* VendorFreelancerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9312F5768C600D31D28 /* VendorFreelancerDetailView.swift */; };
 		806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96A2F5768C600D31D28 /* QuotationsListView.swift */; };
 		806CA9842F5768C600D31D28 /* VendorDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA92B2F5768C600D31D28 /* VendorDashboardView.swift */; };
 		806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA97C2F5768C600D31D28 /* WorkshopView.swift */; };
@@ -366,7 +365,7 @@
 		90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */; };
 		90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */; };
 		90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */; };
-		90C6FF2B2F20ED0000BDA19A /* VendorFreelancerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2C2F20ED0000BDA19A /* VendorFreelancerDetailView.swift */; };
+		90C6FF2B2F20ED0000BDA19A /* VendorWorkshopAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */; };
 		90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */; };
 		90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */; };
 		90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */; };
@@ -605,7 +604,6 @@
 		806CA92E2F5768C600D31D28 /* VendorEditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEditProfileView.swift; sourceTree = "<group>"; };
 		806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEnquiriesView.swift; sourceTree = "<group>"; };
 		806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEnquiryDetailView.swift; sourceTree = "<group>"; };
-		806CA9312F5768C600D31D28 /* VendorFreelancerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorFreelancerDetailView.swift; sourceTree = "<group>"; };
 		806CA9322F5768C600D31D28 /* VendorFreelancersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorFreelancersView.swift; sourceTree = "<group>"; };
 		806CA9332F5768C600D31D28 /* VendorGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorGalleryView.swift; sourceTree = "<group>"; };
 		806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorJobApplicantsView.swift; sourceTree = "<group>"; };
@@ -767,7 +765,7 @@
 		90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorReviewsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorReviewsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSettingsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorEditProfileView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorEditProfileView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF2C2F20ED0000BDA19A /* VendorFreelancerDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorFreelancerDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorFreelancerDetailView.swift; sourceTree = SOURCE_ROOT; };
+		90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopAdsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorWorkshopAdsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddFreelancerView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorNotificationsView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorNotificationsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorAddWorkshopItemView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorAddWorkshopItemView.swift; sourceTree = SOURCE_ROOT; };
@@ -1368,7 +1366,7 @@
 				90C6FF262F20EC0700BDA19A /* VendorReviewsView.swift */,
 				90C6FF282F20EC0800BDA19A /* VendorSettingsView.swift */,
 				90C6FF2A2F20EC0900BDA19A /* VendorEditProfileView.swift */,
-				90C6FF2C2F20ED0000BDA19A /* VendorFreelancerDetailView.swift */,
+				90C6FF2C2F20ED0000BDA19A /* VendorWorkshopAdsView.swift */,
 				90C6FF2E2F20ED0100BDA19A /* VendorAddFreelancerView.swift */,
 				90C6FF302F20ED0200BDA19A /* VendorNotificationsView.swift */,
 				90C6FF322F20ED0300BDA19A /* VendorAddWorkshopItemView.swift */,
@@ -1508,7 +1506,6 @@
 				806CA92E2F5768C600D31D28 /* VendorEditProfileView.swift */,
 				806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */,
 				806CA9302F5768C600D31D28 /* VendorEnquiryDetailView.swift */,
-				806CA9312F5768C600D31D28 /* VendorFreelancerDetailView.swift */,
 				806CA9322F5768C600D31D28 /* VendorFreelancersView.swift */,
 				806CA9332F5768C600D31D28 /* VendorGalleryView.swift */,
 				806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */,
@@ -1771,7 +1768,6 @@
 				806CA97F2F5768C600D31D28 /* FreelanceWalletView.swift in Sources */,
 				806CA9802F5768C600D31D28 /* VendorEnquiryDetailView.swift in Sources */,
 				806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */,
-				806CA9822F5768C600D31D28 /* VendorFreelancerDetailView.swift in Sources */,
 				806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */,
 				806CA9842F5768C600D31D28 /* VendorDashboardView.swift in Sources */,
 				806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */,
@@ -2074,7 +2070,7 @@
 				90C6FF252F20EC0700BDA19A /* VendorReviewsView.swift in Sources */,
 				90C6FF272F20EC0800BDA19A /* VendorSettingsView.swift in Sources */,
 				90C6FF292F20EC0900BDA19A /* VendorEditProfileView.swift in Sources */,
-				90C6FF2B2F20ED0000BDA19A /* VendorFreelancerDetailView.swift in Sources */,
+				90C6FF2B2F20ED0000BDA19A /* VendorWorkshopAdsView.swift in Sources */,
 				90C6FF2D2F20ED0100BDA19A /* VendorAddFreelancerView.swift in Sources */,
 				90C6FF2F2F20ED0200BDA19A /* VendorNotificationsView.swift in Sources */,
 				90C6FF312F20ED0300BDA19A /* VendorAddWorkshopItemView.swift in Sources */,

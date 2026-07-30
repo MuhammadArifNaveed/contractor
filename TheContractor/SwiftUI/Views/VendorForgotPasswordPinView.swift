@@ -97,7 +97,7 @@ struct VendorForgotPasswordPinView: View {
     
     private var logoSection: some View {
         VStack(spacing: AppTheme.Spacing.small) {
-            Image("splash_logo")
+            Image("logo")
                 .resizable()
                 .scaledToFit()
                 .frame(height: 100)

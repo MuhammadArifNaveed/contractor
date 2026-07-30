@@ -68,7 +68,8 @@ struct VendorHomeView: View {
             }
             .frame(width: 32, height: 32)
 
-            Image("topicon")
+            // Android's toolbar uses @drawable/topicon; the iOS asset catalog ships this as "logo".
+            Image("logo")
                 .resizable()
                 .scaledToFit()
                 .frame(height: 34)
@@ -249,10 +250,15 @@ struct VendorDashboardCountCard: View {
 
     var body: some View {
         VStack(spacing: 2) {
+            // Android's statusName is wrap_content inside a SquareLayout, so longer labels such as
+            // "Completed" wrap rather than truncate.
             Text(count.name)
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
+                .fixedSize(horizontal: false, vertical: true)
 
             Text(count.count)
                 .font(.system(size: 14, weight: .bold))
@@ -263,7 +269,7 @@ struct VendorDashboardCountCard: View {
                 .foregroundColor(.black)
                 .padding(.top, 5)
         }
-        .padding(6)
+        .padding(4)
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
         .background(Color.white)

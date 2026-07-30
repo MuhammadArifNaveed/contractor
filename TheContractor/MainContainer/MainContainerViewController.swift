@@ -864,26 +864,6 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
 
-    func showVendorJobApplicantsController() {
-        self.hideForSideMenu()
-        let vc = VendorJobApplicantsHostingController()
-        let controller = BaseNavigationController(rootViewController: vc)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
-
-        guard let containerView = self.containerView else { return }
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-        self.baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
-    }
-
     func showVendorWorkshopController() {
         self.hideForSideMenu()
         let vc = VendorWorkshopHostingController()
@@ -960,8 +940,10 @@ class MainContainerViewController: BaseViewController{
         Global.shared.loginType = ""
         Global.shared.user = UserViewModel()
         
-        // Clear UserDefaults including vendor data
-        UserDefaultsManager.shared.clearUserData()
+        // Clear UserDefaults including vendor data. `clearAllLoginData()` rather than
+        // `clearUserData()` because the latter leaves `isCompanyLoggedIn` set, which would send
+        // SceneDelegate straight back into the vendor dashboard on the next launch.
+        UserDefaultsManager.shared.clearAllLoginData()
         UserDefaults.standard.removeObject(forKey: "vendor")
         UserDefaults.standard.removeObject(forKey: "isVendor")
         UserDefaults.standard.removeObject(forKey: "loginType")
@@ -1024,6 +1006,26 @@ class MainContainerViewController: BaseViewController{
     /// Android `VendorInterestedWorkshops`.
     func showVendorInterestedWorkshopsController() {
         showVendorScreen(VendorInterestedWorkshopsView())
+    }
+
+    /// Android `WorkShopAds` with `type=vendor`.
+    func showVendorMyWorkshopsController() {
+        showVendorScreen(VendorMyWorkshopsView())
+    }
+
+    /// Android `VendorAllWorkshopsAds`.
+    func showVendorAllWorkshopsController() {
+        showVendorScreen(VendorAllWorkshopsView())
+    }
+
+    /// Android `VendorApplicants` — the drawer item "Available Applicant".
+    func showVendorAvailableApplicantsController() {
+        showVendorScreen(VendorAvailableApplicantsView())
+    }
+
+    /// Android `VendorDashboardFreelancer`.
+    func showVendorFreelancerDashboardController() {
+        showVendorScreen(VendorFreelancersView())
     }
     func loginUser() {
         Global.shared.user = nil

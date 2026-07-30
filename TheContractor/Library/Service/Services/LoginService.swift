@@ -87,6 +87,11 @@ class LoginService: BaseService {
         UserDefaults.standard.set(true, forKey: "isVendor")
         UserDefaults.standard.set("company", forKey: "loginType")
 
+        // SceneDelegate gates session restoration on this flag, so a company that skips it would
+        // come back as a guest on the next cold launch.
+        UserDefaultsManager.shared.isCompanyLoggedIn = true
+        UserDefaultsManager.shared.loginType = "company"
+
         Global.shared.isLogedIn = true
         Global.shared.isVendor = true
         Global.shared.loginType = "company"
@@ -578,6 +583,154 @@ class LoginService: BaseService {
         ]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success, json)
+        }
+    }
+
+    // MARK: - Vendor Jobs
+    /// Job counts per status. Android: `RetrofitApi.vendorJobsStatus()` → `POST jobs/app_jobs_dashboard`,
+    /// response key `vendor_dashboard_counts`.
+    func getVendorJobsDashboard(vendorId: String, userId: String, userType: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/app_jobs_dashboard"
+        let params: [String: String] = ["vendor_id": vendorId, "user_id": userId, "user_type": userType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The jobs in one status. Android: `RetrofitApi.vendorJobListing()` → `POST jobs/jobs_listing`,
+    /// response key `jobs_list`. `id` is the status id.
+    func getVendorJobListing(statusId: String, vendorId: String, userId: String, userType: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/jobs_listing"
+        let params: [String: String] = ["id": statusId, "vendor_id": vendorId, "user_id": userId, "user_type": userType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One job in full. Android: `RetrofitApi.vendorJobDetail()` → `POST jobs/view_job`,
+    /// response key `job_details`. Keyed on `job_uuid`, not the numeric id.
+    func getVendorJobDetail(jobUuid: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/view_job"
+        let params: [String: String] = ["job_uuid": jobUuid]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Android: `RetrofitApi.vendorUpdateJobPublishStatus()`. `check` is `"1"` / `"0"`.
+    func setVendorJobPublished(jobId: String, published: Bool, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/toggle_job_publish"
+        let params: [String: String] = ["job_id": jobId, "check": published ? "1" : "0"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    /// Android: `RetrofitApi.vendorDelectJob()` (sic).
+    func deleteVendorJob(jobId: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/delete_job"
+        let params: [String: String] = ["job_id": jobId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Available Applicants
+    /// Android: `RetrofitApi.availableApplicantApi()` → `POST jobs/search_applicants`,
+    /// response keys `available_users` and `total_page`. `category` and `city` may be empty.
+    func getAvailableApplicants(page: String, category: String, city: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/search_applicants"
+        let params: [String: String] = ["page": page, "category": category, "city": city]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// The people who applied to one job. Android: `RetrofitApi.viewAppliesApi()` →
+    /// `POST jobs/view_applies`, response key `job_applies`.
+    func getVendorJobApplications(jobUuid: String, page: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/view_applies"
+        let params: [String: String] = ["page": page, "job_uuid": jobUuid]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Accept or reject one application. Android: `RetrofitApi.updateJobHireStatusApi()` →
+    /// `POST jobs/update_job_application_status` with `vendor_id`, `application_id`, `status`.
+    func updateVendorJobApplicationStatus(vendorId: String, applicationId: String, status: String,
+                                          completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/update_job_application_status"
+        let params: [String: String] = ["vendor_id": vendorId, "application_id": applicationId, "status": status]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    /// Hire an applicant directly. Android: `RetrofitApi.hireApplicantApi()` → `POST jobs/direct_hire`.
+    func directHireApplicant(vendorId: String, userId: String, userType: String, applicantUuid: String, status: String,
+                             completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/direct_hire"
+        let params: [String: String] = [
+            "vendor_id": vendorId,
+            "user_id": userId,
+            "user_type": userType,
+            "applicant_uuid": applicantUuid,
+            "status": status
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
+        }
+    }
+
+    // MARK: - Vendor Freelancing
+    /// Freelancing counts. Android: `RetrofitApi.vendorFreelancerStatus()` →
+    /// `POST freelancing/freelancing_dashboard`, response key `freelancing_dashboard`.
+    func getVendorFreelancingDashboard(vendorId: String, userId: String, userType: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/freelancing_dashboard"
+        let params: [String: String] = ["vendor_id": vendorId, "user_id": userId, "user_type": userType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    // MARK: - Workshops (vendor side)
+    /// This company's own workshop ads. Android: `RetrofitApi.workshopAds()` → `POST workshop/workshops`.
+    func getVendorWorkshops(vendorId: String, userId: String, userType: String, bidType: String, page: String,
+                            completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/workshops"
+        let params: [String: String] = [
+            "vendor_id": vendorId, "user_id": userId, "user_type": userType, "bid_type": bidType, "page": page
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Every open workshop ad the company could bid on. Android: `RetrofitApi.allWorkshopAds()` →
+    /// `POST workshop/show_workshops_for_interest`.
+    func getAllWorkshopsForInterest(vendorId: String, userId: String, userType: String, bidType: String, page: String,
+                                    completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/show_workshops_for_interest"
+        let params: [String: String] = [
+            "vendor_id": vendorId, "user_id": userId, "user_type": userType, "bid_type": bidType, "page": page
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Register interest in a workshop ad. Android: `RetrofitApi.workshopMarkInterested()` — note the
+    /// part is `workshop_ad_id`, not `workshop_id`.
+    func markWorkshopInterested(vendorId: String, userId: String, userType: String, bidType: String, workshopAdId: String,
+                                completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/mark_workshop_interested"
+        let params: [String: String] = [
+            "vendor_id": vendorId, "user_id": userId, "user_type": userType,
+            "bid_type": bidType, "workshop_ad_id": workshopAdId
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success)
         }
     }
 
