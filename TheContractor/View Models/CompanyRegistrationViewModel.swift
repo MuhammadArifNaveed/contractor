@@ -130,14 +130,14 @@ class CompanyRegistrationViewModel: ObservableObject {
         let firebaseToken = Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
         
         let params: [String: String] = [
-            "company_name": companyName.trimmingCharacters(in: .whitespaces),
-            "arabic_name": companyNameArabic.trimmingCharacters(in: .whitespaces),
+            "company_english": companyName.trimmingCharacters(in: .whitespaces),
+            "company_arabic": companyNameArabic.trimmingCharacters(in: .whitespaces),
             "company_email": companyEmail.trimmingCharacters(in: .whitespaces),
             "company_phone": companyPhone.trimmingCharacters(in: .whitespaces),
             "company_address": companyAddress.trimmingCharacters(in: .whitespaces),
-            "company_owner": ownerName.trimmingCharacters(in: .whitespaces),
+            "owner_name": ownerName.trimmingCharacters(in: .whitespaces),
             "owner_phone": ownerPhone.trimmingCharacters(in: .whitespaces),
-            "agent_referral_code": agentReferralCode.trimmingCharacters(in: .whitespaces),
+            "agent_code": agentReferralCode.trimmingCharacters(in: .whitespaces),
             "login_email": loginEmail.trimmingCharacters(in: .whitespaces),
             "login_password": password.trimmingCharacters(in: .whitespaces),
             "device_type": "ios",

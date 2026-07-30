@@ -286,9 +286,12 @@ struct VendorPressStyle: ButtonStyle {
 
 // MARK: - Top bar
 
-/// The yellow action bar every vendor screen carries. Drawer-rooted screens leave `onBack` nil and
-/// get the hamburger, matching Android's `ActionBarDrawerToggle`; pushed screens pass a dismiss
-/// closure and get the back chevron.
+/// The yellow action bar every vendor screen carries.
+///
+/// Pass `onBack` only from a screen that was pushed by a `NavigationLink` or presented as a sheet.
+/// A screen opened straight from the drawer is the *root* of its own hosting controller, so
+/// `dismiss()` there has nothing to pop and the chevron is dead — leave `onBack` nil and it shows the
+/// hamburger instead, matching Android's `ActionBarDrawerToggle`.
 struct VendorTopBar: View {
     private let title: String
     private let onBack: (() -> Void)?

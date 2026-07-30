@@ -122,7 +122,8 @@ class LoginService: BaseService {
     func vendorForgotPasswordSendPin(email: String,
                                     completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "vendor/send_reset_password_pin"
-        let params: [String: String] = ["email": email]
+        // Android's part is `login_email`; `email` was silently ignored, so no pin was ever sent.
+        let params: [String: String] = ["login_email": email]
         
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
@@ -133,7 +134,7 @@ class LoginService: BaseService {
     func vendorForgotPasswordVerifyPin(email: String, pin: String,
                                        completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "vendor/reset_pin_check"
-        let params: [String: String] = ["email": email, "pin": pin]
+        let params: [String: String] = ["login_email": email, "pin": pin]
         
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
@@ -144,7 +145,7 @@ class LoginService: BaseService {
     func vendorUpdatePassword(email: String, password: String,
                             completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "vendor/update_password"
-        let params: [String: String] = ["password": password, "email": email]
+        let params: [String: String] = ["password": password, "login_email": email]
 
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
@@ -858,17 +859,6 @@ class LoginService: BaseService {
         }
     }
 
-    /// Get vendor enquiries
-    
-    /// Get vendor quotations
-    func getVendorQuotations(vendorId: String, status: String?, pageNo: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
-        let completeURL = EndPoints.BASE_URL + "Vendor/quotations"
-        var params: [String: String] = ["vendor_id": vendorId, "page_no": pageNo]
-        if let status = status { params["status"] = status }
-        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
-            completion(message, success, json)
-        }
-    }
     
     /// Submit vendor quotation response
     

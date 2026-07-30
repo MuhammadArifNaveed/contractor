@@ -39,7 +39,7 @@ struct VendorPostWorkshopView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VendorTopBar(title: "Post Workshop", onBack: { dismiss() })
+            VendorTopBar(title: "Post Workshop")
 
             ZStack {
                 VendorTheme.canvas.ignoresSafeArea(edges: .bottom)

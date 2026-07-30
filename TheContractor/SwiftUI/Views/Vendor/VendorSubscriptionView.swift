@@ -23,6 +23,7 @@ struct VendorSubscriptionView: View {
     @State private var noticeMessage: String?
 
     @State private var couponMembership: VendorMembership?
+    @State private var cardPaymentNotice = false
     @State private var couponCode = ""
     @State private var isBuying = false
 
@@ -48,6 +49,8 @@ struct VendorSubscriptionView: View {
                                 VendorMembershipCard(membership: membership) {
                                     couponCode = ""
                                     couponMembership = membership
+                                } onCardPayment: {
+                                    cardPaymentNotice = true
                                 }
                             }
                         }
@@ -84,6 +87,13 @@ struct VendorSubscriptionView: View {
                     couponCode = ""
                 }
             }
+        }
+        // vendor/buy_membership_online needs a payment gateway the iOS app has no integration for.
+        // Saying so is better than a button that silently fails.
+        .alert("Card payment not available yet", isPresented: $cardPaymentNotice) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Paying by card is not switched on in this version. You can activate a membership with a coupon code, or contact support to pay another way.")
         }
         .onAppear(perform: load)
     }
@@ -308,6 +318,7 @@ struct VendorMyMembership: Identifiable {
 struct VendorMembershipCard: View {
     let membership: VendorMembership
     let onBuy: () -> Void
+    let onCardPayment: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -347,14 +358,41 @@ struct VendorMembershipCard: View {
                 }
                 .padding(.top, 4)
             } else {
-                Button(action: onBuy) {
-                    Text("Buy Membership")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.black)
+                VStack(spacing: VendorTheme.Space.s) {
+                    Button(action: onBuy) {
+                        Text("Use a coupon code")
+                            .font(VendorTheme.Text.cardTitle)
+                            .foregroundColor(VendorTheme.onAccent)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, VendorTheme.Space.m)
+                            .background(
+                                RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                                    .fill(VendorTheme.accent)
+                            )
+                    }
+                    .buttonStyle(VendorPressStyle())
+
+                    // Android's card path; kept visible so the option is discoverable, and honest
+                    // about not being switched on.
+                    Button(action: onCardPayment) {
+                        HStack(spacing: VendorTheme.Space.xs) {
+                            Text("Pay by card")
+                            Text("Soon")
+                                .font(VendorTheme.Text.badge)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Capsule().fill(VendorTheme.surfaceRaised))
+                        }
+                        .font(VendorTheme.Text.cardTitle)
+                        .foregroundColor(VendorTheme.textSecondary)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(VendorTheme.accent)
-                        .cornerRadius(5)
+                        .padding(.vertical, VendorTheme.Space.m)
+                        .background(
+                            RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                                .stroke(VendorTheme.separator, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(VendorPressStyle())
                 }
                 .padding(.top, 4)
             }
