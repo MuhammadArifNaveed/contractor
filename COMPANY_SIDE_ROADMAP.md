@@ -75,15 +75,54 @@ not the `vendor_profile` Android's Gson field name implies.
 
 ### 2. Profile ✅ — same screen as the header, above
 
-### 3. Inbox ⬜
+### 3. Inbox ⬜ — blocked on a dependency, not on porting
 
-Android `VendorChatConnection`. iOS routes to the consumer `ChatListView`, which calls
-`Home/get_chats` — **an endpoint that does not exist**. The real chat surface is split across
-`freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/fetch_order_chats`,
-`freelancing/send_message`, and `workshop/*` quotation chats.
+**Correction to an earlier assumption in this document: the vendor inbox is not REST at all.**
+`VendorChatConnection` and `VendorChat` both use **Firebase Firestore** directly
+(`FirebaseFirestore.getInstance()`). The `freelancing/*chats` REST endpoints listed here previously
+belong to the freelancing-order chat, which is a separate surface.
 
-**Work:** the largest single item here. Needs its own mini-plan: decide which conversation types a
-company sees, build the thread list, then the thread view with send. Treat as its own phase.
+**The blocker:** the iOS project has no Firebase whatsoever — nothing in the `Podfile`, nothing in
+`Pods/`, no `import Firebase` anywhere, and no `GoogleService-Info.plist`. (`Global.shared.fcmToken`
+is only a stored string; no SDK backs it.) Android's `google-services.json` is for project
+`thecontractor-uae`, package `com.thecontractor`, and cannot be reused: iOS needs its own app
+registered in that Firebase project under bundle id `com.contractor.TheContractorx`, which produces
+an iOS-specific `GoogleService-Info.plist`. Only someone with Firebase console access can generate it.
+
+Adding `pod 'Firebase/Firestore'` without that plist makes `FirebaseApp.configure()` crash on launch,
+so it was deliberately **not** added — that would leave the app in a worse state than it is now.
+
+**What is needed to unblock, in order:**
+
+1. Register an iOS app for bundle id `com.contractor.TheContractorx` in the `thecontractor-uae`
+   Firebase project and add the resulting `GoogleService-Info.plist` to the target.
+2. Add `pod 'Firebase/Firestore'` (and `Firebase/Core`) and run `pod install`.
+3. Confirm the Firestore security rules permit an iOS client — the rules may be scoped to the
+   Android app or to authenticated users, and this app performs no Firebase Auth sign-in.
+
+**The contract, ready to implement once unblocked.** Read off `VendorChatConnection` and
+`VendorChat`, so no guesswork remains:
+
+*Thread list* — collection **`user_connections`**, filtered `whereEqualTo("company_uuid", <vendor
+uuid>)`, live via a snapshot listener. `VendorSession.uuid` already carries that value and is
+populated (verified: `1f60a79a-…` for the test company). Document fields used: `company_id`,
+`company_uuid`, `company_serial_no`, `company_name`, `company_is_active`, `user_id`, `user_uuid`,
+`user_name`, `full_name`, `user_is_active`, `is_active`, `chat_uuid`, `created_at`, `last_message`,
+`message_time`.
+
+*Thread* — collection **`chat`**, filtered `whereEqualTo("chat_uuid", <chat uuid>)`, ordered by
+**`country_time`**, live via a snapshot listener.
+
+*Sending* — `add()` a document to **`chat`** with exactly: `company_uuid`, `user_uuid`, `chat_uuid`,
+`time`, `country_time`, `company_is_view` `"0"`, `user_is_view` `"0"`, `message`, and
+`sent_by` `"company"`. On success Android then updates `last_message` on the `user_connections`
+document and fires a push via `vendor/send_message_notification`.
+
+Note every field is a **string**, including the `"0"` view flags — Firestore is schemaless, so
+writing them as booleans or numbers would make the Android client fail to read them.
+
+**Also still missing:** the per-quotation workshop chat thread (`quotations[].chats` in the workshop
+detail response). It belongs with this work.
 
 ### 4. Rating ✅
 
