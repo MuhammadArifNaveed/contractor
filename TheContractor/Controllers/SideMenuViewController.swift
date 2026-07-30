@@ -230,7 +230,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "Quotations":
             mainVC.showVendorQuotationsController()
         case "Post Workshop":
-            mainVC.showVendorAddWorkshopController()
+            mainVC.showVendorPostWorkshopController()
         case "My Workshops":
             mainVC.showVendorMyWorkshopsController()
         case "All Workshops":

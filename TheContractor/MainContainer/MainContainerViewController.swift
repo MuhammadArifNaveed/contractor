@@ -1034,6 +1034,11 @@ class MainContainerViewController: BaseViewController{
         showVendorScreen(VendorMyMembershipView())
     }
 
+    /// Android `VendorPostWorkshop`.
+    func showVendorPostWorkshopController() {
+        showVendorScreen(VendorPostWorkshopView())
+    }
+
     /// Android `VendorInterestedWorkshops`.
     func showVendorInterestedWorkshopsController() {
         showVendorScreen(VendorInterestedWorkshopsView())

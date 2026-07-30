@@ -429,6 +429,51 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Post Workshop
+    /// The three picker lists behind Android's post-workshop form.
+    /// Android: `RetrofitApi.workshopFilterAPI()` → `POST workshop/workshop_filter_data`, returning
+    /// `workshop_type`, `work_sector` (both `{title, value}`) and `freelancer_cities` (`{id, name}`).
+    func getWorkshopFilterData(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/workshop_filter_data"
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Post a new workshop ad. Android: `RetrofitApi.vendorPostWorkShopAdNewAPI()` →
+    /// `POST workshop/submit_workshop_ad`.
+    ///
+    /// The images go up as repeated `images[]` parts — that is the name Android's
+    /// `ImagePartFromUri.createPartFromUri(..., "images[]")` actually sends, despite the Retrofit
+    /// signature calling the argument `surveyImage`.
+    func submitWorkshopAd(vendorId: String, userId: String, userType: String,
+                          bidType: String, workSector: String, workCity: String,
+                          title: String, description: String, images: [Data],
+                          completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/submit_workshop_ad"
+        let params: [String: String] = [
+            "vendor_id": vendorId,
+            "user_id": userId,
+            "user_type": userType,
+            "bid_type": bidType,
+            "work_sector": workSector,
+            "work_city": workCity,
+            "title": title,
+            "description": description
+        ]
+
+        if images.isEmpty {
+            self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+                completion(message, success)
+            }
+        } else {
+            self.makePostAPICallWithImages(with: completeURL, params: params,
+                                           images: images, partName: "images[]") { message, success, _ in
+                completion(message, success)
+            }
+        }
+    }
+
     // MARK: - Vendor Profile
     /// The company's own record. Android: `RetrofitApi.vendorProfile()` → `POST vendor/my_company`.
     ///

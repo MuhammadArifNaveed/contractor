@@ -253,6 +253,41 @@ class BaseService {
         }
     }
 
+    //MARK:- Multipart Post with several images under one repeated part name
+    /// Sends `images` as repeated parts all sharing `partName`, which is how PHP reads an array.
+    ///
+    /// `makePostAPICallWithMultipart` takes a dictionary, so it cannot express the same key twice —
+    /// endpoints like `workshop/submit_workshop_ad` expect `images[]` repeated once per file.
+    func makePostAPICallWithImages(with completeURL: String,
+                                   params: [String: String]?,
+                                   images: [Data],
+                                   partName: String,
+                                   headers: HTTPHeaders? = nil,
+                                   completion: @escaping (_ error: String, _ success: Bool, _ jsonData: JSON?) -> Void) {
+        let requestHeaders = headers ?? self.getHeaders()
+        print("\n==================== API REQUEST (IMAGES) ====================")
+        print("URL: \(completeURL)")
+        print("Params: \(params ?? [:])  Images: \(images.count) under \(partName)")
+
+        sessionManager.upload(multipartFormData: { form in
+            for (key, value) in params ?? [:] {
+                form.append(Data(value.utf8), withName: key)
+            }
+            for (index, data) in images.enumerated() {
+                form.append(data, withName: partName,
+                            fileName: "image\(index + 1).jpg", mimeType: "image/jpeg")
+            }
+        }, to: completeURL, headers: requestHeaders)
+        .responseData { response in
+            let statusCode = response.response?.statusCode ?? -1
+            print("Status: \(statusCode)")
+            print("Raw Response: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "undecodable")")
+            let json = JSON(response.data ?? Data())
+            let result = BaseService.parseMultipartResult(statusCode: statusCode, json: json)
+            completion(result.message, result.success, json)
+        }
+    }
+
     //MARK:- Enhanced Multipart Post API Call with proper file handling
     func makePostAPICallWithMultipartWithFiles(with completeURL:String, params:[String:String]?, imageData: Data?, videoData: Data?, headers: HTTPHeaders? = nil, completion: @escaping (_ error: String, _ success: Bool, _ jsonData:JSON?)->Void) {
         print("\n==================== API REQUEST (MULTIPART) ====================")

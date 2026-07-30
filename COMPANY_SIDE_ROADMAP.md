@@ -108,17 +108,24 @@ a PDF went up as a JPEG. `BaseService.makePostAPICallWithDocument` sends the rea
 type. The picker's URL is security-scoped, so the bytes are read inside a
 start/stopAccessingSecurityScopedResource pair.
 
-### 7. Post Workshop ⬜
+### 7. Post Workshop ✅
 
-Android `VendorPostWorkshop`: loads pickers from `workshop/…filter` (workshop type, work sector,
-cities), then posts via `vendorPostWorkShopAdNewAPI` with title, detail, type, sector, city **and
-multiple images**.
+`VendorPostWorkshopView` replaces `VendorAddWorkshopItemView`, which posted to
+`Home/add_workshop_item` — an endpoint the backend does not serve.
 
-iOS routes to `VendorAddWorkshopItemView`, which posts to `Home/add_workshop_item` — **does not
-exist**.
+Pickers come from `workshop/workshop_filter_data`: `workshop_type` and `work_sector` as
+`{title, value}` (Open/Close and Government/Private), `freelancer_cities` as `{id, name}`. The ad
+posts to `workshop/submit_workshop_ad`.
 
-**Work:** a real form. Three remote-loaded pickers, validation, multi-image picker, multipart post.
-Second-largest item after Inbox.
+**Gotcha:** the images go up as repeated **`images[]`** parts. That is what Android's
+`ImagePartFromUri.createPartFromUri(..., "images[]")` actually sends, despite the Retrofit signature
+naming the argument `surveyImage`. This needed a third transport helper —
+`makePostAPICallWithImages` — because the existing multipart call takes a dictionary and so cannot
+express the same key twice.
+
+Photos use a `PHPickerViewController` wrapper (SwiftUI's `PhotosPicker` is iOS 16; the target is
+iOS 15), up to eight, each downscaled to 1600pt and re-encoded at JPEG 0.75 — straight off the camera
+eight photos is tens of megabytes.
 
 ### 8. My Workshops ✅ · 9. All Workshops ✅ · 10. Interested Workshops ✅
 
@@ -218,7 +225,7 @@ Cheapest-to-most-valuable, front-loading the work that unblocks other work:
 | ~~5~~ | ~~My Membership detail~~ | done |
 | ~~6~~ | ~~Applicant filter sheet~~ | done |
 | ~~7~~ | ~~Job create / edit~~ | done |
-| 8 | Post Workshop form | Large: three pickers + multi-image upload |
+| ~~8~~ | ~~Post Workshop form~~ | done |
 | 9 | Freelancers vendor mode | Multi-screen hire flow |
 | 10 | Inbox | Largest; wants its own plan |
 | — | Membership card payment | Blocked on a payment-gateway decision |
