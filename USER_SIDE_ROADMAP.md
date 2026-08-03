@@ -167,9 +167,29 @@ rename, so it is left for a decision rather than guessed at.
 
 Fabricated hardcoded URLs: 15 → 12.
 
-**U5 — Jobs.** `jobs/search_jobs`, `jobs/job_apply`, `jobs/user_job_applies`,
-`jobs/user_direct_selections`, `jobs/update_user_job_status`. The vendor side already proved these
-endpoints out.
+**U5 — Jobs. ✅ done, and verified against the live API.**
+
+The only phase so far where the endpoints could actually be exercised — none of these needs a company
+session, so all three were called live with real responses:
+
+| Screen | Was | Now | Live result |
+|---|---|---|---|
+| `SearchJobsViewModel` | `Home/search_jobs`, part `search_query`, read `jobs` | `jobs/search_jobs`, parts `page`/`jobs`/`job_category`/`job_city`, reads `available_jobs` | `error:false`, 7 rows |
+| `MyJobApplicationsViewModel` | `Home/get_my_job_applications`, read `applications` | `jobs/user_job_applies` + `page`, reads `job_applications` | `error:false` |
+| `DirectHiringView` | `Home/get_direct_hiring`, read `items` | `jobs/user_direct_selections` + `page`, reads `user_direct_selections` | `error:false` |
+
+**Each of these was wrong in three places at once** — path, request part names, *and* the response key
+the parser read. Fixing only the path would have left every list silently empty, which is why the live
+call mattered here: it is the first phase where the response shape was confirmed rather than inferred
+from Android's models.
+
+Two details worth carrying forward: the job-search term's part is literally named **`jobs`**, not
+`query` or `search`; and `search_jobs` returns its rows under **`available_jobs`**, not `jobs`.
+
+`jobs/job_apply` needed nothing — `JobDetailViewModel` already called it correctly with `user_id` and
+`job_uuid`.
+
+Fabricated hardcoded URLs: 12 → 9.
 
 **U6 — Workshops and estimations.** `Home/recent_workshop_ads`, `Home/workshop_ad_detail`,
 `Home/submit_workshop_ad`, plus the estimation family (`Home/get_estimation_categories`,

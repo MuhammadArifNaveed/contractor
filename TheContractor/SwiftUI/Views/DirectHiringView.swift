@@ -37,10 +37,12 @@ class DirectHiringViewModel: ObservableObject {
     func loadItems() {
         isLoading = true
         guard let userId = UserDefaultsManager.shared.userInfo?.id else { return }
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/get_direct_hiring", params: ["user_id": userId]) { [weak self] _, success, json, _ in
+        // Android: jobs/user_direct_selections, which also takes a page.
+        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/jobs/user_direct_selections", params: ["user_id": userId, "page": "1"]) { [weak self] _, success, json, _ in
             DispatchQueue.main.async {
                 self?.isLoading = false
-                if success, let arr = json?["items"].array {
+                // Live response key is `user_direct_selections`.
+                if success, let arr = json?["user_direct_selections"].array {
                     self?.items = arr.map { DirectHiringItem(id: $0["id"].stringValue, title: $0["title"].stringValue, company: $0["company"].stringValue, date: $0["date"].stringValue, status: $0["status"].stringValue) }
                 }
             }

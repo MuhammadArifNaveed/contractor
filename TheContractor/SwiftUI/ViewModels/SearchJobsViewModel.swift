@@ -32,15 +32,23 @@ class SearchJobsViewModel: ObservableObject {
                 self.isSearching = true
             }
             
-            let params = ["search_query": self.searchQuery]
-            let completeURL = "https://contractor.bidcont.com/rest/Home/search_jobs"
+            // Android: jobs/search_jobs. The search term's part is named `jobs`; category and city
+            // are optional filters this screen does not collect yet.
+            let params = [
+                "page": "1",
+                "jobs": self.searchQuery,
+                "job_category": "",
+                "job_city": ""
+            ]
+            let completeURL = "https://contractor.bidcont.com/rest/jobs/search_jobs"
             
             LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
                 DispatchQueue.main.async {
                     self?.isSearching = false
                     
                     if success, let json = json {
-                        if let jobsArray = json["jobs"].array {
+                        // Live response key is `available_jobs`.
+                        if let jobsArray = json["available_jobs"].array {
                             self?.searchResults = jobsArray.map { self?.parseJob($0) ?? JobModel() }
                         }
                     }
