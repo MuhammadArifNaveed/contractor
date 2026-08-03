@@ -191,10 +191,46 @@ Two details worth carrying forward: the job-search term's part is literally name
 
 Fabricated hardcoded URLs: 12 → 9.
 
-**U6 — Workshops and estimations.** `Home/recent_workshop_ads`, `Home/workshop_ad_detail`,
-`Home/submit_workshop_ad`, plus the estimation family (`Home/get_estimation_categories`,
-`Home/estimation_request`, `Home/estimation_requests`, `Home/submit_estimate_request`) which iOS does
-not touch at all today.
+**U6 — Workshops and estimations. ◐ audited; the work here is bigger than a rename.**
+
+`ContactUsView` was unreachable and is deleted, clearing `Home/contact_us`. Android does not have that
+endpoint either — it opens the contact **web page** (`AppLinks.ContactUS`), which the drawer already
+does.
+
+**Estimations are not implemented on iOS at all.** `EstimationViewController` is reachable — it is the
+Estimation bottom tab, instantiated from the storyboard as `EsstimationVC` — but it makes **no API
+call of any kind**. It is an empty shell. So this is a feature to build, not a path to correct, and it
+was left rather than half-started.
+
+The contract is confirmed and `Home/get_estimation_categories` was called live: `error:false`, two
+categories back, each carrying a nested `sub_categories` array.
+
+| Step | Endpoint | Parts |
+|---|---|---|
+| Categories | `Home/get_estimation_categories` | none |
+| Submit | `Home/submit_estimate_request` | `user_id`, `full_name`, `phone_number`, `email_address`, `note`, `est_enter_sqft`, `look_id`, `cate_id` |
+| List | `Home/estimation_requests` | `user_id`, `page` |
+| Detail | `Home/estimation_request` | `id`, `user_id` |
+
+**The consumer workshop screens are an entangled cluster and need one focused pass.**
+`WorkshopView` and `WorkshopViewModel` (`Home/get_workshop_items`) are unreachable, but
+`WorkshopView.swift` also defines `WorkshopItem`, which the *equally dead* `VendorWorkshopView` still
+references. And `VendorWorkshopView` cannot simply be deleted with its file, because
+`VendorWorkshopView.swift` also holds the **live** `VendorInterestedWorkshopsView`,
+`VendorWorkshopAd` and `VendorWorkshopAdCard`.
+
+Untangling it means: strip the dead `VendorWorkshopView` / `VendorWorkshopViewModel` structs out of
+that file, then delete `WorkshopView.swift`, `WorkshopViewModel.swift`,
+`VendorAddWorkshopItemView.swift`, the two matching hosting controllers, and the now-unused
+`showVendorWorkshopController` / `showVendorAddWorkshopController` on `MainContainerViewController`.
+That clears three fabricated URLs at once — `Home/get_workshop_items`,
+`Home/vendor_workshop_items` and `Home/add_workshop_item` — but it is a coordinated multi-file change
+and was not attempted piecemeal.
+
+The live consumer workshop path (`WorkshopPostView`, reached from the Workshop tab) is separate and
+was not touched here.
+
+Fabricated hardcoded URLs: 9 → 8.
 
 **U7 — Reviews, cart-as-orders, chat.** The four items above with no endpoint. Each needs a decision
 before code: does the feature exist, is it web-only, or is it Firestore. Chat is blocked on Firebase
