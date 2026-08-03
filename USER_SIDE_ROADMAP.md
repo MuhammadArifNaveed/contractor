@@ -50,8 +50,8 @@ exists already.
 |---|---|
 | `AddReviewViewModel` (`Home/submit_review`) | Android has no review-submit endpoint at all. `vendor/rating` is a company-side *read*. Either the feature does not exist or it is web-only. |
 | `ReviewsListViewModel` (`Home/get_company_reviews`) | Same — no consumer review-read endpoint. Ratings may only be reachable through `Home/company_detail`. |
-| `CartViewModel` (`Home/get_cart`) | **Decision taken: the cart is local state.** `ConsumerCartStore` now implements it. The old view model and `CartView`/`CheckoutView` still need rewiring onto it — see below. |
-| `CheckoutViewModel` (`Home/submit_order`) | Same — a consumer "checkout" is `Home/send_enquiries`, which the store performs. |
+| `CartViewModel` (`Home/get_cart`) | **Done.** The cart is local state in `ConsumerCartStore`; `CartView` is on it and the old view model is deleted. |
+| `CheckoutViewModel` (`Home/submit_order`) | **Done.** A consumer "checkout" is just the cart submit — `Home/send_enquiries` — so the screen and its view model are deleted. |
 | `ChatListViewModel` (`Home/get_chats`) | Chat is **Firebase Firestore**, exactly as the vendor inbox is. Blocked on the same iOS Firebase registration. |
 
 ### Payload bugs on paths that are already correct
@@ -136,7 +136,7 @@ clean while every complaint submitted carried no complaint text.
 
 Fabricated hardcoded URLs: 18 → 15.
 
-**U4 — Enquiries and quotations. ◐ lists done; cart, checkout and drill-downs outstanding.**
+**U4 — Enquiries and quotations. ◐ lists, cart, quotation and complaint drill-downs done; enquiry drill-down blocked on the backend.**
 
 The three lists are fixed. All three carried the *same pair* of defects — a `Home/get_*` path the
 backend does not serve, and `page_no` where Android's part is `page`, so paging was broken
@@ -309,13 +309,29 @@ The payload shape is the part to get right. `companies` is a JSON **string** hol
 `new Gson().toJson(selectedCompaniesList)` over `SelectedCompaniesResponseModel`. Contact details come
 off the stored user rather than being asked for again, as in `OrderContactInfo.getDataFromSP()`.
 
-**Still to do: the UI is not on the store yet.** The existing `CartViewModel` is a fabricated
-shopping cart with prices, quantities and a currency total — concepts this app does not have; there
-is nothing to buy, only companies to send an enquiry to. `CartView` and `CheckoutView` are built
-against that model, so they need rewiring onto `ConsumerCartStore`: a row per company with its
-date/time, location and description, the over-limit warning, and a submit that calls
-`store.submit(...)`. `Home/get_cart` and `Home/submit_order` stay in the fabricated count until that
-happens.
+### UI, done
+
+`CartView` is now the enquiry basket on the store: a card per company (logo, name, category), the
+per-company when/where/what shown inline, a details sheet to fill them in, remove, the over-limit
+warning driven by `exceedsLimit`/`overLimitBy`, `refreshLimit()` on appear, and one submit gated on
+`canSubmit`. `CartCompanyDetailsView` in the same file collects the three required fields; `lat`/`lng`
+submit empty because nothing in the app picks a location on a map yet, which is also what Android
+sends when its picker is skipped.
+
+Companies get into the basket from `CompanyDetailView` — its top bar had a decorative `cart` glyph
+doing nothing, now an "Add to enquiry" / "Added" toggle on the store, matching where Android's
+`CompanyDetails` adds.
+
+Five files went with it, all unreferenced afterwards: `CartViewModel` (`Home/get_cart`),
+`CheckoutViewModel` (`Home/submit_order`), `CheckoutView`, plus `CartManager` and `CartItem` — an
+earlier, never-referenced local-cart attempt that was not even in the Xcode target, so it had never
+compiled. **That clears the last of the fabricated endpoints: no `Home/`, `Account/` or `vendor/`
+path anywhere in the iOS source is now absent from Android's `RetrofitApi`, and no hardcoded API URL
+bypasses `BASE_URL`.**
+
+One trap worth recording: the pbxproj removal script matched file names by substring, so
+`CheckoutView.swift` also matched `FreelancerCheckoutView.swift` and would have silently unregistered
+a live screen. Anchored with a negative lookbehind; the count dropped 28 → 24 lines.
 
 ## Notes carried over
 

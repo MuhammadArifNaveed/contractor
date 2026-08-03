@@ -11,6 +11,7 @@ private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
 
 struct CompanyDetailView: View {
     @StateObject private var viewModel: CompanyDetailViewModel
+    @ObservedObject private var cart = ConsumerCartStore.shared
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedTab = 0
     @State private var showComplaintSheet = false
@@ -68,13 +69,42 @@ struct CompanyDetailView: View {
 
             Spacer()
 
-            Image(systemName: "cart")
-                .font(.system(size: 20))
-                .foregroundColor(.white)
-                .padding(.trailing, 16)
+            addToEnquiryButton
+                .padding(.trailing, 12)
         }
         .frame(height: 56)
         .background(yellow)
+    }
+
+    /// Was a decorative cart glyph. Android's `CompanyDetails` adds the company to the local basket
+    /// from here; the basket is then sent as one enquiry from the cart screen.
+    private var addToEnquiryButton: some View {
+        Button(action: toggleInCart) {
+            HStack(spacing: 5) {
+                Image(systemName: isInCart ? "checkmark" : "plus")
+                    .font(.system(size: 12, weight: .bold))
+                Text(isInCart ? "Added" : "Add to enquiry")
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundColor(Color(red: 26/255, green: 20/255, blue: 0))
+            .padding(.horizontal, 12)
+            .frame(height: 34)
+            .background(Capsule().fill(Color.white.opacity(isInCart ? 0.65 : 1)))
+        }
+        .disabled(viewModel.company.id.isEmpty)
+    }
+
+    private var isInCart: Bool {
+        cart.contains(companyId: viewModel.company.id)
+    }
+
+    private func toggleInCart() {
+        let company = viewModel.company
+        guard !company.id.isEmpty else { return }
+        cart.toggle(CartCompany(id: company.id,
+                                companyName: company.company_name,
+                                companyLogo: company.company_logo,
+                                categoryName: company.category_name))
     }
 
     // MARK: - Company Header Card

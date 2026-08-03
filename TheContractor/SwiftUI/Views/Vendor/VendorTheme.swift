@@ -401,6 +401,9 @@ extension VendorTheme {
 
     private static func uploadURL(_ folder: String, _ path: String) -> URL? {
         guard !path.isEmpty else { return nil }
+        // Some models absolutise the path themselves before it reaches a view (CompanyViewModel does),
+        // so prefixing again would produce a URL that 404s.
+        if path.hasPrefix("http") { return URL(string: path) }
         return URL(string: uploads + folder + path)
     }
 }
