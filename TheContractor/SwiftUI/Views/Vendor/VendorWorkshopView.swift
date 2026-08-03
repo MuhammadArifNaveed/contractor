@@ -1,67 +1,15 @@
 //  VendorWorkshopView.swift
+//
+//  Interested Workshops — Android's `VendorInterestedWorkshops` (drawer item):
+//  POST workshop/workshop_my_page with vendor_id, user_id, user_type, bid_type and page;
+//  response keys `workshops` and `total_page`. Two tabs, Open Bid and Close Bid, each resetting
+//  to page 1, with an infinite scroll bounded by total_page.
+//
+//  The file keeps its name from the fabricated VendorWorkshopView it used to hold, which called
+//  Home/vendor_workshop_items and was unreachable.
+
 import SwiftUI
 import SwiftyJSON
-struct VendorWorkshopView: View {
-    @StateObject private var viewModel = VendorWorkshopViewModel()
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
-                }
-                Text("Workshop Items").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
-                Spacer()
-                Button(action: { viewModel.addItem() }) {
-                    Image(systemName: "plus").font(.system(size: 18, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
-                }
-                .padding(.trailing, 4)
-            }
-            .padding(.horizontal, 4).frame(height: 56).background(yellow)
-            ZStack {
-                if viewModel.isLoading && viewModel.items.isEmpty { LoadingView(message: "Loading...") }
-                else if viewModel.items.isEmpty { EmptyStateView(icon: "wrench", title: "No Items", message: "No workshop items") }
-                else {
-                    List(viewModel.items.indices, id: \.self) { i in
-                        HStack(spacing: 12) {
-                            AsyncImage(url: URL(string: viewModel.items[i].image)) { img in img.resizable().aspectRatio(contentMode: .fill) } placeholder: { Color.gray.opacity(0.2) }
-                                .frame(width: 60, height: 60).cornerRadius(8)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(viewModel.items[i].title).font(AppTheme.Fonts.semibold(16))
-                                Text(viewModel.items[i].price).font(AppTheme.Fonts.bold(14)).foregroundColor(AppTheme.Colors.primary)
-                            }
-                        }
-                    }
-                }
-            }
-            .onAppear { viewModel.loadItems() }
-        }
-        .navigationBarHidden(true)
-    }
-}
-class VendorWorkshopViewModel: ObservableObject {
-    @Published var isLoading = false
-    @Published var items: [WorkshopItem] = []
-    func loadItems() {
-        isLoading = true
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/vendor_workshop_items", params: [:]) { [weak self] _, success, json, _ in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                if success, let arr = json?["items"].array {
-                    self?.items = arr.map { WorkshopItem(id: $0["id"].stringValue, title: $0["title"].stringValue, price: $0["price"].stringValue, image: $0["image"].stringValue) }
-                }
-            }
-        }
-    }
-    func addItem() { print("Add item") }
-}
-
-// MARK: - Interested Workshops
-//
-// Port of Android's `VendorInterestedWorkshops` (drawer item "Interested Workshops"):
-// POST workshop/workshop_my_page with `vendor_id`, `user_id`, `user_type`, `bid_type`, `page`;
-// response keys `workshops` and `total_page`. Two tabs — Open Bid and Close Bid — each of which
-// resets to page 1, and an infinite scroll that stops at `total_page`.
 
 struct VendorInterestedWorkshopsView: View {
     private enum BidTab: String {

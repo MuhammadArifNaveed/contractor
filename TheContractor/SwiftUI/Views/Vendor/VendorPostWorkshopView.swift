@@ -8,8 +8,8 @@
 //  {title, value}; `freelancer_cities` as {id, name}), and the ad is posted to
 //  POST workshop/submit_workshop_ad with the photos as repeated `images[]` parts.
 //
-//  Replaces VendorAddWorkshopItemView, which posted to Home/add_workshop_item — an endpoint the
-//  backend does not serve.
+//  Replaced an earlier screen that posted to Home/add_workshop_item, an endpoint the backend does
+//  not serve.
 //
 
 import SwiftUI

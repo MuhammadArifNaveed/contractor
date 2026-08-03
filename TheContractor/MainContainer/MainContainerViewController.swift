@@ -895,45 +895,7 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
 
-    func showVendorWorkshopController() {
-        self.hideForSideMenu()
-        let vc = VendorWorkshopHostingController()
-        let controller = BaseNavigationController(rootViewController: vc)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
 
-        guard let containerView = self.containerView else { return }
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-        self.baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
-    }
-
-    func showVendorAddWorkshopController() {
-        self.hideForSideMenu()
-        let vc = VendorAddWorkshopHostingController()
-        let controller = BaseNavigationController(rootViewController: vc)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
-
-        guard let containerView = self.containerView else { return }
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-        self.baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
-    }
     
 
     

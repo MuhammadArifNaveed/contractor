@@ -212,25 +212,27 @@ categories back, each carrying a nested `sub_categories` array.
 | List | `Home/estimation_requests` | `user_id`, `page` |
 | Detail | `Home/estimation_request` | `id`, `user_id` |
 
-**The consumer workshop screens are an entangled cluster and need one focused pass.**
-`WorkshopView` and `WorkshopViewModel` (`Home/get_workshop_items`) are unreachable, but
-`WorkshopView.swift` also defines `WorkshopItem`, which the *equally dead* `VendorWorkshopView` still
-references. And `VendorWorkshopView` cannot simply be deleted with its file, because
-`VendorWorkshopView.swift` also holds the **live** `VendorInterestedWorkshopsView`,
-`VendorWorkshopAd` and `VendorWorkshopAdCard`.
+**The workshop cluster is now untangled. ✅**
 
-Untangling it means: strip the dead `VendorWorkshopView` / `VendorWorkshopViewModel` structs out of
-that file, then delete `WorkshopView.swift`, `WorkshopViewModel.swift`,
-`VendorAddWorkshopItemView.swift`, the two matching hosting controllers, and the now-unused
-`showVendorWorkshopController` / `showVendorAddWorkshopController` on `MainContainerViewController`.
-That clears three fabricated URLs at once — `Home/get_workshop_items`,
-`Home/vendor_workshop_items` and `Home/add_workshop_item` — but it is a coordinated multi-file change
-and was not attempted piecemeal.
+Done in the documented order: the dead `VendorWorkshopView` and `VendorWorkshopViewModel` structs were
+stripped out of `VendorWorkshopView.swift`, leaving the live `VendorInterestedWorkshopsView`,
+`VendorWorkshopAd` and `VendorWorkshopAdCard` in place (the file keeps its name). Then
+`WorkshopView.swift`, `WorkshopViewModel.swift`, `VendorAddWorkshopItemView.swift` and the two
+matching hosting controllers were deleted, along with the now-unreachable
+`showVendorWorkshopController` and `showVendorAddWorkshopController` on `MainContainerViewController`.
 
-The live consumer workshop path (`WorkshopPostView`, reached from the Workshop tab) is separate and
-was not touched here.
+That clears three fabricated URLs at once: `Home/get_workshop_items`, `Home/vendor_workshop_items` and
+`Home/add_workshop_item`.
 
-Fabricated hardcoded URLs: 9 → 8.
+The leak check earned its keep — it refused the first attempt and named all three real dependencies:
+the two container methods, and a stale comment in `VendorPostWorkshopView.swift` referring to a file
+about to disappear. `WorkshopItem` is still declared in `Models/WorkshopModels.swift`, which is not a
+target member, so that duplicate is harmless.
+
+The live consumer workshop path (`WorkshopPostView`, reached from the Workshop tab) was not touched.
+
+Fabricated hardcoded URLs: 9 → 5, and **all five that remain are the U7 items awaiting a decision**.
+
 
 **U7 — Reviews, cart-as-orders, chat.** The four items above with no endpoint. Each needs a decision
 before code: does the feature exist, is it web-only, or is it Firestore. Chat is blocked on Firebase
