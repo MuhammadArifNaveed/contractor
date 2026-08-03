@@ -86,11 +86,33 @@ Four flags remain in the audit output, triaged:
 - `addWorkshopQuotation` — **real**: Android can attach a document to a workshop quotation and iOS
   sends only text and price. Small gap, company side.
 
-**U2 — Auth and profile.** Login, registration, verify number, forgot password, change password,
-edit profile — six screens onto the `Account/*` family. Do this before the browse flows: the session
-these produce is what the rest reads. Check first whether the SwiftUI `LoginView` / `RegistrationView`
-are reachable at all, or whether the storyboard `LoginViewController` (which already uses the correct
-`Account/user_login`) is the only live path — no point fixing a screen nothing opens.
+**U2 — Auth and profile. ✅ done.**
+
+The reachability check paid off. Of the six screens listed, **four were unreachable duplicates**: the
+SwiftUI `LoginView`, `RegistrationView`, `ForgotPasswordView` and `VerifyNumberView` had no call sites
+anywhere. The live path is the storyboard one — `LoginViewController` → `VerifyNumberViewController` /
+`ForgetPasswordViewController` → `RegistrationViewController` → `OTPViewController` →
+`NewPasswordViewController` — and `LoginViewController` already used the correct
+`Account/user_login`. Fixing the SwiftUI screens would have been effort spent on code nothing opens.
+
+Deleted those four plus their three view models, taking the fabricated `Home/login`,
+`Home/register`, `Home/forgot_password` and `Home/verify_number` with them. The count of fabricated
+hardcoded URLs drops from 26 to 18.
+
+Three genuinely live screens fixed:
+
+| Screen | Was | Now |
+|---|---|---|
+| `ChangePasswordView` | `Home/change_password` with `user_id` + `current_password` | `Account/change_password` with `user_email` + `old_password` |
+| `EditProfileViewModel` | `Home/update_user_profile` with `name` / `phone` | `Account/update_user_profile` with `user_name` / `user_phone` / `surname` / `user_email` / `address` / `city` / `country` / `job_category` |
+| `ForgetPasswordViewController` | `Account/forgot_password` | `Account/update_password` with `new_password` + `user_phone` |
+
+`UserViewModel` had to gain an `email` field — it was commented out, so the session never captured
+the email that `Account/change_password` is keyed on. It reads `email`, falling back to `user_email`.
+
+Still open in this area: `EditProfileViewModel` sends `address`, `city`, `country` and `job_category`
+as empty strings because the form does not collect them, and it does not send the three optional
+file parts Android supports. The call is correct; the form is thinner than Android's.
 
 **U3 — Browse and discovery.** Categories, category- and sub-category-wise companies, find/search
 companies, 24/7 companies, company detail. This is the no-login surface too, so it doubles as the

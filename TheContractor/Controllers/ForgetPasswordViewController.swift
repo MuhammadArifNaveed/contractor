@@ -192,8 +192,10 @@ class ForgetPasswordViewController: UIViewController {
         let fullPhone = phone.hasPrefix("+") ? phone : "+971\(phone)"
 
         MBProgressHUD.showAdded(to: view, animated: true)
-        let url = "https://contractor.bidcont.com/rest/Account/forgot_password"
-        let params: [String: String] = ["user_phone": fullPhone, "new_password": password]
+        // Android: Account/update_password with new_password + user_phone.
+        // Account/forgot_password does not exist.
+        let url = "https://contractor.bidcont.com/rest/Account/update_password"
+        let params: [String: String] = ["new_password": password, "user_phone": fullPhone]
         LoginService.shared().makePostAPICall(with: url, params: params) { [weak self] message, success, _, _ in
             DispatchQueue.main.async {
                 MBProgressHUD.hide(for: self?.view ?? UIView(), animated: true)

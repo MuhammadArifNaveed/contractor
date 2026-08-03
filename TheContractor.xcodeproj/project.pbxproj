@@ -174,14 +174,11 @@
 		806CA90F2F57689000D31D28 /* SubmitEnquiryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8F92F57689000D31D28 /* SubmitEnquiryViewModel.swift */; };
 		806CA9102F57689000D31D28 /* CompanyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8DC2F57689000D31D28 /* CompanyCard.swift */; };
 		806CA9112F57689000D31D28 /* FreelancerHiringModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8F02F57689000D31D28 /* FreelancerHiringModels.swift */; };
-		806CA9122F57689000D31D28 /* RegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8E42F57689000D31D28 /* RegistrationViewModel.swift */; };
 		806CA9132F57689000D31D28 /* EnquiriesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8EF2F57689000D31D28 /* EnquiriesListViewModel.swift */; };
 		806CA9142F57689000D31D28 /* SubmitQuotationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8FA2F57689000D31D28 /* SubmitQuotationViewModel.swift */; };
-		806CA9152F57689000D31D28 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8E32F57689000D31D28 /* LoginViewModel.swift */; };
 		806CA9162F57689000D31D28 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8DD2F57689000D31D28 /* CustomTextField.swift */; };
 		806CA9172F57689000D31D28 /* SubCategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8F72F57689000D31D28 /* SubCategoriesViewModel.swift */; };
 		806CA9182F57689000D31D28 /* SubmitComplaintViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8F82F57689000D31D28 /* SubmitComplaintViewModel.swift */; };
-		806CA9192F57689000D31D28 /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8E22F57689000D31D28 /* ForgotPasswordViewModel.swift */; };
 		806CA91A2F57689000D31D28 /* WorkshopPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8FC2F57689000D31D28 /* WorkshopPostViewModel.swift */; };
 		806CA91B2F57689000D31D28 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8DF2F57689000D31D28 /* PrimaryButton.swift */; };
 		806CA91C2F57689000D31D28 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA8E92F57689000D31D28 /* ChatListViewModel.swift */; };
@@ -194,7 +191,6 @@
 		806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9452F5768C600D31D28 /* VendorWorkshopView.swift */; };
 		806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96A2F5768C600D31D28 /* QuotationsListView.swift */; };
 		806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA97C2F5768C600D31D28 /* WorkshopView.swift */; };
-		806CA9862F5768C600D31D28 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9212F5768C600D31D28 /* LoginView.swift */; };
 		806CA9872F5768C600D31D28 /* VendorJobApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9342F5768C600D31D28 /* VendorJobApplicantsView.swift */; };
 		806CA9882F5768C600D31D28 /* CompanyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9512F5768C600D31D28 /* CompanyDetailView.swift */; };
 		806CA9892F5768C600D31D28 /* WorkshopPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA97B2F5768C600D31D28 /* WorkshopPostView.swift */; };
@@ -202,7 +198,6 @@
 		806CA98B2F5768C600D31D28 /* HiredFreelancerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9622F5768C600D31D28 /* HiredFreelancerListView.swift */; };
 		806CA98C2F5768C600D31D28 /* VendorForgotPasswordPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9762F5768C600D31D28 /* VendorForgotPasswordPinView.swift */; };
 		806CA98D2F5768C600D31D28 /* HiredFreelancerSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9632F5768C600D31D28 /* HiredFreelancerSummaryView.swift */; };
-		806CA98F2F5768C600D31D28 /* VerifyNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9792F5768C600D31D28 /* VerifyNumberView.swift */; };
 		806CA9902F5768C600D31D28 /* VendorReviewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9402F5768C600D31D28 /* VendorReviewsView.swift */; };
 		806CA9922F5768C600D31D28 /* SubCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA96F2F5768C600D31D28 /* SubCategoriesView.swift */; };
 		806CA9942F5768C600D31D28 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94D2F5768C600D31D28 /* ChatListView.swift */; };
@@ -210,7 +205,6 @@
 		806CA9962F5768C600D31D28 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94E2F5768C600D31D28 /* CheckoutView.swift */; };
 		806CA9972F5768C600D31D28 /* QuotationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9692F5768C600D31D28 /* QuotationDetailView.swift */; };
 		806CA9982F5768C600D31D28 /* FreelanceDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA95C2F5768C600D31D28 /* FreelanceDashboardView.swift */; };
-		806CA9992F5768C600D31D28 /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9222F5768C600D31D28 /* RegistrationView.swift */; };
 		806CA99A2F5768C600D31D28 /* CompaniesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9502F5768C600D31D28 /* CompaniesListView.swift */; };
 		806CA99B2F5768C600D31D28 /* SubmitComplaintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9702F5768C600D31D28 /* SubmitComplaintView.swift */; };
 		806CA99C2F5768C600D31D28 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9672F5768C600D31D28 /* MapView.swift */; };
@@ -234,7 +228,6 @@
 		806CA9B52F5768C600D31D28 /* CompaniesByCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA94F2F5768C600D31D28 /* CompaniesByCategoryView.swift */; };
 		806CA9B62F5768C600D31D28 /* ComplaintDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9552F5768C600D31D28 /* ComplaintDetailView.swift */; };
 		806CA9B82F5768C600D31D28 /* VendorQuotationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA93D2F5768C600D31D28 /* VendorQuotationDetailView.swift */; };
-		806CA9B92F5768C600D31D28 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9202F5768C600D31D28 /* ForgotPasswordView.swift */; };
 		806CA9BB2F5768C600D31D28 /* AddReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9482F5768C600D31D28 /* AddReviewView.swift */; };
 		806CA9BC2F5768C600D31D28 /* EnquiryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA95B2F5768C600D31D28 /* EnquiryDetailView.swift */; };
 		806CA9BD2F5768C600D31D28 /* VendorNewPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806CA9782F5768C600D31D28 /* VendorNewPasswordView.swift */; };
@@ -309,12 +302,6 @@
 		90C6FED72F20E70100BDA19A /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FED82F20E70100BDA19A /* CartViewModel.swift */; };
 		90C6FED92F20E70200BDA19A /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDA2F20E70200BDA19A /* CheckoutView.swift */; };
 		90C6FEDB2F20E70300BDA19A /* CheckoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDC2F20E70300BDA19A /* CheckoutViewModel.swift */; };
-		90C6FEDD2F20E80000BDA19A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEDE2F20E80000BDA19A /* LoginView.swift */; };
-		90C6FEDF2F20E80100BDA19A /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE02F20E80100BDA19A /* LoginViewModel.swift */; };
-		90C6FEE12F20E80200BDA19A /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE22F20E80200BDA19A /* RegistrationView.swift */; };
-		90C6FEE32F20E80300BDA19A /* RegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE42F20E80300BDA19A /* RegistrationViewModel.swift */; };
-		90C6FEE52F20E80400BDA19A /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE62F20E80400BDA19A /* ForgotPasswordView.swift */; };
-		90C6FEE72F20E80500BDA19A /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEE82F20E80500BDA19A /* ForgotPasswordViewModel.swift */; };
 		90C6FEE92F20E80600BDA19A /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEEA2F20E80600BDA19A /* WorkshopView.swift */; };
 		90C6FEEB2F20E80700BDA19A /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEEC2F20E80700BDA19A /* WorkshopViewModel.swift */; };
 		90C6FEED2F20E90000BDA19A /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FEEE2F20E90000BDA19A /* ChatListView.swift */; };
@@ -350,7 +337,6 @@
 		90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */; };
 		90C6FF392F20EE0000BDA19A /* AboutUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */; };
 		90C6FF3B2F20EE0100BDA19A /* ContactUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */; };
-		90C6FF3D2F20EE0200BDA19A /* VerifyNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF3E2F20EE0200BDA19A /* VerifyNumberView.swift */; };
 		90C6FF3F2F20EE0300BDA19A /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF402F20EE0300BDA19A /* MapView.swift */; };
 		90C6FF412F20EE0400BDA19A /* CompaniesByCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */; };
 		90C6FF432F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */; };
@@ -534,9 +520,6 @@
 		806CA8DE2F57689000D31D28 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		806CA8DF2F57689000D31D28 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		806CA8E02F57689000D31D28 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
-		806CA8E22F57689000D31D28 /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
-		806CA8E32F57689000D31D28 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		806CA8E42F57689000D31D28 /* RegistrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewModel.swift; sourceTree = "<group>"; };
 		806CA8E62F57689000D31D28 /* AddReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReviewViewModel.swift; sourceTree = "<group>"; };
 		806CA8E72F57689000D31D28 /* AvailableJobsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableJobsViewModel.swift; sourceTree = "<group>"; };
 		806CA8E82F57689000D31D28 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
@@ -561,9 +544,6 @@
 		806CA8FB2F57689000D31D28 /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		806CA8FC2F57689000D31D28 /* WorkshopPostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPostViewModel.swift; sourceTree = "<group>"; };
 		806CA8FD2F57689000D31D28 /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
-		806CA9202F5768C600D31D28 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
-		806CA9212F5768C600D31D28 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		806CA9222F5768C600D31D28 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
 		806CA9252F5768C600D31D28 /* VendorAddWorkshopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAddWorkshopItemView.swift; sourceTree = "<group>"; };
 		806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorApplicantDetailView.swift; sourceTree = "<group>"; };
 		806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEnquiriesView.swift; sourceTree = "<group>"; };
@@ -628,7 +608,6 @@
 		806CA9762F5768C600D31D28 /* VendorForgotPasswordPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorForgotPasswordPinView.swift; sourceTree = "<group>"; };
 		806CA9772F5768C600D31D28 /* VendorForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorForgotPasswordView.swift; sourceTree = "<group>"; };
 		806CA9782F5768C600D31D28 /* VendorNewPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorNewPasswordView.swift; sourceTree = "<group>"; };
-		806CA9792F5768C600D31D28 /* VerifyNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyNumberView.swift; sourceTree = "<group>"; };
 		806CA97A2F5768C600D31D28 /* WebContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContentView.swift; sourceTree = "<group>"; };
 		806CA97B2F5768C600D31D28 /* WorkshopPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPostView.swift; sourceTree = "<group>"; };
 		806CA97C2F5768C600D31D28 /* WorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopView.swift; sourceTree = "<group>"; };
@@ -682,12 +661,6 @@
 		90C6FED82F20E70100BDA19A /* CartViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CartViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CartViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEDA2F20E70200BDA19A /* CheckoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckoutView.swift; path = TheContractor/SwiftUI/Views/CheckoutView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEDC2F20E70300BDA19A /* CheckoutViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckoutViewModel.swift; path = TheContractor/SwiftUI/ViewModels/CheckoutViewModel.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEDE2F20E80000BDA19A /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginView.swift; path = TheContractor/SwiftUI/Views/Auth/LoginView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEE02F20E80100BDA19A /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/LoginViewModel.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEE22F20E80200BDA19A /* RegistrationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegistrationView.swift; path = TheContractor/SwiftUI/Views/Auth/RegistrationView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEE42F20E80300BDA19A /* RegistrationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegistrationViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/RegistrationViewModel.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEE62F20E80400BDA19A /* ForgotPasswordView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ForgotPasswordView.swift; path = TheContractor/SwiftUI/Views/Auth/ForgotPasswordView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FEE82F20E80500BDA19A /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ForgotPasswordViewModel.swift; path = TheContractor/SwiftUI/ViewModels/Auth/ForgotPasswordViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEEA2F20E80600BDA19A /* WorkshopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WorkshopView.swift; path = TheContractor/SwiftUI/Views/WorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEEC2F20E80700BDA19A /* WorkshopViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WorkshopViewModel.swift; path = TheContractor/SwiftUI/ViewModels/WorkshopViewModel.swift; sourceTree = SOURCE_ROOT; };
 		90C6FEEE2F20E90000BDA19A /* ChatListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatListView.swift; path = TheContractor/SwiftUI/Views/ChatListView.swift; sourceTree = SOURCE_ROOT; };
@@ -723,7 +696,6 @@
 		90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorSubscriptionView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorSubscriptionView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AboutUsView.swift; path = TheContractor/SwiftUI/Views/AboutUsView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContactUsView.swift; path = TheContractor/SwiftUI/Views/ContactUsView.swift; sourceTree = SOURCE_ROOT; };
-		90C6FF3E2F20EE0200BDA19A /* VerifyNumberView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VerifyNumberView.swift; path = TheContractor/SwiftUI/Views/VerifyNumberView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF402F20EE0300BDA19A /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapView.swift; path = TheContractor/SwiftUI/Views/MapView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompaniesByCategoryView.swift; path = TheContractor/SwiftUI/Views/CompaniesByCategoryView.swift; sourceTree = SOURCE_ROOT; };
 		90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TwentyFourSevenCompaniesView.swift; path = TheContractor/SwiftUI/Views/TwentyFourSevenCompaniesView.swift; sourceTree = SOURCE_ROOT; };
@@ -1273,12 +1245,6 @@
 				90C6FED82F20E70100BDA19A /* CartViewModel.swift */,
 				90C6FEDA2F20E70200BDA19A /* CheckoutView.swift */,
 				90C6FEDC2F20E70300BDA19A /* CheckoutViewModel.swift */,
-				90C6FEDE2F20E80000BDA19A /* LoginView.swift */,
-				90C6FEE02F20E80100BDA19A /* LoginViewModel.swift */,
-				90C6FEE22F20E80200BDA19A /* RegistrationView.swift */,
-				90C6FEE42F20E80300BDA19A /* RegistrationViewModel.swift */,
-				90C6FEE62F20E80400BDA19A /* ForgotPasswordView.swift */,
-				90C6FEE82F20E80500BDA19A /* ForgotPasswordViewModel.swift */,
 				90C6FEEA2F20E80600BDA19A /* WorkshopView.swift */,
 				90C6FEEC2F20E80700BDA19A /* WorkshopViewModel.swift */,
 				90C6FEEE2F20E90000BDA19A /* ChatListView.swift */,
@@ -1314,7 +1280,6 @@
 				90C6FF382F20ED0600BDA19A /* VendorSubscriptionView.swift */,
 				90C6FF3A2F20EE0000BDA19A /* AboutUsView.swift */,
 				90C6FF3C2F20EE0100BDA19A /* ContactUsView.swift */,
-				90C6FF3E2F20EE0200BDA19A /* VerifyNumberView.swift */,
 				90C6FF402F20EE0300BDA19A /* MapView.swift */,
 				90C6FF422F20EE0400BDA19A /* CompaniesByCategoryView.swift */,
 				90C6FF442F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift */,
@@ -1370,9 +1335,6 @@
 		806CA8E52F57689000D31D28 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				806CA8E22F57689000D31D28 /* ForgotPasswordViewModel.swift */,
-				806CA8E32F57689000D31D28 /* LoginViewModel.swift */,
-				806CA8E42F57689000D31D28 /* RegistrationViewModel.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -1413,9 +1375,6 @@
 		806CA9232F5768C600D31D28 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				806CA9202F5768C600D31D28 /* ForgotPasswordView.swift */,
-				806CA9212F5768C600D31D28 /* LoginView.swift */,
-				806CA9222F5768C600D31D28 /* RegistrationView.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -1502,7 +1461,6 @@
 				806CA9762F5768C600D31D28 /* VendorForgotPasswordPinView.swift */,
 				806CA9772F5768C600D31D28 /* VendorForgotPasswordView.swift */,
 				806CA9782F5768C600D31D28 /* VendorNewPasswordView.swift */,
-				806CA9792F5768C600D31D28 /* VerifyNumberView.swift */,
 				806CA97A2F5768C600D31D28 /* WebContentView.swift */,
 				806CA97B2F5768C600D31D28 /* WorkshopPostView.swift */,
 				806CA97C2F5768C600D31D28 /* WorkshopView.swift */,
@@ -1695,7 +1653,6 @@
 				806CA9812F5768C600D31D28 /* VendorWorkshopView.swift in Sources */,
 				806CA9832F5768C600D31D28 /* QuotationsListView.swift in Sources */,
 				806CA9852F5768C600D31D28 /* WorkshopView.swift in Sources */,
-				806CA9862F5768C600D31D28 /* LoginView.swift in Sources */,
 				806CA9872F5768C600D31D28 /* VendorJobApplicantsView.swift in Sources */,
 				806CA9882F5768C600D31D28 /* CompanyDetailView.swift in Sources */,
 				806CA9892F5768C600D31D28 /* WorkshopPostView.swift in Sources */,
@@ -1703,7 +1660,6 @@
 				806CA98B2F5768C600D31D28 /* HiredFreelancerListView.swift in Sources */,
 				806CA98C2F5768C600D31D28 /* VendorForgotPasswordPinView.swift in Sources */,
 				806CA98D2F5768C600D31D28 /* HiredFreelancerSummaryView.swift in Sources */,
-				806CA98F2F5768C600D31D28 /* VerifyNumberView.swift in Sources */,
 				806CA9902F5768C600D31D28 /* VendorReviewsView.swift in Sources */,
 				806CA9922F5768C600D31D28 /* SubCategoriesView.swift in Sources */,
 				806CA9942F5768C600D31D28 /* ChatListView.swift in Sources */,
@@ -1711,7 +1667,6 @@
 				806CA9962F5768C600D31D28 /* CheckoutView.swift in Sources */,
 				806CA9972F5768C600D31D28 /* QuotationDetailView.swift in Sources */,
 				806CA9982F5768C600D31D28 /* FreelanceDashboardView.swift in Sources */,
-				806CA9992F5768C600D31D28 /* RegistrationView.swift in Sources */,
 				806CA99A2F5768C600D31D28 /* CompaniesListView.swift in Sources */,
 				806CA99B2F5768C600D31D28 /* SubmitComplaintView.swift in Sources */,
 				806CA99C2F5768C600D31D28 /* MapView.swift in Sources */,
@@ -1735,7 +1690,6 @@
 				806CA9B52F5768C600D31D28 /* CompaniesByCategoryView.swift in Sources */,
 				806CA9B62F5768C600D31D28 /* ComplaintDetailView.swift in Sources */,
 				806CA9B82F5768C600D31D28 /* VendorQuotationDetailView.swift in Sources */,
-				806CA9B92F5768C600D31D28 /* ForgotPasswordView.swift in Sources */,
 				806CA9BB2F5768C600D31D28 /* AddReviewView.swift in Sources */,
 				806CA9BC2F5768C600D31D28 /* EnquiryDetailView.swift in Sources */,
 				806CA9BD2F5768C600D31D28 /* VendorNewPasswordView.swift in Sources */,
@@ -1892,12 +1846,6 @@
 				90C6FED72F20E70100BDA19A /* CartViewModel.swift in Sources */,
 				90C6FED92F20E70200BDA19A /* CheckoutView.swift in Sources */,
 				90C6FEDB2F20E70300BDA19A /* CheckoutViewModel.swift in Sources */,
-				90C6FEDD2F20E80000BDA19A /* LoginView.swift in Sources */,
-				90C6FEDF2F20E80100BDA19A /* LoginViewModel.swift in Sources */,
-				90C6FEE12F20E80200BDA19A /* RegistrationView.swift in Sources */,
-				90C6FEE32F20E80300BDA19A /* RegistrationViewModel.swift in Sources */,
-				90C6FEE52F20E80400BDA19A /* ForgotPasswordView.swift in Sources */,
-				90C6FEE72F20E80500BDA19A /* ForgotPasswordViewModel.swift in Sources */,
 				90C6FEE92F20E80600BDA19A /* WorkshopView.swift in Sources */,
 				90C6FEEB2F20E80700BDA19A /* WorkshopViewModel.swift in Sources */,
 				90C6FEED2F20E90000BDA19A /* ChatListView.swift in Sources */,
@@ -1955,14 +1903,11 @@
 				806CA90F2F57689000D31D28 /* SubmitEnquiryViewModel.swift in Sources */,
 				806CA9102F57689000D31D28 /* CompanyCard.swift in Sources */,
 				806CA9112F57689000D31D28 /* FreelancerHiringModels.swift in Sources */,
-				806CA9122F57689000D31D28 /* RegistrationViewModel.swift in Sources */,
 				806CA9132F57689000D31D28 /* EnquiriesListViewModel.swift in Sources */,
 				806CA9142F57689000D31D28 /* SubmitQuotationViewModel.swift in Sources */,
-				806CA9152F57689000D31D28 /* LoginViewModel.swift in Sources */,
 				806CA9162F57689000D31D28 /* CustomTextField.swift in Sources */,
 				806CA9172F57689000D31D28 /* SubCategoriesViewModel.swift in Sources */,
 				806CA9182F57689000D31D28 /* SubmitComplaintViewModel.swift in Sources */,
-				806CA9192F57689000D31D28 /* ForgotPasswordViewModel.swift in Sources */,
 				806CA91A2F57689000D31D28 /* WorkshopPostViewModel.swift in Sources */,
 				806CA91B2F57689000D31D28 /* PrimaryButton.swift in Sources */,
 				806CA91C2F57689000D31D28 /* ChatListViewModel.swift in Sources */,
@@ -1980,7 +1925,6 @@
 				90C6FF372F20ED0600BDA19A /* VendorSubscriptionView.swift in Sources */,
 				90C6FF392F20EE0000BDA19A /* AboutUsView.swift in Sources */,
 				90C6FF3B2F20EE0100BDA19A /* ContactUsView.swift in Sources */,
-				90C6FF3D2F20EE0200BDA19A /* VerifyNumberView.swift in Sources */,
 				90C6FF3F2F20EE0300BDA19A /* MapView.swift in Sources */,
 				90C6FF412F20EE0400BDA19A /* CompaniesByCategoryView.swift in Sources */,
 				90C6FF432F20EE0500BDA19A /* TwentyFourSevenCompaniesView.swift in Sources */,

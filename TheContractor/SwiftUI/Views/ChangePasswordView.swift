@@ -167,12 +167,22 @@ class ChangePasswordViewModel: ObservableObject {
     @Published var showConfirmPassword = false
     var isFormValid: Bool { !currentPassword.isEmpty && !newPassword.isEmpty && newPassword == confirmPassword }
     func changePassword(completion: @escaping () -> Void) {
-        guard isFormValid, let userId = UserDefaultsManager.shared.userInfo?.id else { return }
+        // Android keys this on the email, not the id.
+        guard isFormValid,
+              let userEmail = UserDefaultsManager.shared.userInfo?.email, !userEmail.isEmpty else {
+            errorMessage = "Sign in again to change your password"
+            return
+        }
         isSubmitting = true
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/change_password", params: ["user_id": userId, "current_password": currentPassword, "new_password": newPassword]) { [weak self] msg, success, _, _ in
+        // Android: Account/change_password, keyed on user_email with parts old_password /
+        // new_password. Home/change_password does not exist, and user_id / current_password were
+        // never read.
+        LoginService.shared().changePassword(userEmail: userEmail,
+                                            oldPassword: currentPassword,
+                                            newPassword: newPassword) { [weak self] msg, success in
             DispatchQueue.main.async {
                 self?.isSubmitting = false
-                if success { completion() } else { self?.errorMessage = msg ?? "Failed" }
+                if success { completion() } else { self?.errorMessage = msg.isEmpty ? "Failed" : msg }
             }
         }
     }

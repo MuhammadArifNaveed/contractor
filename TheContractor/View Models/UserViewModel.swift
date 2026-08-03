@@ -21,6 +21,9 @@ class UserViewModel: Codable {
 
     var id: String = kBlankString
     var userType: String = kBlankString
+    /// Needed by Account/change_password, which is keyed on the email rather than the id, and sent
+    /// by Account/update_user_profile.
+    var email: String = kBlankString
 //    var deleted: Bool
 //    var windowsId : String
 //    var firstName: String
@@ -64,6 +67,8 @@ class UserViewModel: Codable {
         let directId = json["id"].stringValue
         self.id = directId.isEmpty ? json["user_id"].stringValue : directId
         self.userType = json["user_type"].stringValue
+        let directEmail = json["email"].stringValue
+        self.email = directEmail.isEmpty ? json["user_email"].stringValue : directEmail
     //        self.windowsId = operater.windowsId
     //        self.firstName = operater.firstName
     //        self.middleName = operater.middleName

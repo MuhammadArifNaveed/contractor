@@ -52,14 +52,21 @@ class EditProfileViewModel: ObservableObject {
         errorMessage = ""
         successMessage = ""
         
+        // Android: Account/update_user_profile. Home/update_user_profile does not exist, and the
+        // `name` / `phone` parts were never read — they are user_name / user_phone.
         let params = [
             "user_id": userId,
-            "name": firstName,
+            "user_name": firstName,
             "surname": lastName,
-            "phone": phone
+            "user_phone": phone,
+            "user_email": UserDefaultsManager.shared.userInfo?.email ?? "",
+            "address": "",
+            "city": "",
+            "country": "",
+            "job_category": ""
         ]
-        
-        let completeURL = "https://contractor.bidcont.com/rest/Home/update_user_profile"
+
+        let completeURL = "https://contractor.bidcont.com/rest/Account/update_user_profile"
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
                 self?.isUpdating = false
