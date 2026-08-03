@@ -32,52 +32,52 @@ struct AssetNames {
 struct SideMenu {
     // Guest mode: only public items visible (no auth required)
     static let GUEST_MENU = [
-        ["title":"Home","image":"home"],
-        ["title":"Company Finder","image":"company-finder"],
-        ["title":"24/7 Maintenance","image":"24-7"],
-        ["title":"Advertise Company","image":"advertisement"],
-        ["title":"Available Jobs","image":"advertisement"],
-        ["title":"Freelancers","image":"become-a-vendor"],
-        ["title":"Freelancer Dashboard","image":"become-a-vendor"],
-        ["title":"About Us","image":"guide"],
-        ["title":"Advertisement","image":"advertisement"],
-        ["title":"Register your Company","image":"become-a-vendor"],
-        ["title":"Privacy Polices","image":"privacy-policy"],
-        ["title":"Terms & Conditions","image":"terms-and-conditions"],
-        ["title":"Guide","image":"guide"],
-        ["title":"Rate Us","image":"rate"],
-        ["title":"Share","image":"share"]
+        ["title":"Home","image":"home","symbol":"house.fill"],
+        ["title":"Company Finder","image":"company-finder","symbol":"magnifyingglass"],
+        ["title":"24/7 Maintenance","image":"24-7","symbol":"clock.fill"],
+        ["title":"Advertise Company","image":"advertisement","symbol":"megaphone.fill"],
+        ["title":"Available Jobs","image":"advertisement","symbol":"briefcase.fill"],
+        ["title":"Freelancers","image":"become-a-vendor","symbol":"person.2.fill"],
+        ["title":"Freelancer Dashboard","image":"become-a-vendor","symbol":"chart.bar.fill"],
+        ["title":"About Us","image":"guide","symbol":"info.circle.fill"],
+        ["title":"Advertisement","image":"advertisement","symbol":"megaphone.fill"],
+        ["title":"Register your Company","image":"become-a-vendor","symbol":"building.2.fill"],
+        ["title":"Privacy Polices","image":"privacy-policy","symbol":"hand.raised.fill"],
+        ["title":"Terms & Conditions","image":"terms-and-conditions","symbol":"doc.text.fill"],
+        ["title":"Guide","image":"guide","symbol":"book.fill"],
+        ["title":"Rate Us","image":"rate","symbol":"star.bubble.fill"],
+        ["title":"Share","image":"share","symbol":"square.and.arrow.up.fill"]
     ]
 
     // Logged-in user: all items visible
     static let USER_MENU = [
-        ["title":"Home","image":"home"],
-        ["title":"Inbox","image":"inbox"],
-        ["title":"Company Finder","image":"company-finder"],
-        ["title":"Submit Enquiry","image":"submit-quotation"],
-        ["title":"Enquiries","image":"enquiries"],
-        ["title":"Submit Quotation","image":"submit-quotation"],
-        ["title":"Quotations","image":"quotation"],
-        ["title":"Complaints","image":"compaints"],
-        ["title":"Estimations","image":"quotation"],
-        ["title":"24/7 Maintenance","image":"24-7"],
-        ["title":"Advertise Company","image":"advertisement"],
-        ["title":"Available Jobs","image":"advertisement"],
-        ["title":"My Job Applies","image":"advertisement"],
-        ["title":"Direct Hiring","image":"advertisement"],
-        ["title":"Freelancers","image":"become-a-vendor"],
-        ["title":"Freelancer Dashboard","image":"become-a-vendor"],
-        ["title":"Workshop Ad","image":"become-a-vendor"],
-        ["title":"About Us","image":"guide"],
-        ["title":"Advertisement","image":"advertisement"],
-        ["title":"Become a Vendor","image":"become-a-vendor"],
-        ["title":"Privacy Polices","image":"privacy-policy"],
-        ["title":"Terms & Conditions","image":"terms-and-conditions"],
-        ["title":"Guide","image":"guide"],
-        ["title":"Contact Us","image":"contact"],
-        ["title":"Rate Us","image":"rate"],
-        ["title":"Share","image":"share"],
-        ["title":"Logout","image":"logout"]
+        ["title":"Home","image":"home","symbol":"house.fill"],
+        ["title":"Inbox","image":"inbox","symbol":"bubble.left.and.bubble.right.fill"],
+        ["title":"Company Finder","image":"company-finder","symbol":"magnifyingglass"],
+        ["title":"Submit Enquiry","image":"submit-quotation","symbol":"square.and.pencil"],
+        ["title":"Enquiries","image":"enquiries","symbol":"tray.full.fill"],
+        ["title":"Submit Quotation","image":"submit-quotation","symbol":"doc.badge.plus"],
+        ["title":"Quotations","image":"quotation","symbol":"doc.plaintext.fill"],
+        ["title":"Complaints","image":"compaints","symbol":"exclamationmark.bubble.fill"],
+        ["title":"Estimations","image":"quotation","symbol":"function"],
+        ["title":"24/7 Maintenance","image":"24-7","symbol":"clock.fill"],
+        ["title":"Advertise Company","image":"advertisement","symbol":"megaphone.fill"],
+        ["title":"Available Jobs","image":"advertisement","symbol":"briefcase.fill"],
+        ["title":"My Job Applies","image":"advertisement","symbol":"doc.text.magnifyingglass"],
+        ["title":"Direct Hiring","image":"advertisement","symbol":"person.fill.badge.plus"],
+        ["title":"Freelancers","image":"become-a-vendor","symbol":"person.2.fill"],
+        ["title":"Freelancer Dashboard","image":"become-a-vendor","symbol":"chart.bar.fill"],
+        ["title":"Workshop Ad","image":"become-a-vendor","symbol":"hammer.fill"],
+        ["title":"About Us","image":"guide","symbol":"info.circle.fill"],
+        ["title":"Advertisement","image":"advertisement","symbol":"megaphone.fill"],
+        ["title":"Become a Vendor","image":"become-a-vendor","symbol":"building.2.fill"],
+        ["title":"Privacy Polices","image":"privacy-policy","symbol":"hand.raised.fill"],
+        ["title":"Terms & Conditions","image":"terms-and-conditions","symbol":"doc.text.fill"],
+        ["title":"Guide","image":"guide","symbol":"book.fill"],
+        ["title":"Contact Us","image":"contact","symbol":"envelope.fill"],
+        ["title":"Rate Us","image":"rate","symbol":"star.bubble.fill"],
+        ["title":"Share","image":"share","symbol":"square.and.arrow.up.fill"],
+        ["title":"Logout","image":"logout","symbol":"arrow.right.square.fill"]
     ]
 
     // Backwards compat alias
@@ -85,11 +85,11 @@ struct SideMenu {
 }
 
 struct VendorMenu {
-    static let MENULIST = [["title":"Home","image":"home"],["title":"Profile","image":"user"],["title":"Inbox","image":"inbox"],["title":"Rating","image":"rate"],["title":"Enquiries","image":"enquiries"],["title":"Quotations","image":"quotation"],["title":"Post Workshop","image":"become-a-vendor"],["title":"My Workshops","image":"become-a-vendor"],["title":"All Workshops","image":"become-a-vendor"],["title":"Interested Workshops","image":"become-a-vendor"],["title":"Jobs Portal","image":"become-a-vendor"],["title":"Available Applicant","image":"become-a-vendor"],["title":"Freelancers","image":"become-a-vendor"],["title":"Freelancer Dashboard","image":"become-a-vendor"],["title":"Memberships","image":"become-a-vendor"],["title":"My Membership","image":"become-a-vendor"],["title":"Vendor Logout","image":"logout"]]
+    static let MENULIST = [["title":"Home","image":"home","symbol":"house.fill"],["title":"Profile","image":"user","symbol":"building.2.fill"],["title":"Inbox","image":"inbox","symbol":"bubble.left.and.bubble.right.fill"],["title":"Rating","image":"rate","symbol":"star.fill"],["title":"Enquiries","image":"enquiries","symbol":"tray.full.fill"],["title":"Quotations","image":"quotation","symbol":"doc.plaintext.fill"],["title":"Post Workshop","image":"become-a-vendor","symbol":"plus.rectangle.on.folder.fill"],["title":"My Workshops","image":"become-a-vendor","symbol":"hammer.fill"],["title":"All Workshops","image":"become-a-vendor","symbol":"square.grid.2x2.fill"],["title":"Interested Workshops","image":"become-a-vendor","symbol":"hand.raised.fill"],["title":"Jobs Portal","image":"become-a-vendor","symbol":"briefcase.fill"],["title":"Available Applicant","image":"become-a-vendor","symbol":"person.crop.rectangle.fill"],["title":"Freelancers","image":"become-a-vendor","symbol":"person.2.fill"],["title":"Freelancer Dashboard","image":"become-a-vendor","symbol":"chart.bar.fill"],["title":"Memberships","image":"become-a-vendor","symbol":"crown.fill"],["title":"My Membership","image":"become-a-vendor","symbol":"checkmark.seal.fill"],["title":"Vendor Logout","image":"logout","symbol":"arrow.right.square.fill"]]
 }
 
 struct ProfileMenu {
-    static let MENULIST = [["title":"Select Language","image":"guide"],["title":"Profile Settings","image":"user"],["title":"Change Password","image":"password"],["title":"About Us","image":"privacy-policy"],["title":"Advertisement","image":"advertisement"],["title":"Become a Vendor","image":"become-a-vendor"],["title":"Documentation","image":"document"],["title":"Privacy Policy","image":"privacy-policy"],["title":"Terms & Conditions","image":"terms-and-conditions"],["title":"Guide","image":"guide"],["title":"Contact Us","image":"contact"],["title":"Logout","image":"logout"]]
+    static let MENULIST = [["title":"Select Language","image":"guide","symbol":"globe"],["title":"Profile Settings","image":"user","symbol":"person.crop.circle.fill"],["title":"Change Password","image":"password","symbol":"lock.fill"],["title":"About Us","image":"privacy-policy","symbol":"info.circle.fill"],["title":"Advertisement","image":"advertisement","symbol":"megaphone.fill"],["title":"Become a Vendor","image":"become-a-vendor","symbol":"building.2.fill"],["title":"Documentation","image":"document","symbol":"doc.on.doc.fill"],["title":"Privacy Policy","image":"privacy-policy","symbol":"hand.raised.fill"],["title":"Terms & Conditions","image":"terms-and-conditions","symbol":"doc.text.fill"],["title":"Guide","image":"guide","symbol":"book.fill"],["title":"Contact Us","image":"contact","symbol":"envelope.fill"],["title":"Logout","image":"logout","symbol":"arrow.right.square.fill"]]
 }
 
 
