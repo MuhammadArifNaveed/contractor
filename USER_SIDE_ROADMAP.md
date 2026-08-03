@@ -114,9 +114,27 @@ Still open in this area: `EditProfileViewModel` sends `address`, `city`, `countr
 as empty strings because the form does not collect them, and it does not send the three optional
 file parts Android supports. The call is correct; the form is thinner than Android's.
 
-**U3 — Browse and discovery.** Categories, category- and sub-category-wise companies, find/search
-companies, 24/7 companies, company detail. This is the no-login surface too, so it doubles as the
-start of that third phase.
+**U3 — Browse and discovery. ✅ done.**
+
+Reachability again cut the work down: `CompaniesByCategoryView` and `SubCategoriesView` have no call
+sites, so they and `SubCategoriesViewModel` were deleted, taking the fabricated
+`Home/companies_by_category` with them. `SearchCompaniesViewModel` turned out to be **already
+correct** — it uses `EndPoints.getSearch`, which is the real `Home/get_search`.
+
+Three live screens fixed:
+
+| Screen | Was | Now |
+|---|---|---|
+| `TwentyFourSevenCompaniesView` | `Home/get_24_7_companies` | `Home/twentyfourcompanies` (takes no parts) |
+| `CompaniesListViewModel` | `Home/get_searched_companies`, paging on `page_no` | `Home/find_companies`, paging on `page` |
+| `CompanyDetailViewModel.submitComplaint` | `Home/submit_complaint` with a `text` part | same path, part renamed to `complaint` |
+
+`CompanyDetailViewModel`'s main fetch was already right: `Home/company_detail` with `company_id`.
+
+The complaint one is worth noting — the path had always been correct, so a path-only audit called it
+clean while every complaint submitted carried no complaint text.
+
+Fabricated hardcoded URLs: 18 → 15.
 
 **U4 — Enquiries and quotations.** Cart as local state with `Home/check_cart_limit`, submission via
 `Home/send_enquiries`, then the `recent_enquiries` / `recent_quotations` / `recent_complaints` lists

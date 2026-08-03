@@ -129,7 +129,8 @@ class CompanyDetailViewModel: ObservableObject {
 
     func submitComplaint(text: String, userId: String) {
         let url = "https://contractor.bidcont.com/rest/Home/submit_complaint"
-        let params: [String: String] = ["company_id": company.id, "user_id": userId, "text": text]
+        // Android's part is `complaint`; `text` was never read.
+        let params: [String: String] = ["company_id": company.id, "user_id": userId, "complaint": text]
         LoginService.shared().makePostAPICall(with: url, params: params) { _, _, _, _ in }
     }
 }

@@ -38,7 +38,8 @@ class CompaniesListViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        var params: [String: String] = ["page_no": "\(currentPage)"]
+        // Android's part is `page`.
+        var params: [String: String] = ["page": "\(currentPage)"]
         if let categoryId = categoryId {
             params["category_id"] = categoryId
         }
@@ -46,7 +47,7 @@ class CompaniesListViewModel: ObservableObject {
             params["sub_category"] = subCategoryId
         }
         
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_searched_companies"
+        let completeURL = "https://contractor.bidcont.com/rest/Home/find_companies"
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
                 self?.isLoading = false
@@ -81,7 +82,8 @@ class CompaniesListViewModel: ObservableObject {
         isLoadingMore = true
         currentPage += 1
         
-        var params: [String: String] = ["page_no": "\(currentPage)"]
+        // Android's part is `page`.
+        var params: [String: String] = ["page": "\(currentPage)"]
         if let categoryId = categoryId {
             params["category_id"] = categoryId
         }
@@ -89,7 +91,7 @@ class CompaniesListViewModel: ObservableObject {
             params["sub_category"] = subCategoryId
         }
         
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_searched_companies"
+        let completeURL = "https://contractor.bidcont.com/rest/Home/find_companies"
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
                 self?.isLoadingMore = false

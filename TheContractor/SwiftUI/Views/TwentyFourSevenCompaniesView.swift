@@ -46,7 +46,7 @@ class TwentyFourSevenCompaniesViewModel: ObservableObject {
     @Published var companies: [CompanyViewModel] = []
     func loadCompanies() {
         isLoading = true
-        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/get_24_7_companies", params: [:]) { [weak self] _, success, json, _ in
+        LoginService.shared().makePostAPICall(with: "https://contractor.bidcont.com/rest/Home/twentyfourcompanies", params: [:]) { [weak self] _, success, json, _ in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 if success, let arr = json?["companies"].array {
