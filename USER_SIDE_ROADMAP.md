@@ -242,6 +242,50 @@ either way and should show the same "not available yet" screen the vendor inbox 
 the consumer screens, as was done for the vendor side. Worth doing once the endpoints are right, not
 before — restyling a screen that shows no data is wasted effort.
 
+## Live verification of U4, and a backend bug
+
+Using a real consumer account (user 45, from the QA phone number entered without its leading zero),
+the three list endpoints and their detail endpoints were finally called for real. Two results matter.
+
+### `Home/recent_enquiries` is broken on the server
+
+It does not return JSON. It returns an HTML CodeIgniter stack trace:
+
+```
+Type: mysqli_sql_exception
+Message: Unknown column 't2.company_whatsapp_phone' in 'field list'
+```
+
+So the consumer enquiries list cannot work no matter what the app sends — the query references a
+column that does not exist. **This needs a backend fix and is worth reporting to whoever owns the
+API.** It also means the enquiry drill-down cannot be verified end to end yet: there is no way to
+obtain a valid enquiry id for a user through the API.
+
+Worth noting Android would hit exactly the same wall, so this is likely broken in production on both
+platforms.
+
+### The U4 parsers were already right
+
+This was flagged as a risk after U5 found wrong response keys on three of three screens. Checked, and
+for these three it was a false alarm — `EnquiriesListViewModel`, `QuotationsListViewModel` and
+`ComplaintsListViewModel` read `enquiries`, `quotations` and `complaints`, and
+`Home/recent_quotations` does return its rows under **`quotations`** (not `recent_quotations`, which
+would have been the natural guess). `Home/recent_complaints` answered
+`{"message":"complaints not found.","error":true}` — reachable, just no data for this account.
+
+So U4 needs no follow-up beyond the drill-downs.
+
+### Detail endpoint shapes, confirmed
+
+| Endpoint | Parts | Response |
+|---|---|---|
+| `Home/quotation` | `id`, `user_id` | `quotation`, plus `quotation_price` and `symbol` at the top level |
+| `Home/complaint` | `id`, `user_id` | reachable; `complaint` expected, unconfirmed — no complaint data on this account |
+| `Home/enquiry_detail` | `id`, `user_id` | unverifiable while `recent_enquiries` is throwing |
+
+Note `Home/quotation` returns the price and currency symbol as **siblings** of `quotation`, not
+inside it — a detail screen has to read all three.
+
 ## Notes carried over
 
 - Every count and flag from this backend is a **string**, including `"0"`/`"1"` booleans. Parse
