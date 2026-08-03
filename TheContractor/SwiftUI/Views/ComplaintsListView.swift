@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ComplaintsListView: View {
+    /// Set by a row tap; drives the detail sheet.
+    @State private var selectedComplaintId: String?
     @StateObject private var viewModel = ComplaintsListViewModel()
     @State private var showSubmitComplaint = false
     
@@ -56,7 +58,7 @@ struct ComplaintsListView: View {
                     LazyVStack(spacing: AppTheme.Spacing.small) {
                         ForEach(viewModel.complaints.indices, id: \.self) { index in
                             ComplaintCard(complaint: viewModel.complaints[index]) {
-                                viewModel.selectComplaint(viewModel.complaints[index])
+                                selectedComplaintId = viewModel.complaints[index].id
                             }
                             .padding(.horizontal, AppTheme.Spacing.medium)
                             
@@ -94,6 +96,9 @@ struct ComplaintsListView: View {
             }
         }
         } // end VStack
+        .sheet(item: $selectedComplaintId) { id in
+            ComplaintDetailView(complaintId: id)
+        }
         .navigationBarHidden(true)
     }
 }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct QuotationsListView: View {
+    /// Set by a row tap; drives the detail sheet.
+    @State private var selectedQuotationId: String?
     @StateObject private var viewModel = QuotationsListViewModel()
     @State private var showSubmitQuotation = false
     
@@ -56,7 +58,7 @@ struct QuotationsListView: View {
                     LazyVStack(spacing: AppTheme.Spacing.small) {
                         ForEach(viewModel.quotations.indices, id: \.self) { index in
                             QuotationCard(quotation: viewModel.quotations[index]) {
-                                viewModel.selectQuotation(viewModel.quotations[index])
+                                selectedQuotationId = viewModel.quotations[index].id
                             }
                             .padding(.horizontal, AppTheme.Spacing.medium)
                             
@@ -84,6 +86,9 @@ struct QuotationsListView: View {
                 }
                 .background(AppTheme.Colors.background)
             }
+        }
+        .sheet(item: $selectedQuotationId) { id in
+            QuotationDetailView(quotationId: id)
         }
         .sheet(isPresented: $showSubmitQuotation) {
             SubmitQuotationView()

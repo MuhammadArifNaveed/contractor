@@ -442,3 +442,12 @@ extension VendorTheme {
         return nil
     }
 }
+
+
+// MARK: - Sheet identity
+
+/// `.sheet(item:)` needs an Identifiable, and the id-driven detail screens pass a plain String id.
+/// Conforming String is the smallest way to express that without a wrapper type per screen.
+extension String: Identifiable {
+    public var id: String { self }
+}

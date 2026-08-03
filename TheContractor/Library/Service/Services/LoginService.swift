@@ -557,6 +557,31 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Consumer quotation / complaint detail
+    /// One of the signed-in user's own quotations. Android: `RetrofitApi.quotationDetail()` →
+    /// `POST Home/quotation`.
+    ///
+    /// The response puts `quotation_price` and `symbol` at the **top level**, as siblings of
+    /// `quotation` rather than inside it, so callers need all three.
+    func getConsumerQuotationDetail(quotationId: String, userId: String,
+                                    completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/quotation"
+        let params: [String: String] = ["id": quotationId, "user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One of the signed-in user's own complaints. Android: `POST Home/complaint`.
+    func getConsumerComplaintDetail(complaintId: String, userId: String,
+                                    completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/complaint"
+        let params: [String: String] = ["id": complaintId, "user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     // MARK: - Vendor Profile
     /// The company's own record. Android: `RetrofitApi.vendorProfile()` → `POST vendor/my_company`.
     ///
