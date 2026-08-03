@@ -186,7 +186,17 @@ class LoginService: BaseService {
     func submitEnquiry(userId: String, firstName: String, lastName: String, phone: String, email: String, companiesJSON: String,
                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Home/send_enquiries"
-        let params: [String: String] = ["user_id": userId, "first_name": firstName, "last_name": lastName, "phone": phone, "email": email, "companies": companiesJSON]
+        // Android's parts are user_name / surname / user_phone / user_email; the previous
+        // first_name / last_name / phone / email were all silently discarded, so every enquiry
+        // arrived with a user id and a company list and nothing else.
+        let params: [String: String] = [
+            "user_id": userId,
+            "user_name": firstName,
+            "surname": lastName,
+            "user_phone": phone,
+            "user_email": email,
+            "companies": companiesJSON
+        ]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
         }
@@ -195,9 +205,10 @@ class LoginService: BaseService {
     /// Get enquiries list for user
     
     /// Get enquiry detail
-    func getEnquiryDetail(enquiryId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+    /// Android: `RetrofitApi.enquiryDetail()` — the parts are `id` and `user_id`, not `enquiry_id`.
+    func getEnquiryDetail(enquiryId: String, userId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Home/enquiry_detail"
-        let params: [String: String] = ["enquiry_id": enquiryId]
+        let params: [String: String] = ["id": enquiryId, "user_id": userId]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success, json)
         }
@@ -260,9 +271,10 @@ class LoginService: BaseService {
     
     // MARK: - Profile Management
     /// Change user password
-    func changePassword(userId: String, oldPassword: String, newPassword: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+    /// Android: `RetrofitApi.changePassword()` — keyed on `user_email`, not `user_id`.
+    func changePassword(userEmail: String, oldPassword: String, newPassword: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Account/change_password"
-        let params: [String: String] = ["user_id": userId, "old_password": oldPassword, "new_password": newPassword]
+        let params: [String: String] = ["user_email": userEmail, "old_password": oldPassword, "new_password": newPassword]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success)
         }

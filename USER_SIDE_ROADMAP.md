@@ -1,0 +1,130 @@
+# User (consumer) side — plan
+
+Same method as the company side: Android is the functional source of truth
+(`RetrofitApi.java` for endpoints, the activities and `res/layout` for behaviour), while presentation
+is iOS-native. See `COMPANY_SIDE_ROADMAP.md` for the design rule and the design system the vendor
+screens now share.
+
+## The headline finding
+
+The consumer side is in worse shape than the company side was. An audit of every hardcoded URL in the
+project found **26 paths that Android does not declare**, spread across roughly two dozen reachable
+screens. Sign-up, sign-in, cart, checkout, chat, reviews, enquiry and quotation lists, profile
+editing and password change all post to endpoints the backend has never served.
+
+Two audits are worth re-running after every change to this area; both live in the session scratchpad:
+
+- **Path audit** — every `BASE_URL + "..."` and hardcoded URL against Android's `@POST` list.
+- **Payload audit** (`parity.py`) — part names against Android's `@Part` names. This is the one that
+  matters most: a path can be right while every field is silently ignored, which is exactly what was
+  happening on the company side's registration and password-reset flows.
+
+## Endpoint mapping
+
+Everything below is read off `RetrofitApi.java`. This is the substance of the work — the UI mostly
+exists already.
+
+| Screen / view model | Calls today | Android's actual endpoint |
+|---|---|---|
+| `LoginViewModel` | `Home/login` | `Account/user_login` |
+| `RegistrationViewModel` | `Home/register` | `Account/user_register` |
+| `ChangePasswordView` | `Home/change_password` | `Account/change_password` |
+| `ForgotPasswordViewModel`, `ForgetPasswordViewController` | `Home/forgot_password`, `Account/forgot_password` | `Account/phone_check` then `Account/update_password` |
+| `VerifyNumberView` | `Home/verify_number` | `Account/phone_check` |
+| `EditProfileViewModel` | `Home/update_user_profile` | `Account/update_user_profile` |
+| `EnquiriesListViewModel` | `Home/get_enquiries` | `Home/recent_enquiries` |
+| `QuotationsListViewModel` | `Home/get_quotations` | `Home/recent_quotations` |
+| `ComplaintsListViewModel` | `Home/get_complaints` | `Home/recent_complaints` |
+| `CompaniesByCategoryView` | `Home/companies_by_category` | `Home/category_wise_companies` (and `Home/sub_category_wise_companies`) |
+| `CompaniesListViewModel` | `Home/get_searched_companies` | `Home/find_companies` / `Home/get_search` |
+| `TwentyFourSevenCompaniesView` | `Home/get_24_7_companies` | `Home/twentyfourcompanies` |
+| `WorkshopViewModel` | `Home/get_workshop_items` | `Home/recent_workshop_ads` |
+| `SearchJobsViewModel` | `Home/search_jobs` | `jobs/search_jobs` |
+| `MyJobApplicationsViewModel` | `Home/get_my_job_applications` | `jobs/user_job_applies` |
+| `DirectHiringView` | `Home/get_direct_hiring` | `jobs/user_direct_selections` |
+| `ContactUsView` | `Home/contact_us` | none — Android opens the contact **web page** (`AppLinks.ContactUS`) |
+
+### No endpoint exists — needs a product decision, not a port
+
+| Screen | Situation |
+|---|---|
+| `AddReviewViewModel` (`Home/submit_review`) | Android has no review-submit endpoint at all. `vendor/rating` is a company-side *read*. Either the feature does not exist or it is web-only. |
+| `ReviewsListViewModel` (`Home/get_company_reviews`) | Same — no consumer review-read endpoint. Ratings may only be reachable through `Home/company_detail`. |
+| `CartViewModel` (`Home/get_cart`) | Android has no cart endpoint. The cart is **local state**; `Home/check_cart_limit` only validates how many companies may be added, and the basket is submitted through `Home/send_enquiries`. |
+| `CheckoutViewModel` (`Home/submit_order`) | Same — "checkout" for a consumer is `Home/send_enquiries`. |
+| `ChatListViewModel` (`Home/get_chats`) | Chat is **Firebase Firestore**, exactly as the vendor inbox is. Blocked on the same iOS Firebase registration. |
+
+### Payload bugs on paths that are already correct
+
+Found by the payload audit; these are live screens that cannot be working:
+
+| Endpoint | Sends | Android expects |
+|---|---|---|
+| `Home/send_enquiries` | `first_name`, `last_name`, `phone`, `email` | `user_name`, `surname`, `user_phone`, `user_email` |
+| `Home/enquiry_detail` | `enquiry_id` | `id`, `user_id` |
+| `Account/change_password` | `user_id` | `user_email` |
+
+## Plan, in order
+
+Ordered so that each phase leaves the app in a better state on its own, and the cheap high-impact
+fixes come first.
+
+**U1 — Payload fixes. ✅ done.** All three corrected: `Home/send_enquiries` now sends
+`user_name`/`surname`/`user_phone`/`user_email`, `Home/enquiry_detail` sends `id`+`user_id` instead of
+`enquiry_id`, and `Account/change_password` is keyed on `user_email` rather than `user_id`. Both
+changed signatures were unreferenced, so no call sites needed updating. The payload audit now reports
+no consumer mismatches.
+
+Four flags remain in the audit output, triaged:
+
+- `registerCompany` — false positive; its params arrive from the caller, which the script cannot see.
+  The caller was corrected on the company side.
+- `requestQuotationByPhoto` — false positive; it does attach images, through a ternary the detector
+  does not follow.
+- `setWorkshopQuotationLock` — false positive; the `"lock"`/`"unlock"` ternary literal is read as a
+  param key.
+- `addWorkshopQuotation` — **real**: Android can attach a document to a workshop quotation and iOS
+  sends only text and price. Small gap, company side.
+
+**U2 — Auth and profile.** Login, registration, verify number, forgot password, change password,
+edit profile — six screens onto the `Account/*` family. Do this before the browse flows: the session
+these produce is what the rest reads. Check first whether the SwiftUI `LoginView` / `RegistrationView`
+are reachable at all, or whether the storyboard `LoginViewController` (which already uses the correct
+`Account/user_login`) is the only live path — no point fixing a screen nothing opens.
+
+**U3 — Browse and discovery.** Categories, category- and sub-category-wise companies, find/search
+companies, 24/7 companies, company detail. This is the no-login surface too, so it doubles as the
+start of that third phase.
+
+**U4 — Enquiries and quotations.** Cart as local state with `Home/check_cart_limit`, submission via
+`Home/send_enquiries`, then the `recent_enquiries` / `recent_quotations` / `recent_complaints` lists
+and their detail screens. Delete `CheckoutViewModel`'s fictional order concept.
+
+**U5 — Jobs.** `jobs/search_jobs`, `jobs/job_apply`, `jobs/user_job_applies`,
+`jobs/user_direct_selections`, `jobs/update_user_job_status`. The vendor side already proved these
+endpoints out.
+
+**U6 — Workshops and estimations.** `Home/recent_workshop_ads`, `Home/workshop_ad_detail`,
+`Home/submit_workshop_ad`, plus the estimation family (`Home/get_estimation_categories`,
+`Home/estimation_request`, `Home/estimation_requests`, `Home/submit_estimate_request`) which iOS does
+not touch at all today.
+
+**U7 — Reviews, cart-as-orders, chat.** The four items above with no endpoint. Each needs a decision
+before code: does the feature exist, is it web-only, or is it Firestore. Chat is blocked on Firebase
+either way and should show the same "not available yet" screen the vendor inbox does.
+
+**U8 — Design system.** Extend `VendorTheme` (rename to a neutral `AppTheme`-style namespace) across
+the consumer screens, as was done for the vendor side. Worth doing once the endpoints are right, not
+before — restyling a screen that shows no data is wasted effort.
+
+## Notes carried over
+
+- Every count and flag from this backend is a **string**, including `"0"`/`"1"` booleans. Parse
+  through `stringValue`.
+- Backend spellings are load-bearing: `vaccancies`, `quotations_dashnoard`, `Vendor_profile` with a
+  capital V. Do not tidy them.
+- Part names sometimes differ from the Retrofit argument name — the workshop image part is `images[]`
+  though the argument is called `surveyImage`. Read the `@Part` annotation, never the signature.
+- Verification is still limited to curl plus compile plus launch. No form in this app has been
+  submitted by hand; that needs
+  `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer` on this machine.
