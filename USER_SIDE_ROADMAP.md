@@ -318,9 +318,18 @@ warning driven by `exceedsLimit`/`overLimitBy`, `refreshLimit()` on appear, and 
 submit empty because nothing in the app picks a location on a map yet, which is also what Android
 sends when its picker is skipped.
 
-Companies get into the basket from `CompanyDetailView` — its top bar had a decorative `cart` glyph
-doing nothing, now an "Add to enquiry" / "Added" toggle on the store, matching where Android's
-`CompanyDetails` adds.
+Companies get into the basket from two places, matching Android. `CompanyDetailView`'s top bar had a
+decorative `cart` glyph doing nothing and now carries an "Add to enquiry" / "Added" toggle. And Android
+adds from the list adapters too (`CompaniesAdapter`, `TitaniumCompaniesAdapter` — both hold a
+`DatabaseHandler`), so the shared `CompanyCard` row has a circular add/added control; that one change
+covers the search results, companies list, 24/7 list and home list, since all four use the same row.
+
+`CompanyCard` was a `Button` wrapping its whole content, which would have swallowed taps on a nested
+control, so the row's tap target is now a gesture on the content instead.
+
+Not done: the compact `TitaniumCompanyCard` tile on the home screen has no basket control — Android's
+titanium adapter does add from the row, but the tile is ~90pt wide and would be crowded. Its details
+screen has the toggle.
 
 Five files went with it, all unreferenced afterwards: `CartViewModel` (`Home/get_cart`),
 `CheckoutViewModel` (`Home/submit_order`), `CheckoutView`, plus `CartManager` and `CartItem` — an

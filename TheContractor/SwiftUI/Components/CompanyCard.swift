@@ -10,9 +10,19 @@ import SwiftUI
 struct CompanyCard: View {
     let company: CompanyViewModel
     let onTap: () -> Void
-    
+
+    /// Android adds to the enquiry basket straight from the list adapters (`CompaniesAdapter`,
+    /// `TitaniumCompaniesAdapter`), not only from the details screen, so the row carries the control.
+    @ObservedObject private var cart = ConsumerCartStore.shared
+
+    init(company: CompanyViewModel, onTap: @escaping () -> Void) {
+        self.company = company
+        self.onTap = onTap
+    }
+
+    // The row was a Button wrapping everything, which would have swallowed taps on the basket
+    // control nested inside it. The tap target is now a gesture on the content instead.
     var body: some View {
-        Button(action: onTap) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 HStack(spacing: AppTheme.Spacing.medium) {
                     // Company Logo
@@ -70,8 +80,10 @@ struct CompanyCard: View {
                     }
                     
                     Spacer()
+
+                    basketButton
                 }
-                
+
                 Divider()
                     .padding(.top, 4)
             }
@@ -79,8 +91,37 @@ struct CompanyCard: View {
             .background(AppTheme.Colors.cardBackground)
             .cornerRadius(AppTheme.CornerRadius.medium)
             .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onTap)
+    }
+
+    private var basketButton: some View {
+        Button(action: toggleInCart) {
+            Image(systemName: isInCart ? "checkmark" : "plus")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(isInCart ? .white : AppTheme.Colors.textPrimary)
+                .frame(width: 32, height: 32)
+                .background(
+                    Circle().fill(isInCart ? AppTheme.Colors.primary
+                                          : AppTheme.Colors.secondaryBackground)
+                )
         }
         .buttonStyle(PlainButtonStyle())
+        .disabled(company.id.isEmpty)
+        .accessibilityLabel(isInCart ? "Remove \(company.company_name) from enquiry"
+                                     : "Add \(company.company_name) to enquiry")
+    }
+
+    private var isInCart: Bool {
+        cart.contains(companyId: company.id)
+    }
+
+    private func toggleInCart() {
+        guard !company.id.isEmpty else { return }
+        cart.toggle(CartCompany(id: company.id,
+                                companyName: company.company_name,
+                                companyLogo: company.company_logo,
+                                categoryName: company.category_name))
     }
 }
 
