@@ -146,7 +146,8 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showComplaintsController()
 
         case "Estimations":
-            mainVC.showEsstimationController()
+            // Android's drawer opens the request list, not the calculator (the calculator is the tab).
+            mainVC.showEstimationRequestsController()
 
         case "24/7 Maintenance":
             mainVC.show24x7MaintenanceController()

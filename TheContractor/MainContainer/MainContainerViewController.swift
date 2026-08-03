@@ -70,6 +70,14 @@ class MainContainerViewController: BaseViewController{
             self.showHomeController()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
+        // A SwiftUI tab screen that hits a signed-in-only action asks for the login screen this way.
+        // "GoToLogin" is observed by ProfileHostingController, which is not installed while another
+        // tab is showing, so it cannot serve that purpose.
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRequestLogin), name: .init("RequestLogin"), object: nil)
+    }
+
+    @objc private func handleRequestLogin() {
+        loginUser()
     }
 
     deinit { NotificationCenter.default.removeObserver(self) }
@@ -400,32 +408,54 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
    
+    /// The Estimation tab — Android's `EstimationFragment`. The storyboard screen this replaces could
+    /// only calculate a figure; it had no way to ask for the free consultation the calculation is for.
     func showEsstimationController()  {
         self.showBarsForTab()
-        let storyBoard = UIStoryboard(name: "Home", bundle: nil)
-        var controller = BaseNavigationController()
-        controller = storyBoard.instantiateViewController(withIdentifier: "EsstimationVC") as! BaseNavigationController
+        showTabScreen(EstimationView())
+    }
+
+    /// Embeds a SwiftUI screen as a bottom-tab root, leaving the tab bars up rather than hiding them
+    /// the way `showVendorScreen` does for a drawer item.
+    ///
+    /// `containerView` is pinned to all four edges of the root view — it runs the full height of the
+    /// screen, with the top and bottom bars drawn *over* it. A screen embedded at `containerView.bounds`
+    /// therefore has its first ~45pt hidden behind the yellow bar. The older tab screens work around
+    /// that by drawing their own copy of the bar underneath it (which is where the doubled logo came
+    /// from); this pins the content between the two bars instead, so a SwiftUI tab screen needs to know
+    /// nothing about them.
+    func showTabScreen<Content: View>(_ rootView: Content) {
+        let hostingController = UIHostingController(rootView: rootView)
+        let controller = BaseNavigationController(rootViewController: hostingController)
         controller.interactivePopGestureRecognizer?.isEnabled = false
         controller.navigationBar.isHidden = true
 
-        guard let containerView = self.containerView else {
-            return
-        }
+        guard let containerView = self.containerView else { return }
 
         if let oldRef = baseNavigationController {
             oldRef.willMove(toParent: nil)
             oldRef.view.removeFromSuperview()
             oldRef.removeFromParent()
-
-            oldRef.view.removeFromSuperview()
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
         containerView.addSubview(controller.view)
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            controller.view.topAnchor.constraint(equalTo: topBarView?.bottomAnchor ?? containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: bottomBarView?.topAnchor ?? containerView.bottomAnchor)
+        ])
         controller.didMove(toParent: self)
     }
-    
+
+    /// The user's own estimate requests — Android's `Estimations`, opened from the drawer and from the
+    /// profile screen. Both used to open the calculator, leaving submitted requests unreachable.
+    func showEstimationRequestsController() {
+        showVendorScreen(EstimationRequestsView())
+    }
+
     func showSearchController()  {
         self.showBarsForTab()
         

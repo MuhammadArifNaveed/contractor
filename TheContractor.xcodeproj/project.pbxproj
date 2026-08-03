@@ -11,7 +11,6 @@
 		0B9EF8ECBFCC4B442ECD69AC /* Pods_TheContractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC58A12B266F9A3C188C8FFA /* Pods_TheContractor.framework */; };
 		0F465FF146E7CB112B0D845F /* FreelancersHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0974232A5F237C5836596319 /* FreelancersHostingController.swift */; };
 		1807146226D6BCDA00B0944B /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1807146126D6BCD900B0944B /* Home.storyboard */; };
-		1807146526D6C10100B0944B /* EstimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1807146426D6C10100B0944B /* EstimationViewController.swift */; };
 		1807146826D6C13E00B0944B /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1807146726D6C13E00B0944B /* CategoryCollectionViewCell.swift */; };
 		180FE33026D84EEA00D1D3C3 /* CompanyCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180FE32F26D84EEA00D1D3C3 /* CompanyCollectionViewCell.swift */; };
 		180FE33326D85AF500D1D3C3 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180FE33226D85AF500D1D3C3 /* ProfileViewController.swift */; };
@@ -331,12 +330,13 @@
 		3B1405FDD486135F78CE0C03 /* VendorPostWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */; };
 		2AC84DADD75AA20AFDA7D7E9 /* VendorHireFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */; };
 		FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */; };
+		F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978022319FA6D12FD35A1FE9 /* EstimationView.swift */; };
+		1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0974232A5F237C5836596319 /* FreelancersHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FreelancersHostingController.swift; sourceTree = "<group>"; };
 		1807146126D6BCD900B0944B /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
-		1807146426D6C10100B0944B /* EstimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimationViewController.swift; sourceTree = "<group>"; };
 		1807146726D6C13E00B0944B /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		180FE32F26D84EEA00D1D3C3 /* CompanyCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCollectionViewCell.swift; sourceTree = "<group>"; };
 		180FE33226D85AF500D1D3C3 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -674,6 +674,8 @@
 		910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPostWorkshopView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPostWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHireFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHireFreelancerView.swift; sourceTree = SOURCE_ROOT; };
 		13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConsumerCartStore.swift; path = TheContractor/SwiftUI/ViewModels/ConsumerCartStore.swift; sourceTree = SOURCE_ROOT; };
+		978022319FA6D12FD35A1FE9 /* EstimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationView.swift; path = TheContractor/SwiftUI/Views/EstimationView.swift; sourceTree = SOURCE_ROOT; };
+		8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationRequestsView.swift; path = TheContractor/SwiftUI/Views/EstimationRequestsView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -742,7 +744,6 @@
 				186C511F26D30966005C5C2E /* CompanyDetailsViewController.swift */,
 				186C512226D30EB0005C5C2E /* SelectedCompaniesListViewController.swift */,
 				18C7403426D565F1008BE9B1 /* SideMenuViewController.swift */,
-				1807146426D6C10100B0944B /* EstimationViewController.swift */,
 				186871D026D6E4B20079736E /* SearchViewController.swift */,
 				189A768326D6F72100F28786 /* HomeViewController.swift */,
 				189A768626D6F7B400F28786 /* WorkshopViewController.swift */,
@@ -1353,6 +1354,8 @@
 		806CA97D2F5768C600D31D28 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */,
+				978022319FA6D12FD35A1FE9 /* EstimationView.swift */,
 				806CA9232F5768C600D31D28 /* Auth */,
 				806CA9462F5768C600D31D28 /* Vendor */,
 				806CA9472F5768C600D31D28 /* AboutUsView.swift */,
@@ -1570,6 +1573,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */,
+				F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */,
 				FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */,
 				2AC84DADD75AA20AFDA7D7E9 /* VendorHireFreelancerView.swift in Sources */,
 				3B1405FDD486135F78CE0C03 /* VendorPostWorkshopView.swift in Sources */,
@@ -1660,7 +1665,6 @@
 				18EA187D26D28820003DF2FC /* ParsedResponseMessage.swift in Sources */,
 				18C4FD8F26D2F9CE009A197E /* QuotationDetailsTableViewCell.swift in Sources */,
 				186871D126D6E4B20079736E /* SearchViewController.swift in Sources */,
-				1807146526D6C10100B0944B /* EstimationViewController.swift in Sources */,
 				18EA189826D28820003DF2FC /* KYEmbedMainControllerSegue.swift in Sources */,
 				18EA188B26D28820003DF2FC /* MKActivityIndicatorView.swift in Sources */,
 				18EA18AB26D28820003DF2FC /* ActiveBuilder.swift in Sources */,

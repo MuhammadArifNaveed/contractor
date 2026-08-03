@@ -208,10 +208,9 @@ class ProfileHostingController: UIHostingController<UserProfileView> {
     }
     
     private func navigateToEstimations() {
-        // Navigate to Estimations screen using EstimationViewController
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        if let estimationVC = storyboard.instantiateViewController(withIdentifier: "EstimationViewController") as? EstimationViewController {
-            navigationController?.pushViewController(estimationVC, animated: true)
+        // Android's ProfileFragment opens the request list here, same as the drawer.
+        if let container = mainContainer() {
+            container.showEstimationRequestsController()
         }
     }
 }

@@ -283,16 +283,66 @@ class LoginService: BaseService {
     /// Update user profile with optional image
     
     // MARK: - Estimations
-    /// Get estimation categories
+    /// The categories the estimate calculator is built from. Android: `POST
+    /// Home/get_estimation_categories`, no parts. Responds under `estimation_categories`, each with a
+    /// nested `sub_categories` array whose `min_val` is the price per square foot.
     func getEstimationCategories(completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "Home/get_estimation_categories"
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: [:], isImageData: false) { message, success, json in
             completion(message, success, json)
         }
     }
-    
-    /// Get estimation items by category
-    
+
+    /// Ask for a free consultation on a calculated estimate. Android: `POST
+    /// Home/submit_estimate_request`.
+    ///
+    /// The two id parts read backwards: `look_id` is the **top-level** category (what the user is
+    /// "looking for") and `cate_id` is the sub-category chosen underneath it. That is how
+    /// `EstimationFragment.requestEstimation()` passes them, and it matches the response, which names
+    /// them `looking_for` and `category_name`. The calculated budget is not sent — the server holds
+    /// the per-sqft price and works it out again.
+    func submitEstimateRequest(userId: String, fullName: String, phone: String, email: String,
+                               note: String, squareFeet: String, lookId: String, categoryId: String,
+                               completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/submit_estimate_request"
+        let params: [String: String] = [
+            "user_id": userId,
+            "full_name": fullName,
+            "phone_number": phone,
+            "email_address": email,
+            "note": note,
+            "est_enter_sqft": squareFeet,
+            "look_id": lookId,
+            "cate_id": categoryId
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
+    /// The signed-in user's own estimate requests, paged. Android: `POST Home/estimation_requests`,
+    /// responding under `requests` with `total_page`.
+    func getEstimationRequests(userId: String, page: Int,
+                               completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/estimation_requests"
+        let params: [String: String] = ["user_id": userId, "page": "\(page)"]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One estimate request. Android: `POST Home/estimation_request`, responding under
+    /// `estimation_request_detail`.
+    func getEstimationRequestDetail(requestId: String, userId: String,
+                                    completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/estimation_request"
+        let params: [String: String] = ["id": requestId, "user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+
     // MARK: - Search & Filter
     /// Search companies with filters
     
@@ -1563,19 +1613,6 @@ class LoginService: BaseService {
         }
     }
     */
-    
-    func getEsstimationData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : CategoryListViewModel?)->Void) {
-        let completeURL = EndPoints.BASE_URL + EndPoints.homeEsstimation
-        self.makeGetAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
-            if success {
-                let data = CategoryListViewModel(list: json!["estimation_categories"])
-                completion(message,true,data)
-            }
-            else{
-              completion(message,false,nil)
-            }
-        }
-    }
     
     func getSearchData(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool , _ home : SearchViewModel?)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.getSearch

@@ -42,7 +42,6 @@ struct EndPoints {
     /// Login for companies (vendor portal)
     static let loginCompany = "vendor/login_company"
     static let home = "Home/categories"
-    static let homeEsstimation = "Home/get_estimation_categories"
     static let getSearch = "Home/get_search"
     static let searchedData = "Home/find_companies"
    

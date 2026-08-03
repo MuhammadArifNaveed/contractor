@@ -197,10 +197,9 @@ Fabricated hardcoded URLs: 12 → 9.
 endpoint either — it opens the contact **web page** (`AppLinks.ContactUS`), which the drawer already
 does.
 
-**Estimations are not implemented on iOS at all.** `EstimationViewController` is reachable — it is the
-Estimation bottom tab, instantiated from the storyboard as `EsstimationVC` — but it makes **no API
-call of any kind**. It is an empty shell. So this is a feature to build, not a path to correct, and it
-was left rather than half-started.
+**Estimations are now built — see the section at the end.** They were the one feature here with no
+implementation at all: `EstimationViewController`, the Estimation bottom tab, could calculate a figure
+and had no way to submit it, and the user's own requests were unreachable from anywhere.
 
 The contract is confirmed and `Home/get_estimation_categories` was called live: `error:false`, two
 categories back, each carrying a nested `sub_categories` array.
@@ -341,6 +340,45 @@ bypasses `BASE_URL`.**
 One trap worth recording: the pbxproj removal script matched file names by substring, so
 `CheckoutView.swift` also matched `FreelancerCheckoutView.swift` and would have silently unregistered
 a live screen. Anchored with a negative lookbehind; the count dropped 28 → 24 lines.
+
+## Estimations — done
+
+Android splits this in two, and iOS collapsed both into one calculator that could not submit anything:
+
+| Android | Endpoint | iOS now |
+|---|---|---|
+| `EstimationFragment` (bottom tab) | `Home/get_estimation_categories`, `Home/submit_estimate_request` | `EstimationView` |
+| `Estimations` (drawer + profile) | `Home/estimation_requests` | `EstimationRequestsView` |
+| `EstimationsDetail` | `Home/estimation_request` | `EstimationRequestDetailView` |
+
+All four endpoints verified live. Categories come back as two entries (`Shell & Core`, `Fitted`) with
+three sub-categories each; `min_val` on the sub-category is the **per-square-foot rate**, despite the
+name. The estimate is `area × rate` and is never sent — the server holds the rate and recomputes.
+
+The one trap is the two id parts on submit, which read backwards: **`look_id` is the top-level
+category** ("looking for") and **`cate_id` is the sub-category**. That is how
+`EstimationFragment.requestEstimation()` passes them, and it matches the response, which names them
+`looking_for` and `category_name`. The payload audit cross-checks all three new calls against
+Android's `@Part` names with no mismatch.
+
+Deleted with it: `EstimationViewController` (the calculator-only storyboard screen), its
+`getEsstimationData` service call — the last `makeGetAPICall` on an endpoint Android POSTs — and the
+`EndPoints.homeEsstimation` constant. Its two storyboard scenes in `Home.storyboard` are now dead but
+left in place; nothing instantiates them.
+
+### Two infrastructure fixes this needed
+
+**`containerView` runs the full height of the screen** with the top and bottom bars drawn *over* it —
+which is why the vendor screens needed a status-bar underlay. A SwiftUI screen embedded at
+`containerView.bounds` therefore loses its first ~45pt behind the yellow bar. The older tab screens
+work around it by drawing their own copy of the bar underneath the real one (the source of the doubled
+logo fixed earlier). `MainContainerViewController.showTabScreen(_:)` pins the content between the two
+bars instead, so a SwiftUI tab screen needs to know nothing about them.
+
+**"GoToLogin" is only observed by `ProfileHostingController`**, which is not installed while another
+tab is showing, so a sign-in prompt posted from any other tab silently did nothing.
+`MainContainerViewController` now observes **"RequestLogin"** and calls `loginUser()`; the estimate
+screen uses that for its consultation gate.
 
 ## Notes carried over
 
