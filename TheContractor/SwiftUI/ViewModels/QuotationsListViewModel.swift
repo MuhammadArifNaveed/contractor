@@ -37,8 +37,8 @@ class QuotationsListViewModel: ObservableObject {
             return
         }
         
-        let params = ["user_id": userId, "page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_quotations"
+        let params = ["user_id": userId, "page": "\(currentPage)"]
+        let completeURL = "https://contractor.bidcont.com/rest/Home/recent_quotations"
         
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
@@ -78,8 +78,8 @@ class QuotationsListViewModel: ObservableObject {
             return
         }
         
-        let params = ["user_id": userId, "page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_quotations"
+        let params = ["user_id": userId, "page": "\(currentPage)"]
+        let completeURL = "https://contractor.bidcont.com/rest/Home/recent_quotations"
         
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {

@@ -136,9 +136,36 @@ clean while every complaint submitted carried no complaint text.
 
 Fabricated hardcoded URLs: 18 → 15.
 
-**U4 — Enquiries and quotations.** Cart as local state with `Home/check_cart_limit`, submission via
-`Home/send_enquiries`, then the `recent_enquiries` / `recent_quotations` / `recent_complaints` lists
-and their detail screens. Delete `CheckoutViewModel`'s fictional order concept.
+**U4 — Enquiries and quotations. ◐ lists done; cart, checkout and drill-downs outstanding.**
+
+The three lists are fixed. All three carried the *same pair* of defects — a `Home/get_*` path the
+backend does not serve, and `page_no` where Android's part is `page`, so paging was broken
+independently of the path:
+
+| View model | Was | Now |
+|---|---|---|
+| `EnquiriesListViewModel` | `Home/get_enquiries`, `page_no` | `Home/recent_enquiries`, `page` |
+| `QuotationsListViewModel` | `Home/get_quotations`, `page_no` | `Home/recent_quotations`, `page` |
+| `ComplaintsListViewModel` | `Home/get_complaints`, `page_no` | `Home/recent_complaints`, `page` |
+
+All three take `user_id` + `page`, confirmed against `RetrofitApi.java`.
+
+**Outstanding in this phase.**
+
+*No drill-down from any list.* `EnquiryDetailView`, `QuotationDetailView` and `ComplaintDetailView`
+all exist but have **no call sites and make no API calls** — they are display-only shells expecting a
+model to be handed in. The endpoints they should use are ready: `Home/enquiry_detail` (already fixed
+in U1), `Home/quotation` and `Home/complaint`, each taking `id` + `user_id`. Wiring the lists to them
+is the next concrete piece of work here.
+
+*Cart and checkout still need the product decision from U7.* `CartViewModel` calls `Home/get_cart`
+and `CheckoutViewModel` calls `Home/submit_order`; neither exists. The shape Android implies is: cart
+is **local state**, `Home/check_cart_limit` (already implemented as `LoginService.checkCartLimit`)
+validates how many companies may be added, and the basket is submitted through `Home/send_enquiries`
+— which U1 already corrected. Converting the cart to local state is a behavioural change, not a
+rename, so it is left for a decision rather than guessed at.
+
+Fabricated hardcoded URLs: 15 → 12.
 
 **U5 — Jobs.** `jobs/search_jobs`, `jobs/job_apply`, `jobs/user_job_applies`,
 `jobs/user_direct_selections`, `jobs/update_user_job_status`. The vendor side already proved these

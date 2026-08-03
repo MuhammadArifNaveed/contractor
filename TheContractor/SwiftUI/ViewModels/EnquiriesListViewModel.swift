@@ -38,8 +38,8 @@ class EnquiriesListViewModel: ObservableObject {
             return
         }
         
-        let params = ["user_id": userId, "page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_enquiries"
+        let params = ["user_id": userId, "page": "\(currentPage)"]
+        let completeURL = "https://contractor.bidcont.com/rest/Home/recent_enquiries"
         
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
@@ -80,8 +80,8 @@ class EnquiriesListViewModel: ObservableObject {
             return
         }
         
-        let params = ["user_id": userId, "page_no": "\(currentPage)"]
-        let completeURL = "https://contractor.bidcont.com/rest/Home/get_enquiries"
+        let params = ["user_id": userId, "page": "\(currentPage)"]
+        let completeURL = "https://contractor.bidcont.com/rest/Home/recent_enquiries"
         
         LoginService.shared().makePostAPICall(with: completeURL, params: params) { [weak self] message, success, json, _ in
             DispatchQueue.main.async {
