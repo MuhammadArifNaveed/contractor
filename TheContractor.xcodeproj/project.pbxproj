@@ -336,6 +336,7 @@
 		C71ED1B4650A158FAC14ED79 /* VendorPostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */; };
 		3B1405FDD486135F78CE0C03 /* VendorPostWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */; };
 		2AC84DADD75AA20AFDA7D7E9 /* VendorHireFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */; };
+		FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -684,6 +685,7 @@
 		B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPostJobView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPostJobView.swift; sourceTree = SOURCE_ROOT; };
 		910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorPostWorkshopView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorPostWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHireFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHireFreelancerView.swift; sourceTree = SOURCE_ROOT; };
+		13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConsumerCartStore.swift; path = TheContractor/SwiftUI/ViewModels/ConsumerCartStore.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1339,6 +1341,7 @@
 		806CA9462F5768C600D31D28 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */,
 				256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */,
 				910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */,
 				B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */,
@@ -1585,6 +1588,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */,
 				2AC84DADD75AA20AFDA7D7E9 /* VendorHireFreelancerView.swift in Sources */,
 				3B1405FDD486135F78CE0C03 /* VendorPostWorkshopView.swift in Sources */,
 				C71ED1B4650A158FAC14ED79 /* VendorPostJobView.swift in Sources */,

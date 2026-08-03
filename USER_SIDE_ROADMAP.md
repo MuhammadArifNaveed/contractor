@@ -50,8 +50,8 @@ exists already.
 |---|---|
 | `AddReviewViewModel` (`Home/submit_review`) | Android has no review-submit endpoint at all. `vendor/rating` is a company-side *read*. Either the feature does not exist or it is web-only. |
 | `ReviewsListViewModel` (`Home/get_company_reviews`) | Same — no consumer review-read endpoint. Ratings may only be reachable through `Home/company_detail`. |
-| `CartViewModel` (`Home/get_cart`) | Android has no cart endpoint. The cart is **local state**; `Home/check_cart_limit` only validates how many companies may be added, and the basket is submitted through `Home/send_enquiries`. |
-| `CheckoutViewModel` (`Home/submit_order`) | Same — "checkout" for a consumer is `Home/send_enquiries`. |
+| `CartViewModel` (`Home/get_cart`) | **Decision taken: the cart is local state.** `ConsumerCartStore` now implements it. The old view model and `CartView`/`CheckoutView` still need rewiring onto it — see below. |
+| `CheckoutViewModel` (`Home/submit_order`) | Same — a consumer "checkout" is `Home/send_enquiries`, which the store performs. |
 | `ChatListViewModel` (`Home/get_chats`) | Chat is **Firebase Firestore**, exactly as the vendor inbox is. Blocked on the same iOS Firebase registration. |
 
 ### Payload bugs on paths that are already correct
@@ -285,6 +285,37 @@ So U4 needs no follow-up beyond the drill-downs.
 
 Note `Home/quotation` returns the price and currency symbol as **siblings** of `quotation`, not
 inside it — a detail screen has to read all three.
+
+## Cart — local state, implemented
+
+Confirmed with the product owner and built to match Android exactly.
+
+Android keeps the basket in a local SQLite table via `DatabaseHandler` and talks to the server only
+twice: `Home/check_cart_limit` for how many companies the plan allows, and `Home/send_enquiries` to
+submit. There is no cart endpoint at all. iOS was calling `Home/get_cart` and `Home/submit_order`,
+neither of which exists.
+
+`ConsumerCartStore` (`SwiftUI/ViewModels/ConsumerCartStore.swift`) is the replacement — a shared
+observable store persisting to UserDefaults rather than SQLite, since the basket is a short list of
+ids and a few strings per row.
+
+It carries the per-company fields Android collects before submitting — `date_time`, `location`,
+`lat`, `lng`, `description` — and reproduces Android's two gates: every row must be complete
+(`SelectedCompaniesAdapter` refuses to build the payload while any field is blank), and the basket
+must fit `available_cart_limit`, with `overLimitBy` matching Android's "remove N companies" message.
+
+The payload shape is the part to get right. `companies` is a JSON **string** holding an array of
+`{company_id, date_time, location, lat, lng, description}` — what Android produces from
+`new Gson().toJson(selectedCompaniesList)` over `SelectedCompaniesResponseModel`. Contact details come
+off the stored user rather than being asked for again, as in `OrderContactInfo.getDataFromSP()`.
+
+**Still to do: the UI is not on the store yet.** The existing `CartViewModel` is a fabricated
+shopping cart with prices, quantities and a currency total — concepts this app does not have; there
+is nothing to buy, only companies to send an enquiry to. `CartView` and `CheckoutView` are built
+against that model, so they need rewiring onto `ConsumerCartStore`: a row per company with its
+date/time, location and description, the over-limit warning, and a submit that calls
+`store.submit(...)`. `Home/get_cart` and `Home/submit_order` stay in the fabricated count until that
+happens.
 
 ## Notes carried over
 
