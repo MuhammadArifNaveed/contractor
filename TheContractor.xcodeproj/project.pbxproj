@@ -321,6 +321,7 @@
 		1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */; };
 		A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17599322345B4B772ABBAD /* SignUpView.swift */; };
 		4F330F33564886463F405EA8 /* WorkshopAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */; };
+		EDD0C2BC089025A6D31C0579 /* VendorDirectHiringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -654,6 +655,7 @@
 		8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationRequestsView.swift; path = TheContractor/SwiftUI/Views/EstimationRequestsView.swift; sourceTree = SOURCE_ROOT; };
 		4A17599322345B4B772ABBAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopAdsView.swift; sourceTree = "<group>"; };
+		43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDirectHiringView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1293,6 +1295,7 @@
 		806CA9462F5768C600D31D28 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */,
 				13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */,
 				256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */,
 				910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */,
@@ -1540,6 +1543,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDD0C2BC089025A6D31C0579 /* VendorDirectHiringView.swift in Sources */,
 				4F330F33564886463F405EA8 /* WorkshopAdsView.swift in Sources */,
 				A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */,
 				1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */,

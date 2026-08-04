@@ -933,6 +933,37 @@ class LoginService: BaseService {
         }
     }
 
+    /// Everyone this company has hired directly, and where each of them is in the process.
+    /// Android: `RetrofitApi.directHiringApi()` → `POST jobs/view_direct_hirings`, response key
+    /// `direct_hirings`.
+    ///
+    /// The response carries no `total_page`, and Android's load-more is commented out in
+    /// `VendorDirectHiring`, so `page` is sent but the list is single-page in practice.
+    func getVendorDirectHirings(vendorId: String, userId: String, userType: String, page: String,
+                                completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/view_direct_hirings"
+        let params: [String: String] = [
+            "page": page, "vendor_id": vendorId, "user_id": userId, "user_type": userType
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Move one direct hire along. Android: `RetrofitApi.updateDirectHireStatusApi()` →
+    /// `POST jobs/update_direct_hiring_status` with `vendor_id`, `hiring_id`, `status`.
+    ///
+    /// `status` is one of Android's five literals, spelled as its own dialog spells them — including
+    /// `interviewed` in lower case, which is what goes over the wire.
+    func updateDirectHiringStatus(vendorId: String, hiringId: String, status: String,
+                                  completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/update_direct_hiring_status"
+        let params: [String: String] = ["vendor_id": vendorId, "hiring_id": hiringId, "status": status]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
     /// Accept or reject one application. Android: `RetrofitApi.updateJobHireStatusApi()` →
     /// `POST jobs/update_job_application_status` with `vendor_id`, `application_id`, `status`.
     func updateVendorJobApplicationStatus(vendorId: String, applicationId: String, status: String,

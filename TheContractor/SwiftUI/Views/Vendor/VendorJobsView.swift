@@ -51,6 +51,8 @@ struct VendorJobsView: View {
                                 }
                             }
                             .padding(10)
+
+                            directHiringLink
                         }
                     }
                 }
@@ -67,6 +69,37 @@ struct VendorJobsView: View {
             VendorPostJobView()
         }
         .onAppear(perform: load)
+    }
+
+    /// Android's jobs dashboard opens `VendorDirectHiring` from here; there is no drawer item for it.
+    private var directHiringLink: some View {
+        NavigationLink(destination: VendorDirectHiringView()) {
+            HStack(spacing: VendorTheme.Space.m) {
+                Image(systemName: "person.fill.badge.plus")
+                    .font(.system(size: 16))
+                    .foregroundColor(VendorTheme.textSecondary)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Direct hiring")
+                        .font(VendorTheme.Text.cardTitle)
+                        .foregroundColor(VendorTheme.textPrimary)
+                    Text("People you hired without a job post")
+                        .font(VendorTheme.Text.meta)
+                        .foregroundColor(VendorTheme.textSecondary)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(VendorTheme.textTertiary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .vendorCard()
+            .padding(.horizontal, 10)
+            .padding(.bottom, 10)
+        }
+        .buttonStyle(VendorPressStyle())
     }
 
     private func load() {

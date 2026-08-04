@@ -21,7 +21,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
 | Fabricated endpoints | **0.** Every API path iOS calls is declared in Android's `RetrofitApi.java`. |
-| Endpoint coverage | iOS calls **99 of Android's 124** endpoints. Of the 25 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 19 are real gaps. Listed below. |
+| Endpoint coverage | iOS calls **101 of Android's 124** endpoints. Of the 23 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 17 are real gaps. Listed below. |
 
 ### Re-running the checks
 
@@ -53,6 +53,7 @@ Two scripts, both in the session scratchpad, both worth running after any change
 | `VendorPostWorkshop`, `VendorWorkshop`, `VendorAllWorkshopsAds`, `VendorWorkshopDetail`, `VendorInterestedWorkshops` | `VendorPostWorkshopView`, `VendorWorkshopView`, `VendorWorkshopAdsView`, `VendorWorkshopDetailView` | Workshop quotation add + lock/unlock included. |
 | `VendorDashboardJobs`, `VendorJobListing`, `VendorPostJob`, `VendorJobDetail` | `VendorJobsView`, `VendorPostJobView`, `VendorJobDetailView` | Create and edit, with image picker. Backend spells it `vaccancies`. |
 | `VendorApplicants`, `VendorApplicantDetail` | `VendorJobApplicantsView`, `VendorApplicantDetailView` | |
+| `VendorDirectHiring`, `VendorDirectHiringDetail` | `VendorDirectHiringView` | Off the jobs dashboard, as on Android. Despite the endpoint name it is not accept/reject: Android's dialog sets one of five statuses — Submitted, Viewed, Shortlisted, `interviewed` (its own lower case), Selected — sent verbatim. |
 | `VendorFreelancersList`, `VendorHiredFreelancers`, `VendorHiredFreelancersSummary`, `VendorDashboardFreelancer` | `VendorFreelancersView`, `VendorHireFreelancerView`, `FreelanceDashboardView` | Hire call works; multi-select + pick-up addresses are Android extras not built. |
 | `VendorMembership`, `VendorMyMembership`, `VendorMyMembershipDetail` | `VendorSubscriptionView`, `VendorMyMembershipDetailView` | Coupon purchase works; **card payment is not wired** — see *Blocked*. |
 | `VendorChat`, `VendorFreelancerChat` | "Coming soon" screen | Firebase Firestore — see *Blocked*. |
@@ -104,7 +105,7 @@ two existing steps and nothing else changes.
 
 `Account/get_user_details_by_id` is still unused — nothing needs to re-read the account yet.
 
-### 2. Android endpoints iOS does not call (25, of which 6 are dead in Android too)
+### 2. Android endpoints iOS does not call (23, of which 6 are dead in Android too)
 
 **Dead on both sides — declared but never called by Android either.** Nothing to port; they are listed
 so nobody mistakes them for missing features:
@@ -117,7 +118,7 @@ feature: Android's `RetrofitApi` declares two `workshopAds` overloads and two `w
 overloads, and the live activities call the `workshop/...` ones, not these. The consumer browse list is
 built on `workshop/workshops` + `workshop/get_workshop_details`, which is what actually shipped.
 
-**The 19 real gaps**, grouped:
+**The 17 real gaps**, grouped:
 
 | Group | Endpoints | Comment |
 |---|---|---|
@@ -125,7 +126,6 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 | Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. |
 | Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
 | Becoming a freelancer | `freelancing/register_user_freelancer`, `freelancing/update_user_freelance_status` | A consumer registering themselves as a freelancer. |
-| Direct hiring (vendor) | `jobs/view_direct_hirings`, `jobs/update_direct_hiring_status` | Consumer side is built; the vendor's accept/reject is not. |
 | Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
 | Push notifications | `Home/send_message_notification`, `vendor/send_message_notification` | Chat push — Firebase. |
 | Misc | `Home/quotation_fee_paid`, `Home/get_by_company_id`, `jobs/search_job_title` | Quotation fee payment; company lookup by id; job-title autocomplete. |
@@ -150,6 +150,14 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
   than `VendorTheme`, which is the shared system despite its name.
 - Dead storyboard scenes: `EstimationViewController` and `EsstimationVC` in `Home.storyboard`, and the
   scenes behind other deleted controllers. Nothing instantiates them.
+- **Vendor direct hiring is unverified visually.** Both screens compile and the endpoints are confirmed,
+  but the simulator run stalled on getting a company session back (see the note under *Test data*), so
+  the list and the status picker have not been seen rendering. Worth a look before release.
+- No status has ever been set on a real direct-hire row: `hiring_status` starts empty and the API has no
+  way back to empty, so setting one on the QA data would not be reversible.
+- **Backend:** `jobs/update_direct_hiring_status` with an unknown `hiring_id` does not 404 — it crashes
+  with `Attempt to read property "applicant_uuid" on null` in `rest/Jobs.php:1046`. Only reachable with a
+  bad id, but worth a fix.
 - `VendorSettingsView` and `VendorReportsView` are unreachable leftovers.
 - `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now; the
   `Vendor` prefix on their names is misleading and worth renaming when something else touches them.
@@ -164,7 +172,7 @@ Honest account of how far each claim is tested.
 | Level | What |
 |---|---|
 | **Driven in the simulator** | The consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
-| **Endpoint verified live (curl), UI compiled but not driven** | Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
+| **Endpoint verified live (curl), UI compiled but not driven** | Vendor direct hiring — the list endpoint answered with 24 real rows and the update endpoint's three part names were confirmed accepted without touching a row; neither screen has been seen on a device. Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all
