@@ -21,7 +21,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
 | Fabricated endpoints | **0.** Every API path iOS calls is declared in Android's `RetrofitApi.java`. |
-| Endpoint coverage | iOS calls **98 of Android's 124** endpoints. The 26 it does not are listed below. |
+| Endpoint coverage | iOS calls **99 of Android's 124** endpoints. Of the 25 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 19 are real gaps. Listed below. |
 
 ### Re-running the checks
 
@@ -74,6 +74,7 @@ Two scripts, both in the session scratchpad, both worth running after any change
 | `Complaints`, `ComplaintDetail` | `ComplaintsListView`, `ComplaintDetailView` | Submit part is `complaint`, not `text` — fixed. |
 | `EstimationFragment`, `Estimations`, `EstimationsDetail` | `EstimationView`, `EstimationRequestsView`, `EstimationRequestDetailView` | Calculator, consultation request, paged list, detail. `look_id` is the top-level category and `cate_id` the sub-category. |
 | `WorkshopFragment` (post an ad) | `WorkshopPostView` | Now on `workshop/workshop_filter_data` + `workshop/submit_workshop_ad`. |
+| `WorkShopAds` (type=user), `WorkshopAdDetail` | `WorkshopAdsView` → `VendorWorkshopDetailView` | Own ads, Open Bid / Close Bid, paged, with the quotations received and an enable/disable action (`workshop/toggle_workshop_status`). One Android activity serves both sides, so this is the company list given a consumer identity — the user's own id goes over the wire as `vendor_id`. |
 | `AvailableJobs`, `AvailableJobsDetails`, `SearchJobsAndApplicant`, `UserJobApplied` | `AvailableJobsView`, `JobDetailView`, `SearchJobsView`, `MyJobApplicationsView` | All three job screens were wrong in path, parts **and** response key. |
 | `UserDirectHiring` | `DirectHiringView` | |
 | `Freelancers`, `SearchFreelancer`, `FreelancerCheckout`, `UserDashboardFreelancer` | `FreelancersView`, `FreelancerCheckoutView`, `FreelanceDashboardView` | |
@@ -103,22 +104,31 @@ two existing steps and nothing else changes.
 
 `Account/get_user_details_by_id` is still unused — nothing needs to re-read the account yet.
 
-### 2. Android endpoints iOS does not call (26)
+### 2. Android endpoints iOS does not call (25, of which 6 are dead in Android too)
 
-Grouped by what they belong to:
+**Dead on both sides — declared but never called by Android either.** Nothing to port; they are listed
+so nobody mistakes them for missing features:
+
+`Home/recent_workshop_ads`, `Home/workshop_ad_detail`, `Home/submit_workshop_ad`,
+`Home/update_workshop_ad_status`, `Home/category_wise_companies`, `Home/sub_category_wise_companies`.
+
+The first four are the reason "consumer workshop-ad browsing" looked like the largest remaining
+feature: Android's `RetrofitApi` declares two `workshopAds` overloads and two `workshopAdDetails`
+overloads, and the live activities call the `workshop/...` ones, not these. The consumer browse list is
+built on `workshop/workshops` + `workshop/get_workshop_details`, which is what actually shipped.
+
+**The 19 real gaps**, grouped:
 
 | Group | Endpoints | Comment |
 |---|---|---|
 | Session | `Account/get_user_details_by_id` | Nothing re-reads the account after sign-in yet. |
-| Consumer workshop ads (browse side) | `Home/recent_workshop_ads`, `Home/workshop_ad_detail`, `Home/submit_workshop_ad`, `Home/update_workshop_ad_status`, `workshop/toggle_workshop_status` | Posting an ad works; **browsing, opening and managing your own ads does not**. The largest remaining feature. |
-| Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | Android's vendor-side ad list. iOS covers the workshop side through `workshop/…`; these two are a separate list not built. |
+| Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. |
 | Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
 | Becoming a freelancer | `freelancing/register_user_freelancer`, `freelancing/update_user_freelance_status` | A consumer registering themselves as a freelancer. |
 | Direct hiring (vendor) | `jobs/view_direct_hirings`, `jobs/update_direct_hiring_status` | Consumer side is built; the vendor's accept/reject is not. |
-| Category drill-down | `Home/category_wise_companies`, `Home/sub_category_wise_companies`, `Home/get_by_company_id` | The screens that used these were unreachable and were deleted; browse goes through search instead. |
 | Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
 | Push notifications | `Home/send_message_notification`, `vendor/send_message_notification` | Chat push — Firebase. |
-| Misc | `Home/quotation_fee_paid`, `jobs/search_job_title` | Quotation fee payment; job-title autocomplete. |
+| Misc | `Home/quotation_fee_paid`, `Home/get_by_company_id`, `jobs/search_job_title` | Quotation fee payment; company lookup by id; job-title autocomplete. |
 
 ### 3. Blocked on something outside the code
 
@@ -141,6 +151,8 @@ Grouped by what they belong to:
 - Dead storyboard scenes: `EstimationViewController` and `EsstimationVC` in `Home.storyboard`, and the
   scenes behind other deleted controllers. Nothing instantiates them.
 - `VendorSettingsView` and `VendorReportsView` are unreachable leftovers.
+- `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now; the
+  `Vendor` prefix on their names is misleading and worth renaming when something else touches them.
 - `Image("splash_logo")` and `Image("topicon")` are referenced in six places; neither asset exists.
 
 ---
@@ -151,7 +163,7 @@ Honest account of how far each claim is tested.
 
 | Level | What |
 |---|---|
-| **Driven in the simulator** | Consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
+| **Driven in the simulator** | The consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
 | **Endpoint verified live (curl), UI compiled but not driven** | Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 

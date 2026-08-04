@@ -18,6 +18,9 @@ struct VendorWorkshopDetailView: View {
     let workshopId: String
     /// True on the All Workshops list, where placing a bid is the point of opening the ad.
     var allowsQuotation: Bool = false
+    /// True when the ad belongs to whoever is signed in — Android's `WorkshopAdDetail` shows
+    /// "(Enabled) Make Disable" / "(Disabled) Make Enable" on your own ad only.
+    var allowsStatusToggle: Bool = false
 
     @State private var state: VendorLoadState = .loading
     @State private var detail: VendorWorkshopDetail?
@@ -29,6 +32,7 @@ struct VendorWorkshopDetailView: View {
     @State private var quotationPrice = ""
     @State private var quotationNote = ""
     @State private var isSubmitting = false
+    @State private var isTogglingStatus = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -54,7 +58,7 @@ struct VendorWorkshopDetailView: View {
                     }
                 }
 
-                if isSubmitting {
+                if isSubmitting || isTogglingStatus {
                     Color.black.opacity(0.2).ignoresSafeArea()
                     VendorBusyIndicator()
                 }
@@ -147,9 +151,45 @@ struct VendorWorkshopDetailView: View {
             }
 
             VendorField(label: "Posted", value: VendorTheme.date(detail.createdAt))
+
+            if allowsStatusToggle {
+                Button(action: toggleStatus) {
+                    HStack(spacing: VendorTheme.Space.xs) {
+                        Image(systemName: detail.isEnabled ? "pause.circle" : "play.circle")
+                            .font(.system(size: 14))
+                        Text(detail.isEnabled ? "Disable this ad" : "Enable this ad")
+                            .font(VendorTheme.Text.label)
+                    }
+                    .foregroundColor(detail.isEnabled ? VendorTheme.negative : VendorTheme.positive)
+                    .padding(.horizontal, VendorTheme.Space.m)
+                    .frame(minHeight: VendorTheme.minTapTarget)
+                    .background(Capsule().fill(VendorTheme.surfaceRaised))
+                }
+                .buttonStyle(VendorPressStyle())
+                .disabled(isTogglingStatus)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .vendorCard()
+    }
+
+    /// `workshop/toggle_workshop_status` decides the new state itself, so the ad is re-read afterwards
+    /// rather than assuming the flip succeeded in the direction we expected.
+    private func toggleStatus() {
+        isTogglingStatus = true
+        GCD.async(.Background) {
+            LoginService.shared().toggleWorkshopStatus(workshopId: workshopId) { message, success, _ in
+                GCD.async(.Main) {
+                    isTogglingStatus = false
+                    if success {
+                        noticeMessage = message.isEmpty ? "Updated." : message
+                        load()
+                    } else {
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                    }
+                }
+            }
+        }
     }
 
     private func statusChip(_ title: String, _ color: Color) -> some View {

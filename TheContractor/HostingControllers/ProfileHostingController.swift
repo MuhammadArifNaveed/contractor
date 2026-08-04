@@ -139,8 +139,9 @@ class ProfileHostingController: UIHostingController<UserProfileView> {
             container.loginUser()
         } else {
             print("🔐 Container not found, using fallback navigation")
-            // Fallback: Direct navigation to login screen
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            // Fallback: the login screen lives in Registration.storyboard. This used to name a "Main"
+            // storyboard, which does not exist in this project, so the fallback could only fail.
+            let storyboard = UIStoryboard(name: "Registration", bundle: nil)
             if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController {
                 navigationController?.pushViewController(loginVC, animated: true)
             }

@@ -158,8 +158,13 @@ extension LoginViewController{
             Global.shared.pendingNavigationAfterLogin = nil
             GCD.async(.Main, delay: 0.5) {
                 if let mainContainer = vc.mainViewController as? MainContainerViewController {
-                    if pending == "workshop" {
+                    switch pending {
+                    case "workshop":
                         mainContainer.showWorkshopController()
+                    case "workshopAds":
+                        mainContainer.showConsumerWorkshopAdsController()
+                    default:
+                        break
                     }
                 }
             }

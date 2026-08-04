@@ -67,7 +67,7 @@ struct SideMenu {
         ["title":"Direct Hiring","image":"advertisement","symbol":"person.fill.badge.plus"],
         ["title":"Freelancers","image":"become-a-vendor","symbol":"person.2.fill"],
         ["title":"Freelancer Dashboard","image":"become-a-vendor","symbol":"chart.bar.fill"],
-        ["title":"Workshop Ad","image":"become-a-vendor","symbol":"hammer.fill"],
+        ["title":"My Workshop Ads","image":"become-a-vendor","symbol":"hammer.fill"],
         ["title":"About Us","image":"guide","symbol":"info.circle.fill"],
         ["title":"Advertisement","image":"advertisement","symbol":"megaphone.fill"],
         ["title":"Become a Vendor","image":"become-a-vendor","symbol":"building.2.fill"],

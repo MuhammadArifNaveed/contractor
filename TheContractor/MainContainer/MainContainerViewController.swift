@@ -479,6 +479,17 @@ class MainContainerViewController: BaseViewController{
         containerView.addSubview(controller.view)
         controller.didMove(toParent: self)
     }
+    /// The consumer's own workshop ads — Android's `WorkShopAds` with `type=user`. Login-gated the
+    /// same way the post form is.
+    func showConsumerWorkshopAdsController() {
+        guard Global.shared.isLogedIn else {
+            Global.shared.pendingNavigationAfterLogin = "workshopAds"
+            loginUser()
+            return
+        }
+        showVendorScreen(WorkshopAdsView())
+    }
+
     func showWorkshopController()  {
         self.showBarsForTab()
         // Workshop requires login (matching Android behavior)

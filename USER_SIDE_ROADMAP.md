@@ -401,6 +401,37 @@ tab is showing, so a sign-in prompt posted from any other tab silently did nothi
 `MainContainerViewController` now observes **"RequestLogin"** and calls `loginUser()`; the estimate
 screen uses that for its consultation gate.
 
+## Consumer workshop ads — done
+
+Posting an ad already worked; nothing could look at one afterwards, because the drawer item opened the
+post form. Now `WorkshopAdsView` lists the user's own ads with Android's Open Bid / Close Bid tabs,
+paged, and opens the shared detail screen with the quotations received and an enable/disable action.
+
+The endpoints are **not** the `Home/...` ones this document previously pointed at.
+`RetrofitApi` declares two `workshopAds` overloads and two `workshopAdDetails` overloads; the live
+activities call `workshop/workshops` (parts `vendor_id`, `user_id`, `user_type`, `bid_type`, `page`) and
+`workshop/get_workshop_details` (part `workshop_id`). `Home/recent_workshop_ads`,
+`Home/workshop_ad_detail`, `Home/submit_workshop_ad` and `Home/update_workshop_ad_status` have no
+caller in Android at all.
+
+`WorkShopAds` is one activity used by both sides, keyed on an intent `type`. A consumer sends **its own
+user id as `vendor_id`** — `getDataFromSP()` sets `vendorId = userId` when the stored session is a user.
+So the iOS list is the company list with the identity passed in: `VendorWorkshopAdsList` now takes a
+`WorkshopAdsIdentity` (`.vendor` or `.consumer`) instead of reaching for `VendorSession.current`.
+
+Enable/disable is `workshop/toggle_workshop_status`, one part `workshop_id`. The endpoint decides the
+new state itself, so the ad is re-read afterwards rather than assuming which way it flipped.
+
+Verified against the QA account's real data: 10 open-bid ads over two pages, 1 close-bid ad, detail
+loads, and the toggle flipped to Disabled and back to Enabled.
+
+**A bug this turned up:** after logging out from the Profile screen, "Login or Create Account" stopped
+working. `UserProfileViewModel.goToLogin()` posts "GoToLogin", which only `ProfileHostingController`
+observes; its handler falls back to a storyboard named "Main" that this project does not have, so when
+the container lookup failed after a logout the row silently did nothing. It now also posts
+"RequestLogin", which `MainContainerViewController` observes for the life of the app, and the fallback
+names `Registration.storyboard`.
+
 ## Notes carried over
 
 - Every count and flag from this backend is a **string**, including `"0"`/`"1"` booleans. Parse

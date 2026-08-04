@@ -25,9 +25,14 @@ class UserProfileViewModel: ObservableObject {
         }
     }
     
+    /// "GoToLogin" is only observed by `ProfileHostingController`, and its handler falls back to a
+    /// storyboard named "Main" that this project does not have — so after a logout, when the container
+    /// lookup fails, the row silently did nothing. "RequestLogin" is observed by
+    /// `MainContainerViewController` for as long as the app is up, which is the reliable path; the old
+    /// notification is still posted so the existing handler keeps working when it can.
     func goToLogin() {
-        print("🔐 goToLogin called - posting GoToLogin notification")
         NotificationCenter.default.post(name: NSNotification.Name("GoToLogin"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("RequestLogin"), object: nil)
     }
     
     func navigateToEditProfile() {

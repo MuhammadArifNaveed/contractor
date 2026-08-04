@@ -9,18 +9,50 @@
 //  Both are paginated Open Bid / Close Bid lists over the same workshop-ad row. The All Workshops
 //  screen adds Android's "mark interested" action (POST workshop/mark_workshop_interested).
 //
+//  The list is shared with the consumer side. Android's `WorkShopAds` is one activity used by both,
+//  keyed on `type` — a company passes its vendor session, a consumer passes its own user id as
+//  `vendor_id` (which is what `WorkShopAds.getDataFromSP()` does). So the identity is a parameter here
+//  rather than a lookup of `VendorSession.current`; see `ConsumerWorkshopAdsView`.
+//
 
 import SwiftUI
 import SwiftyJSON
+
+// MARK: - Who is asking
+
+/// The three id parts `workshop/workshops` and its siblings take. A company fills these from its
+/// `VendorSession`; a consumer sends its own user id as `vendor_id`, exactly as Android does.
+struct WorkshopAdsIdentity {
+    let vendorId: String
+    let userId: String
+    let userType: String
+
+    static var vendor: WorkshopAdsIdentity? {
+        guard let session = VendorSession.current, !session.id.isEmpty else { return nil }
+        return WorkshopAdsIdentity(vendorId: session.id,
+                                   userId: session.user_id,
+                                   userType: session.user_type)
+    }
+
+    static var consumer: WorkshopAdsIdentity? {
+        guard let user = UserDefaultsManager.shared.userInfo, !user.id.isEmpty else { return nil }
+        return WorkshopAdsIdentity(vendorId: user.id,
+                                   userId: user.id,
+                                   userType: user.userType.isEmpty ? "users" : user.userType)
+    }
+}
 
 // MARK: - My Workshops
 
 struct VendorMyWorkshopsView: View {
     var body: some View {
-        VendorWorkshopAdsList(title: "My Workshops", allowsMarkInterested: false) { session, bidType, page, completion in
-            LoginService.shared().getVendorWorkshops(vendorId: session.id,
-                                                    userId: session.user_id,
-                                                    userType: session.user_type,
+        VendorWorkshopAdsList(title: "My Workshops",
+                              identity: .vendor,
+                              allowsMarkInterested: false,
+                              allowsStatusToggle: true) { identity, bidType, page, completion in
+            LoginService.shared().getVendorWorkshops(vendorId: identity.vendorId,
+                                                    userId: identity.userId,
+                                                    userType: identity.userType,
                                                     bidType: bidType,
                                                     page: page,
                                                     completion: completion)
@@ -32,10 +64,12 @@ struct VendorMyWorkshopsView: View {
 
 struct VendorAllWorkshopsView: View {
     var body: some View {
-        VendorWorkshopAdsList(title: "All Workshops", allowsMarkInterested: true) { session, bidType, page, completion in
-            LoginService.shared().getAllWorkshopsForInterest(vendorId: session.id,
-                                                            userId: session.user_id,
-                                                            userType: session.user_type,
+        VendorWorkshopAdsList(title: "All Workshops",
+                              identity: .vendor,
+                              allowsMarkInterested: true) { identity, bidType, page, completion in
+            LoginService.shared().getAllWorkshopsForInterest(vendorId: identity.vendorId,
+                                                            userId: identity.userId,
+                                                            userType: identity.userType,
                                                             bidType: bidType,
                                                             page: page,
                                                             completion: completion)
@@ -48,7 +82,7 @@ struct VendorAllWorkshopsView: View {
 /// Both screens share Android's structure exactly — only the endpoint and whether the
 /// "I'm interested" button appears differ.
 struct VendorWorkshopAdsList: View {
-    typealias Loader = (_ session: VendorSession,
+    typealias Loader = (_ identity: WorkshopAdsIdentity,
                         _ bidType: String,
                         _ page: String,
                         _ completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) -> Void
@@ -61,7 +95,13 @@ struct VendorWorkshopAdsList: View {
     }
 
     let title: String
+    /// Nil when nobody is signed in, which the empty state reports rather than calling with a blank id.
+    let identity: WorkshopAdsIdentity?
     let allowsMarkInterested: Bool
+    /// Own ads can be enabled and disabled; the All Workshops list shows other companies' ads.
+    var allowsStatusToggle: Bool = false
+    /// Consumer screens open over the tab bar and go back to it; company screens are drawer-rooted.
+    var onBack: (() -> Void)? = nil
     let load: Loader
 
     @State private var tab: BidTab = .open
@@ -77,7 +117,7 @@ struct VendorWorkshopAdsList: View {
     var body: some View {
         NavigationView {
         VStack(spacing: 0) {
-            VendorTopBar(title: title)
+            VendorTopBar(title: title, onBack: onBack)
 
             tabs
 
@@ -99,7 +139,8 @@ struct VendorWorkshopAdsList: View {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: VendorWorkshopDetailView(
                                         workshopId: workshop.id,
-                                        allowsQuotation: allowsMarkInterested)) {
+                                        allowsQuotation: allowsMarkInterested,
+                                        allowsStatusToggle: allowsStatusToggle)) {
                                         VendorWorkshopAdCard(workshop: workshop)
                                     }
                                     .buttonStyle(VendorPressStyle())
@@ -203,7 +244,7 @@ struct VendorWorkshopAdsList: View {
     }
 
     private func fetch() {
-        guard let session = VendorSession.current, !session.id.isEmpty else {
+        guard let identity = identity else {
             state = .noData
             isLoadingMore = false
             return
@@ -211,7 +252,7 @@ struct VendorWorkshopAdsList: View {
 
         let requestedTab = tab
         GCD.async(.Background) {
-            load(session, requestedTab.rawValue, String(page)) { message, success, json in
+            load(identity, requestedTab.rawValue, String(page)) { message, success, json in
                 GCD.async(.Main) {
                     isLoadingMore = false
 
@@ -235,13 +276,13 @@ struct VendorWorkshopAdsList: View {
     }
 
     private func markInterested(_ workshop: VendorWorkshopAd) {
-        guard let session = VendorSession.current, !session.id.isEmpty else { return }
+        guard let identity = identity else { return }
 
         isMarking = true
         GCD.async(.Background) {
-            LoginService.shared().markWorkshopInterested(vendorId: session.id,
-                                                         userId: session.user_id,
-                                                         userType: session.user_type,
+            LoginService.shared().markWorkshopInterested(vendorId: identity.vendorId,
+                                                         userId: identity.userId,
+                                                         userType: identity.userType,
                                                          bidType: tab.rawValue,
                                                          workshopAdId: workshop.id) { message, success in
                 GCD.async(.Main) {

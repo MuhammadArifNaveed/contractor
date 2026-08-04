@@ -709,6 +709,18 @@ class LoginService: BaseService {
     }
 
     // MARK: - Workshop detail
+    /// Flip a workshop ad between enabled and disabled. Android: `RetrofitApi.updateWorkshopStatus()` →
+    /// `POST workshop/toggle_workshop_status`, one part `workshop_id`. The endpoint decides the new
+    /// state itself; nothing is sent to say which way to flip it.
+    func toggleWorkshopStatus(workshopId: String,
+                              completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "workshop/toggle_workshop_status"
+        let params: [String: String] = ["workshop_id": workshopId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     /// One workshop ad in full, including its images and the quotations placed on it.
     /// Android: `RetrofitApi.workshopAdDetails()` → `POST workshop/get_workshop_details`.
     func getWorkshopDetails(workshopId: String, completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {

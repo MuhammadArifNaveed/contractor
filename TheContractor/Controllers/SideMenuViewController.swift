@@ -174,8 +174,10 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
                 mainVC.loginUser()
             }
 
-        case "Workshop Ad":
-            mainVC.showWorkshopController()
+        // Android's drawer opens the ad list here (`WorkShopAds` with type=user); the Workshop tab is
+        // where an ad gets posted. Both used to open the post form.
+        case "My Workshop Ads", "Workshop Ad":
+            mainVC.showConsumerWorkshopAdsController()
 
         case "About Us":
             mainVC.showWebController(title: "About Us", link: AppLinks.AboutUS)
