@@ -319,6 +319,7 @@
 		FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */; };
 		F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978022319FA6D12FD35A1FE9 /* EstimationView.swift */; };
 		1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */; };
+		A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17599322345B4B772ABBAD /* SignUpView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -650,6 +651,7 @@
 		13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConsumerCartStore.swift; path = TheContractor/SwiftUI/ViewModels/ConsumerCartStore.swift; sourceTree = SOURCE_ROOT; };
 		978022319FA6D12FD35A1FE9 /* EstimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationView.swift; path = TheContractor/SwiftUI/Views/EstimationView.swift; sourceTree = SOURCE_ROOT; };
 		8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EstimationRequestsView.swift; path = TheContractor/SwiftUI/Views/EstimationRequestsView.swift; sourceTree = SOURCE_ROOT; };
+		4A17599322345B4B772ABBAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1318,6 +1320,7 @@
 		806CA97D2F5768C600D31D28 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4A17599322345B4B772ABBAD /* SignUpView.swift */,
 				8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */,
 				978022319FA6D12FD35A1FE9 /* EstimationView.swift */,
 				806CA9232F5768C600D31D28 /* Auth */,
@@ -1534,6 +1537,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */,
 				1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */,
 				F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */,
 				FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */,

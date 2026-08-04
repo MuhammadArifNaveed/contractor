@@ -117,6 +117,24 @@ Still open in this area: `EditProfileViewModel` sends `address`, `city`, `countr
 as empty strings because the form does not collect them, and it does not send the three optional
 file parts Android supports. The call is correct; the form is thinner than Android's.
 
+**Sign-up, added later. ✅ done.** The U2 pass checked that the *live* auth path used the right
+endpoints and did not check whether the registration controllers did anything — they did not.
+`RegistrationViewController` was an empty `viewDidLoad` and `VerifyNumberViewController` had only a
+back button, so a new user could not create an account. `SignUpView` now does it in two steps:
+`Account/phone_check` on the number, then `Account/user_register` with `username`, `user_name`,
+**`sur_name`** (spelled `surname` on every other endpoint), `user_phone`, `user_email`,
+`user_password`, `country_id` hardcoded `"1"` as Android does, `device_type` and `firebase_token`. The
+response carries the new `user`, so the account is signed in without a second login call.
+
+Two things found on the way: the storyboard's own "Not a Member? Create Account" button ships
+`hidden="YES"` at a hardcoded `y=804` that collides with the programmatic buttons, so a new one is laid
+out alongside them; and the `+92`/`+971` country-code rule was inline in `LoginViewController`, which
+would have let sign-up and sign-in drift apart — it now lives in `PhoneNumber.e164`.
+
+**Not replicated: the SMS code.** Android gates the details form behind Firebase Phone Auth. There is
+no server-side OTP endpoint and `Account/user_register` never checks, so iOS verifies the number is
+free and takes it on trust. Same Firebase blocker as the inboxes.
+
 **U3 — Browse and discovery. ✅ done.**
 
 Reachability again cut the work down: `CompaniesByCategoryView` and `SubCategoriesView` have no call

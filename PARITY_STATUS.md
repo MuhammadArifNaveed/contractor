@@ -18,10 +18,10 @@ iOS-native and deliberately not a copy of Android's layouts.
 | Area | State |
 |---|---|
 | Company / vendor side | **Complete.** All 17 drawer items and the header's View Profile reach a real screen on a real endpoint, or say plainly that the feature is unavailable. |
-| Consumer side | **Feature-complete except sign-up.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). A new user cannot create an account — see the first row of *What is left*. |
+| Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
 | Fabricated endpoints | **0.** Every API path iOS calls is declared in Android's `RetrofitApi.java`. |
-| Endpoint coverage | iOS calls **96 of Android's 124** endpoints. The 28 it does not are listed below. |
+| Endpoint coverage | iOS calls **98 of Android's 124** endpoints. The 26 it does not are listed below. |
 
 ### Re-running the checks
 
@@ -63,7 +63,7 @@ Two scripts, both in the session scratchpad, both worth running after any change
 |---|---|---|
 | `Login` | `LoginViewController` (storyboard) | Correct on `Account/user_login`. The app sends the phone as `+971` + 10 digits. |
 | `ForgotPassword`, `NewPassword` | `ForgetPasswordViewController`, `NewPasswordViewController` | `Account/phone_check` → `Account/update_password`. |
-| `Register`, `VerifyNumber` | **empty shells** | Sign-up does not work. See *What is left*. |
+| `Register`, `VerifyNumber` | `SignUpView` | Two steps: number checked with `Account/phone_check`, then details to `Account/user_register`, which signs the new account in from its own response. Reached from "New here? Create an account" on the login screen — the storyboard's own button for this ships `hidden="YES"`, so a new one is laid out with the other programmatic buttons. Android's SMS code step is not replicated; see *What is left*. |
 | `HomeFragment` | `HomeView` | |
 | `Search`, `SearchResult`, `Companies`, `CompanyFinder` | `SearchCompaniesView`, `SearchResultsView`, `CompaniesListView` | |
 | `CompanyDetails` + fragments | `CompanyDetailView` | Detail, opening hours, sub-categories, reviews read from `Home/company_detail`. |
@@ -86,22 +86,30 @@ Two scripts, both in the session scratchpad, both worth running after any change
 
 ## What is left
 
-### 1. Consumer sign-up — the one gap that stops a new user cold
+### 1. The SMS code on sign-up
 
-`RegistrationViewController` is 20 lines with an empty `viewDidLoad`; `VerifyNumberViewController` has
-a back button and nothing else. `LoginViewController` pushes the latter, and the chain dies there. The
-three endpoints it needs are the first three in the unimplemented list below:
-`Account/phone_check` → `Account/user_register`, with `Account/get_user_details_by_id` for the
-session. **A new user cannot create an account in the iOS app.** Everything else on the consumer side
-assumes an account already exists.
+Sign-up itself now works: `SignUpView` takes the number, checks it with `Account/phone_check`, collects
+the account details and creates it with `Account/user_register`, which returns the new `user` so the
+account is signed in from the registration response — the same thing Android does.
 
-### 2. Android endpoints iOS does not call (28)
+**What is missing is the verification code.** Android sends it through Firebase Phone Auth and opens
+the details form only once the code is confirmed. There is no server-side OTP endpoint — the SMS gate
+is entirely client-side — and `Account/user_register` accepts a number with no proof of ownership. So
+iOS checks the number is free and takes it on trust. Anyone can register a number that is not theirs,
+exactly as they could by calling the endpoint directly.
+
+Turning on Firebase (the same blocker as both inboxes) closes this: the code step slots in between the
+two existing steps and nothing else changes.
+
+`Account/get_user_details_by_id` is still unused — nothing needs to re-read the account yet.
+
+### 2. Android endpoints iOS does not call (26)
 
 Grouped by what they belong to:
 
 | Group | Endpoints | Comment |
 |---|---|---|
-| Sign-up / session | `Account/phone_check`, `Account/user_register`, `Account/get_user_details_by_id` | Item 1 above. |
+| Session | `Account/get_user_details_by_id` | Nothing re-reads the account after sign-in yet. |
 | Consumer workshop ads (browse side) | `Home/recent_workshop_ads`, `Home/workshop_ad_detail`, `Home/submit_workshop_ad`, `Home/update_workshop_ad_status`, `workshop/toggle_workshop_status` | Posting an ad works; **browsing, opening and managing your own ads does not**. The largest remaining feature. |
 | Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | Android's vendor-side ad list. iOS covers the workshop side through `workshop/…`; these two are a separate list not built. |
 | Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
@@ -116,7 +124,7 @@ Grouped by what they belong to:
 
 | Blocker | Affects | What is needed |
 |---|---|---|
-| **No Firebase in the iOS app** | Vendor Inbox, consumer Inbox, freelancer order chat, chat push | Register bundle `com.contractor.TheContractorx` in Firebase project `thecontractor-uae`, add the SDK. Both inboxes currently show an honest "not available yet" screen. |
+| **No Firebase in the iOS app** | Vendor Inbox, consumer Inbox, freelancer order chat, chat push, **and the SMS code on sign-up** | Register bundle `com.contractor.TheContractorx` in Firebase project `thecontractor-uae`, add the SDK. Both inboxes show an honest "not available yet" screen; sign-up proceeds without the code. |
 | **No payment gateway decision** | Membership card purchase (`vendor/buy_membership_online` and the two workshop-membership calls) | Coupon purchase already works. |
 | **Backend bug** | Consumer enquiry detail | `Home/recent_enquiries` returns HTML: `mysqli_sql_exception: Unknown column 't2.company_whatsapp_phone' in 'field list'`. Affects Android too. The list works; the drill-down waits on the column fix. |
 | **Product question** | Consumer reviews | Android has no `submit_review` or `get_company_reviews` endpoint at all. The unreachable iOS screens for both were deleted. Company ratings still show via `Home/company_detail`. If reviews are meant to exist, the backend needs endpoints first. |
@@ -143,9 +151,9 @@ Honest account of how far each claim is tested.
 
 | Level | What |
 |---|---|
-| **Driven in the simulator** | Company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
+| **Driven in the simulator** | Consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
 | **Endpoint verified live (curl), UI compiled but not driven** | Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
-| **Never done** | No form other than login has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
+| **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all
 work headlessly against the booted device — an earlier session's conclusion that no interactive
@@ -172,3 +180,15 @@ Recorded because the mistakes were in the checking, not the code, and the same h
    read the type and sector rows off a `name` key, and the real rows are `{value, title}`.
 4. **"Reviews awaiting a product decision" was overstated as a blocker.** The screens were unreachable,
    so nothing was waiting on the answer; they are deleted.
+
+---
+
+## Test data created while verifying
+
+Verifying sign-up meant creating one account on the QA backend, since there is no other way to know
+the flow works. Delete it whenever you like:
+
+- user id **46**, username `iostest01`, `+971509998877`, `iostest01@example.com`, PIN `3187`.
+
+Nothing else in this work has written to the backend. In particular the estimate consultation form was
+filled in but never submitted.

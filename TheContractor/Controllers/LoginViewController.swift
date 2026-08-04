@@ -39,10 +39,32 @@ class LoginViewController: BaseViewController {
         return button
     }()
 
+    private lazy var createAccountButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("New here? Create an account", for: .normal)
+        button.titleLabel?.font = AppFonts.CenturyGolthicRegularWith(size: 14)
+        button.setTitleColor(AppColors.yellow, for: .normal)
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(actionNotMember(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLoginAsCompanyButton()
         setupForgotPasswordButton()
+        setupCreateAccountButton()
+    }
+
+    private func setupCreateAccountButton() {
+        view.addSubview(createAccountButton)
+        NSLayoutConstraint.activate([
+            createAccountButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            createAccountButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            createAccountButton.bottomAnchor.constraint(equalTo: forgotPasswordButton.topAnchor, constant: -4),
+            createAccountButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
     }
 
     private func setupForgotPasswordButton() {
@@ -86,15 +108,9 @@ class LoginViewController: BaseViewController {
             return
         }
 
-        // Format phone number exactly like Android: three hardcoded Pakistan test
-        // numbers get +92, everything else (including UAE numbers) gets +971.
-        // This is a literal port of Login.java's exact-match check, not a prefix check.
-        let formattedPhone: String
-        if phoneNumber == "3124611478" || phoneNumber == "3024507881" || phoneNumber == "3034937427" {
-            formattedPhone = "+92" + phoneNumber
-        } else {
-            formattedPhone = "+971" + phoneNumber
-        }
+        // Same rule as sign-up, which is why it lives in one place: an account created under one
+        // prefix could not sign in under another.
+        let formattedPhone = PhoneNumber.e164(phoneNumber)
 
         let params : ParamsAny = [
             "user_phone": formattedPhone,
@@ -109,9 +125,15 @@ class LoginViewController: BaseViewController {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "ForgetPasswordViewController") as! ForgetPasswordViewController
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    /// Used to push `VerifyNumberViewController`, a storyboard shell with a back button and no
+    /// behaviour, so sign-up was a dead end. Now the real flow.
     @IBAction func actionNotMember(_ sender: Any) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "VerifyNumberViewController") as! VerifyNumberViewController
-        self.navigationController?.pushViewController(vc, animated: true)
+        let signUp = SignUpView(
+            onRegistered: { [weak self] in self?.enterApp() },
+            onCancel: { [weak self] in self?.navigationController?.popViewController(animated: true) })
+        let controller = UIHostingController(rootView: signUp)
+        controller.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     @IBAction func actionLoginAsCompany(_ sender: Any) {
@@ -123,6 +145,27 @@ class LoginViewController: BaseViewController {
     
 }
 extension LoginViewController{
+
+    /// Into the app with a session already stored — the tail of both sign-in and sign-up.
+    func enterApp() {
+        let storyBoard = UIStoryboard.init(name: "Drawer", bundle: nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: "KYDrawerController") as! KYDrawerController
+        Global.shared.isLogedIn = true
+        self.navigationController?.pushViewController(vc, animated: true)
+
+        // Navigate to pending screen if any
+        if let pending = Global.shared.pendingNavigationAfterLogin {
+            Global.shared.pendingNavigationAfterLogin = nil
+            GCD.async(.Main, delay: 0.5) {
+                if let mainContainer = vc.mainViewController as? MainContainerViewController {
+                    if pending == "workshop" {
+                        mainContainer.showWorkshopController()
+                    }
+                }
+            }
+        }
+    }
+
     func userLogin(params : ParamsAny){
         self.startActivity()
         GCD.async(.Background){
@@ -130,22 +173,7 @@ extension LoginViewController{
                 GCD.async(.Main){
                     self.stopActivity()
                     if(success){
-                        let storyBoard = UIStoryboard.init(name: "Drawer", bundle: nil)
-                        let vc = storyBoard.instantiateViewController(withIdentifier: "KYDrawerController") as! KYDrawerController
-                        Global.shared.isLogedIn = true
-                        self.navigationController?.pushViewController(vc, animated: true)
-                        
-                        // Navigate to pending screen if any
-                        if let pending = Global.shared.pendingNavigationAfterLogin {
-                            Global.shared.pendingNavigationAfterLogin = nil
-                            GCD.async(.Main, delay: 0.5) {
-                                if let mainContainer = vc.mainViewController as? MainContainerViewController {
-                                    if pending == "workshop" {
-                                        mainContainer.showWorkshopController()
-                                    }
-                                }
-                            }
-                        }
+                        self.enterApp()
                     }
                     else{
                         self.showAlertView(message: message)

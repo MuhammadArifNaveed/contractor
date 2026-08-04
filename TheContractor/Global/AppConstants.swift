@@ -33,8 +33,38 @@ struct DictKeys {
     
 }
 
+/// One place for the country-code rule, so sign-up and sign-in cannot drift apart — an account created
+/// under one prefix could not log in under another.
+struct PhoneNumber {
+
+    /// Android's `Login.java` matches three Pakistani test numbers exactly and gives them `+92`;
+    /// everything else, UAE numbers included, gets `+971`. It is an exact-match list, not a prefix
+    /// check, so it is ported literally rather than tidied.
+    private static let pakistaniTestNumbers = ["3124611478", "3024507881", "3034937427"]
+
+    /// `+971xxxxxxxxx` as the API expects it. Accepts what the user typed with or without a leading
+    /// zero, spaces or dashes.
+    static func e164(_ entered: String) -> String {
+        var digits = entered.filter { $0.isNumber }
+        if digits.hasPrefix("00") { digits = String(digits.dropFirst(2)) }
+        if digits.hasPrefix("0") { digits = String(digits.dropFirst()) }
+        if pakistaniTestNumbers.contains(digits) { return "+92" + digits }
+        if digits.hasPrefix("971") { return "+" + digits }
+        return "+971" + digits
+    }
+
+    /// The local part, for showing next to a `+971` prefix label.
+    static func localDigits(_ entered: String) -> String {
+        var digits = entered.filter { $0.isNumber }
+        if digits.hasPrefix("00") { digits = String(digits.dropFirst(2)) }
+        if digits.hasPrefix("971") { digits = String(digits.dropFirst(3)) }
+        if digits.hasPrefix("0") { digits = String(digits.dropFirst()) }
+        return digits
+    }
+}
+
 struct EndPoints {
-   
+
     static let BASE_URL = "https://contractor.bidcont.com/rest/"
     static let app = "app"
     static let verifyPurchase = "verify-purchase"

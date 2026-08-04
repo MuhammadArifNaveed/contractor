@@ -30,6 +30,59 @@ class LoginService: BaseService {
 //            completion(message,success)
 //        }
     }
+    // MARK: - Consumer sign-up
+
+    /// Is this number free to register? Android: `POST Account/phone_check`, one part `user_phone`.
+    ///
+    /// `error:false` means the number is not taken. Android then sends its own SMS code through
+    /// Firebase Phone Auth and only opens the details form once the code is confirmed. There is no
+    /// server-side OTP endpoint — the SMS gate is entirely client-side, and iOS has no Firebase, so
+    /// this check is the only gate before the form. `Account/user_register` accepts the number without
+    /// any proof of ownership either way.
+    func checkPhoneAvailability(phone: String,
+                                completion: @escaping (_ message: String, _ available: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/phone_check"
+        let params: [String: String] = ["user_phone": phone]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
+    /// Create a consumer account. Android: `POST Account/user_register`.
+    ///
+    /// Two details to keep: the surname part is `sur_name` here and `surname` on every other endpoint,
+    /// and `country_id` is hardcoded `"1"` in Android's `Register.register()`.
+    ///
+    /// The response carries the new `user`, so the account is signed in from the registration response
+    /// itself — Android does the same rather than making a second login call.
+    func registerUser(username: String, firstName: String, lastName: String,
+                      phone: String, email: String, password: String,
+                      completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/user_register"
+        let params: [String: String] = [
+            "username": username,
+            "user_name": firstName,
+            "sur_name": lastName,
+            "user_phone": phone,
+            "user_email": email,
+            "user_password": password,
+            "country_id": "1",
+            "device_type": "ios",
+            "firebase_token": Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            if success, let json = json, json["user"].exists() {
+                self.saveUserInfo(UserViewModel(json["user"]))
+                Global.shared.isLogedIn = true
+                Global.shared.isVendor = false
+                Global.shared.loginType = "user"
+                completion(message, true)
+            } else {
+                completion(message, false)
+            }
+        }
+    }
+
     func getUserLogin(params:ParamsAny?,completion: @escaping (_ error: String, _ success: Bool)->Void) {
         let completeURL = EndPoints.BASE_URL + EndPoints.login
         self.makePostAPICall(with: completeURL, params: params) { (message, success, json, responseType) in
