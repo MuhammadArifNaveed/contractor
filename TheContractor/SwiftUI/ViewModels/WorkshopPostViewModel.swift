@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftyJSON
 
 class WorkshopPostViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -39,53 +40,42 @@ class WorkshopPostViewModel: ObservableObject {
     }
     
     // MARK: - Load Filter Data
+
+    /// `workshop/workshop_filter_data`, the same call the vendor Post Workshop screen makes. This used
+    /// to post `Home/workshop_filter_api`, which 404s, and read the type/sector rows off a `name` key
+    /// they do not have — the real rows are `{value, title}`, and the cities are `{id, name}`.
     func loadFilterData() {
         isLoadingFilters = true
         errorMessage = ""
-        
-        let url = "\(EndPoints.BASE_URL)Home/workshop_filter_api"
-        
-        LoginService.shared().makePostAPICall(with: url, params: [:]) { [weak self] message, success, json, error in
-            DispatchQueue.main.async {
-                self?.isLoadingFilters = false
-                
-                if success, let json = json {
-                    // Parse workshop types
-                    if let typesArray = json["workshop_type"].array {
-                        var types = [WorkshopFilterItem(id: "0", name: "Select Type")]
-                        types.append(contentsOf: typesArray.compactMap { item in
-                            guard let id = item["value"].string, let name = item["name"].string else { return nil }
-                            return WorkshopFilterItem(id: id, name: name)
-                        })
-                        self?.workshopTypes = types
+
+        GCD.async(.Background) {
+            LoginService.shared().getWorkshopFilterData { [weak self] message, success, json in
+                GCD.async(.Main) {
+                    guard let self = self else { return }
+                    self.isLoadingFilters = false
+
+                    guard success, let json = json else {
+                        self.errorMessage = message.isEmpty ? "Failed to load filter data" : message
+                        return
                     }
-                    
-                    // Parse work sectors
-                    if let sectorsArray = json["work_sector"].array {
-                        var sectors = [WorkshopFilterItem(id: "0", name: "Select Sector")]
-                        sectors.append(contentsOf: sectorsArray.compactMap { item in
-                            guard let id = item["value"].string, let name = item["name"].string else { return nil }
-                            return WorkshopFilterItem(id: id, name: name)
-                        })
-                        self?.workshopSectors = sectors
-                    }
-                    
-                    // Parse cities
-                    if let citiesArray = json["freelancer_cities"].array {
-                        var cityList = [WorkshopFilterItem(id: "0", name: "Select City")]
-                        cityList.append(contentsOf: citiesArray.compactMap { item in
-                            guard let id = item["id"].string, let name = item["name"].string else { return nil }
-                            return WorkshopFilterItem(id: id, name: name)
-                        })
-                        self?.cities = cityList
-                    }
-                } else {
-                    self?.errorMessage = message ?? "Failed to load filter data"
+
+                    self.workshopTypes = [WorkshopFilterItem(id: "0", name: "Select Type")]
+                        + json["workshop_type"].arrayValue.map {
+                            WorkshopFilterItem(id: $0["value"].stringValue, name: $0["title"].stringValue)
+                        }
+                    self.workshopSectors = [WorkshopFilterItem(id: "0", name: "Select Sector")]
+                        + json["work_sector"].arrayValue.map {
+                            WorkshopFilterItem(id: $0["value"].stringValue, name: $0["title"].stringValue)
+                        }
+                    self.cities = [WorkshopFilterItem(id: "0", name: "Select City")]
+                        + json["freelancer_cities"].arrayValue.map {
+                            WorkshopFilterItem(id: $0["id"].stringValue, name: $0["name"].stringValue)
+                        }
                 }
             }
         }
     }
-    
+
     // MARK: - Submit Workshop Ad
     func submitWorkshopAd() {
         guard isFormValid else {
@@ -105,55 +95,44 @@ class WorkshopPostViewModel: ObservableObject {
         
         isSubmitting = true
         errorMessage = ""
-        
-        // Get user data
-        guard let userId = Global.shared.user?.id,
-              let userType = Global.shared.user?.userType else {
+
+        guard let user = Global.shared.user, !user.id.isEmpty else {
             errorMessage = "User not logged in"
             isSubmitting = false
             return
         }
-        
-        let url = "\(EndPoints.BASE_URL)Home/post_work_shop_ad_new_api"
-        
-        // Prepare parameters
-        var params: [String: Any] = [
-            "user_id": userId,
-            "user_type": userType,
-            "ad_type": selectedTypeId,
-            "ad_sector": selectedSectorId,
-            "ad_city": selectedCityId,
-            "title": title,
-            "detail": details
-        ]
-        
-        // Convert images to base64 if any
-        if !selectedImages.isEmpty {
-            var imageStrings: [String] = []
-            for selectedImage in selectedImages {
-                if let imageData = selectedImage.image.jpegData(compressionQuality: 0.7) {
-                    let base64String = imageData.base64EncodedString()
-                    imageStrings.append(base64String)
-                }
-            }
-            params["images"] = imageStrings
-        }
-        
-        LoginService.shared().makePostAPICall(with: url, params: params) { [weak self] message, success, json, error in
-            DispatchQueue.main.async {
-                self?.isSubmitting = false
-                
-                if success {
-                    self?.successMessage = message ?? "Workshop ad submitted successfully"
-                    self?.showSuccessAlert = true
-                    self?.clearForm()
-                } else {
-                    self?.errorMessage = message ?? "Failed to submit workshop ad"
+
+        // `workshop/submit_workshop_ad` is shared with the vendor side — `user_type` is what tells the
+        // backend which one is posting. The previous call posted `Home/post_work_shop_ad_new_api`
+        // (404) with base64 image strings and Android's part names spelled differently
+        // (`ad_type`/`ad_sector`/`ad_city`/`detail`); Android sends repeated `images[]` file parts.
+        let images = selectedImages.compactMap { $0.image.jpegData(compressionQuality: 0.7) }
+
+        GCD.async(.Background) {
+            LoginService.shared().submitWorkshopAd(vendorId: "",
+                                                   userId: user.id,
+                                                   userType: user.userType,
+                                                   bidType: self.selectedTypeId,
+                                                   workSector: self.selectedSectorId,
+                                                   workCity: self.selectedCityId,
+                                                   title: self.title,
+                                                   description: self.details,
+                                                   images: images) { [weak self] message, success in
+                GCD.async(.Main) {
+                    guard let self = self else { return }
+                    self.isSubmitting = false
+                    if success {
+                        self.successMessage = message.isEmpty ? "Workshop ad submitted successfully" : message
+                        self.showSuccessAlert = true
+                        self.clearForm()
+                    } else {
+                        self.errorMessage = message.isEmpty ? "Failed to submit workshop ad" : message
+                    }
                 }
             }
         }
     }
-    
+
     // MARK: - Helper Methods
     func removeImage(at index: Int) {
         guard index < selectedImages.count else { return }

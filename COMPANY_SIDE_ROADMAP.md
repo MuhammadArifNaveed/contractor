@@ -1,5 +1,8 @@
 # Company (vendor) side — completion roadmap
 
+
+> **Start with [`PARITY_STATUS.md`](PARITY_STATUS.md)** for the current what-is-done / what-is-left picture. This document is the detail behind it.
+
 Walks the vendor drawer top to bottom, from the header's **View Profile** button down to **Logout**,
 and says for each entry what exists, what is missing, and what it takes to finish. Android is the
 functional source of truth (`RetrofitApi.java` for endpoints, `VendorActivities/*` + `res/layout/*`

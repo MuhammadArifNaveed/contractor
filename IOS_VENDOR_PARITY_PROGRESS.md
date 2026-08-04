@@ -1,5 +1,8 @@
 # iOS ⇄ Android parity: company (vendor) side
 
+
+> **Start with [`PARITY_STATUS.md`](PARITY_STATUS.md)** for the current what-is-done / what-is-left picture. This document is the detail behind it.
+
 Working log for bringing the iOS company/vendor experience in line with the Android app.
 Android is the source of truth — `TheContractor-Android/.../RetrofitLibrary/RetrofitApi.java` is
 authoritative for every endpoint path and part name, and the `VendorActivities/*.java` + matching
@@ -27,7 +30,7 @@ authoritative for every endpoint path and part name, and the `VendorActivities/*
 | 5 | Quotations chain | ✅ built, endpoints verified live |
 | 6 | Replace the four "Coming Soon" drawer items | ✅ built, endpoints verified live |
 | 7 | Vendor jobs, workshops, freelancing | ✅ built, endpoints verified live |
-| 8 | Service-layer cleanup, remove fabricated views | ◐ service layer done and clean; 42 hardcoded URLs in views remain |
+| 8 | Service-layer cleanup, remove fabricated views | ✅ done — 0 fabricated endpoints project-wide; see `PARITY_STATUS.md` |
 | 9 | Simulator test pass | ✅ dashboard confirmed; see caveat below |
 
 ## Verification status

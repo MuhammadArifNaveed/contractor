@@ -1,5 +1,8 @@
 # User (consumer) side — plan
 
+
+> **Start with [`PARITY_STATUS.md`](PARITY_STATUS.md)** for the current what-is-done / what-is-left picture. This document is the detail behind it.
+
 Same method as the company side: Android is the functional source of truth
 (`RetrofitApi.java` for endpoints, the activities and `res/layout` for behaviour), while presentation
 is iOS-native. See `COMPANY_SIDE_ROADMAP.md` for the design rule and the design system the vendor
@@ -37,7 +40,7 @@ exists already.
 | `ComplaintsListViewModel` | `Home/get_complaints` | `Home/recent_complaints` |
 | `CompaniesByCategoryView` | `Home/companies_by_category` | `Home/category_wise_companies` (and `Home/sub_category_wise_companies`) |
 | `CompaniesListViewModel` | `Home/get_searched_companies` | `Home/find_companies` / `Home/get_search` |
-| `TwentyFourSevenCompaniesView` | `Home/get_24_7_companies` | `Home/twentyfourcompanies` |
+| `TwentyFourSevenCompaniesView` | `Home/get_24_7_companies` | `Home/twentyFourCompanies` (the camelCase spelling is Android's; iOS had it all-lowercase until later) |
 | `WorkshopViewModel` | `Home/get_workshop_items` | `Home/recent_workshop_ads` |
 | `SearchJobsViewModel` | `Home/search_jobs` | `jobs/search_jobs` |
 | `MyJobApplicationsViewModel` | `Home/get_my_job_applications` | `jobs/user_job_applies` |
@@ -48,11 +51,11 @@ exists already.
 
 | Screen | Situation |
 |---|---|
-| `AddReviewViewModel` (`Home/submit_review`) | Android has no review-submit endpoint at all. `vendor/rating` is a company-side *read*. Either the feature does not exist or it is web-only. |
-| `ReviewsListViewModel` (`Home/get_company_reviews`) | Same — no consumer review-read endpoint. Ratings may only be reachable through `Home/company_detail`. |
+| `AddReviewViewModel` (`Home/submit_review`) | **Resolved by deletion.** Android has no review-submit endpoint at all, and the iOS screen was unreachable, so nothing was waiting on the product answer. Deleted. |
+| `ReviewsListViewModel` (`Home/get_company_reviews`) | **Resolved by deletion.** Also unreachable. Company ratings still reach the UI through `Home/company_detail`. |
 | `CartViewModel` (`Home/get_cart`) | **Done.** The cart is local state in `ConsumerCartStore`; `CartView` is on it and the old view model is deleted. |
 | `CheckoutViewModel` (`Home/submit_order`) | **Done.** A consumer "checkout" is just the cart submit — `Home/send_enquiries` — so the screen and its view model are deleted. |
-| `ChatListViewModel` (`Home/get_chats`) | Chat is **Firebase Firestore**, exactly as the vendor inbox is. Blocked on the same iOS Firebase registration. |
+| `ChatListViewModel` (`Home/get_chats`) | **Done.** Chat is **Firebase Firestore**, exactly as the vendor inbox is, so the consumer Inbox now shows the same honest "not available yet" screen and the fabricated call is gone. |
 
 ### Payload bugs on paths that are already correct
 

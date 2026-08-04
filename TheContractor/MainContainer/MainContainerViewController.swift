@@ -600,25 +600,15 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     
+    /// Consumer Inbox. Android's `Chat`/`ChatConnection` are Firebase Firestore, exactly as the vendor
+    /// inbox is, and iOS has no Firebase at all — so this says so rather than calling `Home/get_chats`,
+    /// an endpoint the backend has never served.
     func showChatListController() {
-        self.hideForSideMenu()
-        let chatVC = ChatListHostingController()
-        let controller = BaseNavigationController(rootViewController: chatVC)
-        controller.interactivePopGestureRecognizer?.isEnabled = false
-        controller.navigationBar.isHidden = true
-        
-        guard let containerView = self.containerView else { return }
-        
-        if let oldRef = baseNavigationController {
-            oldRef.willMove(toParent: nil)
-            oldRef.view.removeFromSuperview()
-            oldRef.removeFromParent()
-        }
-        self.baseNavigationController = controller
-        addChild(controller)
-        controller.view.frame = containerView.bounds
-        containerView.addSubview(controller.view)
-        controller.didMove(toParent: self)
+        showVendorScreen(VendorComingSoonView(
+            title: "Inbox",
+            icon: "bubble.left.and.bubble.right",
+            headline: "Messaging is not available yet",
+            detail: "Chat needs Firebase to be set up for the iOS app before it can be switched on."))
     }
     
     func showCartController() {
