@@ -33,6 +33,7 @@ struct SideMenu {
     // Guest mode: only public items visible (no auth required)
     static let GUEST_MENU = [
         ["title":"Home","image":"home","symbol":"house.fill"],
+        ["title":"Select Language","image":"guide","symbol":"globe"],
         ["title":"Company Finder","image":"company-finder","symbol":"magnifyingglass"],
         ["title":"24/7 Maintenance","image":"24-7","symbol":"clock.fill"],
         ["title":"Advertise Company","image":"advertisement","symbol":"megaphone.fill"],
@@ -45,6 +46,7 @@ struct SideMenu {
         ["title":"Privacy Polices","image":"privacy-policy","symbol":"hand.raised.fill"],
         ["title":"Terms & Conditions","image":"terms-and-conditions","symbol":"doc.text.fill"],
         ["title":"Guide","image":"guide","symbol":"book.fill"],
+        ["title":"Documentation","image":"document","symbol":"doc.on.doc.fill"],
         ["title":"Rate Us","image":"rate","symbol":"star.bubble.fill"],
         ["title":"Share","image":"share","symbol":"square.and.arrow.up.fill"]
     ]
@@ -52,6 +54,7 @@ struct SideMenu {
     // Logged-in user: all items visible
     static let USER_MENU = [
         ["title":"Home","image":"home","symbol":"house.fill"],
+        ["title":"Select Language","image":"guide","symbol":"globe"],
         ["title":"Inbox","image":"inbox","symbol":"bubble.left.and.bubble.right.fill"],
         ["title":"Company Finder","image":"company-finder","symbol":"magnifyingglass"],
         ["title":"Submit Enquiry","image":"submit-quotation","symbol":"square.and.pencil"],
@@ -74,6 +77,7 @@ struct SideMenu {
         ["title":"Privacy Polices","image":"privacy-policy","symbol":"hand.raised.fill"],
         ["title":"Terms & Conditions","image":"terms-and-conditions","symbol":"doc.text.fill"],
         ["title":"Guide","image":"guide","symbol":"book.fill"],
+        ["title":"Documentation","image":"document","symbol":"doc.on.doc.fill"],
         ["title":"Contact Us","image":"contact","symbol":"envelope.fill"],
         ["title":"Rate Us","image":"rate","symbol":"star.bubble.fill"],
         ["title":"Share","image":"share","symbol":"square.and.arrow.up.fill"],

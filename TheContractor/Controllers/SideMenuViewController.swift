@@ -179,6 +179,13 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
         case "My Workshop Ads", "Workshop Ad":
             mainVC.showConsumerWorkshopAdsController()
 
+        // Android shows both of these to guests as well as signed-in users.
+        case "Select Language":
+            mainVC.showVendorScreen(LanguageSelectionView())
+
+        case "Documentation", "Documentations":
+            mainVC.showWebController(title: "Documentation", link: AppLinks.Documentation)
+
         case "About Us":
             mainVC.showWebController(title: "About Us", link: AppLinks.AboutUS)
 
