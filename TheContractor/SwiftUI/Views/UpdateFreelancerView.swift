@@ -4,6 +4,10 @@ import UIKit
 import UniformTypeIdentifiers
 import SwiftyJSON
 
+/// Note: this form shipped with demo values in every field — "Test Freelancer", a made-up IBAN, four
+/// sample addresses — which anyone pressing through would have submitted. They are cleared, and the
+/// three fields the account owns are seeded from it. Prefilling the rest from an existing freelancer
+/// record (`freelancing/register_user_freelancer` returns all 38 fields) is still to do.
 struct UpdateFreelancerView: View {
     enum Mode {
         case registerCompany
@@ -39,24 +43,24 @@ struct UpdateFreelancerView: View {
     @State private var step: Step = .general
 
     // General information
-    @State private var name: String = "Test Freelancer"
-    @State private var email: String = "test@example.com"
-    @State private var phone: String = "0501234567"
+    @State private var name: String = ""
+    @State private var email: String = ""
+    @State private var phone: String = ""
     /// Used as Hourly Rate (AED) field
-    @State private var experienceYears: String = "25"
-    @State private var selectedSkills: [String] = ["Plumbing", "Electrical"]
-    @State private var selectedCategory: String = "Maintenance"
-    @State private var selectedCity: String = "Dubai"
-    @State private var selectedArea: String = "Deira"
+    @State private var experienceYears: String = ""
+    @State private var selectedSkills: [String] = []
+    @State private var selectedCategory: String = ""
+    @State private var selectedCity: String = ""
+    @State private var selectedArea: String = ""
 
     @State private var availablePerHour: Bool = true
     @State private var startTime: Date = Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date()
     @State private var endTime: Date = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
 
-    @State private var bankName: String = "Emirates NBD"
-    @State private var bankAddress: String = "Dubai Main Branch"
-    @State private var accountTitle: String = "Test Account"
-    @State private var iban: String = "AE070300000000123456789"
+    @State private var bankName: String = ""
+    @State private var bankAddress: String = ""
+    @State private var accountTitle: String = ""
+    @State private var iban: String = ""
 
     // Media selection
     @State private var isShowingImagePicker: Bool = false
@@ -66,12 +70,7 @@ struct UpdateFreelancerView: View {
     @State private var selectedImageData: Data?
     @State private var selectedVideoData: Data?
 
-    @State private var addresses: [FreelancerAddress] = [
-        FreelancerAddress(title: "this is testing current address", fullAddress: "139 Second Industrial St - Industrial Areas - Industrial Area - Sharjah - United Arab Emirates", isCurrent: true),
-        FreelancerAddress(title: "test", fullAddress: "", isCurrent: false),
-        FreelancerAddress(title: "sfsdfsdfs", fullAddress: "", isCurrent: false),
-        FreelancerAddress(title: "this is address", fullAddress: "139 Second Industrial St - Industrial Areas - Industrial Area - Sharjah - United Arab Emirates", isCurrent: false)
-    ]
+    @State private var addresses: [FreelancerAddress] = []
 
     @State private var addressPendingDelete: FreelancerAddress?
     @State private var showingDeleteAlert: Bool = false
@@ -245,6 +244,7 @@ struct UpdateFreelancerView: View {
             if skills.isEmpty || categories.isEmpty || cities.isEmpty {
                 loadFreelancingSearch()
             }
+            seedFromAccount()
         }
         .onChange(of: step) { newStep in
             // Fetch addresses only when switching to address step in company mode
@@ -1025,6 +1025,18 @@ struct UpdateFreelancerView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         return formatter.string(from: date)
+    }
+
+    /// Name, email and phone belong to the account, which is why Android stops requiring them when the
+    /// form is opened by a user rather than a company (`from=user` in `FreelancerGeneralFragment`).
+    /// Only fills blanks, so it never overwrites something typed.
+    private func seedFromAccount() {
+        guard let user = Global.shared.user else { return }
+        if name.isEmpty {
+            name = [user.name, user.surname].filter { !$0.isEmpty }.joined(separator: " ")
+        }
+        if email.isEmpty { email = user.email }
+        if phone.isEmpty { phone = user.phone }
     }
 
     private func showToast(_ message: String) {

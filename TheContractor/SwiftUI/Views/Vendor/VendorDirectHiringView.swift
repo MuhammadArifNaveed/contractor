@@ -29,8 +29,9 @@ struct VendorDirectHiringView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    // Pushed from the jobs dashboard, which already provides the NavigationView. Wrapping this screen
+    // in its own put a second, floating back chevron over the yellow bar.
     var body: some View {
-        NavigationView {
             VStack(spacing: 0) {
                 VendorTopBar(title: "Direct Hiring", onBack: { dismiss() })
 
@@ -52,8 +53,6 @@ struct VendorDirectHiringView: View {
                 }
             }
             .navigationBarHidden(true)
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
         .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
             Button("OK", role: .cancel) { }
         } message: {

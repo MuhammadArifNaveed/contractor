@@ -42,6 +42,9 @@ class EditProfileViewModel: ObservableObject {
             firstName = user.name
             lastName = user.surname
             phone = user.phone
+            // The field used to render blank on an account that has an email, and anything typed into
+            // it was thrown away because the update read the stored value instead.
+            email = user.email
             isAvailableAsFreelancer = user.isAvailableAsFreelance == "1"
         }
     }
@@ -70,11 +73,21 @@ class EditProfileViewModel: ObservableObject {
                         self.errorMessage = message.isEmpty ? "Please try again" : message
                         return
                     }
-                    // Follow what the server says rather than what was tapped.
-                    if let json = json, json["isAvailable"].exists() {
-                        self.isAvailableAsFreelancer = json["isAvailable"].boolValue
-                            || json["isAvailable"].stringValue == "1"
-                            || json["isAvailable"].stringValue == "true"
+                    // Follow what the server says rather than what was tapped — the endpoint decides
+                    // the resulting state itself and ignores `isChecked`, so the optimistic flip above
+                    // has to be corrected here.
+                    //
+                    // The key is `available`, not `isAvailable`: Android reads it through Gson from a
+                    // model whose getter is `isAvailable()`, which maps to the JSON key `available`.
+                    // Looking for `isAvailable` found nothing and left the optimistic value in place,
+                    // so the checkbox could say "available" while the alert said the opposite.
+                    if let json = json {
+                        let flag = json["available"].exists() ? json["available"] : json["isAvailable"]
+                        if flag.exists() {
+                            self.isAvailableAsFreelancer = flag.boolValue
+                                || flag.stringValue == "1"
+                                || flag.stringValue == "true"
+                        }
                     }
                     var stored = user
                     stored.isAvailableAsFreelance = self.isAvailableAsFreelancer ? "1" : "0"
@@ -138,7 +151,7 @@ class EditProfileViewModel: ObservableObject {
             "user_name": firstName,
             "surname": lastName,
             "user_phone": phone,
-            "user_email": UserDefaultsManager.shared.userInfo?.email ?? "",
+            "user_email": email.isEmpty ? (UserDefaultsManager.shared.userInfo?.email ?? "") : email,
             "address": "",
             "city": "",
             "country": "",

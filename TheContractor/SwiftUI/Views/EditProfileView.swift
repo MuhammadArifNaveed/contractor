@@ -216,7 +216,10 @@ struct EditProfileView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "person.crop.rectangle")
                                 .font(.system(size: 16))
-                            Text(viewModel.hasFreelancerRecord ? "My freelancer profile" : "Register as a freelancer")
+                            // A fixed label: whether a record exists is only known once
+                            // freelancing/register_user_freelancer answers, so naming one or the other
+                            // before the tap would be a guess. Android labels it plainly too.
+                            Text("Freelancer profile")
                                 .font(.system(size: 14, weight: .semibold))
                             Spacer()
                             if viewModel.isCheckingFreelancerRecord {

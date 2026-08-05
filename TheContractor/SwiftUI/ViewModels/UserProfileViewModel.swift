@@ -31,7 +31,10 @@ class UserProfileViewModel: ObservableObject {
     /// `MainContainerViewController` for as long as the app is up, which is the reliable path; the old
     /// notification is still posted so the existing handler keeps working when it can.
     func goToLogin() {
-        NotificationCenter.default.post(name: NSNotification.Name("GoToLogin"), object: nil)
+        // Only "RequestLogin". Posting both meant ProfileHostingController.triggerLogin() and
+        // MainContainerViewController.handleRequestLogin() each called loginUser(), and two overlapping
+        // runs of it — it replaces the nav stack after a delay, then pops to root — left the app on
+        // whatever tab was behind instead of the login screen.
         NotificationCenter.default.post(name: NSNotification.Name("RequestLogin"), object: nil)
     }
     
