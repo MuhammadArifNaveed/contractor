@@ -139,28 +139,61 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 | **Backend bug** | Consumer enquiry detail | `Home/recent_enquiries` returns HTML: `mysqli_sql_exception: Unknown column 't2.company_whatsapp_phone' in 'field list'`. Affects Android too. The list works; the drill-down waits on the column fix. |
 | **Product question** | Consumer reviews | Android has no `submit_review` or `get_company_reviews` endpoint at all. The unreachable iOS screens for both were deleted. Company ratings still show via `Home/company_detail`. If reviews are meant to exist, the backend needs endpoints first. |
 
-### 4. Debt and polish
+### 4. Everything else remaining, ranked
 
-- `addWorkshopQuotation` cannot attach a document; Android can.
-- Freelancer hire flow has no multi-select or pick-up addresses.
-- `EditProfileView` sends `address`, `city`, `country`, `job_category` as empty strings — the form does
-  not collect them — and none of Android's three optional file parts.
-- Design-system pass over the older consumer screens (`HomeView`, `SearchCompaniesView`,
-  `CompanyDetailView`, the job screens) — they still use `AppTheme` and hand-rolled yellow bars rather
-  than `VendorTheme`, which is the shared system despite its name.
-- Dead storyboard scenes: `EstimationViewController` and `EsstimationVC` in `Home.storyboard`, and the
+Nothing below blocks a normal user; they are ordered by what they cost.
+
+**Worth doing next**
+
+1. **Design-system pass over the older consumer screens** — `HomeView`, `SearchCompaniesView`,
+   `CompanyDetailView`, `CartView`'s neighbours, the job screens. They still use `AppTheme` with
+   hand-rolled yellow bars instead of `VendorTheme`, which is the shared system despite its name. This is
+   the largest remaining *visible* difference between the two halves of the app.
+2. **`UpdateFreelancerView` does not prefill from an existing freelancer record.**
+   `freelancing/register_user_freelancer` returns all 38 fields — skills, rate, bank details, addresses —
+   so a user editing their profile retypes everything. The data is already fetched by the row that opens
+   the form.
+3. **Edit Profile's "available for job" checkbox is still a local flag** that saves nowhere. Android
+   drives it through its own call; the freelancer switch beside it is now live, which makes the dead one
+   more obvious.
+4. **`EditProfileView` sends `address`, `city`, `country` and `job_category` as empty strings** because
+   the form does not collect them, and none of Android's three optional file parts. The call is correct;
+   the form is thinner than Android's.
+5. **`addWorkshopQuotation` cannot attach a document**; Android can.
+6. **Freelancer hire flow has no multi-select or pick-up addresses** — both are Android extras on a hire
+   call that already works.
+
+**Cleanup**
+
+- Dead storyboard scenes: `EstimationViewController` and `EsstimationVC` in `Home.storyboard`, plus the
   scenes behind other deleted controllers. Nothing instantiates them.
-- No status has ever been set on a real direct-hire row: `hiring_status` starts empty and the API has no
-  way back to empty, so setting one on the QA data would not be reversible.
-- **Backend:** `jobs/update_direct_hiring_status` with an unknown `hiring_id` does not 404 — it crashes
-  with `Attempt to read property "applicant_uuid" on null` in `rest/Jobs.php:1046`. Only reachable with a
-  bad id, but worth a fix.
-- `UpdateFreelancerView` still does not prefill from an existing freelancer record;
-  `freelancing/register_user_freelancer` returns all 38 fields, so the data is there.
 - `VendorSettingsView` and `VendorReportsView` are unreachable leftovers.
-- `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now; the
-  `Vendor` prefix on their names is misleading and worth renaming when something else touches them.
+- `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now, so the
+  `Vendor` prefix on their names misleads. Worth renaming when something else touches them.
 - `Image("splash_logo")` and `Image("topicon")` are referenced in six places; neither asset exists.
+- `parity.py`, the payload audit, lives only in a session scratchpad and gets wiped. It belongs in the
+  repo next to a copy of `audit_urls.py`.
+
+**Not exercised**
+
+- No direct-hire status has been set on a real row: `hiring_status` starts empty and the API offers no way
+  back to empty, so setting one on the QA data would not be reversible. The picker and the payload are
+  verified; the write is not.
+- The consultation request on the estimate flow has never been submitted, for the same reason.
+
+### 5. Backend issues to report
+
+Found while porting; all affect Android too unless noted.
+
+| Where | Problem |
+|---|---|
+| `Home/recent_enquiries` | Returns HTML, not JSON: `mysqli_sql_exception: Unknown column 't2.company_whatsapp_phone' in 'field list'`. Blocks the consumer enquiry drill-down on both platforms. |
+| `jobs/update_direct_hiring_status` | An unknown `hiring_id` does not 404 — it crashes with `Attempt to read property "applicant_uuid" on null` at `rest/Jobs.php:1046`. |
+| `jobs/view_direct_hirings` | No `total_page` in the response, so the list cannot page. Android's load-more is commented out for the same reason. |
+| `freelancing/update_user_freelance_status` | Ignores the `isChecked` part it declares — the endpoint decides the new state itself and reports it as `available`. Sending `true` on an account it considers ineligible returns `available: false`. |
+| Hiring status case | Written mixed-case (`Shortlisted`), stored lower-case (`shortlisted`). Clients have to compare case-insensitively. |
+| `Account/user_register` | Accepts any phone number with no proof of ownership; the SMS gate is client-side only. |
+| Reviews | No `submit_review` or `get_company_reviews` endpoint exists at all. |
 
 ---
 
@@ -171,7 +204,7 @@ Honest account of how far each claim is tested.
 | Level | What |
 |---|---|
 | **Driven in the simulator** | Edit Profile's freelancer availability switch and freelancer-profile form (real account data, no demo values); vendor direct hiring — list with real rows and status chips, detail, and the five-value picker; the consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
-| **Endpoint verified live (curl), UI compiled but not driven** | Vendor direct hiring's status *write* (the picker opens and the list/detail were driven, but no status was set — there is no way back to "no status"). Formerly-unverified — the list endpoint answered with 24 real rows and the update endpoint's three part names were confirmed accepted without touching a row; neither screen has been seen on a device. Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
+| **Endpoint verified live (curl), UI compiled but not driven** | The two write actions listed under *Not exercised* above, and every screen not named in the row above. Each endpoint was called against the live backend and each parser written against the real key names — but a screen that has only been compiled can still be wrong in ways only looking at it reveals, which is exactly what the last visual pass showed: four defects on two screens whose endpoints were all correct. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all
@@ -199,6 +232,15 @@ Recorded because the mistakes were in the checking, not the code, and the same h
    read the type and sector rows off a `name` key, and the real rows are `{value, title}`.
 4. **"Reviews awaiting a product decision" was overstated as a blocker.** The screens were unreachable,
    so nothing was waiting on the answer; they are deleted.
+5. **"Consumer workshop-ad browsing" was described as the largest remaining feature on the strength of
+   endpoints Android never calls.** `RetrofitApi` declares two `workshopAds` and two `workshopAdDetails`
+   overloads; the unused-endpoint scan could not tell them apart, so four dead `Home/...workshop_ad...`
+   paths looked like missing features. The real pair is `workshop/workshops` +
+   `workshop/get_workshop_details`.
+6. **Two features were reported as done while only contract-verified.** Driving them afterwards found
+   four defects — a wrong response key, demo data in every field of a live form, a blank email field
+   that discarded input, and a double-posted notification that broke the login entry point. Endpoint
+   correctness is not screen correctness; the ledger below now separates the two.
 
 ---
 
