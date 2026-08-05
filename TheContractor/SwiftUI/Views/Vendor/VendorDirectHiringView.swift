@@ -154,7 +154,6 @@ struct VendorDirectHireDetailView: View {
     private static let statuses = ["Submitted", "Viewed", "Shortlisted", "interviewed", "Selected"]
 
     @State private var showingPicker = false
-    @State private var chosenStatus = "Submitted"
     @State private var confirmingStatus: String?
     @State private var isUpdating = false
     @State private var errorMessage: String?
@@ -166,6 +165,13 @@ struct VendorDirectHireDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var currentStatus: String { updatedStatus ?? hire.hiringStatus }
+
+    /// True when this literal is the status the record currently holds. The write and the read differ in
+    /// case: Android sends `Shortlisted` and the backend stores `shortlisted`, so comparing exactly
+    /// meant the picker never ticked anything.
+    private func isCurrent(_ status: String) -> Bool {
+        status.compare(currentStatus, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -216,7 +222,6 @@ struct VendorDirectHireDetailView: View {
                         .vendorCard()
 
                         Button(action: {
-                            chosenStatus = Self.statuses.contains(currentStatus) ? currentStatus : "Submitted"
                             showingPicker = true
                         }) {
                             Text("Update status")
@@ -280,7 +285,7 @@ struct VendorDirectHireDetailView: View {
                                     .font(VendorTheme.Text.body)
                                     .foregroundColor(VendorTheme.textPrimary)
                                 Spacer()
-                                if status == currentStatus {
+                                if isCurrent(status) {
                                     Image(systemName: "checkmark")
                                         .font(.system(size: 13, weight: .semibold))
                                         .foregroundColor(VendorTheme.textSecondary)

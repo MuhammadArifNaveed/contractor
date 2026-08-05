@@ -155,8 +155,6 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 - **Backend:** `jobs/update_direct_hiring_status` with an unknown `hiring_id` does not 404 — it crashes
   with `Attempt to read property "applicant_uuid" on null` in `rest/Jobs.php:1046`. Only reachable with a
   bad id, but worth a fix.
-- The status picker does not tick the row matching the current status — the API's value probably differs
-  in case from the five literals. Cosmetic.
 - `UpdateFreelancerView` still does not prefill from an existing freelancer record;
   `freelancing/register_user_freelancer` returns all 38 fields, so the data is there.
 - `VendorSettingsView` and `VendorReportsView` are unreachable leftovers.
