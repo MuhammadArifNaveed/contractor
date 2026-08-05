@@ -21,7 +21,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
 | Fabricated endpoints | **0.** Every API path iOS calls is declared in Android's `RetrofitApi.java`. |
-| Endpoint coverage | iOS calls **101 of Android's 124** endpoints. Of the 23 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 17 are real gaps. Listed below. |
+| Endpoint coverage | iOS calls **103 of Android's 124** endpoints. Of the 21 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 15 are real gaps. Listed below. |
 
 ### Re-running the checks
 
@@ -79,7 +79,8 @@ Two scripts, both in the session scratchpad, both worth running after any change
 | `AvailableJobs`, `AvailableJobsDetails`, `SearchJobsAndApplicant`, `UserJobApplied` | `AvailableJobsView`, `JobDetailView`, `SearchJobsView`, `MyJobApplicationsView` | All three job screens were wrong in path, parts **and** response key. |
 | `UserDirectHiring` | `DirectHiringView` | |
 | `Freelancers`, `SearchFreelancer`, `FreelancerCheckout`, `UserDashboardFreelancer` | `FreelancersView`, `FreelancerCheckoutView`, `FreelanceDashboardView` | |
-| `UpdateProfile`, `ChangePassword`, `ProfileFragment` | `EditProfileView`, `ChangePasswordView`, `UserProfileView` | `Account/change_password` is keyed on `user_email`, not `user_id` — fixed. |
+| `UpdateProfile`'s freelancer checkbox and form entry | Edit Profile → availability switch + "Register as a freelancer" | `freelancing/update_user_freelance_status` (flag part is camelCase `isChecked`) and `freelancing/register_user_freelancer`, which despite its name is a **read** that says whether a record exists. |
+| `UpdateProfile`, `ChangePassword`, `ProfileFragment` | `EditProfileView`, `ChangePasswordView`, `UserProfileView` | `Account/change_password` is keyed on `user_email`, not `user_id` — fixed. Freelancer availability and the freelancer profile now live here, as on Android. |
 | `AdvertiseCompany` | `AdvertiseCompanyView` | |
 | `SelectLanguage`, `MapsActivity`, `WebViewActivity` | `LanguageSelectionView`, `MapView`, `WebContentView` | About / Privacy / Terms / Guide / Contact / Advertisement are web pages, as on Android. |
 | `Chat`, `ChatConnection` | "Coming soon" screen | Firebase Firestore — see *Blocked*. |
@@ -105,7 +106,7 @@ two existing steps and nothing else changes.
 
 `Account/get_user_details_by_id` is still unused — nothing needs to re-read the account yet.
 
-### 2. Android endpoints iOS does not call (23, of which 6 are dead in Android too)
+### 2. Android endpoints iOS does not call (21, of which 6 are dead in Android too)
 
 **Dead on both sides — declared but never called by Android either.** Nothing to port; they are listed
 so nobody mistakes them for missing features:
@@ -118,14 +119,13 @@ feature: Android's `RetrofitApi` declares two `workshopAds` overloads and two `w
 overloads, and the live activities call the `workshop/...` ones, not these. The consumer browse list is
 built on `workshop/workshops` + `workshop/get_workshop_details`, which is what actually shipped.
 
-**The 17 real gaps**, grouped:
+**The 15 real gaps**, grouped:
 
 | Group | Endpoints | Comment |
 |---|---|---|
 | Session | `Account/get_user_details_by_id` | Nothing re-reads the account after sign-in yet. |
 | Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. |
 | Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
-| Becoming a freelancer | `freelancing/register_user_freelancer`, `freelancing/update_user_freelance_status` | A consumer registering themselves as a freelancer. |
 | Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
 | Push notifications | `Home/send_message_notification`, `vendor/send_message_notification` | Chat push — Firebase. |
 | Misc | `Home/quotation_fee_paid`, `Home/get_by_company_id`, `jobs/search_job_title` | Quotation fee payment; company lookup by id; job-title autocomplete. |
@@ -172,7 +172,7 @@ Honest account of how far each claim is tested.
 | Level | What |
 |---|---|
 | **Driven in the simulator** | The consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
-| **Endpoint verified live (curl), UI compiled but not driven** | Vendor direct hiring — the list endpoint answered with 24 real rows and the update endpoint's three part names were confirmed accepted without touching a row; neither screen has been seen on a device. Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
+| **Endpoint verified live (curl), UI compiled but not driven** | Consumer freelancer availability and profile entry on Edit Profile — both endpoints answered live (the QA user has a freelancer record; the new sign-up account does not, which is the branch that opens the form in add mode), but the screen has not been driven. Vendor direct hiring — the list endpoint answered with 24 real rows and the update endpoint's three part names were confirmed accepted without touching a row; neither screen has been seen on a device. Everything else. Each endpoint was called against the live backend and the parser written against the real key names. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all

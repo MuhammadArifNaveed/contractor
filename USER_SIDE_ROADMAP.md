@@ -432,6 +432,40 @@ the container lookup failed after a logout the row silently did nothing. It now 
 "RequestLogin", which `MainContainerViewController` observes for the life of the app, and the fallback
 names `Registration.storyboard`.
 
+## Freelancer self-registration — done
+
+Two endpoints, both mis-suggested by their names:
+
+- **`freelancing/register_user_freelancer`** (one part, `user_id`) is a **read**, not a registration.
+  Android's `UpdateProfile` calls it to decide whether to open the freelancer form in add or update
+  mode: `status == "false"` means no record, otherwise the record comes back under
+  `user_freelancer_details`. Verified live — the QA user (45) has a record with 38 fields; the new
+  sign-up account (46) answers `{"status": false, "message": "No freelancer found."}`. Note `status`
+  arrives as a JSON boolean in one case and a string in the other, so the check reads it as a string.
+- **`freelancing/update_user_freelance_status`** is the availability switch: parts `user_id`,
+  `user_type`, `vendor_id` (a consumer sends its own id, as on the workshop endpoints) and
+  **`isChecked`** — camelCase, unlike every other part on this backend. The required-field probe names
+  the first three; the response reports the resulting state, which the switch follows rather than
+  assuming the tap won. Android reverts its checkbox on failure and so does this.
+
+Saving the form itself is `freelancing/register_company_freelancer` / `update_company_freelancer`,
+shared with the company side — Android's `from=user` flag only relaxes validation, since a user's name,
+email and phone come from the account. `UpdateFreelancerView` already reads `Global.shared.user`, so it
+works for either account type.
+
+Both live on **Edit Profile**, where Android puts them. The "No, I am not available as freelancer"
+checkbox already existed there as a local flag that saved nowhere; it is now live, and its label follows
+the state. Below it is "Register as a freelancer" / "My freelancer profile", which checks for a record
+and then opens the form.
+
+One iOS detail: Edit Profile is pushed onto a **UIKit** navigation stack, so there is no SwiftUI
+`NavigationView` above it and a `NavigationLink` there does nothing — the form is presented as a sheet.
+`UserViewModel` also had to gain `is_available_as_freelance`, which the login response has always
+returned.
+
+The neighbouring "available for job" checkbox is still a local flag. Android drives it through a
+separate call; out of scope here and left alone.
+
 ## Notes carried over
 
 - Every count and flag from this backend is a **string**, including `"0"`/`"1"` booleans. Parse

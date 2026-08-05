@@ -30,6 +30,54 @@ class LoginService: BaseService {
 //            completion(message,success)
 //        }
     }
+    // MARK: - Freelancing, consumer side
+
+    /// Turn "available as a freelancer" on or off for the signed-in user. Android:
+    /// `RetrofitApi.updateUserFreelanceStatus()` → `POST freelancing/update_user_freelance_status`.
+    ///
+    /// The flag part is spelled **`isChecked`**, camelCase, unlike every other part on this backend.
+    /// The response carries the resulting state, which is what the checkbox should follow — Android
+    /// reverts its checkbox on any failure rather than assuming the tap won.
+    func updateUserFreelanceStatus(userId: String, userType: String, isAvailable: Bool,
+                                   completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/update_user_freelance_status"
+        let params: [String: String] = [
+            "user_id": userId,
+            "user_type": userType,
+            // A consumer sends its own id as `vendor_id` here, as it does on the workshop endpoints.
+            "vendor_id": userId,
+            "isChecked": isAvailable ? "true" : "false"
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Does this user already have a freelancer record, and what is in it? Android:
+    /// `RetrofitApi.userFreelancerData()` → `POST freelancing/register_user_freelancer`, one part
+    /// `user_id`.
+    ///
+    /// The endpoint name reads like a registration but it is a **read**: `UpdateProfile` calls it to
+    /// decide whether to open the freelancer form in add or update mode. `status == "false"` means no
+    /// record yet; otherwise the record comes back under `user_freelancer_details`. Saving the form is
+    /// `freelancing/register_company_freelancer` / `update_company_freelancer`, which are shared with
+    /// the company side — Android's `from=user` flag only relaxes validation, since a user's name,
+    /// email and phone come from the account.
+    func getUserFreelancerRecord(userId: String,
+                                 completion: @escaping (_ message: String, _ success: Bool, _ hasRecord: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/register_user_freelancer"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            guard success, let json = json else {
+                completion(message, false, false, nil)
+                return
+            }
+            // Android reads `status` as a string here, not a boolean.
+            let hasRecord = json["status"].stringValue != "false" && json["user_freelancer_details"].exists()
+            completion(message, true, hasRecord, json)
+        }
+    }
+
     // MARK: - Consumer sign-up
 
     /// Is this number free to register? Android: `POST Account/phone_check`, one part `user_phone`.

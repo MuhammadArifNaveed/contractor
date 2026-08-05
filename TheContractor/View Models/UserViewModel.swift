@@ -21,6 +21,8 @@ class UserViewModel: Codable {
 
     var id: String = kBlankString
     var userType: String = kBlankString
+    /// `"1"`/`"0"` from the login response. Drives the freelancer availability switch on Edit Profile.
+    var isAvailableAsFreelance: String = kBlankString
     /// Needed by Account/change_password, which is keyed on the email rather than the id, and sent
     /// by Account/update_user_profile.
     var email: String = kBlankString
@@ -67,6 +69,7 @@ class UserViewModel: Codable {
         let directId = json["id"].stringValue
         self.id = directId.isEmpty ? json["user_id"].stringValue : directId
         self.userType = json["user_type"].stringValue
+        self.isAvailableAsFreelance = json["is_available_as_freelance"].stringValue
         let directEmail = json["email"].stringValue
         self.email = directEmail.isEmpty ? json["user_email"].stringValue : directEmail
     //        self.windowsId = operater.windowsId

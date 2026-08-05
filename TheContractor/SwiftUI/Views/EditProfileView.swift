@@ -187,20 +187,51 @@ struct EditProfileView: View {
                         Spacer()
                     }
                     
-                    // Freelancer Checkbox
+                    // Freelancer availability. This was a local flag that saved nowhere; it now calls
+                    // freelancing/update_user_freelance_status on each tap and follows the state the
+                    // response reports, the way Android's UpdateProfile does.
                     HStack {
-                        Button(action: { viewModel.notAvailableAsFreelancer.toggle() }) {
+                        Button(action: { viewModel.toggleFreelanceAvailability() }) {
                             HStack {
-                                Image(systemName: viewModel.notAvailableAsFreelancer ? "checkmark.square.fill" : "square")
-                                    .foregroundColor(viewModel.notAvailableAsFreelancer ? yellow : .gray)
+                                Image(systemName: viewModel.isAvailableAsFreelancer ? "checkmark.square.fill" : "square")
+                                    .foregroundColor(viewModel.isAvailableAsFreelancer ? yellow : .gray)
                                     .font(.system(size: 20))
-                                Text("No, I am not available as freelancer")
+                                Text(viewModel.isAvailableAsFreelancer
+                                     ? "Yes, I am available as a freelancer"
+                                     : "No, I am not available as a freelancer")
                                     .font(.system(size: 14))
                                     .foregroundColor(.black)
                             }
                         }
+                        .disabled(viewModel.isUpdatingFreelanceStatus)
                         Spacer()
+                        if viewModel.isUpdatingFreelanceStatus {
+                            ProgressView()
+                        }
                     }
+
+                    // Registering yourself as a freelancer, and editing that record afterwards.
+                    // Android reaches the same form from here with from=user.
+                    Button(action: { viewModel.openFreelancerProfile() }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "person.crop.rectangle")
+                                .font(.system(size: 16))
+                            Text(viewModel.hasFreelancerRecord ? "My freelancer profile" : "Register as a freelancer")
+                                .font(.system(size: 14, weight: .semibold))
+                            Spacer()
+                            if viewModel.isCheckingFreelancerRecord {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .foregroundColor(.black)
+                        .padding(.vertical, 12)
+                    }
+                    .disabled(viewModel.isCheckingFreelancerRecord)
+
                     
                     // Update Button
                     Button(action: {
@@ -242,6 +273,17 @@ struct EditProfileView: View {
             .background(Color(UIColor.systemGroupedBackground))
         }
         .navigationBarHidden(true)
+        // EditProfileView is pushed onto a UIKit navigation stack, so there is no SwiftUI
+        // NavigationView above it and a NavigationLink here would do nothing.
+        .sheet(isPresented: $viewModel.openFreelancerForm) {
+            UpdateFreelancerView()
+        }
+        .alert("", isPresented: Binding(get: { viewModel.freelanceNotice != nil },
+                                       set: { if !$0 { viewModel.freelanceNotice = nil } })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.freelanceNotice ?? "")
+        }
         .onAppear {
             viewModel.loadCurrentUserInfo()
         }
