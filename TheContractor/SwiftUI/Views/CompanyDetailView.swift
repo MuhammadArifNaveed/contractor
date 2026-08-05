@@ -55,25 +55,10 @@ struct CompanyDetailView: View {
 
     // MARK: - Top Bar
     private var topBar: some View {
-        HStack(spacing: 0) {
-            Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(VendorTheme.onAccent)
-                    .frame(width: 44, height: 44)
-            }
-
-            Text("Company Details")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(VendorTheme.onAccent)
-
-            Spacer()
-
+        VendorTopBar(title: "Company Details",
+                     onBack: { presentationMode.wrappedValue.dismiss() }) {
             addToEnquiryButton
-                .padding(.trailing, 12)
         }
-        .frame(height: 56)
-        .background(yellow)
     }
 
     /// Was a decorative cart glyph. Android's `CompanyDetails` adds the company to the local basket
@@ -86,10 +71,10 @@ struct CompanyDetailView: View {
                 Text(isInCart ? "Added" : "Add to enquiry")
                     .font(.system(size: 12, weight: .semibold))
             }
-            .foregroundColor(Color(red: 26/255, green: 20/255, blue: 0))
+            .foregroundColor(VendorTheme.onAccent)
             .padding(.horizontal, 12)
             .frame(height: 34)
-            .background(Capsule().fill(Color.white.opacity(isInCart ? 0.65 : 1)))
+            .background(Capsule().fill(VendorTheme.surface.opacity(isInCart ? 0.65 : 1)))
         }
         .disabled(viewModel.company.id.isEmpty)
     }

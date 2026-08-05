@@ -16,21 +16,8 @@ struct FreelancersView: View {
 
             VStack(spacing: 0) {
                 // Top bar
-                HStack(spacing: 0) {
-                    Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(VendorTheme.onAccent)
-                            .frame(width: 44, height: 44)
-                    }
-                    Text("Freelancers")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(VendorTheme.onAccent)
-                    Spacer()
-                }
-                .padding(.horizontal, 8)
-                .frame(height: 56)
-                .background(yellow)
+                VendorTopBar(title: "Freelancers",
+                             onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) })
 
                 if vm.isLoading && vm.items.isEmpty {
                     Spacer()

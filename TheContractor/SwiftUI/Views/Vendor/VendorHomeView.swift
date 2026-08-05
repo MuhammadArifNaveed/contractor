@@ -297,6 +297,10 @@ struct VendorTopBar: View {
     private let onBack: (() -> Void)?
     private let trailingIcon: String?
     private let trailingAction: (() -> Void)?
+    /// Arbitrary trailing content, for the bars whose right-hand side is not a single icon — the
+    /// Add-to-enquiry pill on company details, for one. Type-erased so the twenty-odd existing call
+    /// sites do not have to name a generic parameter.
+    private let trailing: AnyView?
 
     init(title: String,
          onBack: (() -> Void)? = nil,
@@ -306,6 +310,17 @@ struct VendorTopBar: View {
         self.onBack = onBack
         self.trailingIcon = trailingIcon
         self.trailingAction = trailingAction
+        self.trailing = nil
+    }
+
+    init<Trailing: View>(title: String,
+                         onBack: (() -> Void)? = nil,
+                         @ViewBuilder trailing: () -> Trailing) {
+        self.title = title
+        self.onBack = onBack
+        self.trailingIcon = nil
+        self.trailingAction = nil
+        self.trailing = AnyView(trailing())
     }
 
     var body: some View {
@@ -333,6 +348,9 @@ struct VendorTopBar: View {
                         .foregroundColor(VendorTheme.onAccent)
                         .frame(width: VendorTheme.minTapTarget, height: VendorTheme.minTapTarget)
                 }
+            } else if let trailing = trailing {
+                trailing
+                    .padding(.trailing, VendorTheme.Space.xs)
             }
         }
         .padding(.horizontal, VendorTheme.Space.s)

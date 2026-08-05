@@ -17,7 +17,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 
 | Area | State |
 |---|---|
-| Design system | **One system now.** `AppTheme`'s colours resolve to `VendorTheme`, so the consumer screens share the palette and follow dark mode; twelve hand-rolled yellow bars are now `VendorTopBar`. |
+| Design system | **One system now.** `AppTheme`'s colours resolve to `VendorTheme`, so the consumer screens share the palette and follow dark mode, and **every** yellow bar in the app is `VendorTopBar` — fifteen were hand-rolled `HStack`s. |
 | Company / vendor side | **Complete.** All 17 drawer items and the header's View Profile reach a real screen on a real endpoint, or say plainly that the feature is unavailable. |
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
@@ -146,10 +146,6 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 
 **Worth doing next**
 
-1. **Three bars are still hand-rolled** — Edit Profile, Freelancers and Company Details each host custom
-   trailing content (a camera button, a filter icon, the Add-to-enquiry pill) that `VendorTopBar` cannot
-   take, so they keep their own `HStack`. Their labels were switched to `onAccent` so they match, but
-   giving `VendorTopBar` a trailing view-builder would let all three collapse into it.
 2. **`UpdateFreelancerView` does not prefill from an existing freelancer record.**
    `freelancing/register_user_freelancer` returns all 38 fields — skills, rate, bank details, addresses —
    so a user editing their profile retypes everything. The data is already fetched by the row that opens
@@ -174,6 +170,8 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 - `Image("splash_logo")` and `Image("topicon")` are referenced in six places; neither asset exists.
 - The container's background behind a drawer screen is a fixed `F4F4F6`, so a thin light strip shows
   under the content in dark mode. UIKit side, one line in `MainContainerViewController`.
+- Company Details' bar was converted last, using `VendorTopBar`'s new trailing view-builder, and has not
+  been looked at on a device — the Add-to-enquiry pill's fit inside the shared bar is unverified.
 - `AppTheme.Fonts` still hands out fixed point sizes (`semibold(16)`) rather than the semantic scale, so
   consumer screens do not scale with the system text size the way the vendor ones do.
 - `parity.py`, the payload audit, lives only in a session scratchpad and gets wiped. It belongs in the

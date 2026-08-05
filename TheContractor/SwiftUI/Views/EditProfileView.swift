@@ -19,21 +19,8 @@ struct EditProfileView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Yellow top bar
-            HStack {
-                Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(VendorTheme.onAccent)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Update Profile")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(VendorTheme.onAccent)
-                Spacer()
-            }
-            .padding(.horizontal, 4)
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Update Profile",
+                         onBack: { presentationMode.wrappedValue.dismiss() })
             
             ScrollView {
                 VStack(spacing: 16) {
