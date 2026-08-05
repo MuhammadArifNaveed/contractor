@@ -8,7 +8,7 @@ struct FreelancersView: View {
     @State private var selectedFreelancer: FreelancerItem?
     @State private var showCheckout = false
 
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -20,12 +20,12 @@ struct FreelancersView: View {
                     Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.white)
+                            .foregroundColor(VendorTheme.onAccent)
                             .frame(width: 44, height: 44)
                     }
                     Text("Freelancers")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(VendorTheme.onAccent)
                     Spacer()
                 }
                 .padding(.horizontal, 8)
@@ -112,7 +112,7 @@ struct FreelancersView: View {
 private struct FreelancerPublicCard: View {
     let item: FreelancerItem
     let onHire: () -> Void
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

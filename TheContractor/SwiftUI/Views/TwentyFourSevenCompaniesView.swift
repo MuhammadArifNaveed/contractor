@@ -2,27 +2,12 @@
 import SwiftUI
 struct TwentyFourSevenCompaniesView: View {
     @StateObject private var viewModel = TwentyFourSevenCompaniesViewModel()
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         VStack(spacing: 0) {
             // Custom yellow top bar
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("24/7 Maintenance")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.leading, 4)
-                Spacer()
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "24/7 Maintenance", onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) })
 
             ZStack {
                 if viewModel.isLoading && viewModel.companies.isEmpty {

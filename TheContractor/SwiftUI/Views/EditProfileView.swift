@@ -12,7 +12,7 @@ struct EditProfileView: View {
     @StateObject private var viewModel = EditProfileViewModel()
     @Environment(\.presentationMode) var presentationMode
     
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
     private let cities = ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah"]
     private let categories = ["Plumber", "Electrician", "Carpenter", "Painter", "Mason", "Welder"]
     
@@ -23,12 +23,12 @@ struct EditProfileView: View {
                 Button(action: { presentationMode.wrappedValue.dismiss() }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
+                        .foregroundColor(VendorTheme.onAccent)
                         .frame(width: 44, height: 44)
                 }
                 Text("Update Profile")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(VendorTheme.onAccent)
                 Spacer()
             }
             .padding(.horizontal, 4)

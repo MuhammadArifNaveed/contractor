@@ -10,7 +10,7 @@ import SwiftUI
 struct JobDetailView: View {
     @StateObject private var viewModel: JobDetailViewModel
     @Environment(\.presentationMode) var presentationMode
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
     private let logoBase = "https://contractor.bidcont.com/uploads/companies/"
 
     init(job: JobModel) {
@@ -20,21 +20,7 @@ struct JobDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Yellow top bar
-            HStack(spacing: 0) {
-                Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Job Detail")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                Spacer()
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Job Detail", onBack: { presentationMode.wrappedValue.dismiss() })
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {

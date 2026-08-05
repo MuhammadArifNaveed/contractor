@@ -17,6 +17,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 
 | Area | State |
 |---|---|
+| Design system | **One system now.** `AppTheme`'s colours resolve to `VendorTheme`, so the consumer screens share the palette and follow dark mode; twelve hand-rolled yellow bars are now `VendorTopBar`. |
 | Company / vendor side | **Complete.** All 17 drawer items and the header's View Profile reach a real screen on a real endpoint, or say plainly that the feature is unavailable. |
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
 | Guest (no-login) flow | **Not started.** `GUEST_MENU` exists and some screens gate on login; the flow has never been walked end to end. |
@@ -145,10 +146,10 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 
 **Worth doing next**
 
-1. **Design-system pass over the older consumer screens** — `HomeView`, `SearchCompaniesView`,
-   `CompanyDetailView`, `CartView`'s neighbours, the job screens. They still use `AppTheme` with
-   hand-rolled yellow bars instead of `VendorTheme`, which is the shared system despite its name. This is
-   the largest remaining *visible* difference between the two halves of the app.
+1. **Three bars are still hand-rolled** — Edit Profile, Freelancers and Company Details each host custom
+   trailing content (a camera button, a filter icon, the Add-to-enquiry pill) that `VendorTopBar` cannot
+   take, so they keep their own `HStack`. Their labels were switched to `onAccent` so they match, but
+   giving `VendorTopBar` a trailing view-builder would let all three collapse into it.
 2. **`UpdateFreelancerView` does not prefill from an existing freelancer record.**
    `freelancing/register_user_freelancer` returns all 38 fields — skills, rate, bank details, addresses —
    so a user editing their profile retypes everything. The data is already fetched by the row that opens
@@ -171,6 +172,10 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 - `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now, so the
   `Vendor` prefix on their names misleads. Worth renaming when something else touches them.
 - `Image("splash_logo")` and `Image("topicon")` are referenced in six places; neither asset exists.
+- The container's background behind a drawer screen is a fixed `F4F4F6`, so a thin light strip shows
+  under the content in dark mode. UIKit side, one line in `MainContainerViewController`.
+- `AppTheme.Fonts` still hands out fixed point sizes (`semibold(16)`) rather than the semantic scale, so
+  consumer screens do not scale with the system text size the way the vendor ones do.
 - `parity.py`, the payload audit, lives only in a session scratchpad and gets wiped. It belongs in the
   repo next to a copy of `audit_urls.py`.
 
@@ -203,7 +208,7 @@ Honest account of how far each claim is tested.
 
 | Level | What |
 |---|---|
-| **Driven in the simulator** | Edit Profile's freelancer availability switch and freelancer-profile form (real account data, no demo values); vendor direct hiring — list with real rows and status chips, detail, and the five-value picker; the consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
+| **Driven in the simulator** | The design-system pass, in light *and* dark mode — the palette, cards, text and accent buttons all follow the system now, which is how the empty-state action's white-on-yellow label was caught. Edit Profile's freelancer availability switch and freelancer-profile form (real account data, no demo values); vendor direct hiring — list with real rows and status chips, detail, and the five-value picker; the consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
 | **Endpoint verified live (curl), UI compiled but not driven** | The two write actions listed under *Not exercised* above, and every screen not named in the row above. Each endpoint was called against the live backend and each parser written against the real key names — but a screen that has only been compiled can still be wrong in ways only looking at it reveals, which is exactly what the last visual pass showed: four defects on two screens whose endpoints were all correct. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 

@@ -10,20 +10,34 @@ import SwiftUI
 // MARK: - App Colors
 struct AppTheme {
     
+    /// These now resolve to `VendorTheme`, which is the app's design system despite the name — it is
+    /// shared with the consumer screens. Two things were wrong with the old values:
+    ///
+    /// * `primary` was `F9B11F`, a different yellow from the `F2BE36` the app bars and every vendor
+    ///   screen use, so the consumer half was visibly off-brand.
+    /// * card, text and border colours were hardcoded light values, so consumer screens did not follow
+    ///   dark mode while the vendor screens did — white cards with black text on a black page.
+    ///
+    /// Repointing here rather than editing two dozen call sites keeps the diff small and means the
+    /// screens still on `AppTheme` pick up the system as it changes. The blues and the green are left
+    /// alone: they carry meaning of their own and are not part of the yellow palette.
     struct Colors {
-        static let primary = Color(hex: "F9B11F") // Yellow/Gold
+        static let primary = VendorTheme.accent
         static let darkBlue = Color(hex: "093485")
         static let lightBlue = Color(hex: "093485").opacity(0.61)
-        static let gray = Color(hex: "969696")
-        static let lightGray = Color(hex: "969696").opacity(0.61)
+        static let gray = VendorTheme.textSecondary
+        static let lightGray = VendorTheme.textTertiary
         static let darkGreen = Color(hex: "00582A")
-        static let background = Color(UIColor.systemBackground)
-        static let secondaryBackground = Color(UIColor.secondarySystemBackground)
-        static let cardBackground = Color.white
-        static let textPrimary = Color.black
-        static let textSecondary = Color(hex: "555555")
-        static let border = Color(hex: "E0E0E0")
+        static let background = VendorTheme.canvas
+        static let secondaryBackground = VendorTheme.surfaceRaised
+        static let cardBackground = VendorTheme.surface
+        static let textPrimary = VendorTheme.textPrimary
+        static let textSecondary = VendorTheme.textSecondary
+        static let border = VendorTheme.separator
+        /// A star is gold in either mode.
         static let starYellow = Color(hex: "FFD700")
+        /// Disabled fill for primary buttons — a grey *fill* rather than the grey used for text.
+        static let surfaceDisabled = VendorTheme.surfaceRaised
     }
     
     struct Fonts {
@@ -138,10 +152,10 @@ struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTheme.Fonts.semibold(16))
-            .foregroundColor(.white)
+            .foregroundColor(isEnabled ? VendorTheme.onAccent : VendorTheme.textTertiary)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(isEnabled ? AppTheme.Colors.primary : AppTheme.Colors.gray)
+            .background(isEnabled ? AppTheme.Colors.primary : AppTheme.Colors.surfaceDisabled)
             .cornerRadius(AppTheme.CornerRadius.large)
             .opacity(configuration.isPressed ? 0.8 : 1.0)
     }
@@ -153,7 +167,7 @@ struct OutlinedTextFieldStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding()
-            .background(Color.white)
+            .background(AppTheme.Colors.cardBackground)
             .cornerRadius(AppTheme.CornerRadius.small)
             .overlay(
                 RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)

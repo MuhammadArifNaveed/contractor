@@ -4,26 +4,12 @@ struct ChangePasswordView: View {
     @StateObject private var viewModel = ChangePasswordViewModel()
     @Environment(\.presentationMode) var presentationMode
     
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
     
     var body: some View {
         VStack(spacing: 0) {
             // Custom yellow top bar
-            HStack(spacing: 0) {
-                Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Change Password")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                Spacer()
-            }
-            .padding(.horizontal, 4)
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Change Password", onBack: { presentationMode.wrappedValue.dismiss() })
             
             ScrollView {
                 VStack(spacing: 24) {

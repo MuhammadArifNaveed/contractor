@@ -15,29 +15,12 @@ struct SubmitQuotationView: View {
     @State private var showSuccessAlert = false
     @State private var successMessage = ""
     
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
     
     var body: some View {
         VStack(spacing: 0) {
             // Yellow top bar with back button
-            HStack(spacing: 0) {
-                Button(action: { 
-                    NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil)
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Quotation By Photo")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.leading, 4)
-                Spacer()
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Quotation By Photo", onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) })
             
             ScrollView {
                 VStack(spacing: 16) {

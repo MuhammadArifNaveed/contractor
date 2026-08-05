@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+private let yellow = VendorTheme.accent
 
 struct CompanyDetailView: View {
     @StateObject private var viewModel: CompanyDetailViewModel
@@ -59,13 +59,13 @@ struct CompanyDetailView: View {
             Button(action: { presentationMode.wrappedValue.dismiss() }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(VendorTheme.onAccent)
                     .frame(width: 44, height: 44)
             }
 
             Text("Company Details")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(VendorTheme.onAccent)
 
             Spacer()
 

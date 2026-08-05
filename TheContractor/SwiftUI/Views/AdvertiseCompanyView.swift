@@ -12,25 +12,12 @@ struct AdvertisementArea: Identifiable {
 // MARK: - AdvertiseCompanyView (matches Android AdvertiseCompany.java)
 struct AdvertiseCompanyView: View {
     @StateObject private var vm = AdvertiseCompanyVM()
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         VStack(spacing: 0) {
             // Yellow top bar
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Advertise Company")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                Spacer()
-            }
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Advertise Company", onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) })
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
@@ -171,7 +158,7 @@ private struct AreaPickerSheet: View {
     let areas: [AdvertisementArea]
     @Binding var selected: [AdvertisementArea]
     let onDone: () -> Void
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         NavigationView {

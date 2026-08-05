@@ -11,32 +11,14 @@ struct AvailableJobsView: View {
     @StateObject private var viewModel = AvailableJobsViewModel()
     @State private var showSearch = false
     @State private var selectedJob: JobModel?
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
+    private let yellow = VendorTheme.accent
 
     var body: some View {
         VStack(spacing: 0) {
             // Custom yellow top bar
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                Text("Available Jobs")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                Spacer()
-                Button(action: { showSearch = true }) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                }
-                .padding(.trailing, 8)
-            }
-            .frame(height: 56)
-            .background(yellow)
+            VendorTopBar(title: "Available Jobs", onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) },
+                         trailingIcon: "magnifyingglass",
+                         trailingAction: { showSearch = true })
 
             ZStack {
                 if viewModel.isLoading && viewModel.jobs.isEmpty {

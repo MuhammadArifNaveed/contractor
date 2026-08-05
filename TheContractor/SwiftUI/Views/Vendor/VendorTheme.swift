@@ -234,7 +234,9 @@ struct VendorEmptyState: View {
                 Button(action: action) {
                     Text(actionTitle)
                         .font(VendorTheme.Text.cardTitle)
-                        .foregroundColor(VendorTheme.textPrimary)
+                        // On the accent fill this has to be `onAccent`, not `textPrimary`: the latter
+                        // flips to near-white in dark mode and the label vanished into the yellow.
+                        .foregroundColor(VendorTheme.onAccent)
                         .padding(.horizontal, VendorTheme.Space.l)
                         .padding(.vertical, VendorTheme.Space.s)
                         .background(Capsule().fill(VendorTheme.accent))

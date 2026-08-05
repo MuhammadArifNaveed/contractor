@@ -3,17 +3,9 @@ import SwiftUI
 
 struct MyJobApplicationsView: View {
     @StateObject private var viewModel = MyJobApplicationsViewModel()
-    private let yellow = Color(red: 242/255, green: 190/255, blue: 54/255)
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                Button(action: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }) {
-                    Image(systemName: "chevron.left").font(.system(size: 20, weight: .medium)).foregroundColor(.white).frame(width: 44, height: 44)
-                }
-                Text("My Applications").font(.system(size: 18, weight: .semibold)).foregroundColor(.white)
-                Spacer()
-            }
-            .padding(.horizontal, 4).frame(height: 56).background(yellow)
+            VendorTopBar(title: "My Applications", onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) })
             ZStack {
                 if viewModel.isLoading && viewModel.applications.isEmpty { LoadingView(message: "Loading...") }
                 else if viewModel.applications.isEmpty { EmptyStateView(icon: "briefcase", title: "No Applications", message: "You haven't applied to any jobs") }
