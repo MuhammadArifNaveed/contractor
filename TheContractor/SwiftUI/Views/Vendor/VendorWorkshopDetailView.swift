@@ -21,6 +21,10 @@ struct VendorWorkshopDetailView: View {
     /// True when the ad belongs to whoever is signed in — Android's `WorkshopAdDetail` shows
     /// "(Enabled) Make Disable" / "(Disabled) Make Enable" on your own ad only.
     var allowsStatusToggle: Bool = false
+    /// The ad's `show_chat` flag, which only the **list** endpoints return — `workshop/get_workshop_details`
+    /// omits it — so it is carried in from the row that opened this screen. Android reads it off its own
+    /// ad model and hides the chat row unless it is `"1"`.
+    var showsChat: Bool = false
 
     @State private var state: VendorLoadState = .loading
     @State private var detail: VendorWorkshopDetail?
@@ -33,6 +37,9 @@ struct VendorWorkshopDetailView: View {
     @State private var quotationNote = ""
     @State private var isSubmitting = false
     @State private var isTogglingStatus = false
+
+    @State private var isOpeningChat = false
+    @State private var chatThread: ChatConnection?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -58,7 +65,7 @@ struct VendorWorkshopDetailView: View {
                     }
                 }
 
-                if isSubmitting || isTogglingStatus {
+                if isSubmitting || isTogglingStatus || isOpeningChat {
                     Color.black.opacity(0.2).ignoresSafeArea()
                     VendorBusyIndicator()
                 }
@@ -91,6 +98,9 @@ struct VendorWorkshopDetailView: View {
                 showQuotationSheet = false
             }
         }
+        .sheet(item: $chatThread) { connection in
+            ChatThreadView(connection: connection, role: .company)
+        }
         .onAppear(perform: load)
     }
 
@@ -103,6 +113,10 @@ struct VendorWorkshopDetailView: View {
 
                 if !detail.imagePaths.isEmpty {
                     imagesCard(detail)
+                }
+
+                if canMessageOwner(detail) {
+                    messageButton
                 }
 
                 if allowsQuotation {
@@ -227,6 +241,85 @@ struct VendorWorkshopDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .vendorCard()
+    }
+
+    /// Android's `VendorWorkshopDetail` reveals its chat row on `show_chat == "1"` alone, because that
+    /// screen is only ever reached by a signed-in company. This one is shared with the consumer side, so
+    /// it also has to establish that a company is looking and that the ad belongs to a user — the two
+    /// halves of a `user_connections` document are a company and a user, and there is no company-to-company
+    /// thread in the schema.
+    private func canMessageOwner(_ detail: VendorWorkshopDetail) -> Bool {
+        showsChat && detail.userType == "users" && !detail.userId.isEmpty && ChatCompany.current != nil
+    }
+
+    private var messageButton: some View {
+        Button(action: openChat) {
+            HStack(spacing: VendorTheme.Space.xs) {
+                Image(systemName: "bubble.left.and.bubble.right")
+                    .font(.system(size: 15, weight: .semibold))
+                Text("Message")
+                    .font(VendorTheme.Text.cardTitle)
+            }
+            .foregroundColor(VendorTheme.textPrimary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, VendorTheme.Space.m)
+            .background(
+                RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                    .fill(VendorTheme.surface)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                            .stroke(VendorTheme.separator, lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(VendorPressStyle())
+        .disabled(isOpeningChat)
+    }
+
+    /// Two steps before the thread can open, both of which Android gets for free from the ad model it
+    /// loads (`Vendor/workshop_ad_detail`, which the backend no longer serves): the owner's uuid and
+    /// names, then the existing connection if these two have talked before.
+    ///
+    /// Nothing is written here. A connection document appears only when the first message is sent —
+    /// `ChatService.send` creates it — so opening a thread and backing out leaves no trace, which is
+    /// what `VendorChat` does too.
+    private func openChat() {
+        guard let detail = detail, let company = ChatCompany.current else { return }
+
+        isOpeningChat = true
+        GCD.async(.Background) {
+            LoginService.shared().getUserDetailsById(userId: detail.userId) { message, success, json in
+                let account = json?["user"]
+                guard success, let account = account, !account["uuid"].stringValue.isEmpty else {
+                    GCD.async(.Main) {
+                        isOpeningChat = false
+                        errorMessage = message.isEmpty ? "Could not open this conversation" : message
+                    }
+                    return
+                }
+
+                // Android's `fullName` is `name + " " + surname` off the ad; the account carries the
+                // same two fields.
+                let fullName = [account["name"].stringValue, account["surname"].stringValue]
+                    .filter { !$0.isEmpty }
+                    .joined(separator: " ")
+                let user = ChatUser(id: detail.userId,
+                                    uuid: account["uuid"].stringValue,
+                                    userName: account["username"].stringValue,
+                                    fullName: fullName)
+
+                ChatService.shared.findConnection(companyUUID: company.uuid, userUUID: user.uuid) { existing, error in
+                    GCD.async(.Main) {
+                        isOpeningChat = false
+                        if let error = error {
+                            errorMessage = error
+                            return
+                        }
+                        chatThread = existing ?? ChatConnection.pending(company: company, user: user)
+                    }
+                }
+            }
+        }
     }
 
     private var quotationButton: some View {
@@ -399,6 +492,10 @@ struct VendorWorkshopDetailView: View {
 struct VendorWorkshopDetail {
     let id: String
     let adId: String
+    /// Who posted the ad. The response carries no `uuid` for them — chat resolves that separately
+    /// through `Account/get_user_details_by_id`.
+    let userId: String
+    let userType: String
     let title: String
     let description: String
     let workSector: String
@@ -418,6 +515,8 @@ struct VendorWorkshopDetail {
     init(_ json: JSON) {
         self.id = json["id"].stringValue
         self.adId = json["ad_id"].stringValue
+        self.userId = json["user_id"].stringValue
+        self.userType = json["user_type"].stringValue
         self.title = json["title"].stringValue
         self.description = json["description"].stringValue
         self.workSector = json["work_sector"].stringValue

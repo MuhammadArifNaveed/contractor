@@ -49,7 +49,8 @@ struct VendorInterestedWorkshopsView: View {
                     ScrollView {
                         VStack(spacing: 10) {
                             ForEach(workshops) { workshop in
-                                NavigationLink(destination: VendorWorkshopDetailView(workshopId: workshop.id)) {
+                                NavigationLink(destination: VendorWorkshopDetailView(workshopId: workshop.id,
+                                                                                     showsChat: workshop.showsChat)) {
                                     VendorWorkshopAdCard(workshop: workshop)
                                 }
                                     .buttonStyle(VendorPressStyle())
@@ -181,6 +182,11 @@ struct VendorWorkshopAd: Identifiable {
     let statusName: String
     let statusColor: String
     let interested: String
+    /// The ad owner's contact-visibility flags. Only `show_chat` is read — it gates the Message action
+    /// on the detail screen, and the detail endpoint does not return it, so it is carried from here.
+    let showChat: String
+
+    var showsChat: Bool { showChat == "1" }
 
     var posterName: String {
         [name, surname].filter { !$0.isEmpty }.joined(separator: " ")
@@ -206,6 +212,7 @@ struct VendorWorkshopAd: Identifiable {
         self.statusName = json["status_name"].stringValue
         self.statusColor = json["status_color"].stringValue
         self.interested = json["interested"].stringValue
+        self.showChat = json["show_chat"].stringValue
     }
 }
 

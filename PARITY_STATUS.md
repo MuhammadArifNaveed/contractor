@@ -125,8 +125,8 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 
 | Group | Endpoints | Comment |
 |---|---|---|
-| Session | `Account/get_user_details_by_id` | Nothing re-reads the account after sign-in yet. |
-| Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. |
+| ~~Session~~ | ~~`Account/get_user_details_by_id`~~ | **Now called.** Chat needs the workshop ad owner's `uuid` and it is the only live endpoint that returns one. |
+| Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. **`Vendor/workshop_ad_detail` is broken on the backend** and cannot be ported — see the issues table below. |
 | Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
 | Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
 | Push notifications | `Home/send_message_notification`, `vendor/send_message_notification` | Chat push — Firebase. |
@@ -136,6 +136,7 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 
 | Blocker | Affects | What is needed |
 |---|---|---|
+| **`thecontractor-b1d78` has no Firestore database** | **All of chat, on both sides** | The project and its API key are valid, but Firestore was never created inside it: every collection answers `HTTP 404 "The database (default) does not exist for project thecontractor-b1d78"`, while an unknown project id answers 403 to the same key — so this is provisioning, not auth. Chat has therefore never run, only compiled. Fix in the Firebase console: Firestore Database → Create database. The app never signs in to Firebase Auth, so the rules it is created with have to allow unauthenticated access or chat stays just as dead. |
 | **Firebase is in a different project than Android** | Chat visibility and push delivery | The SDK is in and chat is built, but the plist is for `thecontractor-b1d78` while Android is `thecontractor-uae`. Firestore and FCM are per-project: iOS conversations are invisible to Android and the backend (which pushes from `uae`) cannot deliver to iOS tokens. The owner chose to keep `b1d78` and migrate Android later. |
 | **SMS code on sign-up** | Sign-up takes a phone number on trust | Firebase Phone Auth, unaffected by the project mismatch. A simulator cannot receive an SMS, so a test number has to be added in the console before it can be verified. |
 | **No payment gateway decision** | Membership card purchase (`vendor/buy_membership_online` and the two workshop-membership calls) | Coupon purchase already works. |
@@ -198,6 +199,8 @@ Found while porting; all affect Android too unless noted.
 | `jobs/view_direct_hirings` | No `total_page` in the response, so the list cannot page. Android's load-more is commented out for the same reason. |
 | `freelancing/update_user_freelance_status` | Ignores the `isChecked` part it declares — the endpoint decides the new state itself and reports it as `available`. Sending `true` on an account it considers ineligible returns `available: false`. |
 | Hiring status case | Written mixed-case (`Shortlisted`), stored lower-case (`shortlisted`). Clients have to compare case-insensitively. |
+| `Vendor/workshop_ad_detail` | 500s for every id: `Call to undefined method Workshop_model::get_workshop_ad_detail_by_id()` at `Vendor.php:2013`. This is the endpoint behind Android's `VendorWorkshopDetail`, so **Android's chat entry point is unreachable too** — the screen that hosts it never loads. |
+| `show_chat` on workshop ads | `"0"` on every ad in the QA data, and no declared endpoint sets it (`workshop/submit_workshop_ad` does not take the flag). Android gates its chat entry on `show_chat == "1"`, so as the data stands that entry can never appear on either platform. Also absent from `workshop/get_workshop_details`, though both list endpoints return it. |
 | `Account/user_register` | Accepts any phone number with no proof of ownership; the SMS gate is client-side only. |
 | Reviews | No `submit_review` or `get_company_reviews` endpoint exists at all. |
 
@@ -211,6 +214,7 @@ Honest account of how far each claim is tested.
 |---|---|
 | **Driven in the simulator** | The design-system pass, in light *and* dark mode — the palette, cards, text and accent buttons all follow the system now, which is how the empty-state action's white-on-yellow label was caught. Edit Profile's freelancer availability switch and freelancer-profile form (real account data, no demo values); vendor direct hiring — list with real rows and status chips, detail, and the five-value picker; the consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
 | **Endpoint verified live (curl), UI compiled but not driven** | The two write actions listed under *Not exercised* above, and every screen not named in the row above. Each endpoint was called against the live backend and each parser written against the real key names — but a screen that has only been compiled can still be wrong in ways only looking at it reveals, which is exactly what the last visual pass showed: four defects on two screens whose endpoints were all correct. |
+| **Written, compiles, has never executed** | **All of chat** — both inboxes, the thread, `createConnection`, the lazy create-on-first-send, and the Message entry point on the workshop ad. b1d78 has no Firestore database, so every query 404s; none of this code has reached a database even once. The two REST endpoints it leans on *are* verified live (`Account/get_user_details_by_id` returns the `uuid`, `username`, `name` and `surname` the connection needs for user 45), and the Firestore document shapes are copied field-for-field from Android — but that is a reading of Android's source, not a test. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all

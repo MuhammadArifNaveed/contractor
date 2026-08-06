@@ -78,6 +78,24 @@ class LoginService: BaseService {
         }
     }
 
+    /// Read one account by id. Android: `RetrofitApi.getUserDetailById()` → `POST
+    /// Account/get_user_details_by_id`, one part `user_id`, response key `user`.
+    ///
+    /// Chat is what needs this. Firestore keys a conversation on the participants' **uuids**, and a
+    /// company opening a workshop ad only learns the owner's numeric `user_id` — no workshop endpoint
+    /// returns a `uuid`. Android sidesteps that by reading the ad through `Vendor/workshop_ad_detail`,
+    /// whose model carries `user_uuid`, `username`, `name` and `surname`; that endpoint is currently
+    /// broken on the backend (`Call to undefined method Workshop_model::get_workshop_ad_detail_by_id()`),
+    /// so this call supplies the same four values from the account itself.
+    func getUserDetailsById(userId: String,
+                            completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/get_user_details_by_id"
+        let params: [String: String] = ["user_id": userId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
     // MARK: - Consumer sign-up
 
     /// Is this number free to register? Android: `POST Account/phone_check`, one part `user_phone`.

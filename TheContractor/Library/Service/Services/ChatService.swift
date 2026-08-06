@@ -9,8 +9,10 @@
 //
 //  * **`user_connections`** — one document per company/user pair, carrying both sides' names and ids, the
 //    `chat_uuid` that ties the thread together, and `last_message` / `message_time` for the inbox row.
-//    Connections are created elsewhere (a thread is opened from a company or an enquiry), so both inboxes
-//    only ever read this collection.
+//    **Only the company side creates one**, and only on the first message it actually sends: Android's
+//    `VendorChat` checks for an existing document on open and writes one in `createUserConnectionOnFireStore()`
+//    when the send button is pressed with none found. The consumer's `Chat.java` never writes to this
+//    collection, so a user cannot start a thread — they can only answer one.
 //  * **`chat`** — one document per message, tied to the thread by `chat_uuid`.
 //
 //  Two details are load-bearing:
@@ -64,6 +66,10 @@ struct ChatConnection: Identifiable, Equatable {
         return name.isEmpty ? "Conversation" : name
     }
 
+    /// True until Firestore has the document. Android carries the same state as a `userConnection`
+    /// boolean plus an empty `documentID`, and branches on it when the send button is pressed.
+    var isPending: Bool { id.isEmpty }
+
     init(id: String, data: [String: Any]) {
         func string(_ key: String) -> String { data[key] as? String ?? "" }
         self.id = id
@@ -80,6 +86,64 @@ struct ChatConnection: Identifiable, Equatable {
         self.messageTime = string("message_time")
         self.createdAt = string("created_at")
     }
+
+    private init(id: String, chatUUID: String, company: ChatCompany, user: ChatUser,
+                 lastMessage: String, messageTime: String, createdAt: String) {
+        self.id = id
+        self.chatUUID = chatUUID
+        self.companyId = company.id
+        self.companyUUID = company.uuid
+        self.companySerialNo = company.serialNo
+        self.companyName = company.name
+        self.userId = user.id
+        self.userUUID = user.uuid
+        self.userName = user.userName
+        self.fullName = user.fullName
+        self.lastMessage = lastMessage
+        self.messageTime = messageTime
+        self.createdAt = createdAt
+    }
+
+    /// A thread the company has opened but not yet sent anything on. Android generates the `chat_uuid`
+    /// the moment `VendorChat` starts (`getUUID()`), before it knows whether a connection exists, and
+    /// throws it away if the lookup finds one — so it is minted here for the same reason.
+    static func pending(company: ChatCompany, user: ChatUser) -> ChatConnection {
+        ChatConnection(id: "", chatUUID: UUID().uuidString, company: company, user: user,
+                       lastMessage: "", messageTime: "", createdAt: "")
+    }
+
+    /// The same row once Firestore has accepted it.
+    func stored(id: String) -> ChatConnection {
+        ChatConnection(id: id, chatUUID: chatUUID,
+                       company: ChatCompany(id: companyId, uuid: companyUUID,
+                                            serialNo: companySerialNo, name: companyName),
+                       user: ChatUser(id: userId, uuid: userUUID, userName: userName, fullName: fullName),
+                       lastMessage: lastMessage, messageTime: messageTime, createdAt: createdAt)
+    }
+}
+
+/// The company half of a connection — Android reads these four off its stored `VendorSharedPrefModel`.
+struct ChatCompany: Equatable {
+    let id: String
+    let uuid: String
+    let serialNo: String
+    let name: String
+
+    /// The signed-in company, or `nil` when none is.
+    static var current: ChatCompany? {
+        guard let session = VendorSession.current, !session.uuid.isEmpty else { return nil }
+        return ChatCompany(id: session.id, uuid: session.uuid,
+                           serialNo: session.company_serial_number, name: session.company_name)
+    }
+}
+
+/// The user half. Android takes all four off the workshop ad it was opened from; iOS reads them from
+/// `Account/get_user_details_by_id`, because the ad endpoint it can reach carries no uuid.
+struct ChatUser: Equatable {
+    let id: String
+    let uuid: String
+    let userName: String
+    let fullName: String
 }
 
 struct ChatMessage: Identifiable, Equatable {
@@ -158,6 +222,69 @@ final class ChatService {
             }
     }
 
+    // MARK: - Starting a conversation (company only)
+
+    /// Android's `checkUserConnectionFromFireStore()`: is there already a thread between these two?
+    /// Hands back the stored connection when there is, so its `chat_uuid` and document id are reused
+    /// rather than a second thread being opened over the top of the first.
+    func findConnection(companyUUID: String, userUUID: String,
+                        completion: @escaping (_ connection: ChatConnection?, _ error: String?) -> Void) {
+        db.collection("user_connections")
+            .whereField("company_uuid", isEqualTo: companyUUID)
+            .whereField("user_uuid", isEqualTo: userUUID)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    completion(nil, error.localizedDescription)
+                    return
+                }
+                guard let document = snapshot?.documents.first else {
+                    completion(nil, nil)
+                    return
+                }
+                completion(ChatConnection(id: document.documentID, data: document.data()), nil)
+            }
+    }
+
+    /// Android's `createUserConnectionOnFireStore()`, field for field and in the same order.
+    ///
+    /// `created_at` is the device-zone timestamp in the swapped `yyyy-dd-MM` format; `last_message` and
+    /// `message_time` start empty, and all three `is_active` flags start `"1"`. Android calls this only
+    /// from the send button, never on open, so a company browsing a thread it never replies to leaves
+    /// nothing behind.
+    func createConnection(_ connection: ChatConnection,
+                          completion: @escaping (_ connection: ChatConnection?, _ error: String?) -> Void) {
+        let document: [String: Any] = [
+            "company_id": connection.companyId,
+            "company_uuid": connection.companyUUID,
+            "company_serial_no": connection.companySerialNo,
+            "company_name": connection.companyName,
+            "company_is_active": "1",
+            "user_id": connection.userId,
+            "user_uuid": connection.userUUID,
+            "user_name": connection.userName,
+            "full_name": connection.fullName,
+            "user_is_active": "1",
+            "is_active": "1",
+            "chat_uuid": connection.chatUUID,
+            "created_at": ChatService.currentDateTime(),
+            "last_message": "",
+            "message_time": ""
+        ]
+
+        var reference: DocumentReference?
+        reference = db.collection("user_connections").addDocument(data: document) { error in
+            if let error = error {
+                completion(nil, error.localizedDescription)
+                return
+            }
+            guard let id = reference?.documentID else {
+                completion(nil, "Could not start this conversation")
+                return
+            }
+            completion(connection.stored(id: id), nil)
+        }
+    }
+
     // MARK: - Thread
 
     /// Live message list for one thread, ordered the way Android orders it.
@@ -178,13 +305,29 @@ final class ChatService {
 
     /// Adds the message, then updates the connection's `last_message` / `message_time` so the inbox row
     /// moves — the same two steps, in the same order, as `Chat.sendMessageFirebase()`.
+    ///
+    /// A pending connection is written first, which is Android's send-button branch: `if(userConnection)
+    /// sendMessageFirebase(...) else createUserConnectionOnFireStore()`, where the create's success
+    /// handler sends the message that triggered it. The stored connection comes back through the
+    /// completion so the caller can keep the document id it now has.
     func send(_ message: String,
               in connection: ChatConnection,
               as role: ChatRole,
-              completion: @escaping (_ error: String?) -> Void) {
+              completion: @escaping (_ connection: ChatConnection?, _ error: String?) -> Void) {
         let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            completion(nil)
+            completion(connection, nil)
+            return
+        }
+
+        guard !connection.isPending else {
+            createConnection(connection) { [weak self] created, error in
+                guard let created = created else {
+                    completion(nil, error ?? "Could not start this conversation")
+                    return
+                }
+                self?.send(trimmed, in: created, as: role, completion: completion)
+            }
             return
         }
 
@@ -203,14 +346,14 @@ final class ChatService {
 
         db.collection("chat").addDocument(data: document) { [weak self] error in
             if let error = error {
-                completion(error.localizedDescription)
+                completion(nil, error.localizedDescription)
                 return
             }
             self?.db.collection("user_connections").document(connection.id).updateData([
                 "last_message": trimmed,
                 "message_time": countryTime
             ]) { updateError in
-                completion(updateError?.localizedDescription)
+                completion(connection, updateError?.localizedDescription)
             }
         }
     }

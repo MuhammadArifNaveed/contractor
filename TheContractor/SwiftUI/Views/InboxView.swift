@@ -9,9 +9,10 @@
 //  This replaces the two "not available yet" screens. The consumer one used to call `Home/get_chats`,
 //  which the backend has never served — chat was always Firestore.
 //
-//  Conversations are not created here. Android's chat activities receive a `chat_uuid` from the
-//  connection list, so `user_connections` is only ever read by the app; a connection appears when a
-//  thread is started elsewhere.
+//  Conversations are not created here. A thread starts on a workshop ad, where a company presses
+//  Message (`VendorWorkshopDetailView`, mirroring Android's `VendorWorkshopDetail` → `VendorChat`), and
+//  the connection document is not written until that company's first message is actually sent. The
+//  inbox only ever reads `user_connections`.
 //
 
 import SwiftUI
@@ -41,9 +42,11 @@ struct InboxView: View {
                 case .noData:
                     VendorEmptyState(icon: "bubble.left.and.bubble.right",
                                      title: "No conversations",
+                                     // Only a company can open a thread, so neither side is told to
+                                     // start one it has no way to start.
                                      message: role == .user
-                                        ? "Message a company from its page and the conversation will appear here."
-                                        : "Conversations started by customers will appear here.")
+                                        ? "When a company messages you about one of your ads, the conversation will appear here."
+                                        : "Message a customer from their workshop ad and the conversation will appear here.")
                 case .loaded:
                     list
                 }
@@ -135,9 +138,11 @@ struct InboxView: View {
 // MARK: - One conversation
 
 struct ChatThreadView: View {
-    let connection: ChatConnection
     let role: ChatRole
 
+    /// Replaced with the stored row once a pending thread's first message creates it, so the
+    /// `last_message` update that follows has a document id to write to.
+    @State private var connection: ChatConnection
     @State private var messages: [ChatMessage] = []
     @State private var draft = ""
     @State private var isSending = false
@@ -145,6 +150,11 @@ struct ChatThreadView: View {
     @State private var listener: ListenerRegistration?
 
     @Environment(\.dismiss) private var dismiss
+
+    init(connection: ChatConnection, role: ChatRole) {
+        self._connection = State(initialValue: connection)
+        self.role = role
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -257,13 +267,14 @@ struct ChatThreadView: View {
     private func send() {
         let message = draft
         isSending = true
-        ChatService.shared.send(message, in: connection, as: role) { error in
+        ChatService.shared.send(message, in: connection, as: role) { stored, error in
             isSending = false
             if let error = error {
                 errorMessage = error
-            } else {
-                draft = ""
+                return
             }
+            if let stored = stored { connection = stored }
+            draft = ""
         }
     }
 }

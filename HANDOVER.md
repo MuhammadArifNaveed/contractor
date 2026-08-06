@@ -114,6 +114,23 @@ The owner created a Firebase project and supplied `GoogleService-Info.plist`.
 > b1d78. **The owner chose to keep b1d78 and migrate Android later.** Anyone continuing should know iOS
 > chat is isolated from Android chat until that migration happens.
 
+> ### ⛔ `thecontractor-b1d78` has no Firestore database
+>
+> The Firebase project exists and the API key in the plist is valid, but **Firestore was never
+> provisioned inside it**, so every chat read and write fails:
+>
+> ```
+> GET .../projects/thecontractor-b1d78/databases/(default)/documents/user_connections
+> HTTP 404  "The database (default) does not exist for project thecontractor-b1d78"
+> ```
+>
+> The 404 is database-level, not project-level — a genuinely unknown project id answers 403 to the same
+> key, so this is not an auth or a typo problem. **Nothing in chat has ever run**: the inbox shipped in
+> `194df25` compiles and opens, and then every query errors. It cannot be verified on screen until
+> someone opens the Firebase console for b1d78 → Firestore Database → Create database (pick a region;
+> the rules mode matters too — the app never signs in to Firebase Auth, so locked-mode rules would deny
+> it just as completely). **This is the first thing to do before touching chat again.**
+
 Done:
 
 - Pods `Firebase/Auth`, `Firebase/Firestore`, `Firebase/Messaging` (12.17.0). CocoaPods prints a
@@ -170,22 +187,41 @@ format, `last_message` and `message_time` empty, and the three `is_active` flags
 Android opens `VendorChat` from **`VendorWorkshopDetail`** (and the inbox row adapter). So on Android the
 entry point for a *new* conversation is a company messaging a user about a workshop ad.
 
-**iOS matches the read side but does not create connections yet.** `ChatService` has no
-`createConnection`; the iOS company cannot start a new thread. That is the next chat task — see below.
+### iOS now creates connections too — with two detours Android does not have
+
+`ChatService.createConnection` writes the same fifteen fields in the same order, and `send()` calls it
+lazily when the connection is still pending (`id == ""`), which is Android's `if(userConnection) send
+else create` branch. `VendorWorkshopDetailView` has the Message action, mirroring `VendorWorkshopDetail`.
+Two things could not be copied:
+
+1. **`Vendor/workshop_ad_detail` is dead on the backend.** It answers
+   `Call to undefined method Workshop_model::get_workshop_ad_detail_by_id()` (`Vendor.php:2013`) for
+   every id. That is the endpoint feeding Android's `VendorWorkshopDetail`, so **Android's own chat
+   entry point cannot load either** — the screen behind the Message row never renders. iOS uses
+   `workshop/get_workshop_details` instead, which works but returns no `uuid` for the ad's owner.
+2. **So the owner's uuid comes from `Account/get_user_details_by_id`** (part `user_id`, response key
+   `user`), verified live: it returns `uuid`, `username`, `name` and `surname` — exactly the four values
+   Android reads off its ad model. This endpoint was on the "never called" list; it has a use now.
+
+**The gate is `show_chat == "1"`, and no ad in the QA data has it set.** Every row from
+`workshop/workshops` and `workshop/show_workshops_for_interest` carries `show_chat: "0"`, and no declared
+endpoint writes the flag — `workshop/submit_workshop_ad` does not take it. The detail endpoint does not
+return `show_chat` at all, so it is carried in from the list row that opened the screen
+(`VendorWorkshopDetailView(showsChat:)`). The owner chose the faithful gate over a reachable one, so the
+Message button is correct but currently invisible on all live data.
 
 ---
 
 ## 5. Pending, in the order worth doing
 
-1. **Finish chat.** The build that would confirm `ChatService`/`InboxView` compile was still running when
-   this file was written — **verify the build first.** Then:
-   - add `createConnection(company:user:)` to `ChatService`, replicating
-     `createUserConnectionOnFireStore()` exactly (field list above, `chat_uuid` a fresh UUID, created
-     lazily on first send);
-   - give the company an entry point, mirroring Android's: a "Message" action on the workshop-ad detail
-     screen (`VendorWorkshopDetailView`), which is where `VendorWorkshopDetail` opens `VendorChat`;
-   - drive both inboxes in the simulator. Two accounts are needed — company 706 and consumer 45 — so the
-     honest test is: company starts a thread, consumer sees and answers it.
+1. **Chat is written and unverifiable.** `createConnection`, the lazy create-on-first-send and the
+   Message entry point are all in and compile clean. **Not one line of it has run against a database**,
+   because b1d78 has no Firestore (see the box in §4). Nothing else in chat is worth touching until that
+   database exists. Once it does, the honest test is still: company 706 starts a thread, consumer 45 sees
+   and answers it — and it needs the `show_chat` decision revisited, since with the faithful gate there
+   is no ad in the QA data on which the Message button appears. Verifying it means either a row with
+   `show_chat = "1"` (backend or web side — the app cannot set it) or temporarily dropping `showsChat &&`
+   from `canMessageOwner`.
 2. **SMS code on sign-up** (Firebase Phone Auth). Unaffected by the project mismatch. A simulator cannot
    receive an SMS, so add a test phone number in the Firebase console first, or it cannot be verified.
    The code step slots between `SignUpView`'s two existing steps and nothing else changes.
@@ -243,3 +279,8 @@ Nothing has been tested on a physical device, in Arabic, or (except the theme pa
   this pattern before trusting a form.
 - Old-style `project.pbxproj` with many duplicate file references; the build prints "Skipping duplicate
   build file" warnings that are pre-existing and harmless.
+- **A fresh `simctl install` starts with no session at all.** The keychain note above is about surviving
+  `uninstall`, not about a session existing in the first place — after a reinstall the drawer shows
+  "Login or Create Account" and both halves have to be signed in again.
+- **`curl` is not on `PATH` inside a `for` loop** in this sandbox, though it resolves fine in a plain
+  command. Use `/usr/bin/curl` in loops.
