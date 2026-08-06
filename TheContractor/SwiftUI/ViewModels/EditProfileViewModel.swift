@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SwiftyJSON
 
 class EditProfileViewModel: ObservableObject {
     @Published var firstName = ""
@@ -111,7 +112,7 @@ class EditProfileViewModel: ObservableObject {
 
         isCheckingFreelancerRecord = true
         GCD.async(.Background) {
-            LoginService.shared().getUserFreelancerRecord(userId: user.id) { [weak self] message, success, hasRecord, _ in
+            LoginService.shared().getUserFreelancerRecord(userId: user.id) { [weak self] message, success, hasRecord, json in
                 GCD.async(.Main) {
                     guard let self = self else { return }
                     self.isCheckingFreelancerRecord = false
@@ -120,6 +121,7 @@ class EditProfileViewModel: ObservableObject {
                         return
                     }
                     self.hasFreelancerRecord = hasRecord
+                    self.freelancerRecord = hasRecord ? json?["user_freelancer_details"] : nil
                     self.openFreelancerForm = true
                 }
             }
@@ -128,6 +130,8 @@ class EditProfileViewModel: ObservableObject {
 
     /// True once `freelancing/register_user_freelancer` reports a record; the form opens in update mode.
     @Published var hasFreelancerRecord = false
+    /// The record itself, handed to the form so an existing profile arrives filled in rather than blank.
+    @Published var freelancerRecord: JSON?
     
     func updateProfile(completion: @escaping () -> Void) {
         guard isFormValid else {

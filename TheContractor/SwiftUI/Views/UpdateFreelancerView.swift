@@ -5,9 +5,9 @@ import UniformTypeIdentifiers
 import SwiftyJSON
 
 /// Note: this form shipped with demo values in every field — "Test Freelancer", a made-up IBAN, four
-/// sample addresses — which anyone pressing through would have submitted. They are cleared, and the
-/// three fields the account owns are seeded from it. Prefilling the rest from an existing freelancer
-/// record (`freelancing/register_user_freelancer` returns all 38 fields) is still to do.
+/// sample addresses — which anyone pressing through would have submitted. They are cleared; the three
+/// fields the account owns are seeded from it, and when the caller already has the freelancer record it
+/// is applied on top so editing an existing profile does not mean retyping it.
 struct UpdateFreelancerView: View {
     enum Mode {
         case registerCompany
@@ -104,8 +104,14 @@ struct UpdateFreelancerView: View {
     @State private var cityIdByName: [String: String] = [:]
     @State private var areaIdByCityAndTitle: [String: [String: String]] = [:]
 
-    init(mode: Mode = .generic) {
+    /// The caller's existing freelancer record, when there is one. `EditProfileView` has it already:
+    /// the row that opens this form calls `freelancing/register_user_freelancer` to decide between add
+    /// and update, and that response *is* the record.
+    private let record: JSON?
+
+    init(mode: Mode = .generic, record: JSON? = nil) {
         self.mode = mode
+        self.record = record
     }
 
     var body: some View {
@@ -245,6 +251,7 @@ struct UpdateFreelancerView: View {
                 loadFreelancingSearch()
             }
             seedFromAccount()
+            applyRecord()
         }
         .onChange(of: step) { newStep in
             // Fetch addresses only when switching to address step in company mode
@@ -1037,6 +1044,58 @@ struct UpdateFreelancerView: View {
         }
         if email.isEmpty { email = user.email }
         if phone.isEmpty { phone = user.phone }
+    }
+
+    /// Fills the form from an existing freelancer record. Runs after `seedFromAccount()` and wins over
+    /// it, since the record is the more specific truth.
+    ///
+    /// Field shapes, read off the live response rather than guessed: `available_per_hour` is `"0"`/`"1"`,
+    /// `from_time`/`to_time` are `HH:mm:ss`, `skills` is an array of objects carrying `skill_title`, and
+    /// `addresses` is an array of `{address, pick_up_address, status}` where `status == "1"` marks the
+    /// current one.
+    private func applyRecord() {
+        guard let record = record, record.exists() else { return }
+
+        if !record["name"].stringValue.isEmpty { name = record["name"].stringValue }
+        if !record["email"].stringValue.isEmpty { email = record["email"].stringValue }
+        if !record["phone"].stringValue.isEmpty { phone = record["phone"].stringValue }
+        if !record["hourly_rate"].stringValue.isEmpty { experienceYears = record["hourly_rate"].stringValue }
+
+        let skillTitles = record["skills"].arrayValue
+            .map { $0["skill_title"].stringValue }
+            .filter { !$0.isEmpty }
+        if !skillTitles.isEmpty { selectedSkills = skillTitles }
+
+        if !record["category_name"].stringValue.isEmpty { selectedCategory = record["category_name"].stringValue }
+        if !record["city_name"].stringValue.isEmpty { selectedCity = record["city_name"].stringValue }
+        if !record["area_name"].stringValue.isEmpty { selectedArea = record["area_name"].stringValue }
+
+        availablePerHour = record["available_per_hour"].stringValue == "1"
+        if let from = UpdateFreelancerView.time(record["from_time"].stringValue) { startTime = from }
+        if let to = UpdateFreelancerView.time(record["to_time"].stringValue) { endTime = to }
+
+        if !record["bank_name"].stringValue.isEmpty { bankName = record["bank_name"].stringValue }
+        if !record["bank_address"].stringValue.isEmpty { bankAddress = record["bank_address"].stringValue }
+        if !record["account_title"].stringValue.isEmpty { accountTitle = record["account_title"].stringValue }
+        if !record["iban"].stringValue.isEmpty { iban = record["iban"].stringValue }
+
+        let stored = record["addresses"].arrayValue.compactMap { entry -> FreelancerAddress? in
+            let title = entry["address"].stringValue
+            guard !title.isEmpty else { return nil }
+            return FreelancerAddress(apiId: entry["id"].stringValue,
+                                     title: title,
+                                     fullAddress: entry["pick_up_address"].stringValue,
+                                     isCurrent: entry["status"].stringValue == "1")
+        }
+        if !stored.isEmpty { addresses = stored }
+    }
+
+    /// `HH:mm:ss` against today, which is all the two time pickers read.
+    private static func time(_ raw: String) -> Date? {
+        guard !raw.isEmpty else { return nil }
+        let parts = raw.split(separator: ":").compactMap { Int($0) }
+        guard parts.count >= 2 else { return nil }
+        return Calendar.current.date(bySettingHour: parts[0], minute: parts[1], second: 0, of: Date())
     }
 
     private func showToast(_ message: String) {

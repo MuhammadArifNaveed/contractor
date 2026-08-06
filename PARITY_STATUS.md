@@ -146,10 +146,11 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 
 **Worth doing next**
 
-2. **`UpdateFreelancerView` does not prefill from an existing freelancer record.**
-   `freelancing/register_user_freelancer` returns all 38 fields — skills, rate, bank details, addresses —
-   so a user editing their profile retypes everything. The data is already fetched by the row that opens
-   the form.
+2. **The freelancer form's prefill is unverified on screen.** The mapping was written against the live
+   record (every field shape printed from the real response), and it compiles, but the filled form has
+   not been looked at. What would confirm it: sign in as the QA user, Profile → Profile Settings →
+   Freelancer profile, and check hourly rate 5, two skills, category `carpentor`, Dubai / Al Mamzar,
+   10:00–18:00, the bank block, and four addresses.
 3. **Edit Profile's "available for job" checkbox is still a local flag** that saves nowhere. Android
    drives it through its own call; the freelancer switch beside it is now live, which makes the dead one
    more obvious.

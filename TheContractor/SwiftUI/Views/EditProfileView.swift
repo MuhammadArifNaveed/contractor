@@ -266,7 +266,7 @@ struct EditProfileView: View {
         // EditProfileView is pushed onto a UIKit navigation stack, so there is no SwiftUI
         // NavigationView above it and a NavigationLink here would do nothing.
         .sheet(isPresented: $viewModel.openFreelancerForm) {
-            UpdateFreelancerView()
+            UpdateFreelancerView(record: viewModel.freelancerRecord)
         }
         .alert("", isPresented: Binding(get: { viewModel.freelanceNotice != nil },
                                        set: { if !$0 { viewModel.freelanceNotice = nil } })) {
