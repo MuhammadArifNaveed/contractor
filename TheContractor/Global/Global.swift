@@ -25,6 +25,11 @@ class Global {
 
     // MARK: - Device / Misc
     var fcmToken: String = ""
+
+    /// What every login and registration call should put in `firebase_token`. Android holds the literal
+    /// `"null"` until `FirebaseMessaging.getToken()` answers and sends that, so an unregistered device
+    /// looks the same on both platforms. iOS used to send `"testtoken123"`.
+    var firebaseTokenForRequest: String { fcmToken.isEmpty ? "null" : fcmToken }
     var systemVersion = UIDevice.current.systemVersion
     var deviceModel = UIDevice.modelName
     var controllerTitle = ""

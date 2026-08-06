@@ -116,7 +116,7 @@ class LoginViewController: BaseViewController {
             "user_phone": formattedPhone,
             "user_password": password,
             "device_type": "ios",
-            "firebase_token": Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+            "firebase_token": Global.shared.firebaseTokenForRequest
         ]
         self.userLogin(params: params)
     }

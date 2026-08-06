@@ -11,6 +11,15 @@ target 'TheContractor' do
   pod 'Cosmos'
   pod 'iOSDropDown'
   pod 'XNLogger'
+
+  # Firebase. Android has auth, messaging, firestore, database and analytics; chat is Firestore
+  # (collections `user_connections` and `chat`), the SMS code on sign-up is Auth phone verification, and
+  # `firebase_token` on login/register is a Messaging registration token. Realtime Database and
+  # Analytics are not pulled in: nothing in the Android chat path uses Database beyond a ServerValue
+  # import, and Analytics has no parity requirement.
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
+  pod 'Firebase/Messaging'
 end
 
 

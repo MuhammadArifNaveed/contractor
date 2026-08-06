@@ -116,7 +116,7 @@ class LoginService: BaseService {
             "user_password": password,
             "country_id": "1",
             "device_type": "ios",
-            "firebase_token": Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+            "firebase_token": Global.shared.firebaseTokenForRequest
         ]
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             if success, let json = json, json["user"].exists() {

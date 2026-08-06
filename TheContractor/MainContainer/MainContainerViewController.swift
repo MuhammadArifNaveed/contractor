@@ -611,15 +611,11 @@ class MainContainerViewController: BaseViewController{
         controller.didMove(toParent: self)
     }
     
-    /// Consumer Inbox. Android's `Chat`/`ChatConnection` are Firebase Firestore, exactly as the vendor
-    /// inbox is, and iOS has no Firebase at all — so this says so rather than calling `Home/get_chats`,
-    /// an endpoint the backend has never served.
+    /// Consumer Inbox — Android's `ChatConnection` + `Chat`, on Firestore. The screen this replaces said
+    /// "not available yet"; before that it called `Home/get_chats`, which the backend has never served.
     func showChatListController() {
-        showVendorScreen(VendorComingSoonView(
-            title: "Inbox",
-            icon: "bubble.left.and.bubble.right",
-            headline: "Messaging is not available yet",
-            detail: "Chat needs Firebase to be set up for the iOS app before it can be switched on."))
+        showVendorScreen(InboxView(role: .user,
+                                   onBack: { NotificationCenter.default.post(name: .init("GoBackToTabBar"), object: nil) }))
     }
     
     func showCartController() {
@@ -1034,12 +1030,10 @@ class MainContainerViewController: BaseViewController{
 
     /// The vendor inbox is Firebase Firestore on Android and iOS has no Firebase set up, so this is a
     /// placeholder rather than a screen wired to the wrong endpoint. See COMPANY_SIDE_ROADMAP.md.
+    /// Company Inbox — Android's `VendorChatConnection` + `VendorChat`. Same collections as the consumer
+    /// side; only the uuid the inbox filters on and what `sent_by` records differ.
     func showVendorInboxComingSoon() {
-        showVendorScreen(VendorComingSoonView(
-            title: "Inbox",
-            icon: "bubble.left.and.bubble.right",
-            headline: "Messaging is not available yet",
-            detail: "Chat needs Firebase to be set up for the iOS app before it can be switched on."))
+        showVendorScreen(InboxView(role: .company))
     }
 
     /// Android `VendorPostWorkshop`.

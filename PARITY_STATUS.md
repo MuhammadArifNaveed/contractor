@@ -17,6 +17,7 @@ iOS-native and deliberately not a copy of Android's layouts.
 
 | Area | State |
 |---|---|
+| Firebase | **SDK in, chat built, project mismatched.** Auth/Firestore/Messaging pods, plist registered, `FirebaseApp.configure()`, and the real FCM token now reaches the backend instead of the literal `"testtoken123"`. See the blocked row. |
 | Design system | **One system now.** `AppTheme`'s colours resolve to `VendorTheme`, so the consumer screens share the palette and follow dark mode, and **every** yellow bar in the app is `VendorTopBar` — fifteen were hand-rolled `HStack`s. |
 | Company / vendor side | **Complete.** All 17 drawer items and the header's View Profile reach a real screen on a real endpoint, or say plainly that the feature is unavailable. |
 | Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
@@ -84,7 +85,7 @@ Two scripts, both in the session scratchpad, both worth running after any change
 | `UpdateProfile`, `ChangePassword`, `ProfileFragment` | `EditProfileView`, `ChangePasswordView`, `UserProfileView` | `Account/change_password` is keyed on `user_email`, not `user_id` — fixed. Freelancer availability and the freelancer profile now live here, as on Android. |
 | `AdvertiseCompany` | `AdvertiseCompanyView` | |
 | `SelectLanguage`, `MapsActivity`, `WebViewActivity` | `LanguageSelectionView`, `MapView`, `WebContentView` | About / Privacy / Terms / Guide / Contact / Advertisement are web pages, as on Android. |
-| `Chat`, `ChatConnection` | "Coming soon" screen | Firebase Firestore — see *Blocked*. |
+| `Chat`, `ChatConnection`, `VendorChat`, `VendorChatConnection` | `InboxView` + `ChatThreadView` on `ChatService` | Firestore, live listeners, both roles from one screen. **iOS cannot start a new conversation yet** — on Android only the company creates the `user_connections` document, lazily on first send from the workshop-ad detail screen. |
 
 ---
 
@@ -135,7 +136,8 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 
 | Blocker | Affects | What is needed |
 |---|---|---|
-| **No Firebase in the iOS app** | Vendor Inbox, consumer Inbox, freelancer order chat, chat push, **and the SMS code on sign-up** | Register bundle `com.contractor.TheContractorx` in Firebase project `thecontractor-uae`, add the SDK. Both inboxes show an honest "not available yet" screen; sign-up proceeds without the code. |
+| **Firebase is in a different project than Android** | Chat visibility and push delivery | The SDK is in and chat is built, but the plist is for `thecontractor-b1d78` while Android is `thecontractor-uae`. Firestore and FCM are per-project: iOS conversations are invisible to Android and the backend (which pushes from `uae`) cannot deliver to iOS tokens. The owner chose to keep `b1d78` and migrate Android later. |
+| **SMS code on sign-up** | Sign-up takes a phone number on trust | Firebase Phone Auth, unaffected by the project mismatch. A simulator cannot receive an SMS, so a test number has to be added in the console before it can be verified. |
 | **No payment gateway decision** | Membership card purchase (`vendor/buy_membership_online` and the two workshop-membership calls) | Coupon purchase already works. |
 | **Backend bug** | Consumer enquiry detail | `Home/recent_enquiries` returns HTML: `mysqli_sql_exception: Unknown column 't2.company_whatsapp_phone' in 'field list'`. Affects Android too. The list works; the drill-down waits on the column fix. |
 | **Product question** | Consumer reviews | Android has no `submit_review` or `get_company_reviews` endpoint at all. The unreachable iOS screens for both were deleted. Company ratings still show via `Home/company_detail`. If reviews are meant to exist, the backend needs endpoints first. |

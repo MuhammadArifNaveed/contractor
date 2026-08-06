@@ -226,7 +226,7 @@ struct CompanyLoginView: View {
         isLoading = true
         errorMessage = nil
 
-        let firebase = Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+        let firebase = Global.shared.firebaseTokenForRequest
 
         GCD.async(.Background) {
             LoginService.shared().loginCompany(email: email, pinCode: password, firebaseToken: firebase) { message, success, json in

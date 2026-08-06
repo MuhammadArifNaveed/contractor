@@ -127,7 +127,7 @@ class CompanyRegistrationViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        let firebaseToken = Global.shared.fcmToken.isEmpty ? "testtoken123" : Global.shared.fcmToken
+        let firebaseToken = Global.shared.firebaseTokenForRequest
         
         let params: [String: String] = [
             "company_english": companyName.trimmingCharacters(in: .whitespaces),
