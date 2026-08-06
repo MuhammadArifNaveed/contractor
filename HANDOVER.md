@@ -125,7 +125,14 @@ The owner created a Firebase project and supplied `GoogleService-Info.plist`.
 > ```
 >
 > The 404 is database-level, not project-level — a genuinely unknown project id answers 403 to the same
-> key, so this is not an auth or a typo problem. **Nothing in chat has ever run**: the inbox shipped in
+> key, so this is not an auth or a typo problem.
+>
+> **Not to be confused with the Realtime Database.** b1d78 *does* have an RTDB instance
+> (`thecontractor-b1d78-default-rtdb.firebaseio.com`, empty, rules `.read`/`.write` both `false`) — it
+> answers 401 where a nonexistent instance answers 404. It is the wrong product: Android's chat and this
+> port both use **Cloud Firestore** (`FirebaseFirestore.getInstance()` / `Firestore.firestore()`,
+> `db.collection(...)`), which is a separate console section with a separate database. Seeing a database
+> under *Realtime Database* does not mean chat is provisioned. **Nothing in chat has ever run**: the inbox shipped in
 > `194df25` compiles and opens, and then every query errors. It cannot be verified on screen until
 > someone opens the Firebase console for b1d78 → Firestore Database → Create database (pick a region;
 > the rules mode matters too — the app never signs in to Firebase Auth, so locked-mode rules would deny
