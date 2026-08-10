@@ -210,12 +210,13 @@ Two things could not be copied:
    `user`), verified live: it returns `uuid`, `username`, `name` and `surname` — exactly the four values
    Android reads off its ad model. This endpoint was on the "never called" list; it has a use now.
 
-**The gate is `show_chat == "1"`, and no ad in the QA data has it set.** Every row from
-`workshop/workshops` and `workshop/show_workshops_for_interest` carries `show_chat: "0"`, and no declared
-endpoint writes the flag — `workshop/submit_workshop_ad` does not take it. The detail endpoint does not
-return `show_chat` at all, so it is carried in from the list row that opened the screen
-(`VendorWorkshopDetailView(showsChat:)`). The owner chose the faithful gate over a reachable one, so the
-Message button is correct but currently invisible on all live data.
+**Android gates the chat row on `show_chat == "1"`; iOS deliberately does not.** Every row from
+`workshop/workshops` and `workshop/show_workshops_for_interest` carries `show_chat: "0"`, no declared
+endpoint writes the flag (`workshop/submit_workshop_ad` does not take it), and the detail endpoint does
+not return it at all. Honouring it hid the Message action on every ad in existence, so the owner chose to
+show it instead. The flag was plumbed through the list row for a while; that plumbing is gone, since
+nothing read it once the gate went. `canMessageOwner` still requires a signed-in company and an ad owned
+by a *user* — `user_connections` has one company half and one user half, with no company-to-company form.
 
 ---
 
@@ -223,11 +224,6 @@ Message button is correct but currently invisible on all live data.
 
 1. **Chat is done and verified end to end** — company 706 started a thread, consumer 45 saw it and
    answered, and both Firestore documents were read back and checked field by field. What is left on it:
-   - **The Message button is invisible on all live data**, because the shipped gate is `show_chat == "1"`
-     and every ad carries `"0"`. The end-to-end test was run with `showsChat &&` temporarily dropped from
-     `canMessageOwner`; that override is **not** committed. Making the feature reachable is either a row
-     with `show_chat = "1"` (backend or web side — no declared endpoint sets it) or deleting those two
-     words. This is a product decision, not a code one.
    - **`findConnection`'s "existing thread found" branch has never fired.** Every run so far started with
      an empty collection, so the branch that reuses a connection instead of creating a second one is the
      one untested path in chat. Tapping Message on the same ad as company 706 again would exercise it.

@@ -21,10 +21,6 @@ struct VendorWorkshopDetailView: View {
     /// True when the ad belongs to whoever is signed in — Android's `WorkshopAdDetail` shows
     /// "(Enabled) Make Disable" / "(Disabled) Make Enable" on your own ad only.
     var allowsStatusToggle: Bool = false
-    /// The ad's `show_chat` flag, which only the **list** endpoints return — `workshop/get_workshop_details`
-    /// omits it — so it is carried in from the row that opened this screen. Android reads it off its own
-    /// ad model and hides the chat row unless it is `"1"`.
-    var showsChat: Bool = false
 
     @State private var state: VendorLoadState = .loading
     @State private var detail: VendorWorkshopDetail?
@@ -243,13 +239,18 @@ struct VendorWorkshopDetailView: View {
         .vendorCard()
     }
 
-    /// Android's `VendorWorkshopDetail` reveals its chat row on `show_chat == "1"` alone, because that
-    /// screen is only ever reached by a signed-in company. This one is shared with the consumer side, so
-    /// it also has to establish that a company is looking and that the ad belongs to a user — the two
-    /// halves of a `user_connections` document are a company and a user, and there is no company-to-company
-    /// thread in the schema.
+    /// Android's `VendorWorkshopDetail` reveals its chat row only when the ad's `show_chat` flag is
+    /// `"1"`. **iOS deliberately does not gate on it.** Every ad the backend serves carries
+    /// `show_chat: "0"`, and no declared endpoint ever sets it — `workshop/submit_workshop_ad` does not
+    /// take the flag — so honouring it hides the Message action on every ad in existence, which is to say
+    /// it ships the feature dead. Android's own chat entry point is unreachable for a second reason
+    /// anyway: the screen behind it is fed by `Vendor/workshop_ad_detail`, which 500s.
+    ///
+    /// Two checks remain. A company has to be looking, and the ad has to belong to a user: this screen is
+    /// shared with the consumer side, and the two halves of a `user_connections` document are a company
+    /// and a user — the schema has no company-to-company thread.
     private func canMessageOwner(_ detail: VendorWorkshopDetail) -> Bool {
-        showsChat && detail.userType == "users" && !detail.userId.isEmpty && ChatCompany.current != nil
+        detail.userType == "users" && !detail.userId.isEmpty && ChatCompany.current != nil
     }
 
     private var messageButton: some View {

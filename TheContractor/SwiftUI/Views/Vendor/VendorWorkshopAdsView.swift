@@ -140,8 +140,7 @@ struct VendorWorkshopAdsList: View {
                                     NavigationLink(destination: VendorWorkshopDetailView(
                                         workshopId: workshop.id,
                                         allowsQuotation: allowsMarkInterested,
-                                        allowsStatusToggle: allowsStatusToggle,
-                                        showsChat: workshop.showsChat)) {
+                                        allowsStatusToggle: allowsStatusToggle)) {
                                         VendorWorkshopAdCard(workshop: workshop)
                                     }
                                     .buttonStyle(VendorPressStyle())
