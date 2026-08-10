@@ -149,14 +149,7 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 
 **Worth doing next**
 
-1. **After a vendor logout, the consumer login screen cannot be opened.** Found while driving chat.
-   Neither the drawer's "Login or Create Account" nor the Profile tab's button does anything — the drawer
-   just closes — until the app is relaunched, after which both work. Reproduced with the drawer confirmed
-   open on screen, so it is not a mis-tap or an animation race. Vendor logout itself works (the drawer
-   correctly reverts to the guest list). Suspect the login routing that §7's "only post `RequestLogin`"
-   trap describes: something in that path is left stale by the vendor sign-out. Untouched so far — it is
-   outside chat, and chat was verified by relaunching.
-2. **The freelancer form's prefill is unverified on screen.** The mapping was written against the live
+1. **The freelancer form's prefill is unverified on screen.** The mapping was written against the live
    record (every field shape printed from the real response), and it compiles, but the filled form has
    not been looked at. What would confirm it: sign in as the QA user, Profile → Profile Settings →
    Freelancer profile, and check hourly rate 5, two skills, category `carpentor`, Dubai / Al Mamzar,
@@ -221,6 +214,7 @@ Honest account of how far each claim is tested.
 |---|---|
 | **Driven in the simulator** | The design-system pass, in light *and* dark mode — the palette, cards, text and accent buttons all follow the system now, which is how the empty-state action's white-on-yellow label was caught. Edit Profile's freelancer availability switch and freelancer-profile form (real account data, no demo values); vendor direct hiring — list with real rows and status chips, detail, and the five-value picker; the consumer's own workshop ads — list with real rows on both bid tabs, detail, and the enable/disable action flipped to Disabled and back to Enabled so the account's data is unchanged; consumer sign-up end to end — the taken-number path shows the backend's own "Phone number is already exist.", and a new account was created and signed in (see the note below); company login and dashboard; both app bars; the whole estimate flow — categories load, 1200 sqft of Shell & Core office gives AED 198,000 at 165/sqft, the signed-out consultation gate reaches the login screen, the request list shows the account's real request, the detail screen fetches and renders it, and the consultation form prefills from the stored user. Consumer login with the tester account. |
 | **Endpoint verified live (curl), UI compiled but not driven** | The two write actions listed under *Not exercised* above, and every screen not named in the row above. Each endpoint was called against the live backend and each parser written against the real key names — but a screen that has only been compiled can still be wrong in ways only looking at it reveals, which is exactly what the last visual pass showed: four defects on two screens whose endpoints were all correct. |
+| **Driven in the simulator** | **Sign-out and the login prompt, on the hierarchy where they used to fail.** Logging out with the drawer installed as the window's root now reaches the login screen instead of silently doing nothing; Skip then pushes the drawer back onto the navigation controller that fix builds, and the drawer's "Login or Create Account" opens the login screen too. See the fix note below. Not re-tested through a *company* sign-out specifically, which needs the company PIN again — but that is the same `showLoginScreen()` call on the same hierarchy. |
 | **Driven in the simulator, both accounts, documents verified** | **Chat, end to end.** Company 706 opened workshop ad 109, pressed Message (owner's `uuid`/`username`/`name`/`surname` resolved live through `Account/get_user_details_by_id`), and sent — `createConnection` wrote the connection *on send, not on open*, then the message. Consumer 45 signed in, saw the thread in the inbox, opened it and replied. Both documents were then read back out of Firestore: `user_connections` has all **15** of Android's fields and no others, `chat` has all **9**; every value a string; `created_at = 2026-11-08` confirms the swapped `yyyy-dd-MM` for 11 August; `country_time` is an hour behind in Dubai; `sent_by` is `company` then `user`; `last_message`/`message_time` follow the newest message; and `user_is_view` flipped to `1` on the company's message when the consumer opened the thread, which verifies `markThreadViewed`. Bubble side and counterpart name flip correctly per role. |
 | **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
 

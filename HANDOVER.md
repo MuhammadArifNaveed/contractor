@@ -288,6 +288,16 @@ Nothing has been tested on a physical device, in Arabic, or (except the theme pa
   this pattern before trusting a form.
 - Old-style `project.pbxproj` with many duplicate file references; the build prints "Skipping duplicate
   build file" warnings that are pre-existing and harmless.
+- **The drawer is installed two different ways, and only one of them has a navigation controller.**
+  `LoginViewController` *pushes* it (`enterApp()`, `actionSkip`), so it sits inside a `UINavigationController`;
+  but `CompanyLoginView` and `SceneDelegate`'s already-signed-in path assign
+  `window.rootViewController = drawer`, where it has none. Code that reached for
+  `(navigationController?.parent as? KYDrawerController)?.navigationController` therefore succeeded on the
+  cast and then sent everything to a nil optional — sign-out and the login prompt both did nothing at all,
+  silently, for the whole session. `MainContainerViewController.showLoginScreen()` handles both shapes;
+  anything else walking that chain needs the same treatment. Note `LoginViewController` cannot function
+  without a navigation controller — Skip, Forgot password, Sign up, Login as a company and `enterApp()`
+  all push.
 - **A Firestore equality filter plus `order(by:)` on another field needs a composite index**, which a
   freshly created project has none of, and the query fails outright until someone creates it by hand from
   the URL in the error. `observeMessages` sorts in Swift instead, as `observeConnections` already did.

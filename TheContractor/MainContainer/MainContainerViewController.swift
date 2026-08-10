@@ -969,16 +969,44 @@ class MainContainerViewController: BaseViewController{
         UserDefaults.standard.removeObject(forKey: "loginType")
         UserDefaults.standard.synchronize()
         
-        GCD.async(.Main, delay: 1) {
-            let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            if let container = self.navigationController?.parent as? KYDrawerController {
-                container.navigationController?.setViewControllers([controller], animated: true)
-                container.navigationController?.popToRootViewController(animated: true)
-           }
-         }
+        GCD.async(.Main, delay: 1) { [weak self] in
+            self?.showLoginScreen()
+        }
      }
-    
+
+    /// Puts the login screen on screen, whichever way the drawer happens to be installed.
+    ///
+    /// Both sign-out and the "you need an account for this" prompt used to do this inline, by casting
+    /// `navigationController?.parent` to `KYDrawerController` and then driving
+    /// `container.navigationController`. **That inner optional is nil whenever the drawer is the window's
+    /// root view controller** — which is how `CompanyLoginView` installs it (`window.rootViewController =
+    /// drawer`) and how `SceneDelegate` installs it for an already-signed-in launch. The cast succeeded,
+    /// both navigation calls went to nil, and the app silently stayed exactly where it was: signing out of
+    /// a company and then asking for the consumer login did nothing at all until the app was relaunched.
+    private func showLoginScreen() {
+        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                as? LoginViewController else { return }
+
+        // The drawer was pushed onto the storyboard's own login stack — reuse it, which is what shipped
+        // and what still happens on a cold launch with no stored session.
+        if let drawerNavigation = (navigationController?.parent as? KYDrawerController)?.navigationController {
+            drawerNavigation.setNavigationBarHidden(true, animated: false)
+            drawerNavigation.setViewControllers([controller], animated: true)
+            return
+        }
+
+        // The drawer is the window's root, so there is no stack to reuse and one has to be built.
+        // `LoginViewController` does not work without it: Skip, Forgot password, Sign up, Login as a
+        // company and `enterApp()` all push onto `self.navigationController`.
+        guard let window = view.window else { return }
+        let navigation = UINavigationController(rootViewController: controller)
+        navigation.setNavigationBarHidden(true, animated: false)
+        window.rootViewController = navigation
+        UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve,
+                          animations: nil, completion: nil)
+    }
+
     /// Embeds a SwiftUI vendor screen in the container the same way every UIKit screen is embedded,
     /// so the drawer stays reachable. Replacing the drawer's own navigation stack (which the old
     /// `showVendorHome()` did) tore the hamburger out of the hierarchy.
@@ -1068,14 +1096,9 @@ class MainContainerViewController: BaseViewController{
     func loginUser() {
         Global.shared.user = nil
         UserDefaultsManager.shared.clearUserData()
-        GCD.async(.Main, delay: 1) {
-            let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            if let container = self.navigationController?.parent as? KYDrawerController {
-                container.navigationController?.setViewControllers([controller], animated: true)
-                container.navigationController?.popToRootViewController(animated: true)
-           }
-         }
+        GCD.async(.Main, delay: 1) { [weak self] in
+            self?.showLoginScreen()
+        }
      }
     
 }
