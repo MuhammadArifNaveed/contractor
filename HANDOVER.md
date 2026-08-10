@@ -222,11 +222,11 @@ by a *user* — `user_connections` has one company half and one user half, with 
 
 ## 5. Pending, in the order worth doing
 
-1. **Chat is done and verified end to end** — company 706 started a thread, consumer 45 saw it and
-   answered, and both Firestore documents were read back and checked field by field. What is left on it:
-   - **`findConnection`'s "existing thread found" branch has never fired.** Every run so far started with
-     an empty collection, so the branch that reuses a connection instead of creating a second one is the
-     one untested path in chat. Tapping Message on the same ad as company 706 again would exercise it.
+1. **Chat is done. Nothing is pending on it** — every path has now been driven and checked against the
+   documents in Firestore, including `findConnection`'s reuse branch (a second Message tap on the same ad
+   reopened the same thread; the collection still holds exactly one connection with the same `chat_uuid`)
+   and `markThreadViewed` on both sides. The only chat work left is outside the app: push *delivery*
+   (item 3), which no code change here can unblock.
 2. **SMS code on sign-up** (Firebase Phone Auth). Unaffected by the project mismatch. A simulator cannot
    receive an SMS, so add a test phone number in the Firebase console first, or it cannot be verified.
    The code step slots between `SignUpView`'s two existing steps and nothing else changes.
