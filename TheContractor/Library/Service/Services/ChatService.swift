@@ -288,18 +288,25 @@ final class ChatService {
     // MARK: - Thread
 
     /// Live message list for one thread, ordered the way Android orders it.
+    ///
+    /// The sort is done here rather than with `.order(by: "country_time")`, because pairing that with the
+    /// `chat_uuid` equality filter is a composite query, and Firestore rejects it until someone creates a
+    /// matching index by hand — which a freshly created project has none of. Android's project only works
+    /// because that index was added to it at some point. Sorting in Swift gives the identical order (the
+    /// same string field, ascending) with nothing to provision, and matches what `observeConnections`
+    /// already does one method up.
     func observeMessages(chatUUID: String,
                          onChange: @escaping ([ChatMessage]) -> Void,
                          onError: @escaping (String) -> Void) -> ListenerRegistration {
         db.collection("chat")
             .whereField("chat_uuid", isEqualTo: chatUUID)
-            .order(by: "country_time")
             .addSnapshotListener { snapshot, error in
                 if let error = error {
                     onError(error.localizedDescription)
                     return
                 }
-                onChange((snapshot?.documents ?? []).map { ChatMessage(id: $0.documentID, data: $0.data()) })
+                let rows = (snapshot?.documents ?? []).map { ChatMessage(id: $0.documentID, data: $0.data()) }
+                onChange(rows.sorted { $0.countryTime < $1.countryTime })
             }
     }
 
@@ -349,11 +356,30 @@ final class ChatService {
                 completion(nil, error.localizedDescription)
                 return
             }
+            // Android's order: the message lands, then `updateLastMessage`, then the push — and it waits
+            // for none of them.
             self?.db.collection("user_connections").document(connection.id).updateData([
                 "last_message": trimmed,
                 "message_time": countryTime
             ]) { updateError in
                 completion(connection, updateError?.localizedDescription)
+            }
+            ChatService.notifyRecipient(of: trimmed, in: connection, as: role)
+        }
+    }
+
+    /// Asks the backend to push the message to whoever is on the other end.
+    private static func notifyRecipient(of message: String, in connection: ChatConnection, as role: ChatRole) {
+        GCD.async(.Background) {
+            switch role {
+            case .user:
+                LoginService.shared().notifyCompanyOfChatMessage(message: message,
+                                                                 companySerialNo: connection.companySerialNo)
+            case .company:
+                LoginService.shared().notifyUserOfChatMessage(message: message,
+                                                              userName: connection.userName,
+                                                              chatUUID: connection.chatUUID,
+                                                              companySerialNo: connection.companySerialNo)
             }
         }
     }
@@ -395,9 +421,32 @@ final class ChatService {
         return formatter
     }
 
-    /// Reads one of those strings back for display. `VendorTheme.date` already tries both orders, so this
-    /// hands it over rather than repeating the guesswork.
+    /// Reads one of those strings back for display.
+    ///
+    /// Parsed with the exact written format rather than handed to `VendorTheme.date`, which tries
+    /// `yyyy-MM-dd` first and only falls back to the swapped order when that fails. For a chat timestamp
+    /// it never fails: `2026-10-08` is the 10th of August here, but it parses cleanly as the 8th of
+    /// October, so every message whose day is 12 or lower rendered under the wrong month. Chat always
+    /// writes the swapped order, so there is nothing to guess.
+    ///
+    /// Both timestamps shown in the UI (`country_time`, and `message_time` on the inbox row) are Dubai
+    /// wall-clock, so parsing and formatting in that zone displays exactly what was written.
     static func display(_ raw: String) -> String {
-        VendorTheme.date(raw)
+        format(raw, as: "d MMM yyyy, h:mm a")
+    }
+
+    /// The same, without the time, for dense inbox rows.
+    static func shortDisplay(_ raw: String) -> String {
+        format(raw, as: "d MMM yyyy")
+    }
+
+    private static func format(_ raw: String, as pattern: String) -> String {
+        let zone = TimeZone(identifier: "Asia/Dubai") ?? .current
+        guard let date = formatter(timeZone: zone).date(from: raw) else { return raw }
+        let out = DateFormatter()
+        out.locale = .current
+        out.timeZone = zone
+        out.dateFormat = pattern
+        return out.string(from: date)
     }
 }

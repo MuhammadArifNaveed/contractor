@@ -96,6 +96,37 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Chat notifications
+
+    // Firestore carries the message; these two tell the backend to push it. Android fires one from each
+    // chat screen the moment the `chat` document lands, and ignores the outcome — a failed push must not
+    // fail a message that is already delivered — so both are fire-and-forget here too.
+    //
+    // The endpoint prefix follows the **caller**, not the recipient: the consumer's screen calls
+    // `Home/...` to notify the company, the company's screen calls `vendor/...` to notify the user.
+    // The message part is spelled **`meesage`** on both, which is the backend's own spelling.
+
+    /// Consumer → company. Android: `Chat.sendNotification()` → `POST Home/send_message_notification`.
+    /// `company_id` is misleadingly named: Android passes the company's **serial number**, not its id.
+    func notifyCompanyOfChatMessage(message: String, companySerialNo: String) {
+        let completeURL = EndPoints.BASE_URL + "Home/send_message_notification"
+        let params: [String: String] = ["meesage": message, "company_id": companySerialNo]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { _, _, _ in }
+    }
+
+    /// Company → consumer. Android: `VendorChat.sendNotification()` →
+    /// `POST vendor/send_message_notification`. Note `chatUDID`, not `chat_uuid`.
+    func notifyUserOfChatMessage(message: String, userName: String, chatUUID: String, companySerialNo: String) {
+        let completeURL = EndPoints.BASE_URL + "vendor/send_message_notification"
+        let params: [String: String] = [
+            "meesage": message,
+            "username": userName,
+            "chatUDID": chatUUID,
+            "vendor_serial_no": companySerialNo
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { _, _, _ in }
+    }
+
     // MARK: - Consumer sign-up
 
     /// Is this number free to register? Android: `POST Account/phone_check`, one part `user_phone`.

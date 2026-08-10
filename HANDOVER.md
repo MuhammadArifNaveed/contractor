@@ -104,39 +104,39 @@ Android too. `PARITY_STATUS.md` has the grouped list and is kept current.
 
 ---
 
-## 4. Firebase — current state and the one decision that matters
+## 4. Firebase — current state
 
-The owner created a Firebase project and supplied `GoogleService-Info.plist`.
+iOS runs on its **own Firebase project, separate from Android's**, and will keep doing so: Android is
+`thecontractor-uae` (sender 440409598739) and nobody on this side has access to that account. Firestore
+and FCM are both per-project, so the two apps' conversations cannot see each other and the backend's push
+credentials cannot reach iOS. The history of which project iOS used is below; only the last one matters.
 
-> **The plist is for `thecontractor-b1d78`. Android's `google-services.json` is `thecontractor-uae`
-> (sender 440409598739).** Firestore and FCM are per-project, so iOS chat reads and writes a different
-> database than Android, and the backend's push credentials (uae) cannot deliver to iOS tokens minted by
-> b1d78. **The owner chose to keep b1d78 and migrate Android later.** Anyone continuing should know iOS
-> chat is isolated from Android chat until that migration happens.
-
-> ### ⛔ `thecontractor-b1d78` has no Firestore database
+> ### ✅ Resolved — iOS is now on `contractor-e1442`
 >
-> The Firebase project exists and the API key in the plist is valid, but **Firestore was never
-> provisioned inside it**, so every chat read and write fails:
+> b1d78 was abandoned. Two things were wrong with it: the owner's account had no permission to create a
+> Firestore database there (the console offered *"ask a project owner for the necessary permissions"*
+> instead of a Create button), and the database that *did* appear in it was a **Realtime Database** —
+> a different product the chat code cannot talk to. Do not confuse the three console sections:
+> **Realtime Database**, **Storage** (needs a paid plan, irrelevant here) and **Cloud Firestore**. Only
+> the last one matters; Android's chat and this port both use `FirebaseFirestore` / `db.collection(...)`.
 >
-> ```
-> GET .../projects/thecontractor-b1d78/databases/(default)/documents/user_connections
-> HTTP 404  "The database (default) does not exist for project thecontractor-b1d78"
-> ```
+> A fresh project, **`contractor-e1442`**, was created with the owner as owner, an iOS app registered for
+> `com.contractor.TheContractorx`, Firestore created, and rules published as `allow read, write: if true`.
+> `TheContractor/GoogleService-Info.plist` is that project's. Read, write and delete are verified against
+> it, and **chat has now been driven end to end on it** — see the ledger in `PARITY_STATUS.md`.
 >
-> The 404 is database-level, not project-level — a genuinely unknown project id answers 403 to the same
-> key, so this is not an auth or a typo problem.
+> Three things to know:
 >
-> **Not to be confused with the Realtime Database.** b1d78 *does* have an RTDB instance
-> (`thecontractor-b1d78-default-rtdb.firebaseio.com`, empty, rules `.read`/`.write` both `false`) — it
-> answers 401 where a nonexistent instance answers 404. It is the wrong product: Android's chat and this
-> port both use **Cloud Firestore** (`FirebaseFirestore.getInstance()` / `Firestore.firestore()`,
-> `db.collection(...)`), which is a separate console section with a separate database. Seeing a database
-> under *Realtime Database* does not mean chat is provisioned. **Nothing in chat has ever run**: the inbox shipped in
-> `194df25` compiles and opens, and then every query errors. It cannot be verified on screen until
-> someone opens the Firebase console for b1d78 → Firestore Database → Create database (pick a region;
-> the rules mode matters too — the app never signs in to Firebase Auth, so locked-mode rules would deny
-> it just as completely). **This is the first thing to do before touching chat again.**
+> - **The open rules are deliberate and temporary.** The app authenticates against the PHP backend and
+>   never signs into Firebase Auth, so there is no identity for rules to test and production-mode rules
+>   deny every query. The API key ships inside the app binary, so the database is currently readable by
+>   anyone who extracts it. Tightening this means adopting Firebase Auth — separate work.
+> - **iOS chat is isolated from Android chat, permanently for now.** Android is on `thecontractor-uae`,
+>   which has its own live Firestore with real conversations in it. The owner has no access to that
+>   account, so the two will not converge without one.
+> - **Push delivery is still dead.** The backend pushes with `uae` credentials and cannot reach tokens
+>   minted by `contractor-e1442`. The two `send_message_notification` calls fire correctly; only delivery
+>   is blocked.
 
 Done:
 
@@ -221,14 +221,16 @@ Message button is correct but currently invisible on all live data.
 
 ## 5. Pending, in the order worth doing
 
-1. **Chat is written and unverifiable.** `createConnection`, the lazy create-on-first-send and the
-   Message entry point are all in and compile clean. **Not one line of it has run against a database**,
-   because b1d78 has no Firestore (see the box in §4). Nothing else in chat is worth touching until that
-   database exists. Once it does, the honest test is still: company 706 starts a thread, consumer 45 sees
-   and answers it — and it needs the `show_chat` decision revisited, since with the faithful gate there
-   is no ad in the QA data on which the Message button appears. Verifying it means either a row with
-   `show_chat = "1"` (backend or web side — the app cannot set it) or temporarily dropping `showsChat &&`
-   from `canMessageOwner`.
+1. **Chat is done and verified end to end** — company 706 started a thread, consumer 45 saw it and
+   answered, and both Firestore documents were read back and checked field by field. What is left on it:
+   - **The Message button is invisible on all live data**, because the shipped gate is `show_chat == "1"`
+     and every ad carries `"0"`. The end-to-end test was run with `showsChat &&` temporarily dropped from
+     `canMessageOwner`; that override is **not** committed. Making the feature reachable is either a row
+     with `show_chat = "1"` (backend or web side — no declared endpoint sets it) or deleting those two
+     words. This is a product decision, not a code one.
+   - **`findConnection`'s "existing thread found" branch has never fired.** Every run so far started with
+     an empty collection, so the branch that reuses a connection instead of creating a second one is the
+     one untested path in chat. Tapping Message on the same ad as company 706 again would exercise it.
 2. **SMS code on sign-up** (Firebase Phone Auth). Unaffected by the project mismatch. A simulator cannot
    receive an SMS, so add a test phone number in the Firebase console first, or it cannot be verified.
    The code step slots between `SignUpView`'s two existing steps and nothing else changes.
@@ -286,6 +288,14 @@ Nothing has been tested on a physical device, in Arabic, or (except the theme pa
   this pattern before trusting a form.
 - Old-style `project.pbxproj` with many duplicate file references; the build prints "Skipping duplicate
   build file" warnings that are pre-existing and harmless.
+- **A Firestore equality filter plus `order(by:)` on another field needs a composite index**, which a
+  freshly created project has none of, and the query fails outright until someone creates it by hand from
+  the URL in the error. `observeMessages` sorts in Swift instead, as `observeConnections` already did.
+  Android only works because that index was added to its project at some point.
+- **`VendorTheme.date` cannot be trusted for chat timestamps.** It tries `yyyy-MM-dd` first and only falls
+  back to the swapped order when that *fails* — and on a chat timestamp it never fails, it just silently
+  yields the wrong month for any day ≤ 12. Chat parses with the exact format via `ChatService.display` /
+  `shortDisplay`. Anything else reading a swapped-format string has the same bug latent in it.
 - **A fresh `simctl install` starts with no session at all.** The keychain note above is about surviving
   `uninstall`, not about a session existing in the first place — after a reinstall the drawer shows
   "Login or Create Account" and both halves have to be signed in again.

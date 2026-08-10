@@ -107,7 +107,7 @@ struct InboxView: View {
             Spacer(minLength: 0)
 
             if !connection.messageTime.isEmpty {
-                Text(VendorTheme.shortDate(connection.messageTime))
+                Text(ChatService.shortDisplay(connection.messageTime))
                     .font(VendorTheme.Text.meta)
                     .foregroundColor(VendorTheme.textTertiary)
             }
