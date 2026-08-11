@@ -131,13 +131,18 @@ feature: Android's `RetrofitApi` declares two `workshopAds` overloads and two `w
 overloads, and the live activities call the `workshop/...` ones, not these. The consumer browse list is
 built on `workshop/workshops` + `workshop/get_workshop_details`, which is what actually shipped.
 
-**The 15 real gaps**, grouped:
+**13 real gaps**, re-audited by diffing every path Android's `RetrofitApi` declares *and calls* against every
+path string appearing anywhere in the iOS sources. Two caveats on the method: Android declares overloaded
+methods sharing a name (`workshopAds`, `workshopAdDetails`), so a path can look called when only its
+sibling is — which is why the `Home/...workshop_ad...` pair below is still listed despite being dead; and
+a path merely *mentioned in an iOS comment* counts as present, so the list errs toward under-reporting.
+There are **no fabricated endpoints**: every URL iOS calls is one Android declares.
 
 | Group | Endpoints | Comment |
 |---|---|---|
 | ~~Session~~ | ~~`Account/get_user_details_by_id`~~ | **Now called.** Chat needs the workshop ad owner's `uuid` and it is the only live endpoint that returns one. |
 | Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. **`Vendor/workshop_ad_detail` is broken on the backend** and cannot be ported — see the issues table below. |
-| Freelancer order chat | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | Chat — same Firebase blocker. |
+| **Freelancer order chat** | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | **The largest genuinely missing feature, and nothing to do with Firebase** — an earlier note here calling it "the same Firebase blocker" was wrong. Android's `VendorFreelancerChat` is a plain REST chat on a freelancer *order*, separate from the Firestore company↔user chat. iOS has no screen for it at all. |
 | Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
 | ~~Push notifications~~ | ~~`Home/send_message_notification`, `vendor/send_message_notification`~~ | **Now called**, one per side, fire-and-forget from `ChatService.send` exactly where Android fires them. Both probed live (with deliberately bogus ids, so nothing was pushed to a real account) and both answer `{"message":"error","error":false}`. Note the part is `meesage`, and the consumer call's `company_id` part actually carries the company's *serial number*. |
 | Misc | `Home/quotation_fee_paid`, `Home/get_by_company_id`, `jobs/search_job_title` | Quotation fee payment; company lookup by id; job-title autocomplete. |
