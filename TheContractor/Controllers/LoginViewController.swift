@@ -13,90 +13,53 @@ class LoginViewController: BaseViewController {
     @IBOutlet weak var txtPin: UITextField!
     @IBOutlet weak var txtNumber: UITextField!
 
-    private lazy var loginAsCompanyButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Login as a Company", for: .normal)
-        button.titleLabel?.font = AppFonts.CenturyGolthicRegularWith(size: 16)
-        button.setTitleColor(AppColors.yellow, for: .normal)
-        button.backgroundColor = .clear
-        button.layer.cornerRadius = 8
-        button.layer.borderWidth = 1
-        button.layer.borderColor = AppColors.yellow.cgColor
-        button.contentEdgeInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
-        button.addTarget(self, action: #selector(actionLoginAsCompany(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
 
-    private lazy var forgotPasswordButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Forgot Password?", for: .normal)
-        button.titleLabel?.font = AppFonts.CenturyGolthicRegularWith(size: 14)
-        button.setTitleColor(AppColors.yellow, for: .normal)
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(actionForgetPassword(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
 
-    private lazy var createAccountButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("New here? Create an account", for: .normal)
-        button.titleLabel?.font = AppFonts.CenturyGolthicRegularWith(size: 14)
-        button.setTitleColor(AppColors.yellow, for: .normal)
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(actionNotMember(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoginAsCompanyButton()
-        setupForgotPasswordButton()
-        setupCreateAccountButton()
+        installLoginScreen()
     }
 
-    private func setupCreateAccountButton() {
-        view.addSubview(createAccountButton)
+    /// Covers the storyboard scene with `ConsumerLoginView`. The scene's own logo, fields and Login
+    /// button stay in the hierarchy underneath — the outlets are still wired, so nothing that touches
+    /// them has to change — but nothing sees them.
+    private func installLoginScreen() {
+        let screen = ConsumerLoginView(
+            onLogin: { [weak self] phone, pin in self?.performLogin(phone: phone, pin: pin) },
+            onSkip: { [weak self] in self?.actionSkip(self as Any) },
+            onCreateAccount: { [weak self] in self?.actionNotMember(self as Any) },
+            onForgotPassword: { [weak self] in self?.actionForgetPassword(self as Any) },
+            onCompanyLogin: { [weak self] in self?.actionLoginAsCompany(self as Any) })
+
+        let host = UIHostingController(rootView: screen)
+        addChild(host)
+        host.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(host.view)
         NSLayoutConstraint.activate([
-            createAccountButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            createAccountButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            createAccountButton.bottomAnchor.constraint(equalTo: forgotPasswordButton.topAnchor, constant: -4),
-            createAccountButton.heightAnchor.constraint(equalToConstant: 36)
+            host.view.topAnchor.constraint(equalTo: view.topAnchor),
+            host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        host.didMove(toParent: self)
     }
 
-    private func setupForgotPasswordButton() {
-        view.addSubview(forgotPasswordButton)
-        NSLayoutConstraint.activate([
-            forgotPasswordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            forgotPasswordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            forgotPasswordButton.bottomAnchor.constraint(equalTo: loginAsCompanyButton.topAnchor, constant: -12),
-            forgotPasswordButton.heightAnchor.constraint(equalToConstant: 36)
-        ])
-    }
 
-    private func setupLoginAsCompanyButton() {
-        view.addSubview(loginAsCompanyButton)
 
-        NSLayoutConstraint.activate([
-            loginAsCompanyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            loginAsCompanyButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            loginAsCompanyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32),
-            loginAsCompanyButton.heightAnchor.constraint(equalToConstant: 48)
-        ])
-    }
     @IBAction func actionSkip(_ sender: Any) {
         let storyBoard = UIStoryboard.init(name: "Drawer", bundle: nil)
         let vc = storyBoard.instantiateViewController(withIdentifier: "KYDrawerController") as! KYDrawerController
         Global.shared.isLogedIn = false
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    /// Kept for the storyboard connection; the visible screen is `ConsumerLoginView`, which calls
+    /// `performLogin` directly.
     @IBAction func actionLogin(_ sender: Any) {
-        let phoneNumber = self.txtNumber.text ?? ""
-        let password = self.txtPin.text ?? ""
+        performLogin(phone: txtNumber?.text ?? "", pin: txtPin?.text ?? "")
+    }
 
+    func performLogin(phone phoneNumber: String, pin password: String) {
         // Validate inputs (matching Android's Login.java exactly)
         if phoneNumber.isEmpty {
             self.showAlertView(message: "Enter phone number")

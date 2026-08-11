@@ -314,6 +314,7 @@
 		90SRES012F58200000D106BC /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SRES002F58200000D106BC /* SearchResultsView.swift */; };
 		A2386867D1AA9A89ADE50830 /* VendorMyMembershipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46E73E837F4257644C4073D /* VendorMyMembershipDetailView.swift */; };
 		A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17599322345B4B772ABBAD /* SignUpView.swift */; };
+		22F9BC4CD4EE4D1097ED2BE7 /* ConsumerLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA39C82A8A247E7B39C47DA /* ConsumerLoginView.swift */; };
 		F50CCFD26FAB4F4F883A2883 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */; };
 		ADA69BED3567D410EFA62928 /* VendorJobsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5A0B744778F590FFDBDD5 /* VendorJobsHostingController.swift */; };
 		C71ED1B4650A158FAC14ED79 /* VendorPostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */; };
@@ -473,6 +474,7 @@
 		256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHireFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHireFreelancerView.swift; sourceTree = SOURCE_ROOT; };
 		43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDirectHiringView.swift; sourceTree = "<group>"; };
 		4A17599322345B4B772ABBAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		4EA39C82A8A247E7B39C47DA /* ConsumerLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumerLoginView.swift; sourceTree = "<group>"; };
 		6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		6C8B626348FA64B2A1B0804B /* VendorJobApplicantsHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorJobApplicantsHostingController.swift; sourceTree = "<group>"; };
 		6CD1F94792207836DD4C3716 /* VendorEnquiriesHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorEnquiriesHostingController.swift; sourceTree = "<group>"; };
@@ -1338,6 +1340,7 @@
 				654189C484BA250D5C381AEF /* InboxView.swift */,
 				E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */,
 				4A17599322345B4B772ABBAD /* SignUpView.swift */,
+				4EA39C82A8A247E7B39C47DA /* ConsumerLoginView.swift */,
 				6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */,
 				8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */,
 				978022319FA6D12FD35A1FE9 /* EstimationView.swift */,
@@ -1558,6 +1561,7 @@
 				EDD0C2BC089025A6D31C0579 /* VendorDirectHiringView.swift in Sources */,
 				4F330F33564886463F405EA8 /* WorkshopAdsView.swift in Sources */,
 				A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */,
+				22F9BC4CD4EE4D1097ED2BE7 /* ConsumerLoginView.swift in Sources */,
 				F50CCFD26FAB4F4F883A2883 /* ForgotPasswordView.swift in Sources */,
 				1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */,
 				F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */,
