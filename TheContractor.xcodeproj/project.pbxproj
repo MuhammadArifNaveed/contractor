@@ -323,6 +323,7 @@
 		F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978022319FA6D12FD35A1FE9 /* EstimationView.swift */; };
 		FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C4CC5F4700681BC82239FD /* ConsumerCartStore.swift */; };
 		C5B61F554C81960945F71988 /* ChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA34CA9CFA07944BCDB2EE5 /* ChatService.swift */; };
+		3E50E13862D344FBAFCD0944 /* PhoneAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */; };
 		73B923325CEC57151D509BFE /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654189C484BA250D5C381AEF /* InboxView.swift */; };
 		5905A388F0F1C6C0394C314A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
@@ -660,6 +661,7 @@
 		E427B39844C2A348174E3164 /* Pods-TheContractor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TheContractor.release.xcconfig"; path = "Target Support Files/Pods-TheContractor/Pods-TheContractor.release.xcconfig"; sourceTree = "<group>"; };
 		EEC619E2300B37FE01A5EA57 /* VendorQuotationsHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorQuotationsHostingController.swift; sourceTree = "<group>"; };
 		BAA34CA9CFA07944BCDB2EE5 /* ChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatService.swift; sourceTree = "<group>"; };
+		580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneAuthService.swift; sourceTree = "<group>"; };
 		654189C484BA250D5C381AEF /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -822,6 +824,7 @@
 			isa = PBXGroup;
 			children = (
 				BAA34CA9CFA07944BCDB2EE5 /* ChatService.swift */,
+				580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */,
 				18EA180B26D28820003DF2FC /* BaseService.swift */,
 				18EA180C26D28820003DF2FC /* LoginService.swift */,
 			);
@@ -1551,6 +1554,7 @@
 			files = (
 				73B923325CEC57151D509BFE /* InboxView.swift in Sources */,
 				C5B61F554C81960945F71988 /* ChatService.swift in Sources */,
+				3E50E13862D344FBAFCD0944 /* PhoneAuthService.swift in Sources */,
 				EDD0C2BC089025A6D31C0579 /* VendorDirectHiringView.swift in Sources */,
 				4F330F33564886463F405EA8 /* WorkshopAdsView.swift in Sources */,
 				A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */,

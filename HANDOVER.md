@@ -227,9 +227,13 @@ by a *user* — `user_connections` has one company half and one user half, with 
    reopened the same thread; the collection still holds exactly one connection with the same `chat_uuid`)
    and `markThreadViewed` on both sides. The only chat work left is outside the app: push *delivery*
    (item 3), which no code change here can unblock.
-2. **SMS code on sign-up** (Firebase Phone Auth). Unaffected by the project mismatch. A simulator cannot
-   receive an SMS, so add a test phone number in the Firebase console first, or it cannot be verified.
-   The code step slots between `SignUpView`'s two existing steps and nothing else changes.
+2. **SMS code on sign-up — written, never executed.** `PhoneAuthService` plus a third step in
+   `SignUpView`, replicating `VerifyNumber` (60-second resend countdown included). Blocked on the console:
+   **Firebase Authentication has never been enabled** on `contractor-e1442` — `identitytoolkit` answers
+   `CONFIGURATION_NOT_FOUND`. Authentication → Get started → enable **Phone** → add a **test phone
+   number**. The test number is required for simulator verification: real Phone Auth needs an APNs key on
+   the project so Firebase can silently push a token proving the app is genuine, a simulator gets no push,
+   and the reCAPTCHA fallback wants a `REVERSED_CLIENT_ID` URL scheme this plist has no `CLIENT_ID` for.
 3. **Push delivery.** The token now reaches the backend; what is untested is whether a notification
    arrives and what happens when it is tapped. Blocked in practice by the project mismatch, since the
    backend pushes from `uae`.

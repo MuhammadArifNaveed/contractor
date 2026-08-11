@@ -8,12 +8,13 @@
 //  `VerifyNumberViewController` had a back button and nothing else, so a new user could not create an
 //  account at all. Everything else on the consumer side assumes an account already exists.
 //
-//  **The one step that is not replicated: the SMS code.** Android sends it through Firebase Phone Auth
-//  and opens the details form only once the code is confirmed. There is no server-side OTP endpoint —
-//  the SMS gate lives entirely in the client — and this app has no Firebase, the same blocker that
-//  keeps both inboxes switched off. `Account/user_register` accepts a number with no proof of
-//  ownership, so the number is checked for availability and taken on trust. When Firebase is added,
-//  the code step slots in between the two steps below and nothing else has to change.
+//  Three steps, matching Android: the number, the SMS code, then the account.
+//
+//  The code step is the only thing standing between a stranger and an account on someone else's number.
+//  There is no server-side OTP on either platform — `Account/phone_check` only reports whether a number
+//  is free, and `Account/user_register` accepts whatever it is handed — so the gate is entirely
+//  client-side, in `PhoneAuthService`. `Account/phone_check` still runs first, so a number that is
+//  already registered is rejected before an SMS is spent on it.
 //
 
 import SwiftUI
@@ -26,12 +27,16 @@ struct SignUpView: View {
 
     private enum Step {
         case phone
+        case code
         case details
     }
 
     @State private var step: Step = .phone
 
     @State private var phone = ""
+    @State private var code = ""
+    /// Android hides its resend button behind a 60-second countdown and shows the remaining time.
+    @State private var secondsUntilResend = 0
     @State private var username = ""
     @State private var firstName = ""
     @State private var lastName = ""
@@ -44,8 +49,7 @@ struct SignUpView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VendorTopBar(title: step == .phone ? "Create account" : "Your details",
-                         onBack: { step == .phone ? onCancel() : withAnimation { step = .phone } })
+            VendorTopBar(title: title, onBack: goBack)
 
             ZStack {
                 VendorTheme.canvas.ignoresSafeArea(edges: .bottom)
@@ -55,6 +59,8 @@ struct SignUpView: View {
                         switch step {
                         case .phone:
                             phoneStep
+                        case .code:
+                            codeStep
                         case .details:
                             detailsStep
                         }
@@ -73,6 +79,33 @@ struct SignUpView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(notice ?? "")
+        }
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            if secondsUntilResend > 0 { secondsUntilResend -= 1 }
+        }
+    }
+
+    private var title: String {
+        switch step {
+        case .phone: return "Create account"
+        case .code: return "Verify your number"
+        case .details: return "Your details"
+        }
+    }
+
+    /// Stepping back off the code screen throws the verification away, so re-entering a number always
+    /// starts a fresh one rather than checking the new number against the old number's code.
+    private func goBack() {
+        switch step {
+        case .phone:
+            onCancel()
+        case .code:
+            PhoneAuthService.shared.reset()
+            code = ""
+            secondsUntilResend = 0
+            withAnimation { step = .phone }
+        case .details:
+            withAnimation { step = .code }
         }
     }
 
@@ -119,7 +152,53 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - Step 2, the account
+    // MARK: - Step 2, the code
+
+    private var codeStep: some View {
+        VStack(spacing: VendorTheme.Space.m) {
+            VStack(alignment: .leading, spacing: VendorTheme.Space.m) {
+                Text("Enter the code we sent you")
+                    .font(VendorTheme.Text.screenTitle)
+                    .foregroundColor(VendorTheme.textPrimary)
+
+                Text("We sent a code to \(PhoneNumber.e164(phone)).")
+                    .font(VendorTheme.Text.meta)
+                    .foregroundColor(VendorTheme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                TextField("123456", text: $code)
+                    .keyboardType(.numberPad)
+                    .font(VendorTheme.Text.metric)
+                    .multilineTextAlignment(.center)
+                    .padding(VendorTheme.Space.m)
+                    .background(
+                        RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                            .fill(VendorTheme.surfaceRaised)
+                    )
+
+                // Android shows a live countdown and swaps in the resend button only once it reaches zero.
+                if secondsUntilResend > 0 {
+                    Text("Resend in \(secondsUntilResend / 60):\(String(format: "%02d", secondsUntilResend % 60))")
+                        .font(VendorTheme.Text.meta)
+                        .foregroundColor(VendorTheme.textTertiary)
+                } else {
+                    Button(action: sendCode) {
+                        Text("Resend code")
+                            .font(VendorTheme.Text.label)
+                            .foregroundColor(VendorTheme.textPrimary)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .disabled(isBusy)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .vendorCard()
+
+            primaryButton("Verify", action: verifyCode)
+        }
+    }
+
+    // MARK: - Step 3, the account
 
     private var detailsStep: some View {
         VStack(spacing: VendorTheme.Space.m) {
@@ -226,14 +305,57 @@ struct SignUpView: View {
         GCD.async(.Background) {
             LoginService.shared().checkPhoneAvailability(phone: PhoneNumber.e164(phone)) { message, available in
                 GCD.async(.Main) {
-                    isBusy = false
-                    if available {
-                        withAnimation { step = .details }
-                    } else {
+                    guard available else {
+                        isBusy = false
                         // The backend's own wording covers "already registered".
                         notice = message.isEmpty ? "This number cannot be used" : message
+                        return
                     }
+                    // Free to register — now prove the number belongs to whoever is asking. `isBusy`
+                    // stays on through the send, which is Android showing its progress dialog across
+                    // both calls.
+                    sendCode()
                 }
+            }
+        }
+    }
+
+    /// Sends the SMS, and doubles as the resend action — Android's `ResendCode()` is the same call with
+    /// the same options.
+    private func sendCode() {
+        isBusy = true
+        PhoneAuthService.shared.sendCode(to: PhoneNumber.e164(phone)) { error in
+            GCD.async(.Main) {
+                isBusy = false
+                if let error = error {
+                    notice = error
+                    // Android drops back to the number field when verification cannot start.
+                    withAnimation { step = .phone }
+                    return
+                }
+                code = ""
+                secondsUntilResend = PhoneAuthService.resendInterval
+                withAnimation { step = .code }
+            }
+        }
+    }
+
+    private func verifyCode() {
+        let trimmed = code.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            notice = "Enter the code"
+            return
+        }
+
+        isBusy = true
+        PhoneAuthService.shared.verify(code: trimmed) { error in
+            GCD.async(.Main) {
+                isBusy = false
+                if let error = error {
+                    notice = error
+                    return
+                }
+                withAnimation { step = .details }
             }
         }
     }

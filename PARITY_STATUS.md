@@ -93,20 +93,30 @@ Two scripts, both in the session scratchpad, both worth running after any change
 
 ### 1. The SMS code on sign-up
 
-Sign-up itself now works: `SignUpView` takes the number, checks it with `Account/phone_check`, collects
-the account details and creates it with `Account/user_register`, which returns the new `user` so the
-account is signed in from the registration response — the same thing Android does.
+`SignUpView` is now three steps, matching Android: the number (`Account/phone_check`), the SMS code
+(Firebase Phone Auth, in `PhoneAuthService`), then the account (`Account/user_register`). The code step
+replicates `VerifyNumber`: `verifyPhoneNumber` → 60-second countdown with the resend button hidden behind
+it → `credential(withVerificationID:verificationCode:)` → `signIn(with:)`, and the details form opens only
+once that succeeds. Android's `onVerificationCompleted` auto-fill has no counterpart, because iOS cannot
+read the SMS itself.
 
-**What is missing is the verification code.** Android sends it through Firebase Phone Auth and opens
-the details form only once the code is confirmed. There is no server-side OTP endpoint — the SMS gate
-is entirely client-side — and `Account/user_register` accepts a number with no proof of ownership. So
-iOS checks the number is free and takes it on trust. Anyone can register a number that is not theirs,
-exactly as they could by calling the endpoint directly.
+**It compiles and has never run.** Firebase Authentication is not enabled on `contractor-e1442` —
+`identitytoolkit.googleapis.com/v1/projects` answers `CONFIGURATION_NOT_FOUND`, meaning the product has
+never been initialised for the project, the same way Firestore had not been. Until that is done:
 
-Turning on Firebase (the same blocker as both inboxes) closes this: the code step slots in between the
-two existing steps and nothing else changes.
+1. Firebase console → **Authentication** → Get started (this creates the config).
+2. Sign-in method → enable **Phone**.
+3. Phone → **Phone numbers for testing** → add a number and a fixed code.
 
-`Account/get_user_details_by_id` is still unused — nothing needs to re-read the account yet.
+Step 3 is not optional for a simulator. Real phone verification needs an APNs key uploaded to the Firebase
+project so Firebase can silently push a token to prove the app is genuine; a simulator receives no push,
+and the reCAPTCHA fallback needs a `REVERSED_CLIENT_ID` URL scheme that this plist does not carry. A
+console test number bypasses all of it. Any of those failures surface as "Verification is not set up for
+this app yet" rather than blaming the user's number.
+
+Until the console side is done, **`Account/user_register` is still reachable with an unverified number**
+by calling it directly — the gate is client-side on both platforms, so this closes the app's door, not
+the endpoint's.
 
 ### 2. Android endpoints iOS does not call (21, of which 6 are dead in Android too)
 
@@ -138,7 +148,7 @@ built on `workshop/workshops` + `workshop/get_workshop_details`, which is what a
 |---|---|---|
 | ~~**Firestore not provisioned**~~ | ~~All of chat~~ | **Resolved.** iOS moved to a new project, `contractor-e1442`, with Firestore created and rules `allow read, write: if true`. Chat is verified end to end on it. The open rules are a standing security debt — the app never signs into Firebase Auth, so there is no identity for stricter rules to test, and the API key ships in the binary. |
 | **Firebase is in a different project than Android** | Cross-platform chat visibility, and push delivery | iOS is on `contractor-e1442`, Android on `thecontractor-uae`. Firestore and FCM are per-project, so the two apps' conversations are invisible to each other and the backend (which pushes from `uae`) cannot deliver to iOS tokens — the `send_message_notification` calls succeed, only delivery is dead. **Not fixable from this side:** nobody here has access to the `uae` account, so converging the two needs whoever owns it. |
-| **SMS code on sign-up** | Sign-up takes a phone number on trust | Firebase Phone Auth, unaffected by the project mismatch. A simulator cannot receive an SMS, so a test number has to be added in the console before it can be verified. |
+| **Firebase Authentication is not enabled** | The SMS code on sign-up | Built and compiling, never executed: `identitytoolkit.googleapis.com` answers `CONFIGURATION_NOT_FOUND` for `contractor-e1442`, so Auth has never been initialised. Console → Authentication → Get started, enable **Phone**, then add a **test phone number**, which a simulator needs because it cannot receive an SMS and has no APNs token to prove the app with. |
 | **No payment gateway decision** | Membership card purchase (`vendor/buy_membership_online` and the two workshop-membership calls) | Coupon purchase already works. |
 | **Backend bug** | Consumer enquiry detail | `Home/recent_enquiries` returns HTML: `mysqli_sql_exception: Unknown column 't2.company_whatsapp_phone' in 'field list'`. Affects Android too. The list works; the drill-down waits on the column fix. |
 | **Product question** | Consumer reviews | Android has no `submit_review` or `get_company_reviews` endpoint at all. The unreachable iOS screens for both were deleted. Company ratings still show via `Home/company_detail`. If reviews are meant to exist, the backend needs endpoints first. |
