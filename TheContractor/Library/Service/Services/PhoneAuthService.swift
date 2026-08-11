@@ -79,11 +79,24 @@ final class PhoneAuthService {
     /// verification code to try again."), and two of the cases are configuration problems that would
     /// otherwise reach a user as gibberish.
     private static func message(for error: Error) -> String {
-        guard let code = AuthErrorCode(rawValue: (error as NSError).code) else {
+        let nsError = error as NSError
+
+        guard let code = AuthErrorCode(rawValue: nsError.code) else {
             return error.localizedDescription
         }
 
         switch code {
+        // `.internalError` is Firebase's catch-all and its message is literally "An internal error has
+        // occurred, print and inspect the error details for more information" — which tells a user
+        // nothing and a developer only where to look. The server's own reason is in the userInfo under
+        // `FIRAuthErrorUserInfoDeserializedResponseKey`, so it is dug out and shown. `CONFIGURATION_NOT_FOUND`
+        // there, for instance, means Firebase Authentication has never been enabled on the project.
+        case .internalError:
+            let response = nsError.userInfo["FIRAuthErrorUserInfoDeserializedResponseKey"] as? [String: Any]
+            let reason = (response?["message"] as? String)
+                ?? ((response?["error"] as? [String: Any])?["message"] as? String)
+            guard let reason = reason, !reason.isEmpty else { return error.localizedDescription }
+            return "Verification failed: \(reason)"
         case .invalidVerificationCode:
             return "That code is not right. Check it and try again."
         case .sessionExpired:

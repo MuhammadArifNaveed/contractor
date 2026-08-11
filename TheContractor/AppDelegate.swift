@@ -7,6 +7,7 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+import FirebaseAuth
 import FirebaseCore
 import FirebaseMessaging
 import UserNotifications
@@ -53,6 +54,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // Messaging needs the APNs token to mint an FCM one.
         Messaging.messaging().apnsToken = deviceToken
+        // Auth needs it too, for a different reason: phone verification proves the app is genuine by
+        // having Firebase send it a silent push. Without this the SMS step falls back to a reCAPTCHA
+        // page in a browser. `.unknown` lets the SDK read sandbox-vs-production off the provisioning
+        // profile rather than us hardcoding it per build.
+        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+    }
+
+    /// The silent push that proves the app is genuine during phone verification. Returning early when
+    /// Auth claims it keeps that internal message out of the rest of the notification handling.
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if Auth.auth().canHandleNotification(userInfo) {
+            completionHandler(.noData)
+            return
+        }
+        completionHandler(.noData)
+    }
+
+    /// The reCAPTCHA fallback's callback, for when there is no APNs token to verify the app with — a
+    /// simulator, or a build whose Firebase project has no APNs key. The scheme it returns on is
+    /// registered in Info.plist as `app-<GOOGLE_APP_ID with colons as dashes>`; `PhoneAuthProvider`
+    /// calls `fatalError` outright if that scheme is missing, so it is not optional.
+    ///
+    /// This app is scene-based, so `SceneDelegate.scene(_:openURLContexts:)` is what actually fires;
+    /// this stays for completeness and for any pre-scene path.
+    func application(_ app: UIApplication, open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        Auth.auth().canHandle(url)
     }
 
     func application(_ application: UIApplication,

@@ -5,6 +5,7 @@
 //  Created by Rana Faheem on 8/22/21.
 //
 
+import FirebaseAuth
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -53,6 +54,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard let _ = (scene as? UIWindowScene) else { return }
         }
     }
+    /// Phone verification's reCAPTCHA fallback comes back through a custom URL scheme, and on a
+    /// scene-based app this is the method that receives it — `AppDelegate.application(_:open:options:)`
+    /// is never called once scenes are in play.
+    @available(iOS 13.0, *)
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        for context in URLContexts where Auth.auth().canHandle(context.url) {
+            return
+        }
+    }
+
     @available(iOS 13.0, *)
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
