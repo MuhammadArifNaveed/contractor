@@ -430,6 +430,24 @@ class LoginService: BaseService {
         }
     }
     
+    /// Set a new password after a forgotten-password phone verification. Android:
+    /// `RetrofitApi.newPassword()` → `POST Account/update_password`, parts `new_password` and
+    /// `user_phone`.
+    ///
+    /// **The endpoint asks for no proof of anything** — a phone number and a new password is the whole
+    /// request, so whoever calls it can take over any account whose number they know. Android's gate is
+    /// Firebase phone verification in `ForgotPassword`, entirely client-side, and `ForgotPasswordView`
+    /// is the same gate here. Nothing stops the endpoint being called directly on either platform; this
+    /// closes the app's door only.
+    func resetPassword(phone: String, newPassword: String,
+                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Account/update_password"
+        let params: [String: String] = ["new_password": newPassword, "user_phone": phone]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
     /// Update user profile with optional image
     
     // MARK: - Estimations

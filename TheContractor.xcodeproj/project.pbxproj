@@ -27,7 +27,6 @@
 		189A768A26D7010800F28786 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A768926D7010800F28786 /* LoginViewController.swift */; };
 		189A768D26D7017900F28786 /* VerifyNumberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A768C26D7017900F28786 /* VerifyNumberViewController.swift */; };
 		189A769026D7018F00F28786 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A768F26D7018F00F28786 /* RegistrationViewController.swift */; };
-		189A769326D701FF00F28786 /* ForgetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A769226D701FF00F28786 /* ForgetPasswordViewController.swift */; };
 		189A769626D7021400F28786 /* OTPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A769526D7021400F28786 /* OTPViewController.swift */; };
 		189A769926D7022400F28786 /* NewPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A769826D7022400F28786 /* NewPasswordViewController.swift */; };
 		18C1BCA426F9656C0001EB73 /* CategoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C1BCA326F9656C0001EB73 /* CategoryListViewModel.swift */; };
@@ -315,6 +314,7 @@
 		90SRES012F58200000D106BC /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90SRES002F58200000D106BC /* SearchResultsView.swift */; };
 		A2386867D1AA9A89ADE50830 /* VendorMyMembershipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46E73E837F4257644C4073D /* VendorMyMembershipDetailView.swift */; };
 		A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17599322345B4B772ABBAD /* SignUpView.swift */; };
+		F50CCFD26FAB4F4F883A2883 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */; };
 		ADA69BED3567D410EFA62928 /* VendorJobsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5A0B744778F590FFDBDD5 /* VendorJobsHostingController.swift */; };
 		C71ED1B4650A158FAC14ED79 /* VendorPostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */; };
 		E5FD036F0B7646A1894F4939 /* CompanyLoginHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2DE02893B945888A6B365F /* CompanyLoginHostingController.swift */; };
@@ -348,7 +348,6 @@
 		189A768926D7010800F28786 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		189A768C26D7017900F28786 /* VerifyNumberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyNumberViewController.swift; sourceTree = "<group>"; };
 		189A768F26D7018F00F28786 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
-		189A769226D701FF00F28786 /* ForgetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordViewController.swift; sourceTree = "<group>"; };
 		189A769526D7021400F28786 /* OTPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTPViewController.swift; sourceTree = "<group>"; };
 		189A769826D7022400F28786 /* NewPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPasswordViewController.swift; sourceTree = "<group>"; };
 		18C1BCA326F9656C0001EB73 /* CategoryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewModel.swift; sourceTree = "<group>"; };
@@ -474,6 +473,7 @@
 		256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHireFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHireFreelancerView.swift; sourceTree = SOURCE_ROOT; };
 		43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDirectHiringView.swift; sourceTree = "<group>"; };
 		4A17599322345B4B772ABBAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		6C8B626348FA64B2A1B0804B /* VendorJobApplicantsHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorJobApplicantsHostingController.swift; sourceTree = "<group>"; };
 		6CD1F94792207836DD4C3716 /* VendorEnquiriesHostingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorEnquiriesHostingController.swift; sourceTree = "<group>"; };
 		800504CC2F54CD3800D106BC /* AdvertiseCompanyHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertiseCompanyHostingController.swift; sourceTree = "<group>"; };
@@ -739,7 +739,6 @@
 				189A768926D7010800F28786 /* LoginViewController.swift */,
 				189A768C26D7017900F28786 /* VerifyNumberViewController.swift */,
 				189A768F26D7018F00F28786 /* RegistrationViewController.swift */,
-				189A769226D701FF00F28786 /* ForgetPasswordViewController.swift */,
 				189A769526D7021400F28786 /* OTPViewController.swift */,
 				189A769826D7022400F28786 /* NewPasswordViewController.swift */,
 				180FE33226D85AF500D1D3C3 /* ProfileViewController.swift */,
@@ -1339,6 +1338,7 @@
 				654189C484BA250D5C381AEF /* InboxView.swift */,
 				E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */,
 				4A17599322345B4B772ABBAD /* SignUpView.swift */,
+				6CEF3885DBDE432D861FEBEF /* ForgotPasswordView.swift */,
 				8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */,
 				978022319FA6D12FD35A1FE9 /* EstimationView.swift */,
 				806CA9232F5768C600D31D28 /* Auth */,
@@ -1558,6 +1558,7 @@
 				EDD0C2BC089025A6D31C0579 /* VendorDirectHiringView.swift in Sources */,
 				4F330F33564886463F405EA8 /* WorkshopAdsView.swift in Sources */,
 				A26734FC62DEB9F0DE360AA5 /* SignUpView.swift in Sources */,
+				F50CCFD26FAB4F4F883A2883 /* ForgotPasswordView.swift in Sources */,
 				1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */,
 				F6FDA861D4B6A438481408EF /* EstimationView.swift in Sources */,
 				FFC02F45BB70E60F1BF011CB /* ConsumerCartStore.swift in Sources */,
@@ -1680,7 +1681,6 @@
 				18EA189626D28820003DF2FC /* KYEmbedDrawerControllerSegue.swift in Sources */,
 				18EA187426D28820003DF2FC /* UserDefaultsManager.swift in Sources */,
 				18E9D86A26D2FEB600C984A0 /* EquiryDetailsTableViewCell.swift in Sources */,
-				189A769326D701FF00F28786 /* ForgetPasswordViewController.swift in Sources */,
 				18EA187026D28820003DF2FC /* Strings.swift in Sources */,
 				18EA18B226D28820003DF2FC /* NoDataView.swift in Sources */,
 				18EA18AA26D28820003DF2FC /* StringTrimExtension.swift in Sources */,

@@ -121,9 +121,20 @@ class LoginViewController: BaseViewController {
         self.userLogin(params: params)
     }
     
+    /// Used to push `ForgetPasswordViewController`, which took a number and a new password on one screen
+    /// and posted them to `Account/update_password` — an endpoint that asks for no proof of ownership, so
+    /// knowing someone's number was enough to take their account. `ForgotPasswordView` puts Android's
+    /// Firebase phone verification in front of it.
     @IBAction func actionForgetPassword(_ sender: Any) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ForgetPasswordViewController") as! ForgetPasswordViewController
-        self.navigationController?.pushViewController(vc, animated: true)
+        let reset = ForgotPasswordView(
+            onFinished: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+                self?.showAlertView(message: "Password changed. Sign in with your new password.")
+            },
+            onCancel: { [weak self] in self?.navigationController?.popViewController(animated: true) })
+        let controller = UIHostingController(rootView: reset)
+        controller.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     /// Used to push `VerifyNumberViewController`, a storyboard shell with a back button and no
     /// behaviour, so sign-up was a dead end. Now the real flow.
