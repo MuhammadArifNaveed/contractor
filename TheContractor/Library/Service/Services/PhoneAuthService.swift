@@ -86,16 +86,15 @@ final class PhoneAuthService {
         }
 
         switch code {
-        // `.internalError` is Firebase's catch-all and its message is literally "An internal error has
+        // `.internalError` is Firebase's catch-all, and its message is literally "An internal error has
         // occurred, print and inspect the error details for more information" — which tells a user
-        // nothing and a developer only where to look. The server's own reason is in the userInfo under
-        // `FIRAuthErrorUserInfoDeserializedResponseKey`, so it is dug out and shown. `CONFIGURATION_NOT_FOUND`
-        // there, for instance, means Firebase Authentication has never been enabled on the project.
+        // nothing and a developer only where to look. The server's own reason is in the userInfo, but
+        // **which key holds it depends on which wrapper the SDK reached for**: `unexpectedErrorResponse`
+        // has four overloads, storing the parsed JSON, the raw body, an underlying error, or some
+        // combination. All three are worth trying. `CONFIGURATION_NOT_FOUND`, for instance, means
+        // Firebase Authentication has never been enabled on the project.
         case .internalError:
-            let response = nsError.userInfo["FIRAuthErrorUserInfoDeserializedResponseKey"] as? [String: Any]
-            let reason = (response?["message"] as? String)
-                ?? ((response?["error"] as? [String: Any])?["message"] as? String)
-            guard let reason = reason, !reason.isEmpty else { return error.localizedDescription }
+            guard let reason = serverReason(in: nsError) else { return error.localizedDescription }
             return "Verification failed: \(reason)"
         case .invalidVerificationCode:
             return "That code is not right. Check it and try again."
@@ -117,5 +116,29 @@ final class PhoneAuthService {
         default:
             return error.localizedDescription
         }
+    }
+
+    /// Digs the backend's own message out of a wrapped Auth error, whichever way the SDK stashed it:
+    /// the deserialized JSON, the raw response body, or a nested underlying error.
+    private static func serverReason(in error: NSError) -> String? {
+        func message(in any: Any?) -> String? {
+            guard let dictionary = any as? [String: Any] else { return nil }
+            if let message = dictionary["message"] as? String, !message.isEmpty { return message }
+            if let nested = dictionary["error"] as? [String: Any],
+               let message = nested["message"] as? String, !message.isEmpty { return message }
+            return nil
+        }
+
+        if let reason = message(in: error.userInfo["FIRAuthErrorUserInfoDeserializedResponseKey"]) {
+            return reason
+        }
+        if let data = error.userInfo["FIRAuthErrorUserInfoDataKey"] as? Data,
+           let reason = message(in: try? JSONSerialization.jsonObject(with: data)) {
+            return reason
+        }
+        if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+            return serverReason(in: underlying) ?? underlying.localizedDescription
+        }
+        return nil
     }
 }
