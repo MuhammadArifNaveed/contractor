@@ -45,6 +45,27 @@ struct VendorFreelancersView: View {
                                 }
                             }
                             .padding(10)
+
+                            // Android reaches the order chats from this dashboard
+                            // (`VendorDashboardFreelancer` → `VendorFreelancersChatConnection`).
+                            NavigationLink(destination: FreelancerOrderChatsView()) {
+                                HStack(spacing: VendorTheme.Space.s) {
+                                    Image(systemName: "bubble.left.and.bubble.right")
+                                        .font(.system(size: 15, weight: .semibold))
+                                    Text("Order chats")
+                                        .font(VendorTheme.Text.cardTitle)
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundColor(VendorTheme.textTertiary)
+                                }
+                                .foregroundColor(VendorTheme.textPrimary)
+                                .padding(VendorTheme.Space.m)
+                                .frame(maxWidth: .infinity)
+                                .vendorCard()
+                                .padding(.horizontal, 10)
+                            }
+                            .buttonStyle(VendorPressStyle())
                         }
                     }
                 }

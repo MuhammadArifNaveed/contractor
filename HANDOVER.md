@@ -106,6 +106,45 @@ Android too. `PARITY_STATUS.md` has the grouped list and is kept current.
 
 ## 4. Firebase — current state
 
+### ⚙️ Changing the Firebase project — the full checklist
+
+Every time the Firebase account or project changes, **all of these** have to be redone. Each one has
+already cost a round trip at least once, and every one of them fails quietly or with a misleading error.
+
+| # | Step | Where | If you skip it |
+|---|---|---|---|
+| 1 | Register an **iOS app** with bundle id `com.contractor.TheContractorx` | Project settings → Add app → iOS | No plist exists to download. `GOOGLE_APP_ID` is issued here and cannot be hand-written |
+| 2 | Replace `TheContractor/GoogleService-Info.plist` | repo | App talks to the old project |
+| 3 | **Update the URL scheme** in `TheContractor/Info.plist` → `CFBundleURLTypes` to `app-<GOOGLE_APP_ID with colons as dashes>` | repo | **Hard crash** on the SMS step: `PhoneAuthProvider` calls `fatalError` when the scheme is missing |
+| 4 | Create the **Cloud Firestore** database | Build → Firestore Database → Create database | Every chat read and write 404s. Not the Realtime Database — different product |
+| 5 | Set Firestore **rules** to allow the app's access | Firestore → Rules | 403 `Missing or insufficient permissions`. The app never signs in to Firebase Auth, so `if request.auth != null` denies everything |
+| 6 | **Authentication → Get started**, then enable **Phone** | Build → Authentication | `CONFIGURATION_NOT_FOUND` on sign-up and password reset |
+| 7 | Add a **test phone number** | Authentication → Sign-in method → Phone | A simulator cannot receive a real SMS |
+| 8 | **SMS region policy** → Allow → **United Arab Emirates (AE)** | Authentication → Settings → SMS region policy | `OPERATION_NOT_ALLOWED : SMS unable to be sent until this region enabled`. Separate gate from step 6 |
+| 9 | Upload the **APNs auth key** (`.p8`, dev + production) | Project settings → Cloud Messaging | No push delivery, and phone auth falls back to reCAPTCHA in a browser on real devices |
+| 10 | Generate a **service account key** and give it to the backend | Project settings → Service accounts | Backend cannot push to this project's tokens |
+| 11 | Attach a **billing account** before launch | Google Cloud console | SMS is capped at **10/day** on a new project |
+
+**Verify from the terminal rather than trusting the console** — the console has shown the wrong project
+more than once. `API_KEY` comes from the plist:
+
+```
+# Firestore reachable and rules open?
+curl -s -H "x-goog-api-key: $KEY" \
+  "https://firestore.googleapis.com/v1/projects/<PROJECT>/databases/(default)/documents/user_connections?pageSize=1"
+# 404 = no database · 403 = rules deny · 200 = good
+
+# Auth configured, Phone on, region allowed?
+curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=$KEY" \
+  -H "Content-Type: application/json" -d '{"phoneNumber":"+971500000000"}'
+# CONFIGURATION_NOT_FOUND = Auth never initialised · OPERATION_NOT_ALLOWED = region not allowed
+# sessionInfo = good
+```
+
+**Also remember:** Firestore and FCM are per-project, so changing projects **orphans every existing
+conversation** and invalidates every stored push token. Chat history does not migrate.
+
+
 iOS runs on its **own Firebase project, separate from Android's**, and will keep doing so: Android is
 `thecontractor-uae` (sender 440409598739) and nobody on this side has access to that account. Firestore
 and FCM are both per-project, so the two apps' conversations cannot see each other and the backend's push

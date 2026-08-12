@@ -96,6 +96,67 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Freelancer order chat
+
+    // A second, entirely separate chat from the Firestore one. It hangs off a freelancer *order*, lives
+    // on the REST backend with no Firebase involved, and Android reaches it from the freelancer
+    // dashboard (`VendorDashboardFreelancer` → `VendorFreelancersChatConnection` → `VendorFreelancerChat`).
+
+    /// Orders this account placed. Android: `RetrofitApi.freelancersPlacedChatConnection()` →
+    /// `POST freelancing/order_placed_chats`, response key `order_chats`.
+    func getPlacedOrderChats(vendorId: String, userId: String, userType: String,
+                             completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        orderChatConnections(path: "freelancing/order_placed_chats",
+                             vendorId: vendorId, userId: userId, userType: userType, completion: completion)
+    }
+
+    /// Orders this account received. Android: `RetrofitApi.freelancersReceivedChatConnection()` →
+    /// `POST freelancing/order_recieved_chats` — note the backend's spelling of "received".
+    func getReceivedOrderChats(vendorId: String, userId: String, userType: String,
+                               completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        orderChatConnections(path: "freelancing/order_recieved_chats",
+                             vendorId: vendorId, userId: userId, userType: userType, completion: completion)
+    }
+
+    private func orderChatConnections(path: String, vendorId: String, userId: String, userType: String,
+                                      completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + path
+        let params: [String: String] = ["vendor_id": vendorId, "user_id": userId, "user_type": userType]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// One order's messages. Android: `RetrofitApi.freelancerOrderChat()` →
+    /// `POST freelancing/fetch_order_chats`, one part `order_id`, response key `chats`.
+    ///
+    /// Two response shapes matter. An order nobody has written on answers `error:true` with
+    /// "No chats found" — an empty thread, not a failure. And `sending` is a separate flag from `error`:
+    /// when it reads `"false"` Android hides the composer and shows "Order Expired / Rejected", which is
+    /// what a past-dated order does. Both live orders on the QA account are past their date, so
+    /// `freelancing/send_message` answers "Message not sent, Order Expired" for them.
+    func getOrderChat(orderId: String,
+                      completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/fetch_order_chats"
+        let params: [String: String] = ["order_id": orderId]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            completion(message, success, json)
+        }
+    }
+
+    /// Android: `RetrofitApi.freelancerSendMessage()` → `POST freelancing/send_message`. The part is
+    /// `message` here, unlike the Firestore chat's push call which spells it `meesage`.
+    func sendOrderChatMessage(orderId: String, message: String, userId: String, userType: String,
+                              completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "freelancing/send_message"
+        let params: [String: String] = [
+            "order_id": orderId, "message": message, "user_id": userId, "user_type": userType
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, _ in
+            completion(message, success)
+        }
+    }
+
     // MARK: - Chat notifications
 
     // Firestore carries the message; these two tell the backend to push it. Android fires one from each

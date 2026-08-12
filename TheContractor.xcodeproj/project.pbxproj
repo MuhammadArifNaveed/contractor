@@ -135,6 +135,7 @@
 		18EA18C926D29560003DF2FC /* Registration.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18EA18C826D29560003DF2FC /* Registration.storyboard */; };
 		1A75669C4EA051066FFEF195 /* EstimationRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933264D5A4709A4D37A2900 /* EstimationRequestsView.swift */; };
 		2781B8063222E557F9056E1A /* VendorWorkshopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */; };
+		CEF69DAAF8474049927E3C4B /* FreelancerOrderChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4085D0D8CB43D19EA01A6D /* FreelancerOrderChatView.swift */; };
 		2AC84DADD75AA20AFDA7D7E9 /* VendorHireFreelancerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */; };
 		3B1405FDD486135F78CE0C03 /* VendorPostWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910DD90E92599DCAF720DAF0 /* VendorPostWorkshopView.swift */; };
 		463D81106F940724F95538B0 /* VendorEnquiriesHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CD1F94792207836DD4C3716 /* VendorEnquiriesHostingController.swift */; };
@@ -471,6 +472,7 @@
 		18EA18C826D29560003DF2FC /* Registration.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Registration.storyboard; sourceTree = "<group>"; };
 		1F2DE02893B945888A6B365F /* CompanyLoginHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyLoginHostingController.swift; path = TheContractor/Controllers/CompanyLoginHostingController.swift; sourceTree = SOURCE_ROOT; };
 		239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorWorkshopDetailView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorWorkshopDetailView.swift; sourceTree = SOURCE_ROOT; };
+		0F4085D0D8CB43D19EA01A6D /* FreelancerOrderChatView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FreelancerOrderChatView.swift; path = TheContractor/SwiftUI/Views/Vendor/FreelancerOrderChatView.swift; sourceTree = SOURCE_ROOT; };
 		256A4E489FA73665130C4EB7 /* VendorHireFreelancerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VendorHireFreelancerView.swift; path = TheContractor/SwiftUI/Views/Vendor/VendorHireFreelancerView.swift; sourceTree = SOURCE_ROOT; };
 		43A94F84A79255D314E790EE /* VendorDirectHiringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDirectHiringView.swift; sourceTree = "<group>"; };
 		4A17599322345B4B772ABBAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -1314,6 +1316,7 @@
 				B8DC588984A3C07E6E054F4C /* VendorPostJobView.swift */,
 				C46E73E837F4257644C4073D /* VendorMyMembershipDetailView.swift */,
 				239E77DA250B73DCB382AACC /* VendorWorkshopDetailView.swift */,
+				0F4085D0D8CB43D19EA01A6D /* FreelancerOrderChatView.swift */,
 				8353643BA8DCAD21C3788C75 /* VendorTheme.swift */,
 				806CA9272F5768C600D31D28 /* VendorApplicantDetailView.swift */,
 				806CA92F2F5768C600D31D28 /* VendorEnquiriesView.swift */,
@@ -1571,6 +1574,7 @@
 				C71ED1B4650A158FAC14ED79 /* VendorPostJobView.swift in Sources */,
 				A2386867D1AA9A89ADE50830 /* VendorMyMembershipDetailView.swift in Sources */,
 				2781B8063222E557F9056E1A /* VendorWorkshopDetailView.swift in Sources */,
+				CEF69DAAF8474049927E3C4B /* FreelancerOrderChatView.swift in Sources */,
 				5AF8F9C4D0AF4660B4E26959 /* VendorTheme.swift in Sources */,
 				E5FD036F0B7646A1894F4939 /* CompanyLoginHostingController.swift in Sources */,
 				F6180782D77945FBB9E12365 /* CompanyLoginView.swift in Sources */,
