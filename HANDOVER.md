@@ -227,13 +227,17 @@ by a *user* — `user_connections` has one company half and one user half, with 
    reopened the same thread; the collection still holds exactly one connection with the same `chat_uuid`)
    and `markThreadViewed` on both sides. The only chat work left is outside the app: push *delivery*
    (item 3), which no code change here can unblock.
-2. **SMS code on sign-up — written, never executed.** `PhoneAuthService` plus a third step in
-   `SignUpView`, replicating `VerifyNumber` (60-second resend countdown included). Blocked on the console:
-   **Firebase Authentication has never been enabled** on `contractor-e1442` — `identitytoolkit` answers
-   `CONFIGURATION_NOT_FOUND`. Authentication → Get started → enable **Phone** → add a **test phone
-   number**. The test number is required for simulator verification: real Phone Auth needs an APNs key on
-   the project so Firebase can silently push a token proving the app is genuine, a simulator gets no push,
-   and the reCAPTCHA fallback wants a `REVERSED_CLIENT_ID` URL scheme this plist has no `CLIENT_ID` for.
+2. **SMS code on sign-up — done and verified end to end.** Driven on the simulator with the test
+   number `+971500000000` / `123456`: the code step appeared, the code was accepted, and the details
+   form opened with the verified number locked in.
+
+   Two things worth knowing. **On a simulator there is no APNs token**, so FirebaseAuth falls back to a
+   reCAPTCHA page in an `SFSafariViewController` and comes back through the custom URL scheme — which is
+   why that `Info.plist` entry is load-bearing rather than decorative. On a real device the uploaded
+   APNs key means a silent push is used and no browser ever appears. And **the SMS region policy is a
+   separate gate from enabling Phone**: a new project denies every `+971` number with
+   `OPERATION_NOT_ALLOWED : SMS unable to be sent until this region enabled by the app developer` until
+   AE is added under Authentication → Settings → SMS region policy.
 3. **Push delivery.** The token now reaches the backend; what is untested is whether a notification
    arrives and what happens when it is tapped. Blocked in practice by the project mismatch, since the
    backend pushes from `uae`.
