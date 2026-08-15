@@ -1,5 +1,9 @@
 # Handover — read this first
 
+> **Resuming in a fresh chat? Start with [`RESUME_HERE.md`](RESUME_HERE.md)** — current state,
+> what is left, who is blocking what, and the traps that cost hours. This file is the ground
+> rules and tooling underneath it.
+
 Enough context to pick up the iOS/Android parity work in a fresh session without re-deriving anything.
 Where this file says "see X", X has the detail.
 
