@@ -1,0 +1,151 @@
+rules_version = '2';
+
+// Firestore security rules for chat.
+//
+// Deploy: Firebase console -> Firestore Database -> Rules -> paste -> Publish.
+// (Or `firebase deploy --only firestore:rules` if the CLI is ever set up here.)
+//
+// ---------------------------------------------------------------------------
+// READ THIS BEFORE ASSUMING CHAT IS SECURED
+// ---------------------------------------------------------------------------
+//
+// The rules below are a real improvement on `allow read, write: if true`, but they do NOT close the
+// hole. **Reads are still open.** Anyone who extracts the API key from the app binary can still read
+// every conversation. That cannot be fixed from the rules file alone, and here is exactly why:
+//
+// Chat identity in this app is the account's `uuid` — `user_uuid` for a consumer, `company_uuid` for a
+// company — issued by the PHP backend. Firestore can only scope a query by `request.auth`, which is a
+// Firebase Auth identity. The app never signs in to Firebase Auth for chat (the only `signIn` call in
+// the codebase is `PhoneAuthService`, for the sign-up SMS code), so `request.auth` is null on every
+// chat request and there is nothing to match a uuid against.
+//
+// Anonymous auth does not help. `request.auth != null` would only require the caller to mint an
+// anonymous session, which anyone holding the API key can do. It would look like a fix and be none.
+//
+// THE ACTUAL FIX, in order:
+//
+//   1. The backend mints a **Firebase custom token** at login, with the account's uuid as the Firebase
+//      uid (`createCustomToken(uuid, claims)`). It needs a service account key from the same Firebase
+//      project the app points at — the same key the push work needs, so it is one ask, not two.
+//   2. iOS calls `Auth.auth().signIn(withCustomToken:)` after a successful login, and signs out of
+//      Firebase alongside the app sign-out.
+//   3. Swap in the `participantsOnly` rules at the bottom of this file, which are written and ready.
+//
+// Until step 1 exists, deploy what follows and do not describe chat as private.
+//
+// ---------------------------------------------------------------------------
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The inbox. One document per company/consumer pair.
+    match /user_connections/{connection} {
+
+      // Open, for the reason above.
+      allow read: if true;
+
+      // A new thread must be shaped like one the app writes. This is what stops the collection being
+      // used as free storage and stops a malformed row breaking every inbox that lists it.
+      allow create: if request.resource.data.keys().hasAll([
+                         'company_uuid', 'user_uuid', 'chat_uuid'
+                       ])
+                    && request.resource.data.company_uuid is string
+                    && request.resource.data.user_uuid is string
+                    && request.resource.data.chat_uuid is string
+                    && request.resource.data.company_uuid.size() > 0
+                    && request.resource.data.user_uuid.size() > 0
+                    && request.resource.data.chat_uuid.size() > 0
+                    // Guarded rather than read directly: touching a field a document does not have
+                    // makes the whole rule error out, and an error is a denial.
+                    && (!('last_message' in request.resource.data.keys())
+                        || request.resource.data.last_message.size() <= 5000);
+
+      // Sending a message updates the row's preview. Nothing else about a thread may change — in
+      // particular the two uuids and the chat_uuid are frozen, so an existing thread cannot be
+      // re-pointed at a different pair of accounts.
+      allow update: if request.resource.data.company_uuid == resource.data.company_uuid
+                    && request.resource.data.user_uuid == resource.data.user_uuid
+                    && request.resource.data.chat_uuid == resource.data.chat_uuid
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['last_message', 'message_time']);
+
+      // The app never deletes a thread, and neither does Android.
+      allow delete: if false;
+    }
+
+    // The messages themselves. Tied to a thread by `chat_uuid`.
+    match /chat/{message} {
+
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasAll([
+                         'chat_uuid', 'message', 'sent_by'
+                       ])
+                    && request.resource.data.chat_uuid is string
+                    && request.resource.data.chat_uuid.size() > 0
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 5000
+                    // `ChatRole.rawValue`. Anything else would break `isMine(role:)`, which decides
+                    // which side of the thread a bubble is drawn on.
+                    && request.resource.data.sent_by in ['user', 'company'];
+
+      // A message is only ever marked read after the fact — `markThreadViewed` flips the other side's
+      // flag. The text itself is immutable, so nobody can rewrite what was said.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                      .hasOnly(['user_is_view', 'company_is_view']);
+
+      allow delete: if false;
+    }
+
+    // Nothing else in this project is used by the app.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// participantsOnly — deploy this INSTEAD of the above, once the backend mints custom tokens and the
+// app signs in with them (steps 1 and 2 at the top). `request.auth.uid` is the account uuid.
+// ---------------------------------------------------------------------------
+//
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//
+//     function isParticipant(data) {
+//       return request.auth != null
+//              && (request.auth.uid == data.user_uuid || request.auth.uid == data.company_uuid);
+//     }
+//
+//     match /user_connections/{connection} {
+//       allow read:   if isParticipant(resource.data);
+//       allow create: if isParticipant(request.resource.data)
+//                     && request.resource.data.chat_uuid.size() > 0;
+//       allow update: if isParticipant(resource.data)
+//                     && request.resource.data.company_uuid == resource.data.company_uuid
+//                     && request.resource.data.user_uuid == resource.data.user_uuid
+//                     && request.resource.data.diff(resource.data).affectedKeys()
+//                          .hasOnly(['last_message', 'message_time']);
+//       allow delete: if false;
+//     }
+//
+//     match /chat/{message} {
+//       allow read:   if isParticipant(resource.data);
+//       allow create: if isParticipant(request.resource.data)
+//                     && request.resource.data.message.size() > 0
+//                     && request.resource.data.message.size() <= 5000
+//                     && request.resource.data.sent_by in ['user', 'company'];
+//       allow update: if isParticipant(resource.data)
+//                     && request.resource.data.diff(resource.data).affectedKeys()
+//                          .hasOnly(['user_is_view', 'company_is_view']);
+//       allow delete: if false;
+//     }
+//
+//     match /{document=**} { allow read, write: if false; }
+//   }
+// }
+//
+// NOTE: the message documents already carry `company_uuid` and `user_uuid` alongside `chat_uuid`
+// (see ChatService.send), so `isParticipant` works on them directly — no lookup of the parent
+// connection is needed, and no rule-level `get()` cost is incurred.

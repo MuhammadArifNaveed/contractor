@@ -1,9 +1,9 @@
-# Resume here — iOS/Android parity, state at 2026-08-11
+# Resume here — iOS/Android parity, state at 2026-08-15
 
 Written to be enough on its own. Read this, then `HANDOVER.md` (ground rules, tooling, traps) and
 `PARITY_STATUS.md` (the authority on per-feature state).
 
-Branch `feature/arif`, everything pushed, latest commit `3fd3abb`. Build is clean.
+Branch `feature/arif`, everything pushed. Build is clean.
 
 ---
 
@@ -47,12 +47,24 @@ the real key names → screen driven in the simulator*. Anything short of that i
 - **Sign-out / login routing**, on the hierarchy where it used to fail silently.
 - **The Message entry point** on workshop ads, with the `show_chat` gate removed.
 
+- **Freelancer order chat.** Driven on 15 Aug as vendor 706. **Placed** lists order #9 (Himanshu Dimri
+  software Solutions, 2026-06-27) badged Expired; **Received** lists order #8 (Bilal update Jan Updte,
+  2026-03-20) badged Expired. The thread opens, shows the empty state, and the composer is replaced by
+  "Order Expired / Rejected". Driving it found a real defect, now fixed — see the note in §4.
+- **Push notification tap routing** (`PushRouter.swift`). Driven with `xcrun simctl push`: a tapped
+  `vendor_membership` notification opened My Membership on the real ELITE record, and `user_inbox` with
+  an unknown `chatUUID` fell back to the company inbox showing the live Firestore thread. The routing
+  and the buffering are proven; what is *not* proven is delivery from the real backend, which is still
+  blocked (§3).
+
 ### Built, compiles, not yet driven
 
-- **Freelancer order chat** (`FreelancerOrderChatView.swift`). All four endpoints verified live against
-  vendor 706. The **Order chats** row renders on the Freelancer Dashboard — that much was seen on screen.
-  The list and thread themselves were never opened: the simulator died mid-navigation.
-  **This is the first thing to finish.** See §4.
+- **Company Finder** (`CompanyFinderView.swift`). `Home/get_by_company_id` verified live (238 companies
+  for `a`, `error:true` + "company not found." for a miss). The screen was not driven: it is on the
+  *consumer* drawer and the simulator holds a company session that would be lost by signing out, which
+  costs the owner a PIN entry to restore. Drive it on the next consumer login.
+- **Job-title suggestions.** `jobs/search_job_title` verified live (`eng` → Civil Engineer), wired into
+  `SearchJobsView` as tappable chips. Same reason: the screen is behind the consumer's Available Jobs.
 
 ---
 
@@ -65,30 +77,36 @@ the real key names → screen driven in the simulator*. Anything short of that i
 | Cross-platform chat | Owner | §1 above |
 | Push **delivery** | Backend dev | The backend pushes with `uae` credentials and cannot reach `e1442` tokens. **Solvable without the uae account:** the backend already stores `firebase_token_device` (`ios`/`android`) — confirmed on the live user record — so it can hold two credential sets and pick by that field. Needs a service account key from `e1442` (Project settings → Service accounts). Fallback: push straight to APNs with the `.p8` already uploaded |
 | SMS quota | Owner | Capped at **10/day** until a billing account is attached. Real users will hit this immediately |
-| Payment gateway | Owner | Deferred; memberships to show "Coming soon" |
-| 4 backend bugs | Backend dev | `Vendor/workshop_ad_detail` 500s (breaks this screen on **Android too**); `Home/recent_enquiries` returns HTML, unknown column `t2.company_whatsapp_phone`; `jobs/update_direct_hiring_status` crashes on an unknown id; `jobs/view_direct_hirings` has no `total_page` so it cannot page |
+| Payment gateway | Owner | Deferred. The membership screens are **not** dead ends: plans load from `vendor/memberships`, coupon redemption works, and the card button already says "Card payment not available yet" |
+| **Credential leak** | Backend dev | `Home/get_by_company_id` returns `login_password` (MD5), `otp`, `verified_token`, `password_update_token`, `app_password_update_pin` and both firebase tokens for all 238 companies, unauthenticated. Neither app reads those fields — the fix is to stop selecting them. **Report this first** |
+| 7 backend bugs | Backend dev | The four already known (`Vendor/workshop_ad_detail` 500s, breaking this screen on **Android too**; `Home/recent_enquiries` returns HTML, unknown column `t2.company_whatsapp_phone`; `jobs/update_direct_hiring_status` crashes on an unknown id; `jobs/view_direct_hirings` has no `total_page` so it cannot page) plus three found on 15 Aug: `Home/quotation_fee_paid` errors on `Undefined variable $quotation_id`; `vendor/membership_details` throws on null; `freelancing/fetch_order_chats` omits `sending` for an empty thread. Full list in `PARITY_STATUS.md` §5 |
 
 ### Code work, nothing blocking it
 
-1. **Finish freelancer order chat verification** — §4.
-2. **Push receive + tap routing.** Android's `MyFirebaseMessagingService` routes on `type` (`user`/`vendor`)
-   and `action` (e.g. `user_inbox`), carrying `vendorId`, `vendorName`, `vendorUUID`, `chatUUID`,
-   `vendorSerialNo`. iOS has none of this. Buildable now, but **unverifiable until push delivery works**.
-3. **Three small endpoints:** `jobs/search_job_title` (job-title autocomplete), `Home/get_by_company_id`
-   (company lookup), `Home/quotation_fee_paid` (quotation fee).
-4. **Memberships → "Coming soon"** so the screens are not dead ends.
-5. **Firestore rules.** Currently `allow read, write: if true` and the API key ships inside the app binary,
-   so anyone who extracts it can read every conversation. This is a real pre-launch item. Properly fixing
-   it means signing in to Firebase Auth — the SDK is already wired.
-6. **Unverified screens:** freelancer form prefill (sign in as user 45 → Profile → Profile Settings →
+1. **Deploy `firestore.rules`.** The file is written and in the repo root. Read its header before doing
+   anything else: it is a real improvement on `allow read, write: if true` (writes are shape-validated,
+   deletes are off, message text is immutable, everything outside `chat`/`user_connections` is closed)
+   but **reads stay open**, and it explains exactly why that cannot be fixed from the rules file alone.
+   Chat identity is the backend's account `uuid`; scoping by participant needs `request.auth`, which
+   means the backend minting Firebase **custom tokens** — the same service-account key the push fix
+   needs, so it is one ask. The participant-scoped rules are written and commented out at the bottom of
+   the file, ready to swap in. Do not call chat private until then.
+2. **Sign the consumer in and drive two screens:** Company Finder (drawer → Company Finder) and the
+   job-title chips (Available Jobs → search). Both are built and their endpoints verified live; neither
+   has been looked at.
+3. **Unverified screens:** freelancer form prefill (sign in as user 45 → Profile → Profile Settings →
    Freelancer profile; expect hourly rate 5, two skills, category `carpentor`, Dubai / Al Mamzar,
    10:00–18:00, bank block, four addresses) and Company Details' top bar.
-7. **Cleanup:** dead storyboard scenes, `Image("splash_logo")` and `Image("topicon")` referenced in six
-   places with neither asset existing, `AppTheme.Fonts` still handing out fixed point sizes so consumer
-   screens do not scale with system text size.
-8. **Lower value, cut to ship:** "available for job" checkbox saves nowhere; Edit Profile sends `address`,
+4. **Cleanup:** dead storyboard scenes; `AppTheme.Fonts` still hands out fixed point sizes, so consumer
+   screens do not scale with system text size (`VendorTheme.Text` is already relative and is the model
+   to copy). The missing `splash_logo` / `topicon` references are **gone** — that item is done.
+5. **Lower value, cut to ship:** "available for job" checkbox saves nowhere; Edit Profile sends `address`,
    `city`, `country`, `job_category` as empty strings; `addWorkshopQuotation` cannot attach a document;
    freelancer hire has no multi-select or pick-up addresses.
+
+Done since the last handover, so do not redo it: freelancer order chat verification, push tap routing,
+Company Finder, job-title suggestions, and the three "small endpoints" — of which one
+(`Home/quotation_fee_paid`) turned out to be broken on the backend and is deliberately not wired.
 
 ### Endpoint gap, re-audited
 
@@ -101,25 +119,27 @@ the small endpoints in item 3.
 
 ---
 
-## 4. Finishing the order chat — exact steps
+## 4. The order chat — done, and the defect it surfaced
 
-Needs a **company** login (the owner has to type the PIN; do not put credentials in the repo).
+Driven on 15 Aug as vendor 706. Both tabs list the expected rows and the thread opens with the empty
+state. **The one thing driving it was for was the defect it found:**
 
-1. Drawer → **Freelancer Dashboard** → **Order chats**.
-2. **Placed** tab should list order **#9** (Himanshu Dimri software Solutions), **Received** order **#8**
-   (Bilal update Jan Updte). Both come back live from
-   `freelancing/order_placed_chats` / `order_recieved_chats` for vendor 706.
-3. Open either. Expect an **empty thread** — `fetch_order_chats` answers `error:true` with "No chats found"
-   for both, which the code treats as empty rather than an error.
-4. Expect the composer to be **replaced by "Order Expired / Rejected"**, because both orders are past their
-   date. That is Android's behaviour when `sending` is `"false"`.
+`fetch_order_chats` answers a thread with no messages as `{"status":false,"error":true,"message":"No
+chats found"}` — **with no `sending` key**. The thread read `sending` to decide whether to show the
+composer and defaulted to `true` when absent, so an expired order got a working composer whose every
+send would have come back "Message not sent, Order Expired". The list row already knows (`expired`),
+and now seeds it. Confirmed after the fix: composer replaced by "Order Expired / Rejected", empty state
+reads "This order is closed."
 
-**What cannot be verified without new data:** the message row shape and the send path. Both QA orders are
+The lesson generalises — **a missing key is not the same as a false one.** Any other `exists()` check
+guarding a permissive default has the same shape of bug latent in it.
+
+**Still not verifiable without new data:** the message row shape and the send path. Both QA orders are
 expired, so `freelancing/send_message` answers "Message not sent, Order Expired". The parser was written
 against Android's `FreelancerChatModel` (`message`, `created_at`, `sender_name`, `sender_id`,
 `sender_type`, `order_id`) rather than live data, and the bubble side uses Android's rule —
 `sender_id == userId && sender_type == userType`, **both**, since a company and a user can share a numeric
-id. To finish this properly, someone needs to create a freelancer order dated today or later.
+id. To close this out, someone needs to create a freelancer order dated today or later.
 
 ---
 
@@ -146,6 +166,11 @@ id. To finish this properly, someone needs to create a freelancer order dated to
   once this session. The two curl commands are in `HANDOVER.md` §4.
 - **A fresh `simctl install` starts with no session**, and installing terminates a running app — which will
   interrupt a login the owner just did.
+- **A notification banner lives ~5 seconds, which is shorter than a tool round-trip.** Three attempts at
+  `simctl push` then tap missed it, and the log showed only `willPresent`, never `didReceive`. What works:
+  push on a loop in the background (`for i in $(seq 1 30); do simctl push …; sleep 2; done`) so a banner
+  is guaranteed to be on screen whenever the tap lands. Tapping the notification on the *lock screen*
+  does not work either — it wants authentication first.
 - **The derived-data module cache corrupts periodically** (`module file ... .pcm not found`). Fix is
   `rm -rf /private/tmp/cc-dd` and a full rebuild; clearing only `ExplicitPrecompiledModules` was not enough.
 
@@ -154,12 +179,16 @@ id. To finish this properly, someone needs to create a freelancer order dated to
 ## 6. Pre-launch checklist
 
 - [ ] Decide cross-platform chat (§1) — **blocks launch**
+- [ ] Report the `Home/get_by_company_id` credential leak — **blocks launch**, and it is a one-line
+      backend fix (stop selecting those columns)
 - [ ] Backend: two-credential push keyed on `firebase_token_device`
-- [ ] Tighten Firestore rules
+- [ ] Deploy `firestore.rules`, then chase the custom tokens that let the participant-scoped version go live
 - [ ] Attach a billing account (SMS quota)
-- [ ] Finish order chat verification (§4)
-- [ ] Report the 4 backend bugs
-- [ ] Memberships → "Coming soon"
+- [x] ~~Finish order chat verification~~ — done, and it found a defect (§4)
+- [x] ~~Push receive + tap routing~~ — built and driven; delivery still blocked
+- [ ] Report the other 6 backend bugs (`PARITY_STATUS.md` §5)
+- [x] ~~Memberships → "Coming soon"~~ — not needed; the screens already work and the card path already
+      says it is unavailable
 - [ ] Test on a **real device** — nothing has been. Phone auth behaves differently there: with the APNs key
       uploaded it uses a silent push instead of the reCAPTCHA browser fallback seen on the simulator
 - [ ] Deployment target is **iOS 15**, but the simulator is iOS 26 — newer SF Symbols and APIs compile and
