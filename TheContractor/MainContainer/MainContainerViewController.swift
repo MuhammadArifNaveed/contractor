@@ -403,8 +403,18 @@ class MainContainerViewController: BaseViewController{
         
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
    
@@ -475,8 +485,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     /// The consumer's own workshop ads — Android's `WorkShopAds` with `type=user`. Login-gated the
@@ -518,8 +538,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     func showProfileController()  {
@@ -541,8 +571,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -564,8 +604,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -585,8 +635,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -606,8 +666,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -634,8 +704,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -655,8 +735,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -676,8 +766,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -697,8 +797,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -718,8 +828,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -739,8 +859,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -760,8 +890,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -781,8 +921,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -817,8 +967,18 @@ class MainContainerViewController: BaseViewController{
 
         baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
     
@@ -837,8 +997,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
@@ -857,8 +1027,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
@@ -877,8 +1057,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
@@ -897,8 +1087,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
@@ -917,8 +1117,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
@@ -1026,8 +1236,18 @@ class MainContainerViewController: BaseViewController{
         }
         self.baseNavigationController = controller
         addChild(controller)
-        controller.view.frame = containerView.bounds
+        // Pinned rather than frame-set: `containerView.bounds` is only correct at the instant it is
+        // read, and the container is still settling here because `hideForSideMenu()` has just
+        // changed which bars are visible. A one-shot frame left every hosted screen with a stale
+        // height, which is what made the yellow top bar sit at a different offset per screen.
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         controller.didMove(toParent: self)
     }
 
