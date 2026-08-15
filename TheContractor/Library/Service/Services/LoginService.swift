@@ -292,6 +292,9 @@ class LoginService: BaseService {
                 Global.shared.isVendor = false
                 Global.shared.loginType = "user"
 
+                // Dormant until the backend mints custom tokens; a no-op on every login today.
+                ChatAuthService.signIn(fromLoginResponse: json)
+
                 completion(message,true)
             }
             else{
@@ -324,6 +327,10 @@ class LoginService: BaseService {
             }
 
             self.saveVendorSession(VendorSession(json["Vendor"]))
+
+            // Dormant until the backend mints custom tokens; a no-op on every login today.
+            ChatAuthService.signIn(fromLoginResponse: json)
+
             completion(message, true, json)
         }
     }

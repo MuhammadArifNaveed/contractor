@@ -1190,6 +1190,11 @@ class MainContainerViewController: BaseViewController{
         UserDefaults.standard.removeObject(forKey: "isVendor")
         UserDefaults.standard.removeObject(forKey: "loginType")
         UserDefaults.standard.synchronize()
+
+        // The Firebase session has to end with the app session. Once the participant-scoped Firestore
+        // rules are live, a session left behind would let the next account signed in on this device
+        // read the previous one's threads for as long as the token stayed valid.
+        ChatAuthService.signOut()
         
         GCD.async(.Main, delay: 1) { [weak self] in
             self?.showLoginScreen()

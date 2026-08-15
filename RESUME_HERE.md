@@ -83,14 +83,22 @@ the real key names → screen driven in the simulator*. Anything short of that i
 
 ### Code work, nothing blocking it
 
-1. **Deploy `firestore.rules`.** The file is written and in the repo root. Read its header before doing
-   anything else: it is a real improvement on `allow read, write: if true` (writes are shape-validated,
-   deletes are off, message text is immutable, everything outside `chat`/`user_connections` is closed)
-   but **reads stay open**, and it explains exactly why that cannot be fixed from the rules file alone.
-   Chat identity is the backend's account `uuid`; scoping by participant needs `request.auth`, which
-   means the backend minting Firebase **custom tokens** — the same service-account key the push fix
-   needs, so it is one ask. The participant-scoped rules are written and commented out at the bottom of
-   the file, ready to swap in. Do not call chat private until then.
+1. **Deploy `firestore.rules`.** Written, in the repo root, with `firebase.json` and `.firebaserc`
+   alongside it so `firebase deploy --only firestore:rules` works as soon as someone installs the CLI
+   (it is not installed on this Mac). Otherwise paste it into the console.
+
+   It is a real improvement on `allow read, write: if true` — writes are shape-validated, deletes are
+   off, message text is immutable, everything outside `chat`/`user_connections` is closed — but **reads
+   stay open**, and the header explains why that cannot be fixed from the rules file alone. Locking
+   reads needs exactly one thing now: the backend returning a `firebase_custom_token` at login. **The
+   iOS side is already done** (`ChatAuthService`, wired into both login paths and sign-out, a verified
+   no-op until the field appears). When it lands, swap in the `participantsOnly` rules at the bottom of
+   the file. Do not call chat private until then.
+
+   `./scripts/firebase_preflight.sh` checks the file-level Firebase config in one command — bundle id,
+   the phone-auth URL scheme, the rules, and that the plist is in the Resources phase. It lists the
+   console-side items it cannot see. Run it after any Firebase project change; `HANDOVER.md` §4 is the
+   full checklist.
 2. **Sign the consumer in and drive two screens:** Company Finder (drawer → Company Finder) and the
    job-title chips (Available Jobs → search). Both are built and their endpoints verified live; neither
    has been looked at.

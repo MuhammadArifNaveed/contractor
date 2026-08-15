@@ -330,6 +330,7 @@
 		5905A388F0F1C6C0394C314A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */; };
 		68BF4824A5B7413FA64AF840 /* CompanyFinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */; };
 		CA60BE76956D45709796924F /* PushRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45771C689BBA4FD78591CB72 /* PushRouter.swift */; };
+		C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F358ED16A62A45808D75DA28 /* ChatAuthService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -672,6 +673,7 @@
 		D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyFinderView.swift; sourceTree = "<group>"; };
 		45771C689BBA4FD78591CB72 /* PushRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRouter.swift; sourceTree = "<group>"; };
+		F358ED16A62A45808D75DA28 /* ChatAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAuthService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -831,6 +833,7 @@
 		18EA180A26D28820003DF2FC /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				F358ED16A62A45808D75DA28 /* ChatAuthService.swift */,
 				BAA34CA9CFA07944BCDB2EE5 /* ChatService.swift */,
 				580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */,
 				18EA180B26D28820003DF2FC /* BaseService.swift */,
@@ -1564,6 +1567,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */,
 				CA60BE76956D45709796924F /* PushRouter.swift in Sources */,
 				68BF4824A5B7413FA64AF840 /* CompanyFinderView.swift in Sources */,
 				73B923325CEC57151D509BFE /* InboxView.swift in Sources */,

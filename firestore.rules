@@ -24,14 +24,16 @@ rules_version = '2';
 //
 // THE ACTUAL FIX, in order:
 //
-//   1. The backend mints a **Firebase custom token** at login, with the account's uuid as the Firebase
-//      uid (`createCustomToken(uuid, claims)`). It needs a service account key from the same Firebase
-//      project the app points at — the same key the push work needs, so it is one ask, not two.
-//   2. iOS calls `Auth.auth().signIn(withCustomToken:)` after a successful login, and signs out of
-//      Firebase alongside the app sign-out.
-//   3. Swap in the `participantsOnly` rules at the bottom of this file, which are written and ready.
+//   1. [ ] The backend mints a **Firebase custom token** at login, with the account's uuid as the
+//          Firebase uid (`createCustomToken(uuid, claims)`), and returns it as `firebase_custom_token`.
+//          It needs a service account key from the same Firebase project the app points at — the same
+//          key the push work needs, so it is one ask, not two. **This is the only outstanding step.**
+//   2. [x] iOS signs in with it. Done — `ChatAuthService`, called from both login paths and from
+//          `logoutUser()`. It reads `firebase_custom_token` from the login response and is a verified
+//          no-op while that field is absent, so it is already shipping harmlessly.
+//   3. [ ] Swap in the `participantsOnly` rules at the bottom of this file, which are written and ready.
 //
-// Until step 1 exists, deploy what follows and do not describe chat as private.
+// So: one backend change away. Until then, deploy what follows and do not describe chat as private.
 //
 // ---------------------------------------------------------------------------
 
