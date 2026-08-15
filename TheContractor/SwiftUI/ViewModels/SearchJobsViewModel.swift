@@ -14,17 +14,27 @@ class SearchJobsViewModel: ObservableObject {
     @Published var selectedFilter = ""
     @Published var searchResults: [JobModel] = []
     @Published var isSearching = false
-    
+
+    /// Job titles the backend actually has, for the query the user is typing. Android shows these in a
+    /// multi-select dropdown above the results (`SearchJobsAndApplicant`); here they are tappable chips
+    /// that replace the query, because `jobs/search_jobs` takes one `jobs` term.
+    @Published var titleSuggestions: [String] = []
+
     private var searchTask: DispatchWorkItem?
-    
+    private var suggestTask: DispatchWorkItem?
+
     func performSearch() {
         searchTask?.cancel()
-        
+        suggestTask?.cancel()
+
         guard !searchQuery.isEmpty else {
             searchResults.removeAll()
+            titleSuggestions.removeAll()
             return
         }
-        
+
+        suggestTitles(for: searchQuery)
+
         let task = DispatchWorkItem { [weak self] in
             guard let self = self else { return }
             
@@ -59,7 +69,28 @@ class SearchJobsViewModel: ObservableObject {
         searchTask = task
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: task)
     }
-    
+
+    /// Android: `jobs/search_job_title`, one `title` part, response `jobs_title_list` of
+    /// `{ job_id, name }`. A miss answers `error:true`, which is simply no suggestions.
+    private func suggestTitles(for query: String) {
+        let task = DispatchWorkItem { [weak self] in
+            LoginService.shared().searchJobTitles(title: query) { [weak self] _, success, titles in
+                DispatchQueue.main.async {
+                    // Drop a stale response whose query the user has already typed past.
+                    guard let self = self, self.searchQuery == query else { return }
+                    self.titleSuggestions = success ? titles : []
+                }
+            }
+        }
+        suggestTask = task
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
+    }
+
+    func applySuggestion(_ title: String) {
+        titleSuggestions.removeAll()
+        searchQuery = title
+    }
+
     private func parseJob(_ json: JSON) -> JobModel {
         return JobModel(
             companyId: json["id"].stringValue,

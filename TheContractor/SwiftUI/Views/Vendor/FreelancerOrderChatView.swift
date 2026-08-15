@@ -83,7 +83,12 @@ struct FreelancerOrderChatsView: View {
             Text(errorMessage ?? "")
         }
         .sheet(item: $openOrder) { row in
-            FreelancerOrderChatThreadView(orderId: row.orderId, title: row.freelancerName)
+            // The row's `expired` flag is the only thing that knows an empty thread is closed:
+            // `fetch_order_chats` answers a bare `{"error":true,"message":"No chats found"}` for an
+            // order with no messages, with no `sending` key to read. Verified on order #9.
+            FreelancerOrderChatThreadView(orderId: row.orderId,
+                                          title: row.freelancerName,
+                                          canSendInitially: !row.isExpired)
         }
     }
 
@@ -169,7 +174,20 @@ struct FreelancerOrderChatThreadView: View {
 
     @State private var messages: [FreelancerOrderMessage] = []
     @State private var draft = ""
-    @State private var canSend = true
+
+    /// Seeded from the list row's `expired` flag, because the response cannot always be asked. An
+    /// order with messages answers with `sending` and that wins; an order with none answers only
+    /// `{"error":true,"message":"No chats found"}`, and defaulting to `true` there put a working
+    /// composer on an expired order — every send would have come back "Message not sent, Order
+    /// Expired". Verified against order #9.
+    @State private var canSend: Bool
+
+    init(orderId: String, title: String, canSendInitially: Bool = true) {
+        self.orderId = orderId
+        self.title = title
+        self._canSend = State(initialValue: canSendInitially)
+    }
+
     @State private var isLoading = true
     @State private var isSending = false
     @State private var errorMessage: String?

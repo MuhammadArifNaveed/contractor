@@ -131,4 +131,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Android shows chat notifications while the app is open; iOS suppresses them by default.
         completionHandler([.banner, .list, .sound])
     }
+
+    /// A tapped notification. This is the one callback Android's `PendingIntent` stands in for, and it
+    /// fires for both a running app and a cold launch from the lock screen — the delegate is set in
+    /// `didFinishLaunching`, before the launch notification is delivered. On a cold launch the
+    /// container does not exist yet, which `PushRouter` handles by holding the payload.
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        PushRouter.handle(response.notification.request.content.userInfo)
+        completionHandler()
+    }
 }

@@ -222,6 +222,27 @@ final class ChatService {
             }
     }
 
+    /// One stored connection by its `chat_uuid`. A tapped push carries the uuid but not the document,
+    /// and `ChatThreadView` needs the whole record — both sides' names and uuids, and the document id
+    /// it writes `last_message` back to. Android does not need this: its notification hands the chat
+    /// activity the same five extras the connection row would have given it.
+    ///
+    /// Hands back nil rather than an error for a uuid with no document, because the only caller
+    /// (`PushRouter`) treats both the same way — fall back to the inbox.
+    func connection(chatUUID: String, completion: @escaping (ChatConnection?) -> Void) {
+        db.collection("user_connections")
+            .whereField("chat_uuid", isEqualTo: chatUUID)
+            .limit(to: 1)
+            .getDocuments { snapshot, _ in
+                guard let document = snapshot?.documents.first else {
+                    DispatchQueue.main.async { completion(nil) }
+                    return
+                }
+                let connection = ChatConnection(id: document.documentID, data: document.data())
+                DispatchQueue.main.async { completion(connection) }
+            }
+    }
+
     // MARK: - Starting a conversation (company only)
 
     /// Android's `checkUserConnectionFromFireStore()`: is there already a thread between these two?

@@ -26,7 +26,33 @@ struct SearchJobsView: View {
                 .background(AppTheme.Colors.secondaryBackground)
                 .cornerRadius(AppTheme.CornerRadius.small)
                 .padding(AppTheme.Spacing.medium)
-                
+
+                // Job titles the backend actually has for what is being typed — `jobs/search_job_title`.
+                // Tapping one replaces the query, since `jobs/search_jobs` takes a single `jobs` term.
+                // An exact match is dropped: it would repeat the text already in the field.
+                let suggestions = viewModel.titleSuggestions.filter {
+                    $0.caseInsensitiveCompare(viewModel.searchQuery) != .orderedSame
+                }
+                if !suggestions.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: AppTheme.Spacing.small) {
+                            ForEach(suggestions, id: \.self) { title in
+                                Button(action: { viewModel.applySuggestion(title) }) {
+                                    Text(title)
+                                        .font(AppTheme.Fonts.regular(14))
+                                        .foregroundColor(AppTheme.Colors.textPrimary)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 7)
+                                        .background(AppTheme.Colors.secondaryBackground)
+                                        .cornerRadius(16)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, AppTheme.Spacing.medium)
+                    }
+                    .padding(.bottom, AppTheme.Spacing.small)
+                }
+
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: AppTheme.Spacing.small) {

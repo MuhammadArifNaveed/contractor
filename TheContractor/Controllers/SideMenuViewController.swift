@@ -128,7 +128,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showChatListController()
 
         case "Company Finder":
-            mainVC.showSearchCompanyController()
+            mainVC.showCompanyFinderController()
 
         case "Submit Enquiry":
             mainVC.showCartController()

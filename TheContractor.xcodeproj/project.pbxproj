@@ -328,6 +328,8 @@
 		3E50E13862D344FBAFCD0944 /* PhoneAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */; };
 		73B923325CEC57151D509BFE /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654189C484BA250D5C381AEF /* InboxView.swift */; };
 		5905A388F0F1C6C0394C314A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */; };
+		68BF4824A5B7413FA64AF840 /* CompanyFinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */; };
+		CA60BE76956D45709796924F /* PushRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45771C689BBA4FD78591CB72 /* PushRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -668,6 +670,8 @@
 		580DA6A7614F4FF0BE52C2B1 /* PhoneAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneAuthService.swift; sourceTree = "<group>"; };
 		654189C484BA250D5C381AEF /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		D59E8553827CE357BE7D0575 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyFinderView.swift; sourceTree = "<group>"; };
+		45771C689BBA4FD78591CB72 /* PushRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -754,6 +758,7 @@
 		18EA17F226D28820003DF2FC /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				45771C689BBA4FD78591CB72 /* PushRouter.swift */,
 				18EA17F326D28820003DF2FC /* Strings.swift */,
 				18EA17F426D28820003DF2FC /* Global.swift */,
 				18EA17F526D28820003DF2FC /* Utilities.swift */,
@@ -1340,6 +1345,7 @@
 		806CA97D2F5768C600D31D28 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */,
 				654189C484BA250D5C381AEF /* InboxView.swift */,
 				E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */,
 				4A17599322345B4B772ABBAD /* SignUpView.swift */,
@@ -1558,6 +1564,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA60BE76956D45709796924F /* PushRouter.swift in Sources */,
+				68BF4824A5B7413FA64AF840 /* CompanyFinderView.swift in Sources */,
 				73B923325CEC57151D509BFE /* InboxView.swift in Sources */,
 				C5B61F554C81960945F71988 /* ChatService.swift in Sources */,
 				3E50E13862D344FBAFCD0944 /* PhoneAuthService.swift in Sources */,

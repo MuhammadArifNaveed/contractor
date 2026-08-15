@@ -96,6 +96,47 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Company finder
+
+    /// Keyword search over companies by name or ID. Android: `RetrofitApi.search()` →
+    /// `POST Home/get_by_company_id`, single `keyword` part, response key `companies`.
+    ///
+    /// Verified live: the rows carry the same fields the other company lists use, so they parse with
+    /// `CompanyViewModel`. A keyword with no match answers `error:true` and `"company not found."`,
+    /// which the caller treats as an empty result rather than a failure.
+    func findCompanies(keyword: String,
+                       completion: @escaping (_ message: String, _ success: Bool, _ companies: [CompanyViewModel]) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "Home/get_by_company_id"
+        let params: [String: String] = ["keyword": keyword]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            guard success, let json = json else {
+                completion(message, false, [])
+                return
+            }
+            let companies = json["companies"].arrayValue.map { CompanyViewModel($0) }
+            completion(message, true, companies)
+        }
+    }
+
+    /// Job-title suggestions for the job search. Android: `RetrofitApi.searchJobTitleApi()` →
+    /// `POST jobs/search_job_title`, single `title` part, response key `jobs_title_list` with
+    /// `{ job_id, name }` rows. Verified live.
+    func searchJobTitles(title: String,
+                         completion: @escaping (_ message: String, _ success: Bool, _ titles: [String]) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "jobs/search_job_title"
+        let params: [String: String] = ["title": title]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            guard success, let json = json else {
+                completion(message, false, [])
+                return
+            }
+            let titles = json["jobs_title_list"].arrayValue
+                .map { $0["name"].stringValue }
+                .filter { !$0.isEmpty }
+            completion(message, true, titles)
+        }
+    }
+
     // MARK: - Freelancer order chat
 
     // A second, entirely separate chat from the Firestore one. It hangs off a freelancer *order*, lives

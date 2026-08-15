@@ -69,6 +69,11 @@ class MainContainerViewController: BaseViewController{
             self.imgHome?.tintColor = UIColor.init(hexFromString: "F2BE36")
             self.showHomeController()
         }
+        // A notification tapped on the lock screen reaches the app delegate before this controller
+        // exists, so `PushRouter` holds the payload until there is somewhere to send it. Deferred a
+        // run loop so the home screen just installed above is not replaced mid-transition.
+        DispatchQueue.main.async { PushRouter.flushPending() }
+
         NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
         // A SwiftUI tab screen that hits a signed-in-only action asks for the login screen this way.
         // "GoToLogin" is observed by ProfileHostingController, which is not installed while another
@@ -464,6 +469,13 @@ class MainContainerViewController: BaseViewController{
     /// profile screen. Both used to open the calculator, leaving submitted requests unreachable.
     func showEstimationRequestsController() {
         showVendorScreen(EstimationRequestsView())
+    }
+
+    /// Android `CompanyFinder` — the drawer's "Company Finder", a keyword search over
+    /// `Home/get_by_company_id`. Distinct from the bottom bar's Search tab, which is the category and
+    /// city filter; the drawer item used to open that one, leaving this endpoint with no caller.
+    func showCompanyFinderController() {
+        showVendorScreen(CompanyFinderView())
     }
 
     func showSearchController()  {
