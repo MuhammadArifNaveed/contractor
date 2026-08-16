@@ -118,6 +118,19 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let fcmToken = fcmToken, !fcmToken.isEmpty else { return }
         Global.shared.fcmToken = fcmToken
+
+        // Android subscribes every install to `toAll` in `Home.subscribeFirebaseToken()`, ungated, so a
+        // broadcast sent to that topic reaches every Android device and — until now — no iOS one. This
+        // is separate from the token-addressed push problem: fixing delivery would not have helped,
+        // because the app was never in the topic.
+        //
+        // Subscribing here rather than at launch because a topic subscription needs a registration
+        // token to exist; this callback is the first moment one does.
+        Messaging.messaging().subscribe(toTopic: "toAll") { error in
+            if let error = error {
+                print("toAll topic subscription failed: \(error.localizedDescription)")
+            }
+        }
     }
 }
 

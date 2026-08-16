@@ -12,6 +12,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import SwiftyJSON
 
 struct VendorWorkshopDetailView: View {
@@ -31,6 +32,7 @@ struct VendorWorkshopDetailView: View {
     @State private var showQuotationSheet = false
     @State private var quotationPrice = ""
     @State private var quotationNote = ""
+    @State private var quotationDocument: (data: Data, name: String, mimeType: String)?
     @State private var isSubmitting = false
     @State private var isTogglingStatus = false
 
@@ -87,7 +89,7 @@ struct VendorWorkshopDetailView: View {
             Text(subscriptionMessage ?? "")
         }
         .sheet(isPresented: $showQuotationSheet) {
-            VendorWorkshopQuotationSheet(price: $quotationPrice, note: $quotationNote) {
+            VendorWorkshopQuotationSheet(price: $quotationPrice, note: $quotationNote, document: $quotationDocument) {
                 showQuotationSheet = false
                 submitQuotation()
             } onCancel: {
@@ -327,6 +329,7 @@ struct VendorWorkshopDetailView: View {
         Button(action: {
             quotationPrice = ""
             quotationNote = ""
+            quotationDocument = nil
             showQuotationSheet = true
         }) {
             Text("Send a quotation")
@@ -462,7 +465,8 @@ struct VendorWorkshopDetailView: View {
                                                        userType: session.user_type,
                                                        workshopId: workshopId,
                                                        price: price,
-                                                       message: quotationNote) { message, success, json in
+                                                       message: quotationNote,
+                                                       document: quotationDocument) { message, success, json in
                 GCD.async(.Main) {
                     isSubmitting = false
                     guard success else {
@@ -569,8 +573,15 @@ struct VendorWorkshopQuotation: Identifiable {
 struct VendorWorkshopQuotationSheet: View {
     @Binding var price: String
     @Binding var note: String
+    /// The optional attachment Android allows (`@Part MultipartBody.Part file`). Held as loaded bytes
+    /// rather than a URL: the picker's URL is security-scoped and stops resolving once this sheet goes
+    /// away, so the data is read while access is still granted.
+    @Binding var document: (data: Data, name: String, mimeType: String)?
     let onSubmit: () -> Void
     let onCancel: () -> Void
+
+    @State private var showFileImporter = false
+    @State private var importError: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -609,6 +620,36 @@ struct VendorWorkshopQuotationSheet: View {
                             )
                     }
 
+                    VStack(alignment: .leading, spacing: VendorTheme.Space.xs) {
+                        Text("ATTACHMENT (OPTIONAL)")
+                            .font(VendorTheme.Text.label)
+                            .foregroundColor(VendorTheme.textTertiary)
+                            .tracking(0.4)
+
+                        Button(action: { showFileImporter = true }) {
+                            HStack(spacing: VendorTheme.Space.s) {
+                                Image(systemName: document == nil ? "paperclip" : "doc.fill")
+                                    .foregroundColor(VendorTheme.textSecondary)
+                                Text(document?.name ?? "Attach a document")
+                                    .font(VendorTheme.Text.body)
+                                    .foregroundColor(document == nil ? VendorTheme.textSecondary : VendorTheme.textPrimary)
+                                    .lineLimit(1)
+                                Spacer(minLength: 0)
+                                if document != nil {
+                                    Button(action: { document = nil }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(VendorTheme.textSecondary)
+                                    }
+                                }
+                            }
+                            .padding(VendorTheme.Space.m)
+                            .background(
+                                RoundedRectangle(cornerRadius: VendorTheme.Radius.control, style: .continuous)
+                                    .fill(VendorTheme.surfaceRaised)
+                            )
+                        }
+                    }
+
                     Button(action: onSubmit) {
                         Text("Send")
                             .font(VendorTheme.Text.cardTitle)
@@ -626,5 +667,42 @@ struct VendorWorkshopQuotationSheet: View {
             }
             .background(VendorTheme.canvas)
         }
+        .fileImporter(isPresented: $showFileImporter,
+                      allowedContentTypes: [.pdf, .image, .plainText, .spreadsheet, .presentation, .item],
+                      allowsMultipleSelection: false) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else { return }
+                // The picker hands back a security-scoped URL. Without the start/stop pair the read
+                // fails outright for anything outside the app's own container — iCloud Drive, Files.
+                let scoped = url.startAccessingSecurityScopedResource()
+                defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+                do {
+                    let data = try Data(contentsOf: url)
+                    document = (data: data,
+                                name: url.lastPathComponent,
+                                mimeType: Self.mimeType(for: url))
+                } catch {
+                    importError = "That file could not be read."
+                }
+            case .failure(let error):
+                importError = error.localizedDescription
+            }
+        }
+        .alert("", isPresented: Binding(get: { importError != nil }, set: { _ in importError = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(importError ?? "")
+        }
+    }
+
+    /// PHP reads the part's declared type, so sending everything as octet-stream would have the backend
+    /// reject perfectly valid PDFs. `UTType` resolves the real one from the extension.
+    private static func mimeType(for url: URL) -> String {
+        if let type = UTType(filenameExtension: url.pathExtension),
+           let mime = type.preferredMIMEType {
+            return mime
+        }
+        return "application/octet-stream"
     }
 }

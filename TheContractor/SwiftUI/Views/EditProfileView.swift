@@ -13,8 +13,10 @@ struct EditProfileView: View {
     @Environment(\.presentationMode) var presentationMode
     
     private let yellow = VendorTheme.accent
-    private let cities = ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah"]
-    private let categories = ["Plumber", "Electrician", "Carpenter", "Painter", "Mason", "Welder"]
+    /// `"0"` is Android's unset sentinel for both pickers, so it must not be shown as a value.
+    private var categoryLabel: String {
+        viewModel.selectedCategory == "0" ? "" : viewModel.selectedCategory
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -80,13 +82,13 @@ struct EditProfileView: View {
                     
                     // City Picker
                     Menu {
-                        ForEach(cities, id: \.self) { city in
-                            Button(city) { viewModel.selectedCity = city }
+                        ForEach(viewModel.cities, id: \.id) { city in
+                            Button(city.name) { viewModel.selectedCity = city.id }
                         }
                     } label: {
                         HStack {
-                            Text(viewModel.selectedCity.isEmpty ? "Select City" : viewModel.selectedCity)
-                                .foregroundColor(viewModel.selectedCity.isEmpty ? .gray : .black)
+                            Text(viewModel.selectedCityName.isEmpty ? "Select City" : viewModel.selectedCityName)
+                                .foregroundColor(viewModel.selectedCityName.isEmpty ? .gray : .black)
                             Spacer()
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.gray)
@@ -124,13 +126,14 @@ struct EditProfileView: View {
                     
                     // Category Picker
                     Menu {
-                        ForEach(categories, id: \.self) { category in
-                            Button(category) { viewModel.selectedCategory = category }
+                        // The *title* is what gets stored, not the id — Android's asymmetry, kept.
+                        ForEach(viewModel.categories, id: \.id) { category in
+                            Button(category.name) { viewModel.selectedCategory = category.name }
                         }
                     } label: {
                         HStack {
-                            Text(viewModel.selectedCategory.isEmpty ? "Select Category" : viewModel.selectedCategory)
-                                .foregroundColor(viewModel.selectedCategory.isEmpty ? .gray : .black)
+                            Text(categoryLabel.isEmpty ? "Select Category" : categoryLabel)
+                                .foregroundColor(categoryLabel.isEmpty ? .gray : .black)
                             Spacer()
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.gray)

@@ -16,6 +16,15 @@ struct VendorMyMembershipDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    @State private var showCouponSheet = false
+    @State private var couponCode = ""
+    @State private var isBuying = false
+    @State private var noticeMessage: String?
+    /// Flipped locally on a successful purchase. The list this screen was pushed from holds the record,
+    /// and re-fetching it would mean backing out — so the card reflects the change and the list catches
+    /// up on its next load.
+    @State private var addOnJustBought = false
+
     var body: some View {
         VStack(spacing: 0) {
             VendorTopBar(title: "Membership", onBack: { dismiss() })
@@ -32,9 +41,60 @@ struct VendorMyMembershipDetailView: View {
                     }
                     .padding(VendorTheme.Space.l)
                 }
+
+                if isBuying {
+                    Color.black.opacity(0.2).ignoresSafeArea()
+                    VendorBusyIndicator()
+                }
             }
         }
         .navigationBarHidden(true)
+        .alert("", isPresented: Binding(get: { noticeMessage != nil }, set: { _ in noticeMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(noticeMessage ?? "")
+        }
+        .sheet(isPresented: $showCouponSheet) {
+            VendorCouponSheet(membershipTitle: "Workshop add-on", code: $couponCode) {
+                showCouponSheet = false
+                redeemWorkshopCoupon()
+            } onCancel: {
+                showCouponSheet = false
+                couponCode = ""
+            }
+        }
+    }
+
+    /// Android puts a "Buy now in AED <price>" button on this screen whenever the add-on is not already
+    /// owned. Only the coupon half is offered here; the card half needs the gateway iOS does not have.
+    private var hasAddOn: Bool {
+        addOnJustBought || membership.workshopIncluded.lowercased() == "yes"
+    }
+
+    private func redeemWorkshopCoupon() {
+        let code = couponCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !code.isEmpty else {
+            noticeMessage = "Enter coupon code"
+            return
+        }
+        let vendorId = VendorSession.currentVendorId
+        guard !vendorId.isEmpty else { return }
+
+        isBuying = true
+        GCD.async(.Background) {
+            LoginService.shared().buyWorkshopMembershipByCoupon(vendorId: vendorId,
+                                                                membershipId: membership.id,
+                                                                couponCode: code) { message, success in
+                GCD.async(.Main) {
+                    isBuying = false
+                    couponCode = ""
+                    noticeMessage = message.isEmpty
+                        ? (success ? "Workshop add-on activated." : "Please try again")
+                        : message
+                    if success { addOnJustBought = true }
+                }
+            }
+        }
     }
 
     private var headerCard: some View {
@@ -131,9 +191,26 @@ struct VendorMyMembershipDetailView: View {
                 VendorField(label: "Coupon", value: membership.couponCode)
             }
             VendorField(label: "Workshop add-on",
-                        value: membership.workshopIncluded.lowercased() == "yes"
+                        value: hasAddOn
                             ? "Included (AED \(membership.workshopPrice))"
                             : "Not included")
+
+            if !hasAddOn {
+                Button(action: {
+                    couponCode = ""
+                    showCouponSheet = true
+                }) {
+                    Text(membership.workshopPrice.isEmpty
+                         ? "Add with a coupon"
+                         : "Add with a coupon — AED \(membership.workshopPrice)")
+                        .font(VendorTheme.Text.label)
+                        .foregroundColor(VendorTheme.onAccent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, VendorTheme.Space.m)
+                        .background(VendorTheme.accent)
+                        .cornerRadius(VendorTheme.Radius.control)
+                }
+            }
             if !membership.detail.isEmpty {
                 VendorField(label: "Type", value: membership.detail)
             }

@@ -29,6 +29,14 @@ class UserViewModel: Codable {
     /// Needed by Account/change_password, which is keyed on the email rather than the id, and sent
     /// by Account/update_user_profile.
     var email: String = kBlankString
+
+    /// Edit Profile's four remaining fields. They were not stored, so the screen could not prefill them
+    /// and sent empty strings instead — which the backend wrote straight over the real values. Android
+    /// reads exactly these keys in `UpdateProfile` (`city_id`, `cv_job_category`, not `city`/`job_category`).
+    var address: String = kBlankString
+    var cityId: String = kBlankString
+    var countryId: String = kBlankString
+    var cvJobCategory: String = kBlankString
 //    var deleted: Bool
 //    var windowsId : String
 //    var firstName: String
@@ -73,6 +81,10 @@ class UserViewModel: Codable {
         self.id = directId.isEmpty ? json["user_id"].stringValue : directId
         self.userType = json["user_type"].stringValue
         self.isAvailableAsFreelance = json["is_available_as_freelance"].stringValue
+        self.address = json["address"].stringValue
+        self.cityId = json["city_id"].stringValue
+        self.countryId = json["country_id"].stringValue
+        self.cvJobCategory = json["cv_job_category"].stringValue
         self.uuid = json["uuid"].stringValue
         let directEmail = json["email"].stringValue
         self.email = directEmail.isEmpty ? json["user_email"].stringValue : directEmail

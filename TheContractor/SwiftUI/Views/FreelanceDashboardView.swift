@@ -555,7 +555,12 @@ final class FreelancingService: BaseService {
     func hireFreelancers(freelancerDataJSON: String, completion: @escaping (_ message: String, _ success: Bool) -> Void) {
         let completeURL = EndPoints.BASE_URL + "freelancing/hire_freelancers"
         var params = defaultIdentityParams()
-        params["freelancer_id"] = freelancerDataJSON
+        // `freelancer_data`, not `freelancer_id` — Android's declared @Part name. Sending the wrong
+        // one made the consumer checkout a no-op: the backend never saw the selection, so nobody was
+        // ever hired and the screen still reported success. Confirmed against the live endpoint —
+        // `freelancer_id` and sending nothing at all both answer "Undefined array key freelancer_data"
+        // at Freelancing.php:1690. The vendor path in LoginService always had this right.
+        params["freelancer_data"] = freelancerDataJSON
         
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             if success, let json = json {

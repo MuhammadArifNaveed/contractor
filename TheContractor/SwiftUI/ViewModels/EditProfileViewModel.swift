@@ -14,9 +14,19 @@ class EditProfileViewModel: ObservableObject {
     @Published var lastName = ""
     @Published var phone = ""
     @Published var email = ""
-    @Published var selectedCity = ""
+    /// The city's **id** and the category's **title** — the asymmetry is Android's, and the backend's:
+    /// `UpdateProfile` sets `selectedCity = citiesList.get(i).getId()` but
+    /// `selectedCategory = categoriesList.get(i).getTitle()`, and prefills them from `city_id` and
+    /// `cv_job_category`. Both default to `"0"` there, so an untouched picker sends `"0"`, not "".
+    @Published var selectedCity = "0"
     @Published var address = ""
-    @Published var selectedCategory = ""
+    @Published var selectedCategory = "0"
+
+    /// Real cities and categories, replacing two hardcoded arrays that were invented outright — the
+    /// city list did not carry ids at all, so nothing it produced could have been saved correctly.
+    /// `Home/get_search` is the same source the company search filter uses.
+    @Published var cities: [CityViewModel] = []
+    @Published var categories: [CategoryViewModel] = []
     @Published var availableForJob = false
     /// Android's `cbFreelancer`, and a live switch rather than a local flag: each tap calls
     /// `freelancing/update_user_freelance_status` and follows the state the response reports back,
@@ -47,7 +57,30 @@ class EditProfileViewModel: ObservableObject {
             // it was thrown away because the update read the stored value instead.
             email = user.email
             isAvailableAsFreelancer = user.isAvailableAsFreelance == "1"
+            address = user.address
+            selectedCity = user.cityId.isEmpty ? "0" : user.cityId
+            selectedCategory = user.cvJobCategory.isEmpty ? "0" : user.cvJobCategory
         }
+        loadPickerData()
+    }
+
+    /// Cities and categories for the two pickers. A failure leaves them empty rather than surfacing an
+    /// error: the pickers degrade to showing the stored value, and saving still round-trips it intact,
+    /// which is the behaviour that matters here.
+    private func loadPickerData() {
+        guard cities.isEmpty || categories.isEmpty else { return }
+        LoginService.shared().getSearchData(params: nil) { [weak self] _, success, search in
+            guard success, let search = search else { return }
+            DispatchQueue.main.async {
+                self?.cities = search.cities.cityList
+                self?.categories = search.categories.categoryList
+            }
+        }
+    }
+
+    /// What the city picker shows: the stored id resolved to a name, or a plain prompt.
+    var selectedCityName: String {
+        cities.first { $0.id == selectedCity }?.name ?? ""
     }
 
     // MARK: - Freelancing
@@ -139,11 +172,12 @@ class EditProfileViewModel: ObservableObject {
             return
         }
         
-        guard let userId = UserDefaultsManager.shared.userInfo?.id, !userId.isEmpty else {
+        guard let storedUser = UserDefaultsManager.shared.userInfo, !storedUser.id.isEmpty else {
             errorMessage = "User not logged in"
             return
         }
-        
+        let userId = storedUser.id
+
         isUpdating = true
         errorMessage = ""
         successMessage = ""
@@ -156,10 +190,14 @@ class EditProfileViewModel: ObservableObject {
             "surname": lastName,
             "user_phone": phone,
             "user_email": email.isEmpty ? (UserDefaultsManager.shared.userInfo?.email ?? "") : email,
-            "address": "",
-            "city": "",
-            "country": "",
-            "job_category": ""
+            // These four used to be sent as empty strings, and the backend wrote them straight over the
+            // stored values — so saving a name change silently erased the user's address, city and job
+            // category. `country` is hardcoded "2" exactly as Android does; the app is UAE-only and no
+            // screen collects a country.
+            "address": address,
+            "city": selectedCity,
+            "country": storedUser.countryId.isEmpty ? "2" : storedUser.countryId,
+            "job_category": selectedCategory
         ]
 
         let completeURL = "https://contractor.bidcont.com/rest/Account/update_user_profile"

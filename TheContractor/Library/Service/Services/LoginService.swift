@@ -96,6 +96,26 @@ class LoginService: BaseService {
         }
     }
 
+    /// The workshop add-on on top of an existing membership, bought with a coupon. Android:
+    /// `RetrofitApi.buyWorkshopByCoupon()` → `POST vendor/buy_workshop_membership_by_coupon`, from
+    /// `VendorMyMembershipDetail`. Only the coupon path — `buy_workshop_membership_online` is the card
+    /// path and needs the gateway iOS does not have.
+    func buyWorkshopMembershipByCoupon(vendorId: String, membershipId: String, couponCode: String,
+                                       completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/buy_workshop_membership_by_coupon"
+        let params: [String: String] = [
+            "vendor_id": vendorId,
+            "membership_id": membershipId,
+            "coupon_code": couponCode
+        ]
+        self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
+            // `error` is the authority, as everywhere else on this backend: a 200 with `error:true`
+            // is a refused coupon, not a success.
+            let refused = json?["error"].boolValue ?? false
+            completion(message, success && !refused)
+        }
+    }
+
     // MARK: - Company finder
 
     /// Keyword search over companies by name or ID. Android: `RetrofitApi.search()` →
@@ -965,6 +985,7 @@ class LoginService: BaseService {
     /// `workshop_ad_id` for the same value.
     func addWorkshopQuotation(vendorId: String, userId: String, userType: String, workshopId: String,
                               price: String, message: String,
+                              document: (data: Data, name: String, mimeType: String)? = nil,
                               completion: @escaping (_ message: String, _ success: Bool, _ json: JSON?) -> Void) {
         let completeURL = EndPoints.BASE_URL + "workshop/add_workshop_quotation"
         let params: [String: String] = [
@@ -975,6 +996,21 @@ class LoginService: BaseService {
             "price": price,
             "message": message
         ]
+
+        // Android's `workshopsQuotation` declares `@Part MultipartBody.Part file` and lets the vendor
+        // attach a document to the quote. The part name is the bare `file`, which is what
+        // `makePostAPICallWithDocument` defaults to.
+        if let document = document {
+            self.makePostAPICallWithDocument(with: completeURL,
+                                             params: params,
+                                             fileData: document.data,
+                                             fileName: document.name,
+                                             mimeType: document.mimeType) { message, success, json in
+                completion(message, success, json)
+            }
+            return
+        }
+
         self.makePostAPICallWithMultipart(with: completeURL, dict: nil, params: params, isImageData: false) { message, success, json in
             completion(message, success, json)
         }
