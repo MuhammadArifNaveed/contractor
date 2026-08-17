@@ -332,6 +332,7 @@
 		CA60BE76956D45709796924F /* PushRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45771C689BBA4FD78591CB72 /* PushRouter.swift */; };
 		C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F358ED16A62A45808D75DA28 /* ChatAuthService.swift */; };
 		2D0C99A74B3348528247122B /* PickUpLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */; };
+		1A3063F19CFC4DF3AAE6D5F8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -676,6 +677,7 @@
 		45771C689BBA4FD78591CB72 /* PushRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRouter.swift; sourceTree = "<group>"; };
 		F358ED16A62A45808D75DA28 /* ChatAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAuthService.swift; sourceTree = "<group>"; };
 		419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUpLocationPicker.swift; sourceTree = "<group>"; };
+		1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -728,6 +730,7 @@
 				18EA17DE26D287CC003DF2FC /* Main.storyboard */,
 				18EA17E126D287CF003DF2FC /* Assets.xcassets */,
 				18EA17E326D287CF003DF2FC /* LaunchScreen.storyboard */,
+				1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */,
 				18EA17E626D287CF003DF2FC /* Info.plist */,
 				18EA18BE26D28857003DF2FC /* TheContractor-bridging-header.h */,
 				80C6FE7D2F10E7210014E3EF /* SwiftUI */,
@@ -1496,6 +1499,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A3063F19CFC4DF3AAE6D5F8 /* PrivacyInfo.xcprivacy in Resources */,
 				5905A388F0F1C6C0394C314A /* GoogleService-Info.plist in Resources */,
 				1807146226D6BCDA00B0944B /* Home.storyboard in Resources */,
 				18EA18A326D28820003DF2FC /* GOTHICB_0.TTF in Resources */,

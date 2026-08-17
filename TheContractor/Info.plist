@@ -40,6 +40,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo to add to your profile, workshop ads, job posts or quotations.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose photos and videos from your library to add to your profile, workshop ads, job posts or quotations.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
