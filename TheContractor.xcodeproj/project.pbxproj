@@ -333,6 +333,7 @@
 		C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F358ED16A62A45808D75DA28 /* ChatAuthService.swift */; };
 		2D0C99A74B3348528247122B /* PickUpLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */; };
 		1A3063F19CFC4DF3AAE6D5F8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */; };
+		1CC46490BAE547ADB7B36FCF /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173A12465BE461F835B511A /* Logging.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -678,6 +679,7 @@
 		F358ED16A62A45808D75DA28 /* ChatAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAuthService.swift; sourceTree = "<group>"; };
 		419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUpLocationPicker.swift; sourceTree = "<group>"; };
 		1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C173A12465BE461F835B511A /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -765,6 +767,7 @@
 		18EA17F226D28820003DF2FC /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				C173A12465BE461F835B511A /* Logging.swift */,
 				45771C689BBA4FD78591CB72 /* PushRouter.swift */,
 				18EA17F326D28820003DF2FC /* Strings.swift */,
 				18EA17F426D28820003DF2FC /* Global.swift */,
@@ -1574,6 +1577,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CC46490BAE547ADB7B36FCF /* Logging.swift in Sources */,
 				2D0C99A74B3348528247122B /* PickUpLocationPicker.swift in Sources */,
 				C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */,
 				CA60BE76956D45709796924F /* PushRouter.swift in Sources */,
