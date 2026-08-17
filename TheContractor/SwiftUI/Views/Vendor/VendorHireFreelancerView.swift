@@ -4,17 +4,18 @@
 //
 //  Android's `Freelancers` in vendor mode (`from=vendor`) plus the hire path that follows it.
 //
-//  Browse:  POST freelancing/freelancers_frontend -> `freelancers`
+//  Browse:  POST freelancing/freelancers_frontend -> `freelancers_list`
 //  Filters: POST freelancing/get_freelancing_search
 //  Charges: POST freelancing/transportation_charges
 //  Hire:    POST freelancing/hire_freelancers
 //
-//  Scope note. Android spreads this over several screens with a local database holding a multi-
-//  freelancer selection, then a checkout that also picks a pick-up address. This covers browse ->
-//  detail -> hire for one freelancer at a time, which is complete as far as
-//  `freelancing/hire_freelancers` is concerned — that endpoint takes a JSON array, and a single
-//  entry is a valid booking. Multi-select and address management are not here; see
-//  COMPANY_SIDE_ROADMAP.md.
+//  Android spreads this over several screens with a local SQLite table holding the selection. Here the
+//  selection is view state: tick people on the list, book each in turn through the same sheet a single
+//  hire uses, then post one `freelancer_data` array. Per-freelancer detail is preserved, which is the
+//  point — each entry carries its own dates and time window.
+//
+//  Pick-up addresses belong to the freelancer's own profile rather than to this flow; they live in
+//  `UpdateFreelancerView`, backed by `PickUpLocationPicker`.
 //
 
 import SwiftUI
@@ -22,12 +23,39 @@ import SwiftyJSON
 
 // MARK: - Browse
 
+/// `sheet(item:)` needs an Identifiable; the step's index is its identity, which is exactly what makes
+/// SwiftUI tear the sheet down and present the next one as the batch advances.
+private struct BookingStep: Identifiable {
+    let index: Int
+    var id: Int { index }
+}
+
 struct VendorHireFreelancerView: View {
     @State private var state: VendorLoadState = .loading
     @State private var freelancers: [VendorFreelancerListing] = []
     @State private var errorMessage: String?
 
     @State private var showFilter = false
+
+    // MARK: Multi-select
+    //
+    // Android keeps the selection in a local SQLite table across its browse and checkout screens, then
+    // posts every row as one `freelancer_data` array with a per-freelancer `detail` block. There is no
+    // need for a database here, but the per-freelancer detail matters: each booking carries its own
+    // dates and time window, so one sheet applied to everybody would be a different feature.
+    //
+    // The flow is therefore: tick people on the list, then book them one at a time in sequence,
+    // accumulating entries, and send a single request at the end. That reuses the existing booking
+    // sheet unchanged rather than inventing a second way to describe a booking.
+
+    /// Ordered, so the booking sequence follows the order they were ticked.
+    @State private var selection: [VendorFreelancerListing] = []
+    /// Index into `selection` while stepping through the per-freelancer booking sheets.
+    @State private var bookingIndex: Int?
+    /// Entries built so far in the current run.
+    @State private var pendingEntries: [[String: Any]] = []
+    @State private var isHiringBatch = false
+    @State private var noticeMessage: String?
     @State private var categories: [VendorJobFilterOption] = []
     @State private var cities: [VendorJobFilterOption] = []
     @State private var selectedCategory: VendorJobFilterOption?
@@ -69,19 +97,65 @@ struct VendorHireFreelancerView: View {
                         ScrollView {
                             VStack(spacing: VendorTheme.Space.m) {
                                 ForEach(freelancers) { freelancer in
-                                    NavigationLink(destination: VendorFreelancerDetailView(freelancer: freelancer)) {
-                                        VendorFreelancerCard(freelancer: freelancer)
+                                    HStack(spacing: VendorTheme.Space.s) {
+                                        // The checkbox is its own tap target, outside the link, so
+                                        // selecting somebody and opening their profile stay separate
+                                        // gestures on the same row.
+                                        Button(action: { toggleSelection(freelancer) }) {
+                                            Image(systemName: isSelected(freelancer)
+                                                  ? "checkmark.circle.fill" : "circle")
+                                                .font(.system(size: 22))
+                                                .foregroundColor(isSelected(freelancer)
+                                                                 ? VendorTheme.accent : VendorTheme.textTertiary)
+                                                .frame(width: VendorTheme.minTapTarget,
+                                                       height: VendorTheme.minTapTarget)
+                                        }
+                                        .buttonStyle(.plain)
+
+                                        NavigationLink(destination: VendorFreelancerDetailView(freelancer: freelancer)) {
+                                            VendorFreelancerCard(freelancer: freelancer)
+                                        }
+                                        .buttonStyle(VendorPressStyle())
                                     }
-                                    .buttonStyle(VendorPressStyle())
                                 }
                             }
                             .padding(VendorTheme.Space.l)
+                            // Clear the selection bar so the last row is not trapped underneath it.
+                            .padding(.bottom, selection.isEmpty ? 0 : 72)
                         }
                         .refreshable { await refresh() }
+                    }
+
+                    if !selection.isEmpty {
+                        VStack {
+                            Spacer()
+                            selectionBar
+                        }
+                    }
+
+                    if isHiringBatch {
+                        Color.black.opacity(0.2).ignoresSafeArea()
+                        VendorBusyIndicator()
                     }
                 }
             }
             .navigationBarHidden(true)
+            // One sheet per selected freelancer, in order. Keying on the index is what makes it
+            // re-present for the next person rather than staying dismissed after the first.
+            //
+            // Kept on this view rather than next to the filter sheet on the outer one: stacking two
+            // `.sheet` modifiers on a single view is unreliable, and separating them costs nothing.
+            .sheet(item: Binding(get: { bookingIndex.map { BookingStep(index: $0) } },
+                                 set: { if $0 == nil { cancelBatchBooking() } })) { step in
+                if step.index < selection.count {
+                    let freelancer = selection[step.index]
+                    VendorFreelancerBookingSheet(freelancer: freelancer) { booking in
+                        appendBooking(booking, for: freelancer)
+                    } onCancel: {
+                        cancelBatchBooking()
+                    }
+                }
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .alert("", isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
@@ -100,9 +174,111 @@ struct VendorHireFreelancerView: View {
                 showFilter = false
             }
         }
+        .alert("", isPresented: Binding(get: { noticeMessage != nil }, set: { _ in noticeMessage = nil })) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(noticeMessage ?? "")
+        }
         .onAppear {
             if freelancers.isEmpty { reload() }
             if categories.isEmpty { loadFilters() }
+        }
+    }
+
+    // MARK: - Selection
+
+    private func isSelected(_ freelancer: VendorFreelancerListing) -> Bool {
+        selection.contains { $0.id == freelancer.id }
+    }
+
+    private func toggleSelection(_ freelancer: VendorFreelancerListing) {
+        if let index = selection.firstIndex(where: { $0.id == freelancer.id }) {
+            selection.remove(at: index)
+        } else {
+            selection.append(freelancer)
+        }
+    }
+
+    private var selectionBar: some View {
+        HStack(spacing: VendorTheme.Space.m) {
+            Text(selection.count == 1 ? "1 selected" : "\(selection.count) selected")
+                .font(VendorTheme.Text.body)
+                .foregroundColor(VendorTheme.textPrimary)
+
+            Button("Clear") { selection.removeAll() }
+                .font(VendorTheme.Text.label)
+                .foregroundColor(VendorTheme.textSecondary)
+
+            Spacer(minLength: 0)
+
+            Button(action: startBatchBooking) {
+                Text("Book")
+                    .font(VendorTheme.Text.label)
+                    .foregroundColor(VendorTheme.onAccent)
+                    .padding(.horizontal, VendorTheme.Space.l)
+                    .padding(.vertical, VendorTheme.Space.s)
+                    .background(Capsule().fill(VendorTheme.accent))
+            }
+        }
+        .padding(.horizontal, VendorTheme.Space.l)
+        .padding(.vertical, VendorTheme.Space.m)
+        .background(VendorTheme.surface.shadow(color: .black.opacity(0.12), radius: 8, y: -2))
+    }
+
+    /// Opens the booking sheet for the first selected freelancer. Each completion appends an entry and
+    /// advances; the request goes out after the last one.
+    private func startBatchBooking() {
+        guard !selection.isEmpty else { return }
+        pendingEntries = []
+        bookingIndex = 0
+    }
+
+    private func appendBooking(_ booking: VendorFreelancerBooking, for freelancer: VendorFreelancerListing) {
+        pendingEntries.append(booking.freelancerDataEntry(for: freelancer, transportationCharges: "0"))
+
+        let next = (bookingIndex ?? 0) + 1
+        if next < selection.count {
+            bookingIndex = next
+        } else {
+            bookingIndex = nil
+            submitBatch()
+        }
+    }
+
+    private func cancelBatchBooking() {
+        bookingIndex = nil
+        pendingEntries = []
+    }
+
+    private func submitBatch() {
+        guard let session = VendorSession.current, !session.id.isEmpty else { return }
+        guard !pendingEntries.isEmpty,
+              let data = try? JSONSerialization.data(withJSONObject: pendingEntries),
+              let payload = String(data: data, encoding: .utf8) else {
+            errorMessage = "Could not prepare the booking."
+            return
+        }
+
+        let count = pendingEntries.count
+        isHiringBatch = true
+        GCD.async(.Background) {
+            LoginService.shared().hireFreelancers(freelancerDataJSON: payload,
+                                                  userId: session.user_id,
+                                                  userType: session.user_type,
+                                                  vendorId: session.id) { message, success in
+                GCD.async(.Main) {
+                    isHiringBatch = false
+                    pendingEntries = []
+                    if success {
+                        selection.removeAll()
+                        noticeMessage = message.isEmpty
+                            ? (count == 1 ? "Hiring request sent." : "Hiring request sent for \(count) freelancers.")
+                            : message
+                    } else {
+                        errorMessage = message.isEmpty ? "Please try again" : message
+                    }
+                }
+            }
         }
     }
 
@@ -141,7 +317,11 @@ struct VendorHireFreelancerView: View {
                         errorMessage = message.isEmpty ? "Please try again" : message
                         return
                     }
-                    freelancers = json["freelancers"].arrayValue.map(VendorFreelancerListing.init)
+                    // `freelancers_list`, not `freelancers` — verified live: vendor 706 gets
+                    // `{"total":1, "freelancers_list":[…]}`. Reading the wrong key meant this screen
+                    // showed "No freelancers found" every time, so hiring was unreachable from here
+                    // no matter who was listed.
+                    freelancers = json["freelancers_list"].arrayValue.map(VendorFreelancerListing.init)
                     state = freelancers.isEmpty ? .noData : .loaded
                 }
             }
@@ -546,8 +726,10 @@ struct VendorFreelancerBooking {
     /// Mirrors Android's `SelectedFreelancersDatabaseModel` — the object it hands to
     /// `new Gson().toJson(list)` — including the nested `detail` and its `dates` array. Sent as a
     /// one-element array, which is what `hire_freelancers` expects a single booking to look like.
-    func freelancerDataJSON(for freelancer: VendorFreelancerListing,
-                            transportationCharges: String) -> String? {
+    /// One freelancer's entry. Split out from `freelancerDataJSON` so a batch can collect several and
+    /// serialise them as one array — the endpoint has always taken an array; only the UI was singular.
+    func freelancerDataEntry(for freelancer: VendorFreelancerListing,
+                             transportationCharges: String) -> [String: Any] {
         let time = DateFormatter()
         time.locale = Locale(identifier: "en_US_POSIX")
         time.dateFormat = "HH:mm"
@@ -578,6 +760,12 @@ struct VendorFreelancerBooking {
             ]
         ]
 
+        return entry
+    }
+
+    func freelancerDataJSON(for freelancer: VendorFreelancerListing,
+                            transportationCharges: String) -> String? {
+        let entry = freelancerDataEntry(for: freelancer, transportationCharges: transportationCharges)
         guard let data = try? JSONSerialization.data(withJSONObject: [entry]) else { return nil }
         return String(data: data, encoding: .utf8)
     }

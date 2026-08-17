@@ -570,7 +570,9 @@ struct UpdateFreelancerView: View {
                         address: address,
                         onSelectCurrent: {
                             addresses = addresses.map {
-                                FreelancerAddress(id: $0.id, title: $0.title, fullAddress: $0.fullAddress, isCurrent: $0.id == address.id)
+                                FreelancerAddress(id: $0.id, apiId: $0.apiId, title: $0.title, fullAddress: $0.fullAddress,
+                                                  isCurrent: $0.id == address.id,
+                                                  latitude: $0.latitude, longitude: $0.longitude)
                             }
                         },
                         onDelete: {
@@ -908,19 +910,24 @@ struct UpdateFreelancerView: View {
 
     //MARK: - Address Management
     
+    /// The freelancer **record's** id, which is what `freelancer_id` means on all three address
+    /// endpoints — the column is `freelancer_details_id`, not a user id. These used to send
+    /// `Global.shared.user.id`, so for the QA account they asked for freelancer 45 when the record is
+    /// id 2: the list came back empty every time and any address saved went under a record that is not
+    /// this user's. Confirmed live — `freelancer_id=45` answers `addresses: []`, and the rows that do
+    /// exist carry `freelancer_details_id` matching the record id.
+    private var freelancerRecordId: String {
+        record?["id"].stringValue ?? ""
+    }
+
     private func fetchFreelancerAddresses() {
-        print("📍 Fetch addresses called - mode: \(mode), step: \(step)")
-        
-        // Company vendor temporarily disabled
-        guard let user = Global.shared.user else { 
-            print("📍 No user found")
-            return 
+        let freelancerId = freelancerRecordId
+        guard !freelancerId.isEmpty else {
+            // No record yet — registration has not happened, so there is nothing to attach to.
+            addresses = []
+            return
         }
-        let vendor = user // Use user as vendor for now
-        
-        let freelancerId = vendor.id
-        print("📍 Fetching addresses for freelancer ID: \(freelancerId)")
-        
+
         FreelancingService.shared.fetchFreelancerAddresses(freelancerId: freelancerId) { message, success, json in
             DispatchQueue.main.async {
                 print("📍 Fetch API response - success: \(success), message: \(message)")
@@ -948,7 +955,9 @@ struct UpdateFreelancerView: View {
                     apiId: id,
                     title: title,
                     fullAddress: pickUpAddress.isEmpty ? title : pickUpAddress,
-                    isCurrent: status
+                    isCurrent: status,
+                    latitude: addressJson["pick_up_latitude"].stringValue,
+                    longitude: addressJson["pick_up_longitude"].stringValue
                 )
                 addresses.append(freelancerAddress)
             }
@@ -982,18 +991,21 @@ struct UpdateFreelancerView: View {
     }
     
     private func addAddress(_ address: FreelancerAddress) {
-        // Company vendor temporarily disabled
-        guard let user = Global.shared.user else { return }
-        let vendor = user // Use user as vendor for now
-        
-        let freelancerId = vendor.id
-        
+        let freelancerId = freelancerRecordId
+        guard !freelancerId.isEmpty else {
+            showToast("Save your freelancer profile before adding an address")
+            return
+        }
+
         FreelancingService.shared.addFreelancerAddress(
             freelancerId: freelancerId,
             address: address.title,
             pickUpAddress: address.fullAddress,
-            latitude: "0.00000000", // You might want to get actual coordinates
-            longitude: "0.00000000",
+            // Real coordinates from the map picker. These were hardcoded to "0.00000000" with a
+            // "you might want to get actual coordinates" comment, which meant every pick-up point
+            // saved as null island — and the pick-up location is the whole purpose of the record.
+            latitude: address.latitude,
+            longitude: address.longitude,
             current: address.isCurrent
         ) { message, success, json in
             DispatchQueue.main.async {
@@ -1085,7 +1097,9 @@ struct UpdateFreelancerView: View {
             return FreelancerAddress(apiId: entry["id"].stringValue,
                                      title: title,
                                      fullAddress: entry["pick_up_address"].stringValue,
-                                     isCurrent: entry["status"].stringValue == "1")
+                                     isCurrent: entry["status"].stringValue == "1",
+                                     latitude: entry["pick_up_latitude"].stringValue,
+                                     longitude: entry["pick_up_longitude"].stringValue)
         }
         if !stored.isEmpty { addresses = stored }
     }
@@ -1577,13 +1591,20 @@ private struct FreelancerAddress: Identifiable {
     let title: String
     let fullAddress: String
     let isCurrent: Bool
+    /// The pick-up point. Strings rather than Doubles because every value on this backend is a
+    /// string, and these round-trip to `pick_up_latitude` / `pick_up_longitude` untouched.
+    let latitude: String
+    let longitude: String
 
-    init(id: UUID = UUID(), apiId: String? = nil, title: String, fullAddress: String, isCurrent: Bool) {
+    init(id: UUID = UUID(), apiId: String? = nil, title: String, fullAddress: String,
+         isCurrent: Bool, latitude: String = "0.00000000", longitude: String = "0.00000000") {
         self.id = id
         self.apiId = apiId
         self.title = title
         self.fullAddress = fullAddress
         self.isCurrent = isCurrent
+        self.latitude = latitude
+        self.longitude = longitude
     }
 }
 
@@ -1641,6 +1662,9 @@ private struct AddAddressOverlay: View {
     @State private var houseFlatNo: String = ""
     @State private var googleAddress: String = ""
     @State private var isCurrent: Bool = false
+    @State private var latitude: String = ""
+    @State private var longitude: String = ""
+    @State private var showMapPicker = false
 
     @State private var error: String = ""
 
@@ -1665,13 +1689,26 @@ private struct AddAddressOverlay: View {
                                 .stroke(AppTheme.Colors.primary.opacity(0.75), lineWidth: 1)
                         )
 
-                    TextField("Address from Google Map", text: $googleAddress)
+                    // Was a free-text field labelled "Address from Google Map" that produced no
+                    // coordinates at all. Android drops a marker; this opens the same map.
+                    Button(action: { showMapPicker = true }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: latitude.isEmpty ? "map" : "mappin.circle.fill")
+                                .foregroundColor(AppTheme.Colors.primary)
+                            Text(googleAddress.isEmpty ? "Set pick-up point on map" : googleAddress)
+                                .font(AppTheme.Fonts.body)
+                                .foregroundColor(googleAddress.isEmpty ? AppTheme.Colors.gray : AppTheme.Colors.textPrimary)
+                                .multilineTextAlignment(.leading)
+                            Spacer(minLength: 0)
+                        }
                         .padding(14)
                         .background(Color.white)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(AppTheme.Colors.primary.opacity(0.75), lineWidth: 1)
                         )
+                    }
+                    .buttonStyle(.plain)
 
                     Button(action: {
                         isCurrent.toggle()
@@ -1705,8 +1742,11 @@ private struct AddAddressOverlay: View {
                             return
                         }
 
-                        if g.isEmpty {
-                            error = "Address is required"
+                        // The coordinates are the requirement now, not the text: the address string is
+                        // whatever the geocoder returned and can legitimately be blank over a spot it
+                        // cannot name, but a pick-up record without a point is useless.
+                        if latitude.isEmpty || longitude.isEmpty {
+                            error = "Set the pick-up point on the map"
                             return
                         }
 
@@ -1714,7 +1754,9 @@ private struct AddAddressOverlay: View {
                             FreelancerAddress(
                                 title: h,
                                 fullAddress: g,
-                                isCurrent: isCurrent
+                                isCurrent: isCurrent,
+                                latitude: latitude,
+                                longitude: longitude
                             )
                         )
                     }) {
@@ -1734,6 +1776,16 @@ private struct AddAddressOverlay: View {
                 .padding(.horizontal, 24)
             }
             .onTapGesture {
+            }
+        }
+        .fullScreenCover(isPresented: $showMapPicker) {
+            PickUpLocationPicker(initialCoordinate: nil) { address, lat, lng in
+                googleAddress = address
+                latitude = lat
+                longitude = lng
+                showMapPicker = false
+            } onCancel: {
+                showMapPicker = false
             }
         }
     }

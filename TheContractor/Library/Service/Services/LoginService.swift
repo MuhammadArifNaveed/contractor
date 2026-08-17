@@ -805,7 +805,7 @@ class LoginService: BaseService {
 
     // MARK: - Freelancers (vendor mode)
     /// Browse freelancers. Android: `RetrofitApi.freelancerApi()` →
-    /// `POST freelancing/freelancers_frontend`, response key `freelancers`. Every filter may be
+    /// `POST freelancing/freelancers_frontend`, response key `freelancers_list`. Every filter may be
     /// empty; Android's vendor mode passes the company as both `vendor_id` and `user_id`.
     func getFreelancers(page: String, skills: String, rate: String, category: String, city: String,
                         userId: String, userType: String, vendorId: String,
