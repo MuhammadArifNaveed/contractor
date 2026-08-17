@@ -1,6 +1,12 @@
 # Company (vendor) side — completion roadmap
 
 
+> **Status banner (2026-08-17).** This document is a *working log / plan*, not the current state.
+> [`PARITY_STATUS.md`](PARITY_STATUS.md) is the authority, and [`RESUME_HERE.md`](RESUME_HERE.md) is the
+> entry point for picking the work up. Anything below that reads as "not built yet" may well be built;
+> check there first.
+
+
 > **Start with [`PARITY_STATUS.md`](PARITY_STATUS.md)** for the current what-is-done / what-is-left picture. This document is the detail behind it.
 
 Walks the vendor drawer top to bottom, from the header's **View Profile** button down to **Logout**,
@@ -225,7 +231,7 @@ Filter done. `jobs/get_job_search_fields` feeds category and city pickers; the t
 when a filter is active, and applying resets to page 1. Android uses two toolbar spinners; a single
 sheet of selectable chips shows both current selections at once and takes fewer taps.
 
-### 13. Freelancers ◐ — browse and hire done, multi-select and addresses not
+### 13. Freelancers ✅ — browse, multi-select and hire
 
 `VendorHireFreelancerView` replaces the consumer screen for companies: browse on
 `freelancing/freelancers_frontend` with a category/city filter from
@@ -241,14 +247,25 @@ freelancers. Each entry mirrors `SelectedFreelancersDatabaseModel`, including a 
 `isHourly`, `fromTime`, `toTime`, `isPicked` and a `dates` array. Every value is a string, so
 `isHourly` goes as `"1"`/`"0"` rather than a JSON boolean.
 
-**Not included:** Android's multi-freelancer selection (a local database acting as a cart) and the
-checkout's pick-up address management (`freelancing/get_freelancer_addresses`,
-`freelancing/add_freelancer_address`). This hires one freelancer at a time, which is a valid booking
-as far as `hire_freelancers` is concerned since it takes an array and a single entry is well-formed.
-Adding the cart is a UX change on top of a working call, not a correctness fix.
+**Multi-select is built.** Tick freelancers on the list, book each in turn through the same sheet a
+single hire uses, then post one array. Per-freelancer detail is preserved, which is the point — each
+entry keeps its own dates and window, which is what Android's local selection table exists to do. No
+local database is needed; the selection is view state.
 
-**Untested against data:** `freelancers_frontend` returned zero rows for the test company, so only
-the empty state has actually rendered. The row fields come from Android's `FreelancerListModel`.
+**Correction to an earlier note here.** This section used to say `freelancers_frontend` "returned zero
+rows for the test company, so only the empty state has actually rendered". That was wrong, and the wrong
+conclusion was drawn from it. The endpoint returns `freelancers_list`; iOS was reading `freelancers`, so
+the screen showed "No freelancers found" no matter what came back. Vendor 706 gets `{"total":1,
+"freelancers_list":[…]}` and the list renders correctly now.
+
+The lesson is the one in `RESUME_HERE.md` §4: **an empty screen on this backend is more often a wrong key
+or a wrong id than an empty result.** Confirm with curl before recording "no data" as a finding.
+
+**Pick-up addresses are not part of this flow** — a second earlier assumption that did not survive
+checking. `pick_up_address` / `pick_up_latitude` / `pick_up_longitude` belong to the *freelancer's own
+profile* (Android's `FreelancerAddressFragment`), not to hiring. They live in `UpdateFreelancerView`,
+backed by `PickUpLocationPicker`, and their three endpoints were already wired — but keyed on the user id
+instead of the freelancer record id, so the list always came back empty. Fixed.
 
 ### 14. Freelancer Dashboard ✅
 

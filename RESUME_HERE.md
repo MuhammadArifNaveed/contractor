@@ -1,9 +1,10 @@
-# Resume here — iOS/Android parity, state at 2026-08-15
+# Resume here — iOS/Android parity, state at 2026-08-17
 
 Written to be enough on its own. Read this, then `HANDOVER.md` (ground rules, tooling, traps) and
 `PARITY_STATUS.md` (the authority on per-feature state).
 
-Branch `feature/arif`, everything pushed. Build is clean.
+Branch `feature/arif`. Build is clean. **Five commits are local and unpushed** — `git push origin
+feature/arif` (the assistant's push was blocked by a permission gate, not by anything wrong with them).
 
 ---
 
@@ -46,6 +47,13 @@ the real key names → screen driven in the simulator*. Anything short of that i
   registered number passes and proceeds to send.
 - **Sign-out / login routing**, on the hierarchy where it used to fail silently.
 - **The Message entry point** on workshop ads, with the `show_chat` gate removed.
+- **Freelancer browse and multi-select hiring.** The list populates with the freelancer the API actually
+  returns, the checkbox and selection bar behave, and Book opens the per-freelancer booking sheet. The
+  final Confirm was **not** pressed: it creates a real hiring record against production.
+- **Membership detail**, including the negative case for the new workshop add-on button — vendor 706 owns
+  the add-on, so the button correctly stays hidden.
+- **The workshop quotation attachment row**, with the Files picker opening. Not submitted: that posts a
+  real bid on a live ad and consumes one of the account's 11 quotations.
 
 - **Freelancer order chat.** Driven on 15 Aug as vendor 706. **Placed** lists order #9 (Himanshu Dimri
   software Solutions, 2026-06-27) badged Expired; **Received** lists order #8 (Bilal update Jan Updte,
@@ -59,12 +67,24 @@ the real key names → screen driven in the simulator*. Anything short of that i
 
 ### Built, compiles, not yet driven
 
+Everything here is blocked on the same thing: the simulator holds a **company** session, and these are
+all consumer-side. Signing out costs the owner a PIN entry to restore, so they were left for the next
+consumer login rather than burning it.
+
 - **Company Finder** (`CompanyFinderView.swift`). `Home/get_by_company_id` verified live (238 companies
-  for `a`, `error:true` + "company not found." for a miss). The screen was not driven: it is on the
-  *consumer* drawer and the simulator holds a company session that would be lost by signing out, which
-  costs the owner a PIN entry to restore. Drive it on the next consumer login.
+  for `a`, `error:true` + "company not found." for a miss).
 - **Job-title suggestions.** `jobs/search_job_title` verified live (`eng` → Civil Engineer), wired into
-  `SearchJobsView` as tappable chips. Same reason: the screen is behind the consumer's Available Jobs.
+  `SearchJobsView` as tappable chips.
+- **The Edit Profile fix.** It used to send `address`, `city`, `country` and `job_category` as empty
+  strings, and the backend wrote the blanks over real values — so saving a name change erased the user's
+  address and job category. Now sent properly, prefilled from the stored record, with the city and
+  category pickers backed by `Home/get_search` instead of two hardcoded invented arrays. Reasoned against
+  user 45's live record (`city_id` 10, `cv_job_category` "carpentor", `country_id` 2); not seen on screen.
+- **The consumer freelancer-hire fix.** `FreelancingService.hireFreelancers` sent the selection under
+  `freelancer_id`; the backend reads `freelancer_data`, so checkout reported success and hired nobody.
+  Probed live — the wrong name and no name at all give the identical error. Not driven.
+- **The pick-up location picker** (`PickUpLocationPicker.swift`) and the freelancer-address id fix. The
+  addresses live in the freelancer profile, behind the consumer login.
 
 ---
 
@@ -79,7 +99,7 @@ the real key names → screen driven in the simulator*. Anything short of that i
 | SMS quota | Owner | Capped at **10/day** until a billing account is attached. Real users will hit this immediately |
 | Payment gateway | Owner | Deferred. The membership screens are **not** dead ends: plans load from `vendor/memberships`, coupon redemption works, and the card button already says "Card payment not available yet" |
 | **Credential leak** | Backend dev | `Home/get_by_company_id` returns `login_password` (MD5), `otp`, `verified_token`, `password_update_token`, `app_password_update_pin` and both firebase tokens for all 238 companies, unauthenticated. Neither app reads those fields — the fix is to stop selecting them. **Report this first** |
-| 7 backend bugs | Backend dev | The four already known (`Vendor/workshop_ad_detail` 500s, breaking this screen on **Android too**; `Home/recent_enquiries` returns HTML, unknown column `t2.company_whatsapp_phone`; `jobs/update_direct_hiring_status` crashes on an unknown id; `jobs/view_direct_hirings` has no `total_page` so it cannot page) plus three found on 15 Aug: `Home/quotation_fee_paid` errors on `Undefined variable $quotation_id`; `vendor/membership_details` throws on null; `freelancing/fetch_order_chats` omits `sending` for an empty thread. Full list in `PARITY_STATUS.md` §5 |
+| 10 backend bugs | Backend dev | The four already known (`Vendor/workshop_ad_detail` 500s, breaking this screen on **Android too**; `Home/recent_enquiries` returns HTML, unknown column `t2.company_whatsapp_phone`; `jobs/update_direct_hiring_status` crashes on an unknown id; `jobs/view_direct_hirings` has no `total_page` so it cannot page) plus `Home/quotation_fee_paid` (`Undefined variable $quotation_id`), `vendor/membership_details` (throws on null), `freelancing/fetch_order_chats` (omits `sending` for an empty thread, which put a live composer on an expired order), and the hiring-status case mismatch. Full list in `PARITY_STATUS.md` §5 |
 
 ### Code work, nothing blocking it
 
@@ -99,38 +119,69 @@ the real key names → screen driven in the simulator*. Anything short of that i
    the phone-auth URL scheme, the rules, and that the plist is in the Resources phase. It lists the
    console-side items it cannot see. Run it after any Firebase project change; `HANDOVER.md` §4 is the
    full checklist.
-2. **Sign the consumer in and drive two screens:** Company Finder (drawer → Company Finder) and the
-   job-title chips (Available Jobs → search). Both are built and their endpoints verified live; neither
-   has been looked at.
-3. **Unverified screens:** freelancer form prefill (sign in as user 45 → Profile → Profile Settings →
-   Freelancer profile; expect hourly rate 5, two skills, category `carpentor`, Dubai / Al Mamzar,
-   10:00–18:00, bank block, four addresses) and Company Details' top bar.
+2. **Sign the consumer in.** It is the single unlock for everything left that can be verified: Company
+   Finder, the job-title chips, the Edit Profile fix, the consumer freelancer-hire fix, the pick-up
+   location picker, and the freelancer form prefill. All are built and reasoned against live data; none
+   has been seen on screen, because the simulator holds a company session.
+3. **Localization — the one large piece of work left.** Android ships 264 Arabic strings and branches on
+   language in 138 files, rendering `arabic_name` / `arabic_title` / `arabic_description` from the API.
+   iOS has no `Localizable.strings`, no `.lproj` beyond `Base`, renders no Arabic content field (it parses
+   four and shows none), and its language picker saves a preference nothing reads. For a UAE app this is
+   the biggest remaining gap by a wide margin. Scope it deliberately — it is a project, not a task.
 4. **Cleanup:** dead storyboard scenes; `AppTheme.Fonts` still hands out fixed point sizes, so consumer
-   screens do not scale with system text size (`VendorTheme.Text` is already relative and is the model
-   to copy). The missing `splash_logo` / `topicon` references are **gone** — that item is done.
-5. **Lower value, cut to ship:** "available for job" checkbox saves nowhere; Edit Profile sends `address`,
-   `city`, `country`, `job_category` as empty strings; `addWorkshopQuotation` cannot attach a document;
-   freelancer hire has no multi-select or pick-up addresses.
+   screens ignore the system text size (all 222 call sites funnel through six helpers in
+   `AppTheme.swift`, so it is one file — but it shifts type across ~34 screens and wants a visual pass).
+   `VendorTheme.Text` is already relative and is the model to copy. Also ~40 files are listed twice in
+   `project.pbxproj`'s Sources phase, which makes every build print "Skipping duplicate build file" and
+   buries real warnings.
 
-Done since the last handover, so do not redo it: freelancer order chat verification, push tap routing,
-Company Finder, job-title suggestions, and the three "small endpoints" — of which one
-(`Home/quotation_fee_paid`) turned out to be broken on the backend and is deliberately not wired.
+**Done — do not re-open.** Freelancer order chat verification; push receive and tap routing; Company
+Finder; job-title suggestions; the workshop add-on coupon purchase; workshop quotation attachments; the
+`toAll` topic; multi-select hiring; the pick-up location picker. Plus five bugs found while doing them,
+listed in §5.
 
-### Endpoint gap, re-audited
+Two items dissolved on inspection rather than being built: **"available for job" saves nowhere** is not a
+gap — `Account/update_user_profile` has no part for it, so Android does not save it either. And
+**memberships → "Coming soon"** was unnecessary: the screens already work and the card path already says
+it is unavailable.
 
-**13 real gaps, 0 fabricated endpoints.** Method: every path Android's `RetrofitApi` declares *and calls*,
-against every path string in the iOS sources. Two caveats — Android has overloaded method names
-(`workshopAds`, `workshopAdDetails`) so a path can look called when only its sibling is, and a path merely
-mentioned in an iOS comment counts as present. Of the 13: 4 are freelancer order chat (now built), 3 are
-memberships (deferred), 2 are dead in Android too, 1 is the broken `Vendor/workshop_ad_detail`, and 3 are
-the small endpoints in item 3.
+### Endpoint gap, re-audited 17 Aug
+
+**8 gaps, 0 fabricated endpoints, none of them portable work.** Android declares 126 endpoints and calls
+121 of them; iOS covers **113 of those 121**. Of the 8: 3 are card payments (deferred), 2 are broken on
+the backend, and 3 are dead in Android — the unused halves of two overloaded method pairs plus the
+never-launched `VendorWorkshop` activity. `PARITY_STATUS.md` §2 has the table.
+
+Two traps when re-running this audit, both of which produced wrong answers first time:
+stripping `//` comments naively also truncates every hardcoded `https://…` URL (only treat `//` as a
+comment when not preceded by `:`), and matching Android method names alone conflates the overloaded
+`workshopAds` / `workshopAdDetails` pairs.
 
 ---
 
-## 4. The order chat — done, and the defect it surfaced
+## 4. Bugs found by auditing — and the pattern behind them
 
-Driven on 15 Aug as vendor 706. Both tabs list the expected rows and the thread opens with the empty
-state. **The one thing driving it was for was the defect it found:**
+Six defects surfaced while closing the parity gaps. None was reported by a user, none showed as a crash,
+and **four of them made a screen silently do nothing while reporting success.** That is the pattern worth
+carrying forward: on this backend a wrong key or a wrong id produces an empty result, not an error.
+
+| Bug | Effect | How it was caught |
+|---|---|---|
+| Consumer hire sent `freelancer_id`, backend reads `freelancer_data` | Checkout said "Freelancer Hired" and hired nobody | Probing the endpoint with the wrong name and with nothing at all — identical error both times |
+| Freelancer browse read `freelancers`, key is `freelancers_list` | "No freelancers found" always; hiring unreachable from the vendor side | curl showed `total: 1` while the screen showed none |
+| Freelancer addresses keyed on the user id, not the record id | Address list always empty; saves went under someone else's record | `freelancer_id=45` returns `[]`; real rows carry `freelancer_details_id` |
+| Edit Profile sent four fields as empty strings | The backend wrote the blanks over real values — saving a name change erased the user's address and job category | Comparing part-by-part against Android's `UpdateProfile` |
+| `fetch_order_chats` omits `sending` for an empty thread | Expired orders got a working composer whose every send would fail | Driving the screen — see below |
+| Pick-up coordinates hardcoded `"0.00000000"` | Every pick-up point saved as null island; the point is the record's whole purpose | Reading the code around the address save |
+
+**The generalisable lesson: a missing key is not the same as a false one.** Any other `exists()` check
+guarding a permissive default has the same shape of bug latent in it. And an empty list from this backend
+should be treated as suspicious until the id you sent is confirmed to be the id it wants.
+
+### The order chat, in detail
+
+Driven as vendor 706. Both tabs list the expected rows and the thread opens with the empty state.
+**The one thing driving it was for was the defect it found:**
 
 `fetch_order_chats` answers a thread with no messages as `{"status":false,"error":true,"message":"No
 chats found"}` — **with no `sending` key**. The thread read `sending` to decide whether to show the
@@ -138,9 +189,6 @@ composer and defaulted to `true` when absent, so an expired order got a working 
 send would have come back "Message not sent, Order Expired". The list row already knows (`expired`),
 and now seeds it. Confirmed after the fix: composer replaced by "Order Expired / Rejected", empty state
 reads "This order is closed."
-
-The lesson generalises — **a missing key is not the same as a false one.** Any other `exists()` check
-guarding a permissive default has the same shape of bug latent in it.
 
 **Still not verifiable without new data:** the message row shape and the send path. Both QA orders are
 expired, so `freelancing/send_message` answers "Message not sent, Order Expired". The parser was written
@@ -194,10 +242,17 @@ id. To close this out, someone needs to create a freelancer order dated today or
 - [ ] Attach a billing account (SMS quota)
 - [x] ~~Finish order chat verification~~ — done, and it found a defect (§4)
 - [x] ~~Push receive + tap routing~~ — built and driven; delivery still blocked
-- [ ] Report the other 6 backend bugs (`PARITY_STATUS.md` §5)
+- [ ] Report the other 9 backend bugs (`PARITY_STATUS.md` §5)
+- [ ] Push the five local commits — `git push origin feature/arif`
+- [ ] Sign the consumer in and drive the six unverified consumer screens (§2)
+- [ ] Decide whether **Arabic ships at launch**. If yes, localization is a project's worth of work and
+      needs scheduling now, not discovering later — see §3
 - [x] ~~Memberships → "Coming soon"~~ — not needed; the screens already work and the card path already
       says it is unavailable
+- [x] ~~Multi-select hiring and pick-up addresses~~ — built; fixing them uncovered two more silent bugs (§4)
 - [ ] Test on a **real device** — nothing has been. Phone auth behaves differently there: with the APNs key
       uploaded it uses a silent push instead of the reCAPTCHA browser fallback seen on the simulator
 - [ ] Deployment target is **iOS 15**, but the simulator is iOS 26 — newer SF Symbols and APIs compile and
-      run there and would break on a real iOS 15 device. This has already happened twice
+      run there and would break on a real iOS 15 device. This has already happened twice. `Map`,
+      `.fileImporter` and `.submitLabel` were added this session; all are iOS 14/15 APIs, but check them
+      on a real iOS 15 device before shipping

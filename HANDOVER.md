@@ -52,8 +52,9 @@ below are the current session's; the pattern is `/private/tmp/claude-501/<projec
 | `build.sh` | `xcodebuild -workspace TheContractor.xcworkspace -scheme TheContractor -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /private/tmp/cc-dd -quiet build`, then echoes `--- exit: N ---`. |
 | `run.sh` | `simctl install` + `launch` on the booted device. |
 | `audit_urls.py` | Every API path iOS calls vs Android's declared list. Understands all **three** URL shapes in this codebase: `BASE_URL + "literal"`, `BASE_URL + EndPoints.constant`, `"\(EndPoints.BASE_URL)Home/foo"`, plus hardcoded absolute URLs. Exits non-zero on anything undeclared. **Currently reports 0.** |
-| `parity.py` | Payload audit: iOS part names vs Android `@Part` names. Repeatedly caught bugs the path audit could not. Four known flags, all triaged (3 false positives, 1 real: `addWorkshopQuotation` cannot attach a document). |
-| `add_files.py` | Adds a Swift file to `project.pbxproj` (one file ref, one build file, one group child, one Sources entry). Takes `--group <uuid> --write`. Group uuids: Views `806CA97D2F5768C600D31D28`, Vendor `806CA9462F5768C600D31D28`, Services `18EA180A26D28820003DF2FC`. |
+| `parity.py` | Payload audit: iOS part names vs Android `@Part` names. Repeatedly caught bugs the path audit could not. Four known flags, all triaged (3 false positives, 1 real: `addWorkshopQuotation` could not attach a document — **now fixed**). |
+| `add_files.py` | Adds a Swift file to `project.pbxproj` (one file ref, one build file, one group child, one Sources entry). Takes `--group <uuid> --write`. Group uuids: Views `806CA97D2F5768C600D31D28`, Vendor `806CA9462F5768C600D31D28`, Services `18EA180A26D28820003DF2FC`, **Global `18EA17F226D28820003DF2FC`**, **Components `806CA8E12F57689000D31D28`**. **The group must match the file's real directory** — a group's `path` is what the file ref resolves against, so registering `Global/Foo.swift` under Views makes the build look for `SwiftUI/Views/Foo.swift` and fail with "Build input file cannot be found". Two files were misfiled this way. Also beware: several names appear in more than one group (there is a "Recovered References" group), so find the group by its `path = …`, not by which group happens to contain a similarly named file. |
+| `scripts/firebase_preflight.sh` | **In the repo, not the scratchpad.** Checks the four file-level items from §4's checklist in one command and names the console-side ones it cannot see. Run it after any Firebase project change. |
 | `drop_files.py` | Removes files from `project.pbxproj` with a dangling-uuid assertion. **Must match names with a word boundary** — plain substring matching once nearly unregistered `FreelancerCheckoutView` while removing `CheckoutView`. |
 
 A **plist** goes in the Resources phase (`18EA17D326D287CC003DF2FC`), not Sources — `add_files.py` does
@@ -71,6 +72,15 @@ there). **`screenshot`, `tap`, `text` and `swipe` all work headlessly** against 
   `points_width / image_width` — about **0.437** on this device.
 - **Screenshot between navigation steps.** Blind tap chains fail often and silently; several hours have
   gone into taps that landed on the tab bar.
+- **Convert coordinates from the whole image height, not a remembered number.** A tap meant for a bottom
+  bar landed mid-screen because the scale was applied to the wrong axis reference, and the resulting
+  "nothing happened" was briefly misdiagnosed as a SwiftUI bug. Multiply the *displayed* x and y by
+  `points_width / image_width` (~0.437 here) and sanity-check that the result is inside the 402×874 frame.
+- **A notification banner lives ~5 seconds**, which is shorter than a tool round-trip, so a single
+  `simctl push` then tap always misses and the log shows only `willPresent`, never `didReceive`. Push on
+  a loop in the background (`for i in $(seq 1 30); do simctl push …; sleep 2; done &`) so a banner is
+  guaranteed on screen when the tap lands, then `pkill` the loop. Tapping the notification on the *lock
+  screen* does not work either — it wants authentication first.
 - A stored **company** session survives `simctl uninstall` because it lives in the keychain:
   `xcrun simctl keychain <udid> reset`.
 - Dark mode: `xcrun simctl ui <udid> appearance dark|light`. This is how the last theme defect was found.
@@ -87,18 +97,32 @@ repo** — that discipline has been kept so far. Two facts that are safe and nee
 - The QA consumer is user id **45** (uuid on the record), with real workshop ads, one estimate request and
   a freelancer record. The QA company is vendor id **706**, `user_type=companies`, with 24 direct hires
   and 42 jobs. A second consumer, id **46**, was created by the sign-up flow and has nothing.
+- **User 45's freelancer *record* is id 2, not 45.** The freelancer address endpoints take that record id
+  as `freelancer_id` — the column is `freelancer_details_id` — and passing the user id instead returns an
+  empty list rather than an error, which is how it went unnoticed. Same trap for any other
+  freelancer-scoped call.
+- Vendor 706 already owns the workshop membership add-on, so the "add with a coupon" button on Membership
+  detail is correctly hidden for it. Testing the *visible* case needs a membership without the add-on.
 
 ---
 
 ## 3. Where the app stands
 
-**101–103 of Android's 124 endpoints are implemented; 0 fabricated.** Of the ~21 not called, 6 are dead in
-Android too. `PARITY_STATUS.md` has the grouped list and is kept current.
+**113 of the 121 endpoints Android actually calls are implemented; 0 fabricated.** (Android declares 126;
+5 of those it never calls itself.) All 8 remaining are accounted for — 3 payment-gated, 2 backend-broken,
+3 dead in Android. `PARITY_STATUS.md` has the table and is kept current.
+
+**The one large gap is localization.** Android ships 264 Arabic strings and branches on language in 138
+files; iOS has no `Localizable.strings` at all and renders no Arabic content field, though it parses
+several. The language picker saves a preference nothing reads. Payments are the other exclusion, deferred
+by decision.
 
 - **Company/vendor side** — complete. Every drawer item and the header's View Profile reach a real screen
   or say plainly the feature is unavailable.
-- **Consumer side** — feature-complete including sign-up. The one missing piece of sign-up is the SMS
-  verification code (see Firebase below).
+- **Consumer side** — feature-complete including sign-up and its SMS verification code, which is built
+  and driven. Two screens built this session have never been *looked at* — Company Finder and the
+  job-title suggestion chips — because both sit behind a consumer login and the simulator holds a
+  company session.
 - **Guest (no-login)** — matches Android item-for-item: Android hides twelve drawer items from a guest and
   gates Freelancer Dashboard, the Workshop tab and the estimate consultation behind a login prompt; iOS
   hides the same twelve and gates the same three. Never walked end to end.

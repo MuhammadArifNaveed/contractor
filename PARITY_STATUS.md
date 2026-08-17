@@ -1,6 +1,7 @@
 # iOS ⇄ Android parity — status
 
-One page for "what is replicated and what is left". The three working documents keep the detail:
+**Last audited: 2026-08-17.** One page for "what is replicated and what is left". The three working
+documents keep the detail:
 
 - [`COMPANY_SIDE_ROADMAP.md`](COMPANY_SIDE_ROADMAP.md) — company/vendor plan and design system
 - [`USER_SIDE_ROADMAP.md`](USER_SIDE_ROADMAP.md) — consumer plan, endpoint mapping, per-feature notes
@@ -17,26 +18,42 @@ iOS-native and deliberately not a copy of Android's layouts.
 
 | Area | State |
 |---|---|
-| Firebase | **SDK in, chat built, project mismatched.** Auth/Firestore/Messaging pods, plist registered, `FirebaseApp.configure()`, and the real FCM token now reaches the backend instead of the literal `"testtoken123"`. See the blocked row. |
+| Firebase | **SDK in, chat built and driven, project mismatched.** Auth/Firestore/Messaging pods, plist registered, `FirebaseApp.configure()`, and the real FCM token now reaches the backend instead of the literal `"testtoken123"`. `firestore.rules` is written and ready to deploy (writes validated, deletes off, message text immutable) but **reads stay open** until the backend mints custom tokens — the iOS half of that is already done in `ChatAuthService`. `./scripts/firebase_preflight.sh` checks the file-level config in one command. See the blocked row. |
 | Design system | **One system now.** `AppTheme`'s colours resolve to `VendorTheme`, so the consumer screens share the palette and follow dark mode, and **every** yellow bar in the app is `VendorTopBar` — fifteen were hand-rolled `HStack`s. |
 | Company / vendor side | **Complete.** All 17 drawer items and the header's View Profile reach a real screen on a real endpoint, or say plainly that the feature is unavailable. |
-| Consumer side | **Complete.** Every drawer item and every tab reaches a real screen, or an honest "not available yet" (Inbox). Sign-up works; the SMS code step Android has is the one piece missing, see *What is left*. |
+| Consumer side | **Complete**, including the sign-up SMS code, which is built and driven. Every drawer item and every tab reaches a real screen. "Company Finder" now opens the keyword search on `Home/get_by_company_id` rather than duplicating the bottom bar's filter tab. |
 | Guest (no-login) flow | **Matches Android's item-for-item, never walked end to end.** Android hides twelve drawer items from a guest (Inbox, Submit Enquiry, Enquiries, Request for Quotation, Quotations, Complaints, Estimations, Workshop, Contact Us, Logout, My Job Applies, Direct Hiring) and gates Freelancer Dashboard, the Workshop tab and the estimate consultation behind a login prompt. `GUEST_MENU` hides exactly those twelve and iOS gates the same three. Two items Android shows to guests were missing from both iOS drawers — Select Language and Documentation — and are now added. There is no anonymous company mode on either platform: a company either signs in or does not. |
 | Fabricated endpoints | **0.** Every API path iOS calls is declared in Android's `RetrofitApi.java`. |
-| Endpoint coverage | iOS calls **103 of Android's 124** endpoints. Of the 21 it does not, **6 are dead in Android too** — declared in `RetrofitApi` and never called — so 15 are real gaps. Listed below. |
+| Endpoint coverage | Android declares **126** endpoints, of which **121 are actually called** there (5 are dead in Android). iOS covers **113 of those 121**. The 8 remaining are *all* accounted for and none is portable work: 3 payment-gated, 2 backend-broken, 3 dead in Android via unused method overloads. Listed below. |
+| Push | **Token, receive and tap routing all built.** `PushRouter` mirrors Android's `MyFirebaseMessagingService` across all ten actions, and iOS now subscribes to the `toAll` topic Android has always used. **Delivery is still blocked** — see the blocked row. |
+| Localization | **The one large gap.** Android ships 264 Arabic strings and branches on language in 138 files, rendering `arabic_name` / `arabic_title` / `arabic_description` from the API. iOS has no `Localizable.strings`, no `.lproj` beyond `Base`, and renders no Arabic content field; the language picker saves a preference nothing reads. Not started — scope it deliberately. |
+| Payments | **Deferred by decision.** The three card-payment endpoints are unimplemented and the screens say so plainly. The coupon paths — membership *and* the workshop add-on — are implemented and work. |
 
 ### Re-running the checks
 
-Two scripts, both in the session scratchpad, both worth running after any change in this area:
-
-- **`audit_urls.py`** — every API path iOS calls, against Android's declared list. It understands all
+- **`./scripts/firebase_preflight.sh`** — in the repo, not the scratchpad. Checks the four file-level
+  Firebase items that each cost a round trip at least once: bundle id against the build, the phone-auth
+  URL scheme against `GOOGLE_APP_ID` (absent, and `PhoneAuthProvider` calls `fatalError` outright), the
+  rules file, and the plist being in Resources rather than Sources. All four pass today. It names the
+  console-side items it *cannot* see rather than letting a clean run imply readiness.
+- **`audit_urls.py`** — every API path iOS calls, against Android's declared list. Understands all
   three URL shapes in this codebase: `BASE_URL + "literal"`, `BASE_URL + EndPoints.constant`, and
   `"\(EndPoints.BASE_URL)Home/foo"`, plus fully hardcoded `https://…/rest/…` URLs. Exits non-zero on
   anything Android does not declare.
 - **`parity.py`** — part names against Android's `@Part` names. This is the one that matters most: a
-  path can be right while every field is silently ignored, which is exactly what was happening on
-  company registration and password reset. It currently reports four flags, all triaged (three false
-  positives, one real: `addWorkshopQuotation` cannot attach a document yet).
+  path can be right while every field is silently ignored. Its one real flag —
+  `addWorkshopQuotation` could not attach a document — is now fixed.
+
+`audit_urls.py` and `parity.py` live in the session scratchpad and are wiped between sessions;
+recreate them from the descriptions above. **Two traps when rewriting the path audit**, both of which
+produced wrong answers before being caught:
+
+1. Stripping `//` comments naively also truncates every hardcoded `https://…` URL, which makes a dozen
+   implemented endpoints look missing. Only treat `//` as a comment when it is not preceded by `:`.
+2. Android **overloads method names** — there are two `workshopAds` and two `workshopAdDetails`, each
+   pair pointing at different paths. Matching on the method name alone marks a path as called when
+   only its sibling is. Distinguish by argument count, or the audit will hide three dead endpoints
+   among the live ones.
 
 ---
 
@@ -51,12 +68,12 @@ Two scripts, both in the session scratchpad, both worth running after any change
 | `VendorProfile` | `VendorProfileView` | |
 | `VendorDashboardEnquiries`, `VendorParticularEnquiries`, `VendorEnquiryDetail` | `VendorEnquiriesView`, `VendorEnquiryDetailView` | |
 | `VendorDashboardQuotations`, `VendorParticularQuotations`, `VendorQuotationDetail` | `VendorQuotationsView`, `VendorQuotationDetailView` | Quotation document upload included. |
-| `VendorRating`, `VendorRatingDetail` | `VendorReviewsView` | List only; Android's per-review drill-down is not built. |
+| `VendorRating`, `VendorRatingDetail` | `VendorReviewsView` | List only; Android's per-review drill-down makes no API call, so nothing is lost. |
 | `VendorPostWorkshop`, `VendorWorkshop`, `VendorAllWorkshopsAds`, `VendorWorkshopDetail`, `VendorInterestedWorkshops` | `VendorPostWorkshopView`, `VendorWorkshopView`, `VendorWorkshopAdsView`, `VendorWorkshopDetailView` | Workshop quotation add + lock/unlock included. |
 | `VendorDashboardJobs`, `VendorJobListing`, `VendorPostJob`, `VendorJobDetail` | `VendorJobsView`, `VendorPostJobView`, `VendorJobDetailView` | Create and edit, with image picker. Backend spells it `vaccancies`. |
 | `VendorApplicants`, `VendorApplicantDetail` | `VendorJobApplicantsView`, `VendorApplicantDetailView` | |
 | `VendorDirectHiring`, `VendorDirectHiringDetail` | `VendorDirectHiringView` | Off the jobs dashboard, as on Android. Despite the endpoint name it is not accept/reject: Android's dialog sets one of five statuses — Submitted, Viewed, Shortlisted, `interviewed` (its own lower case), Selected — sent verbatim. |
-| `VendorFreelancersList`, `VendorHiredFreelancers`, `VendorHiredFreelancersSummary`, `VendorDashboardFreelancer` | `VendorFreelancersView`, `VendorHireFreelancerView`, `FreelanceDashboardView` | Hire call works; multi-select + pick-up addresses are Android extras not built. |
+| `VendorFreelancersList`, `VendorHiredFreelancers`, `VendorHiredFreelancersSummary`, `VendorDashboardFreelancer` | `VendorFreelancersView`, `VendorHireFreelancerView`, `FreelanceDashboardView` | **Multi-select hiring built** — tick several, book each through the same sheet, post one `freelancer_data` array with per-freelancer detail. Browse used to read `freelancers`, but the key is `freelancers_list`, so the list was always empty and hiring was unreachable; fixed. |
 | `VendorMembership`, `VendorMyMembership`, `VendorMyMembershipDetail` | `VendorSubscriptionView`, `VendorMyMembershipDetailView` | Coupon purchase works; **card payment is not wired** — see *Blocked*. |
 | `VendorChat`, `VendorFreelancerChat` | "Coming soon" screen | Firebase Firestore — see *Blocked*. |
 
@@ -118,34 +135,31 @@ Until the console side is done, **`Account/user_register` is still reachable wit
 by calling it directly — the gate is client-side on both platforms, so this closes the app's door, not
 the endpoint's.
 
-### 2. Android endpoints iOS does not call (21, of which 6 are dead in Android too)
+### 2. Android endpoints iOS does not call (8, all accounted for)
 
-**Dead on both sides — declared but never called by Android either.** Nothing to port; they are listed
-so nobody mistakes them for missing features:
+Re-audited 2026-08-17 by diffing every path Android's `RetrofitApi` declares **and calls** against every
+path in the iOS sources. Android declares 126; 121 are actually called there; iOS covers **113** of those
+121. There are **no fabricated endpoints** — every URL iOS calls is one Android declares.
 
-`Home/recent_workshop_ads`, `Home/workshop_ad_detail`, `Home/submit_workshop_ad`,
-`Home/update_workshop_ad_status`, `Home/category_wise_companies`, `Home/sub_category_wise_companies`.
+None of the 8 is portable work:
 
-The first four are the reason "consumer workshop-ad browsing" looked like the largest remaining
-feature: Android's `RetrofitApi` declares two `workshopAds` overloads and two `workshopAdDetails`
-overloads, and the live activities call the `workshop/...` ones, not these. The consumer browse list is
-built on `workshop/workshops` + `workshop/get_workshop_details`, which is what actually shipped.
+| Endpoint | Why not |
+|---|---|
+| `vendor/buy_membership_online` | Card payment. Gateway deferred by decision; the screen says "Card payment not available yet" rather than offering a button that fails. |
+| `vendor/buy_workshop_membership_online` | Card payment, same. Its **coupon** sibling is implemented. |
+| `Home/quotation_fee_paid` | Card payment **and** backend-broken (`Undefined variable $quotation_id`). Deliberately not wired — see the issues table. |
+| `vendor/membership_details` | Backend-broken (throws on null). iOS does not need it: every field it would return is already on the `vendor/my_memberships` row, which is what `VendorMyMembershipDetailView` reads. |
+| `Vendor/workshop_ad_detail` | Backend-broken (500s for every id). Breaks Android's own `VendorWorkshopDetail` too. |
+| `Home/recent_workshop_ads` | **Dead in Android.** The unused half of the overloaded `workshopAds` pair — only the 5-argument `workshop/workshops` version is ever called. |
+| `Home/workshop_ad_detail` | **Dead in Android.** The unused half of the overloaded `workshopAdDetails` pair; the live calls go to `workshop/get_workshop_details`. |
+| `Vendor/workshop_ads` | **Dead in Android.** Belongs to the `VendorWorkshop` activity, which is declared in the manifest and launched from nowhere — the only one of Android's 90 activities that is unreachable. |
 
-**13 real gaps**, re-audited by diffing every path Android's `RetrofitApi` declares *and calls* against every
-path string appearing anywhere in the iOS sources. Two caveats on the method: Android declares overloaded
-methods sharing a name (`workshopAds`, `workshopAdDetails`), so a path can look called when only its
-sibling is — which is why the `Home/...workshop_ad...` pair below is still listed despite being dead; and
-a path merely *mentioned in an iOS comment* counts as present, so the list errs toward under-reporting.
-There are **no fabricated endpoints**: every URL iOS calls is one Android declares.
+**Also dead in Android, so never counted as gaps:** `Account/user_register`, `Home/category_wise_companies`,
+`Home/sub_category_wise_companies`, `Home/submit_workshop_ad`, `Home/update_workshop_ad_status`.
 
-| Group | Endpoints | Comment |
-|---|---|---|
-| ~~Session~~ | ~~`Account/get_user_details_by_id`~~ | **Now called.** Chat needs the workshop ad owner's `uuid` and it is the only live endpoint that returns one. |
-| Vendor workshop ads (capital-V variants) | `Vendor/workshop_ads`, `Vendor/workshop_ad_detail` | A separate vendor-side ad list; the `workshop/...` pair covers what both drawers open. **`Vendor/workshop_ad_detail` is broken on the backend** and cannot be ported — see the issues table below. |
-| **Freelancer order chat** | `freelancing/fetch_order_chats`, `freelancing/order_placed_chats`, `freelancing/order_recieved_chats`, `freelancing/send_message` | **The largest genuinely missing feature, and nothing to do with Firebase** — an earlier note here calling it "the same Firebase blocker" was wrong. Android's `VendorFreelancerChat` is a plain REST chat on a freelancer *order*, separate from the Firestore company↔user chat. iOS has no screen for it at all. |
-| Memberships | `vendor/membership_details`, `vendor/buy_workshop_membership_online`, `vendor/buy_workshop_membership_by_coupon` | See *Blocked*. |
-| ~~Push notifications~~ | ~~`Home/send_message_notification`, `vendor/send_message_notification`~~ | **Now called**, one per side, fire-and-forget from `ChatService.send` exactly where Android fires them. Both probed live (with deliberately bogus ids, so nothing was pushed to a real account) and both answer `{"message":"error","error":false}`. Note the part is `meesage`, and the consumer call's `company_id` part actually carries the company's *serial number*. |
-| Misc | `Home/quotation_fee_paid`, `Home/get_by_company_id`, `jobs/search_job_title` | Quotation fee payment; company lookup by id; job-title autocomplete. |
+Closed since the last revision of this section: freelancer order chat (all four), `Home/get_by_company_id`,
+`jobs/search_job_title`, `vendor/buy_workshop_membership_by_coupon`, `Account/get_user_details_by_id`,
+both `send_message_notification` paths.
 
 ### 3. Blocked on something outside the code
 
@@ -160,24 +174,37 @@ There are **no fabricated endpoints**: every URL iOS calls is one Android declar
 
 ### 4. Everything else remaining, ranked
 
-Nothing below blocks a normal user; they are ordered by what they cost.
+**The only large item left is localization** (see the table at the top). Everything below it is small.
 
 **Worth doing next**
 
-1. **The freelancer form's prefill is unverified on screen.** The mapping was written against the live
-   record (every field shape printed from the real response), and it compiles, but the filled form has
-   not been looked at. What would confirm it: sign in as the QA user, Profile → Profile Settings →
-   Freelancer profile, and check hourly rate 5, two skills, category `carpentor`, Dubai / Al Mamzar,
-   10:00–18:00, the bank block, and four addresses.
-3. **Edit Profile's "available for job" checkbox is still a local flag** that saves nowhere. Android
-   drives it through its own call; the freelancer switch beside it is now live, which makes the dead one
-   more obvious.
-4. **`EditProfileView` sends `address`, `city`, `country` and `job_category` as empty strings** because
-   the form does not collect them, and none of Android's three optional file parts. The call is correct;
-   the form is thinner than Android's.
-5. **`addWorkshopQuotation` cannot attach a document**; Android can.
-6. **Freelancer hire flow has no multi-select or pick-up addresses** — both are Android extras on a hire
-   call that already works.
+1. **Two built screens have never been looked at**, both on the consumer side, which is why they are
+   still open: **Company Finder** (drawer → Company Finder) and the **job-title suggestion chips**
+   (Available Jobs → search). Endpoints verified live, code compiles; they need a consumer login to drive.
+2. **The freelancer form's prefill is unverified on screen.** Written against the live record and it
+   compiles, but the filled form has not been seen. To confirm: sign in as the QA user, Profile →
+   Profile Settings → Freelancer profile, and check hourly rate 5, two skills, category `carpentor`,
+   Dubai / Al Mamzar, 10:00–18:00, the bank block, and the addresses.
+3. **`AppTheme.Fonts` hands out fixed point sizes**, so consumer screens ignore the system text size.
+   All 222 call sites funnel through six static helpers in `AppTheme.swift`, so it is one file to change
+   — but it shifts type across ~34 screens and wants a visual pass, which needs the consumer login too.
+   `VendorTheme.Text` is already relative and is the model to copy.
+4. **`EditProfileView` still sends none of Android's three optional file parts.** The four text fields it
+   used to blank are fixed (see below); the file parts remain unbuilt.
+
+**Closed since the last revision** — do not re-open these:
+
+- ~~"available for job" saves nowhere~~ — **not a gap.** `Account/update_user_profile` has no part for
+  `is_available_for_job`; Android prefills the checkbox and never saves it either. iOS matches.
+- ~~`EditProfile` sends `address`/`city`/`country`/`job_category` as empty strings~~ — **was a data-loss
+  bug**, not a thin form: the backend wrote the blanks over real values, so saving a name change erased
+  the user's address and job category. Now sent properly, prefilled from the stored record, with the two
+  pickers backed by `Home/get_search` instead of hardcoded invented arrays. Android's asymmetry is kept:
+  `city` is the city **id**, `job_category` is the category **title**.
+- ~~`addWorkshopQuotation` cannot attach a document~~ — built, with a `.fileImporter` and a real MIME type.
+- ~~Freelancer hire has no multi-select or pick-up addresses~~ — both built. Pick-up addresses turned out
+  to belong to the freelancer's *profile*, not the hire flow.
+- ~~`Image("splash_logo")` / `Image("topicon")` missing~~ — no longer referenced anywhere.
 
 **Cleanup**
 
@@ -186,22 +213,8 @@ Nothing below blocks a normal user; they are ordered by what they cost.
 - `VendorSettingsView` and `VendorReportsView` are unreachable leftovers.
 - `VendorWorkshopAdsList` and `VendorWorkshopDetailView` are shared with the consumer side now, so the
   `Vendor` prefix on their names misleads. Worth renaming when something else touches them.
-- `Image("splash_logo")` and `Image("topicon")` are referenced in six places; neither asset exists.
-- The container's background behind a drawer screen is a fixed `F4F4F6`, so a thin light strip shows
-  under the content in dark mode. UIKit side, one line in `MainContainerViewController`.
-- Company Details' bar was converted last, using `VendorTopBar`'s new trailing view-builder, and has not
-  been looked at on a device — the Add-to-enquiry pill's fit inside the shared bar is unverified.
-- `AppTheme.Fonts` still hands out fixed point sizes (`semibold(16)`) rather than the semantic scale, so
-  consumer screens do not scale with the system text size the way the vendor ones do.
-- `parity.py`, the payload audit, lives only in a session scratchpad and gets wiped. It belongs in the
-  repo next to a copy of `audit_urls.py`.
-
-**Not exercised**
-
-- No direct-hire status has been set on a real row: `hiring_status` starts empty and the API offers no way
-  back to empty, so setting one on the QA data would not be reversible. The picker and the payload are
-  verified; the write is not.
-- The consultation request on the estimate flow has never been submitted, for the same reason.
+- `project.pbxproj` has ~40 files listed twice in Sources; Xcode warns "Skipping duplicate build file"
+  on every build. Harmless, noisy, and it hides real warnings.
 
 ### 5. Backend issues to report
 
@@ -235,7 +248,9 @@ Honest account of how far each claim is tested.
 | **Endpoint verified live (curl), UI compiled but not driven** | The two write actions listed under *Not exercised* above, and every screen not named in the row above. Each endpoint was called against the live backend and each parser written against the real key names — but a screen that has only been compiled can still be wrong in ways only looking at it reveals, which is exactly what the last visual pass showed: four defects on two screens whose endpoints were all correct. |
 | **Driven in the simulator** | **Sign-out and the login prompt, on the hierarchy where they used to fail.** Logging out with the drawer installed as the window's root now reaches the login screen instead of silently doing nothing; Skip then pushes the drawer back onto the navigation controller that fix builds, and the drawer's "Login or Create Account" opens the login screen too. See the fix note below. Not re-tested through a *company* sign-out specifically, which needs the company PIN again — but that is the same `showLoginScreen()` call on the same hierarchy. |
 | **Driven in the simulator, both accounts, documents verified** | **Chat, end to end.** Company 706 opened workshop ad 109, pressed Message (owner's `uuid`/`username`/`name`/`surname` resolved live through `Account/get_user_details_by_id`), and sent — `createConnection` wrote the connection *on send, not on open*, then the message. Consumer 45 signed in, saw the thread in the inbox, opened it and replied. Both documents were then read back out of Firestore: `user_connections` has all **15** of Android's fields and no others, `chat` has all **9**; every value a string; `created_at = 2026-11-08` confirms the swapped `yyyy-dd-MM` for 11 August; `country_time` is an hour behind in Dubai; `sent_by` is `company` then `user`; `last_message`/`message_time` follow the newest message; and `user_is_view` flipped to `1` on the company's message when the consumer opened the thread, which verifies `markThreadViewed`. Bubble side and counterpart name flip correctly per role. A later second Message tap on the same ad exercised **`findConnection`'s reuse branch**: it reopened the existing thread with both messages rather than starting an empty one, the collection still holds exactly **one** connection with the same document id and `chat_uuid`, and `company_is_view` flipped to `1` on the consumer's message — each side's own messages left untouched, as `markThreadViewed` skips them. With the `show_chat` gate removed, the Message button is confirmed visible on the ad. |
-| **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. |
+| **Driven in the simulator (2026-08-17, company session)** | **Freelancer order chat, end to end** — Placed lists order #9 badged Expired, Received lists #8, the thread opens on its empty state, and the composer is replaced by "Order Expired / Rejected". Driving it found the defect that `fetch_order_chats` omits `sending` entirely for an empty thread, so an expired order had a live composer. **Push tap routing** — `simctl push` with `type=vendor, action=vendor_membership` opened My Membership on the real ELITE record; `action=user_inbox` with an unknown `chatUUID` exercised the new Firestore lookup and fell back to the company inbox showing the live thread. **Membership detail** — loads, and the new workshop add-on button correctly stays hidden because vendor 706 already owns the add-on (negative case). **Workshop quotation sheet** — the attachment row renders and the Files picker opens. **Freelancer browse and multi-select** — the list populates with the freelancer the API actually returns (it was reading the wrong key and had always shown "No freelancers found"), the checkbox and selection bar behave, and Book opens the per-freelancer booking sheet. |
+| **Deliberately not done** | Three actions were left unconfirmed because completing them writes to production: submitting a workshop quotation (posts a real bid and consumes one of 11), confirming a freelancer booking (creates a real hiring record), and redeeming a coupon. In each case everything up to the final button is verified. |
+| **Never done** | Apart from login and sign-up, no form has been submitted by hand. Nothing has been tested on a physical device, in Arabic, or in dark mode. The consumer side has not been driven since the Edit Profile and freelancer-hire fixes — both are compiled and reasoned against live responses, neither has been seen on screen. |
 
 `attach` on the simulator MCP tool fails on this Mac, but `screenshot`, `tap`, `text` and `swipe` all
 work headlessly against the booted device — an earlier session's conclusion that no interactive

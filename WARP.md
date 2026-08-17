@@ -5,6 +5,26 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 ## Project Overview
 TheContractor is an iOS application (iOS 15+) built with UIKit and SwiftUI that connects users with contractors and freelancers. The app uses a hybrid architecture combining storyboard-based UIKit screens with modern SwiftUI views for newer features.
 
+The repo also contains `TheContractor-Android/`, the **reference implementation**. The iOS app is being brought to functional parity with it.
+
+## Before changing anything, read these
+
+| File | What it is |
+|---|---|
+| [`RESUME_HERE.md`](RESUME_HERE.md) | Entry point: current state, what is left, who is blocking what |
+| [`PARITY_STATUS.md`](PARITY_STATUS.md) | **The authority** on what is built and what is not |
+| [`HANDOVER.md`](HANDOVER.md) | Ground rules, tooling, and the traps that have cost hours |
+
+### Rules that keep being right
+
+- **`TheContractor-Android/.../RetrofitLibrary/RetrofitApi.java` is the only authority on endpoints.** If a path is not declared there, it does not exist. A large part of the original iOS `LoginService.swift` called invented URLs the backend has never served; roughly 25 files have been deleted as unreachable or fabricated. **Never invent an endpoint.**
+- Read the `@Part("name")` annotation, never the Java argument name — they differ often.
+- **Paths are case-sensitive**: `vendor/...` lowercase for the vendor API, `Home/...` / `Account/...` / `Vendor/...` capitalised.
+- **Backend typos are load-bearing**: `quotations_dashnoard`, `vaccancies`, `images[]`, `sur_name`, `isChecked`.
+- **Every API value is a string**, including `"0"`/`"1"` flags. Parse through SwiftyJSON `stringValue`.
+- **An empty screen is usually a wrong key or a wrong id, not an empty result.** Confirm with curl before concluding "no data" — several bugs hid behind exactly that assumption.
+- Deployment target is **iOS 15**; the simulator is iOS 26, so newer APIs compile and run there but break on a real device.
+
 ## Common Commands
 
 ### Building and Running

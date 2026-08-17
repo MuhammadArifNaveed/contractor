@@ -1,6 +1,12 @@
 # User (consumer) side — plan
 
 
+> **Status banner (2026-08-17).** This document is a *working log / plan*, not the current state.
+> [`PARITY_STATUS.md`](PARITY_STATUS.md) is the authority, and [`RESUME_HERE.md`](RESUME_HERE.md) is the
+> entry point for picking the work up. Anything below that reads as "not built yet" may well be built;
+> check there first.
+
+
 > **Start with [`PARITY_STATUS.md`](PARITY_STATUS.md)** for the current what-is-done / what-is-left picture. This document is the detail behind it.
 
 Same method as the company side: Android is the functional source of truth
