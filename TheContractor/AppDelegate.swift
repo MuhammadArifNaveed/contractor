@@ -63,6 +63,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /// The silent push that proves the app is genuine during phone verification. Returning early when
     /// Auth claims it keeps that internal message out of the rest of the notification handling.
+    ///
+    /// This method is why `Info.plist` declares `UIBackgroundModes = [remote-notification]`. iOS logged
+    /// a warning on every launch without it, and the consequence is not cosmetic: a silent push cannot
+    /// wake the app, so Firebase Phone Auth falls back to the reCAPTCHA browser flow instead of
+    /// verifying silently — the same fallback seen on the simulator, but on real devices too.
+    ///
+    /// If App Review asks what the background mode is for, that is the answer: silent notifications for
+    /// Firebase phone-authentication app verification. It is not used for background content fetching.
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
