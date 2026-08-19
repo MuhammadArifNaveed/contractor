@@ -334,6 +334,7 @@
 		2D0C99A74B3348528247122B /* PickUpLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */; };
 		1A3063F19CFC4DF3AAE6D5F8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */; };
 		1CC46490BAE547ADB7B36FCF /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173A12465BE461F835B511A /* Logging.swift */; };
+		63FDC1153386434881BC2F4F /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42DE93D1ED470B86E50419 /* DeleteAccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -680,6 +681,7 @@
 		419B60162FA44FA7B619DE3B /* PickUpLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUpLocationPicker.swift; sourceTree = "<group>"; };
 		1DA0697934754B66919B8521 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C173A12465BE461F835B511A /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		1E42DE93D1ED470B86E50419 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1357,6 +1359,7 @@
 		806CA97D2F5768C600D31D28 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1E42DE93D1ED470B86E50419 /* DeleteAccountView.swift */,
 				076AF24AD610471C8809F0F0 /* CompanyFinderView.swift */,
 				654189C484BA250D5C381AEF /* InboxView.swift */,
 				E1F3E2D751C43E9B33F74FEF /* WorkshopAdsView.swift */,
@@ -1577,6 +1580,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63FDC1153386434881BC2F4F /* DeleteAccountView.swift in Sources */,
 				1CC46490BAE547ADB7B36FCF /* Logging.swift in Sources */,
 				2D0C99A74B3348528247122B /* PickUpLocationPicker.swift in Sources */,
 				C3C8EECFC7B2415F943CB66F /* ChatAuthService.swift in Sources */,

@@ -223,7 +223,7 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
 
     // MARK: - Vendor menu handler
     private func handleVendorMenuItem(title: String, mainVC: MainContainerViewController) {
-        if title != "Home" && title != "Vendor Logout" {
+        if title != "Home" && title != "Vendor Logout" && title != "Delete Account" {
             mainVC.hideForSideMenu()
         }
         switch title {
@@ -261,6 +261,9 @@ extension SideMenuViewController : UITableViewDelegate , UITableViewDataSource{
             mainVC.showVendorMembershipsController()
         case "My Membership":
             mainVC.showVendorMyMembershipController()
+        case "Delete Account":
+            mainVC.showCompanyDeleteAccountController()
+
         case "Vendor Logout":
             mainVC.logoutUser()
         default:

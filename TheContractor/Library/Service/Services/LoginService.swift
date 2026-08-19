@@ -116,6 +116,44 @@ class LoginService: BaseService {
         }
     }
 
+    // MARK: - Account deletion
+
+    // App Store Review Guideline 5.1.1(v): an app that lets you create an account must let you delete
+    // it from inside the app. Without this the build is rejected, so these are not optional.
+    //
+    // **Both endpoints take JSON, not multipart** — the only two on this backend that do. Verified
+    // against the live server: `vendor/delete_company` answers "The Company Serial Number is required"
+    // to a form-encoded post no matter what is sent, and only reads the value from a JSON body.
+    // `makePostAPiCall` (note the backend-style typo in the name) is the JSON-encoded variant.
+    //
+    // Neither endpoint exists in Android's `RetrofitApi` — they were added to the backend for this, so
+    // there is no reference implementation to match. Behaviour was probed with deliberately
+    // non-existent ids so no real account was touched: a bad user id answers "invalid user id" and a
+    // bad serial "invalid company serial no", both with `error: true`.
+
+    /// Deletes the signed-in consumer's account. Irreversible.
+    func deleteUserAccount(userId: String,
+                           completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "account/delete_user"
+        self.makePostAPiCall(with: completeURL, params: ["user_id": userId]) { message, success, json, _ in
+            let failed = json?["error"].boolValue ?? !success
+            completion(message, success && !failed)
+        }
+    }
+
+    /// Deletes the signed-in company's account. Irreversible.
+    ///
+    /// Keyed on `company_serial_number`, not the vendor id — the serial is what the endpoint takes, and
+    /// `VendorSession` already stores it.
+    func deleteCompanyAccount(serialNumber: String,
+                              completion: @escaping (_ message: String, _ success: Bool) -> Void) {
+        let completeURL = EndPoints.BASE_URL + "vendor/delete_company"
+        self.makePostAPiCall(with: completeURL, params: ["company_serial_number": serialNumber]) { message, success, json, _ in
+            let failed = json?["error"].boolValue ?? !success
+            completion(message, success && !failed)
+        }
+    }
+
     // MARK: - Company finder
 
     /// Keyword search over companies by name or ID. Android: `RetrofitApi.search()` →

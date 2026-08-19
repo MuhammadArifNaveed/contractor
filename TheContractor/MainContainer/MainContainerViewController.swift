@@ -74,6 +74,14 @@ class MainContainerViewController: BaseViewController{
         // run loop so the home screen just installed above is not replaced mid-transition.
         DispatchQueue.main.async { PushRouter.flushPending() }
 
+        // Posted by DeleteAccountView once the backend confirms the account is gone. It routes through
+        // the same logout path as the drawer, because a deleted account must not leave a restorable
+        // session behind — SceneDelegate would otherwise rehydrate it on the next cold launch and the
+        // app would come up signed in as a record that no longer exists.
+        NotificationCenter.default.addObserver(forName: .init("AccountDeleted"), object: nil, queue: .main) { [weak self] _ in
+            self?.logoutUser()
+        }
+
         NotificationCenter.default.addObserver(self, selector: #selector(handleGoBackToTabBar), name: .init("GoBackToTabBar"), object: nil)
         // A SwiftUI tab screen that hits a signed-in-only action asks for the login screen this way.
         // "GoToLogin" is observed by ProfileHostingController, which is not installed while another
@@ -474,6 +482,12 @@ class MainContainerViewController: BaseViewController{
     /// Android `CompanyFinder` — the drawer's "Company Finder", a keyword search over
     /// `Home/get_by_company_id`. Distinct from the bottom bar's Search tab, which is the category and
     /// city filter; the drawer item used to open that one, leaving this endpoint with no caller.
+    /// App Store Guideline 5.1.1(v). Reached from the company drawer.
+    func showCompanyDeleteAccountController() {
+        guard let serial = VendorSession.current?.company_serial_number, !serial.isEmpty else { return }
+        showVendorScreen(DeleteAccountView(account: .company(serialNumber: serial)))
+    }
+
     func showCompanyFinderController() {
         showVendorScreen(CompanyFinderView())
     }

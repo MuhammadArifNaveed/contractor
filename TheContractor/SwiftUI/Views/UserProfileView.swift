@@ -9,6 +9,7 @@ import SwiftUI
 import SafariServices
 
 struct UserProfileView: View {
+    @State private var showDeleteAccount = false
     @StateObject private var viewModel = UserProfileViewModel()
     @State private var showLogoutAlert = false
     @State private var safariURL: URL? = nil
@@ -73,6 +74,11 @@ struct UserProfileView: View {
             Button("No", role: .cancel) {}
         } message: {
             Text("Are you sure you want to logout?")
+        }
+        .sheet(isPresented: $showDeleteAccount) {
+            if let userId = UserDefaultsManager.shared.userInfo?.id, !userId.isEmpty {
+                DeleteAccountView(account: .consumer(userId: userId))
+            }
         }
         .sheet(item: $safariURL) { url in
             SFSafariViewWrapper(url: url)
@@ -211,6 +217,11 @@ struct UserProfileView: View {
             Divider().padding(.leading, 58)
             ProfileRow(icon: "lock", title: "Change Password") {
                 viewModel.navigateToChangePassword()
+            }
+            Divider().padding(.leading, 58)
+            // App Store Guideline 5.1.1(v): account deletion has to be reachable from inside the app.
+            ProfileRow(icon: "trash", title: "Delete Account") {
+                showDeleteAccount = true
             }
             Divider().padding(.leading, 58)
         }
